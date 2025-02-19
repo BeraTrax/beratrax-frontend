@@ -1,24 +1,47 @@
 {
-  "name": "beratrax-monorepo",
+  "name": "beratrax-frontend",
+  "version": "1.0.0",
+  "description": "A DeFi platform that your friends can actually use.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeraTrax/beratrax-frontend.git"
+  },
+  "keywords": [
+    "DeFi",
+    "blockchain",
+    "cryptocurrency",
+    "DApp",
+    "Berachain",
+    "Yield",
+    "High",
+    "APY",
+    "Beratrax"
+  ],
+  "author": "beratrax-dev",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "start": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
-    "turbo": "^2.4.2",
+    "turbo": "1.13.4",
     "typescript": "5.7.3"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "engines": {
     "node": ">=18"
   },
   "packageManager": "yarn@3.4.1",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "bugs": {
+    "url": "https://github.com/BeraTrax/beratrax-frontend/issues"
+  },
+  "homepage": "https://github.com/BeraTrax/beratrax-frontend#readme"
 }

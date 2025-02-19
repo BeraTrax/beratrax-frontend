@@ -18,6 +18,11 @@ coverage
 # Turbo
 .turbo
 
+# .yarn files
+.yarn/cache
+.yarn/versions
+.yarn/install-state.gz
+
 # Vercel
 .vercel
 

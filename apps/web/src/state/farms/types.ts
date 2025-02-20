@@ -1,0 +1,49 @@
+import { FarmData, IClients } from "src/types";
+import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
+import { FarmTransactionType } from "src/types/enums";
+import { PoolDef } from "src/config/constants/pools_json";
+
+export interface StateInterface {
+    farmDetails: FarmDetails;
+    earnings: Earnings;
+    isLoadingEarnings: boolean;
+    isLoading: boolean;
+    isFetched: boolean;
+    account: string;
+    farmDetailInputOptions: FarmDetailInputOptions;
+    error?: string | null;
+}
+export interface FarmDetailInputOptions {
+    transactionType: FarmTransactionType;
+    showInUsd: boolean;
+    currencySymbol: string;
+    bestFunctionNameForArberaHoney: string;
+}
+
+export interface FarmDetails {
+    [farmid: number]: FarmData | undefined;
+}
+
+export interface FetchFarmDetailsAction {
+    farms: PoolDef[];
+    totalSupplies: TotalSupplies;
+    currentWallet: string;
+    getPublicClient: (chainId: number) => IClients["public"];
+    balances: Balances;
+    prices: Prices;
+    decimals: Decimals;
+}
+
+export interface Earnings {
+    [farmId: number]: number;
+}
+
+export interface FetchEarningsAction {
+    farms: PoolDef[];
+    currentWallet: string;
+    decimals: Decimals;
+    prices: Prices;
+    balances: Balances;
+    totalSupplies: TotalSupplies;
+    getPublicClient: (chainId: number) => IClients["public"];
+}

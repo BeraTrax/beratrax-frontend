@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * {
+  outline: 1px solid red;
+} */
+
+body {
+    margin: 0;
+    font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+        "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--new-background_dark);
+    font-family: "Poppins";
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* Arame-Mono font, every variation of font */
+@font-face {
+    font-family: "Arame Mono";
+    src: url("/src/assets/fonts/ArameMono/0Arame-Regular.otf") format("opentype");
+    font-weight: 100 900; /* Supports a range of weights */
+    font-style: normal;
+}
+
+/* League Spartan font, every variation of font */
+@font-face {
+    font-family: "League Spartan";
+    src: url("/src/assets//fonts//LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+    font-weight: 100 900; /* Supports a range of weights */
+    font-style: normal;
+}
+
+@layer base {
+    :root {
+        /* ///// Background Colors ///// */
+        --new-background_primary: #72b21f;
+        --new-background_secondary: #151915;
+        /* --new-background_secondary-hover: #032a51; */
+        --new-background_dark: #020907;
+        /* --new-background_light: #C49167; */
+        /* --new-background_primary_white: # */
+
+        /* ///// Colors ///// */
+        --new-color_primary: #72B21F;
+        --new-color_secondary: #878B82;
+        --new-color-light: #C49167
+        --new-color_grey: #878B82;
+        --new-color_white: #ffffff;
+        --new-color_black: #000000;
+        /* --new-color_disabled: #1d4864; */
+        /* --new-color_warning: #ffcc00; */
+        /* #2f6d95 */
+        --new-color_text: var(--new-color_white);
+
+        /* ///// Border Colors ///// */
+        --new-border_dark: #323d27;
+        /* --new-border_color-secondary: #043b71; */
+        /* --new-border_color_light: #765A46; */
+        --new-border_light: #90bb62;
+
+        --new-button-bg-secondary: #15201c;
+
+        /* ///// Gradients ///// */
+        /* --new-top-to-bottom-curved: radial-gradient(
+            ellipse at bottom,
+            rgba(144, 187, 98, 0.5),
+            #2b3b25,
+            #152117,
+            #060d0d,
+            transparent
+        ); */
+
+        --new-button-primary-light: #a0ff3b; /* Gradient Light */
+        --new-button-primary: #72b21f;
+        --new-button-disabled: #878b82;
+
+        --new-gradient-dark: #283817;
+        --new-gradient-light: #a0ff3b;
+
+        --new-top-to-bottom-curved: url("src/assets/images/backgroundGradient.svg");
+        --new-bottom-right-gradient: url("src/assets/images/ellipse.svg");
+
+        --side-bar-width: 256px;
+    }
+}

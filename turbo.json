@@ -22,11 +22,25 @@
         "^build"
       ]
     },
-    "start": {
-      "cache": false,
+    "dev": {
+      "cache": true,
       "persistent": true,
       "dependsOn": [
         "prepare"
+      ],
+      "inputs": [
+        "src/**",
+        "index.html",
+        "public/**",
+        "package.json",
+        "vite.config.ts"
+      ]
+    },
+    "start:web": {
+      "persistent": true,
+      "dependsOn": [
+        "prepare",
+        "dev"
       ]
     },
     "lint": {

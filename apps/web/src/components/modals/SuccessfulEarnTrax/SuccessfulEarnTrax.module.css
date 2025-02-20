@@ -1,0 +1,38 @@
+.borderClass {
+    border: 6px solid var(--new-button-primary);
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 540px;
+}
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+    
+} 
+.para1 {
+    padding-top: 25px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    text-align: center;
+}
+.para2 {
+    padding-top: 10px;
+    color: #8798ad;
+    text-align: center;
+}
+.btnContainer {
+    padding-top: 25px;
+}
+.okButton {
+    padding: 14px 5px;
+    min-width: 160px;
+    border-radius: 33px;
+    background: var(--new-button-primary);
+    color: white;
+    font-size: 1.4rem;
+}

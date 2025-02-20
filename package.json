@@ -1,6 +1,6 @@
 {
-  "name": "beratrax-frontend",
-  "version": "1.0.0",
+  "name": "beraverse",
+  "version": "0.0.0",
   "description": "A DeFi platform that your friends can actually use.",
   "repository": {
     "type": "git",
@@ -22,8 +22,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:web": "turbo run start:web --filter=beratrax-web-app",
-    "build:web": "turbo run build:web --filter=beratrax-web-app",
+    "start:web": "turbo run start:web --filter=@beratrax/website",
+    "build:web": "turbo run build:web --filter=@beratrax/website",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

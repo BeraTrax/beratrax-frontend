@@ -1,5 +1,5 @@
 {
-  "name": "beratrax-web-app",
+  "name": "@beratrax/website",
   "version": "0.1.1",
   "private": true,
   "type": "module",
@@ -90,7 +90,7 @@
     "build:web": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "find-deadcode": "ts-prune",
-    "upgrade-packages": "upgrade-interactive" 
+    "upgrade-packages": "upgrade-interactive"
   },
   "eslintConfig": {
     "extends": [

@@ -22,7 +22,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:web": "turbo run dev --filter=beratrax-web-app",
+    "start:web": "turbo run start:web --filter=beratrax-web-app",
+    "build:web": "turbo run build:web --filter=beratrax-web-app",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

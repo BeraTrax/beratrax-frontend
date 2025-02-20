@@ -6,7 +6,9 @@
         "package.json"
       ]
     },
-    "build": {
+    "build:web": {
+      "cache": true,
+      "persistent": true,
       "inputs": [
         "yarn.lock",
         "**/package.json",
@@ -22,26 +24,20 @@
         "^build"
       ]
     },
-    "dev": {
+    "start:web": {
       "cache": true,
       "persistent": true,
       "dependsOn": [
         "prepare"
       ],
       "inputs": [
-        "src/**",
-        "index.html",
-        "public/**",
-        "package.json",
-        "vite.config.ts"
+        "apps/web/src/**",
+        "apps/web/index.html",
+        "apps/web/public/**",
+        "apps/web/package.json",
+        "apps/web/vite.config.ts"
       ]
-    },
-    "start:web": {
-      "persistent": true,
-      "dependsOn": [
-        "prepare",
-        "dev"
-      ]
+
     },
     "lint": {
       "dependsOn": ["^lint"],

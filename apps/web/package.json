@@ -86,11 +86,11 @@
   },
   "scripts": {
     "start": "vite",
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "start:web": "vite",
+    "build:web": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "find-deadcode": "ts-prune",
-    "upgrade-packages": "upgrade-interactive"
+    "upgrade-packages": "upgrade-interactive" 
   },
   "eslintConfig": {
     "extends": [

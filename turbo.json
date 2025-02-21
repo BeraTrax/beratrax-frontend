@@ -40,6 +40,19 @@
         "REACT_APP_IS_LEGACY"
       ]
     },
+    "build:mobile": {
+      "cache": true,
+      "inputs": [
+        "apps/mobile/src/**",
+        "apps/mobile/index.js",
+        "apps/mobile/package.json",
+        "apps/mobile/metro.config.js"
+      ],
+      "outputs": [
+        "apps/mobile/android/app/build/**",
+        "apps/mobile/ios/build/**"
+      ]
+    },
     "start:web": {
       "cache": false,
       "persistent": true,
@@ -53,7 +66,16 @@
         "apps/web/package.json",
         "apps/web/vite.config.ts"
       ]
-
+    },
+    "start:mobile": {
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "apps/mobile/src/**",
+        "apps/mobile/index.js",
+        "apps/mobile/package.json",
+        "apps/mobile/metro.config.js"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"],

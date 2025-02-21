@@ -24,6 +24,8 @@
     "build": "turbo run build",
     "start:web": "turbo run start:web --filter=@beratrax/website",
     "build:web": "turbo run build:web --filter=@beratrax/website",
+    "start:mobile": "turbo run start:mobile --filter=mobile",
+    "build:mobile": "turbo run build:mobile --filter=mobile",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

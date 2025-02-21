@@ -1,20 +1,11 @@
-"use client";
+import { styled, Button as TButton } from '@tamagui/core'
 
-import { ReactNode } from "react";
-
-interface ButtonProps {
-  children: ReactNode;
-  className?: string;
-  appName: string;
-}
-
-export const Button = ({ children, className, appName }: ButtonProps) => {
-  return (
-    <button
-      className={className}
-      onClick={() => alert(`Hello from your ${appName} app!`)}
-    >
-      {children}
-    </button>
-  );
-};
+export const Button = styled(TButton, {
+  name: 'Button',
+  borderRadius: 8,
+  paddingHorizontal: 16,
+  paddingVertical: 10,
+  backgroundColor: '$background',
+  color: '$color',
+  hoverStyle: { opacity: 0.8 },
+})

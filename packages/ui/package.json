@@ -1,5 +1,5 @@
 {
-  "name": "@repo/ui",
+  "name": "@beratrax/ui",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -21,7 +21,16 @@
     "typescript": "5.7.3"
   },
   "dependencies": {
+    "@tamagui/config": "^1.125.10",
+    "@tamagui/core": "^1.125.10",
+    "@tamagui/static": "^1.125.10",
+    "@tamagui/web": "^1.125.10",
+    "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-native-gesture-handler": "^2.24.0",
+    "react-native-reanimated": "^3.16.7",
+    "react-native-safe-area-context": "^5.2.0",
+    "react-native-svg": "^15.11.1"
   }
 }

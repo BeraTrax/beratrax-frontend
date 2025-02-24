@@ -19,7 +19,7 @@
         "./apps/web/build"
       ],
       "dependsOn": [
-        "^build"
+        "prepare"
       ],
       "env": [
         "REACT_APP_WEB3AUTH_CLIENT_ID",

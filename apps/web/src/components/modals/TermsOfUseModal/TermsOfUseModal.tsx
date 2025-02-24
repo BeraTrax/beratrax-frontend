@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-import { ImSpinner8 } from "react-icons/im";
-import useWallet from "src/hooks/useWallet";
-import { useAppDispatch } from "src/state";
-import { agreeTermsOfUse } from "src/state/account/accountReducer";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
-import styles from "./TermsOfUseModal.module.css";
+import styles from "./TermsOfUseModal.module.scss";
+import { useAppDispatch } from "src/state";
+import useWallet from "src/hooks/useWallet";
+import { ImSpinner8 } from "react-icons/im";
+import { agreeTermsOfUse } from "src/state/account/accountReducer";
 
 interface IProps {
     setOpenModal: Function;

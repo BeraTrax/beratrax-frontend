@@ -2,7 +2,6 @@ import React, { ReactNode } from "react";
 import { AiOutlineExport } from "react-icons/ai";
 import { BsChat, BsDiamondFill, BsQuestion } from "react-icons/bs";
 import { CiCircleCheck } from "react-icons/ci";
-import { FaSackDollar } from "react-icons/fa6";
 import { GiWorld } from "react-icons/gi";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import {
@@ -25,7 +24,7 @@ const IconWithHeading: React.FC<{ Icon: IconType; children?: ReactNode } & IconB
     ...iconProps
 }) => (
     <div className="flex items-stretch gap-x-2">
-        <Icon {...iconProps} /> <div>{children}</div>
+        <Icon className="shrink-[0]" {...iconProps} /> <div>{children}</div>
     </div>
 );
 
@@ -45,12 +44,9 @@ const UserGuide = () => {
     return (
         <div className="overflow-auto">
             <div className="text-xl text-textWhite p-10 flex gap-y-8 flex-col font-light ">
-                <div className="flex items-start gap-3 font-bold">
-                    <FaSackDollar color="grey" size={70} />
-                    <h1 className="text-4xl leading-none uppercase">
-                        BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
-                    </h1>
-                </div>
+                <h1 className="font-bold text-4xl leading-none uppercase">
+                    💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
+                </h1>
                 <p>
                     Welcome to <b>BeraTrax</b>, the easiest way to access{" "}
                     <b>
@@ -79,7 +75,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -91,7 +87,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -106,7 +102,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -116,7 +112,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -131,7 +127,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -142,7 +138,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -165,7 +161,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -175,7 +171,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -185,7 +181,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -263,7 +259,7 @@ const UserGuide = () => {
 
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -303,7 +299,7 @@ const UserGuide = () => {
                     <h1 className="text-4xl leading-none uppercase">Earning BTX Points by Staking & Referring</h1>
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
@@ -313,7 +309,7 @@ const UserGuide = () => {
                     </IconWithHeading>
                     <IconWithHeading
                         Icon={ICONS.diamond}
-                        size={16}
+                        size={14}
                         color="transparent"
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}

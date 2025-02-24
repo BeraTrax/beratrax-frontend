@@ -1,28 +1,23 @@
-import { dismissNotify, notifyLoading } from "src/api/notify";
 import { approveErc20, getBalance } from "src/api/token";
-import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
-import zapperAbi from "src/assets/abis/zapperAbi";
-import { addressesByChainId } from "src/config/constants/contracts";
-import { errorMessages, loadingMessages, successMessages } from "src/config/constants/notifyMessages";
-import pools_json, { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
-import { SupportedChains } from "src/config/walletConfig";
-import store from "src/state";
-import { setSimulatedSlippage } from "src/state/farms/farmsReducer";
-import { addNotificationWithTimeout } from "src/state/notification/notifiactionReducer";
-import { Balances } from "src/state/tokens/types";
-import {
-    editTransactionDb,
-    markAsFailedDb,
-    TransactionsDB
-} from "src/state/transactions/transactionsReducer";
-import {
-    BridgeService,
-    TransactionStepStatus
-} from "src/state/transactions/types";
-import { CrossChainTransactionObject, IClients } from "src/types";
-import Bridge from "src/utils/Bridge";
 import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "src/utils/common";
+import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "src/api/notify";
 import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
+import { errorMessages, loadingMessages, successMessages } from "src/config/constants/notifyMessages";
+import {
+    SlippageInBaseFn,
+    SlippageOutBaseFn,
+    TokenAmounts,
+    ZapInBaseFn,
+    ZapOutBaseFn,
+    PriceCalculationProps,
+    ZapInFn,
+    ZapOutFn,
+    GetFarmDataProcessedFn,
+    FarmFunctions,
+} from "./types";
+import { addressesByChainId } from "src/config/constants/contracts";
+import { isGasSponsored } from "..";
+import { traceTransactionAssetChange } from "../tenderly";
 import {
     Address,
     createPublicClient,
@@ -34,24 +29,41 @@ import {
     keccak256,
     maxUint256,
     numberToHex,
-    parseEventLogs,
     StateOverride,
-    zeroAddress
+    zeroAddress,
+    getContract,
+    parseEventLogs,
 } from "viem";
-import { isGasSponsored } from "..";
-import { traceTransactionAssetChange } from "../tenderly";
+import zapperAbi from "src/assets/abis/zapperAbi";
+import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
+import vaultAbi from "src/assets/abis/vault.json";
+import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "src/types";
+import { convertQuoteToRoute, getQuote, getStatus, LiFiStep } from "@lifi/sdk";
+import { SupportedChains } from "src/config/walletConfig";
+import store from "src/state";
 import {
-    FarmFunctions,
-    GetFarmDataProcessedFn,
-    PriceCalculationProps,
-    SlippageInBaseFn,
-    SlippageOutBaseFn,
-    TokenAmounts,
-    ZapInBaseFn,
-    ZapInFn,
-    ZapOutBaseFn,
-    ZapOutFn,
-} from "./types";
+    ApproveBridgeStep,
+    ApproveZapStep,
+    BridgeService,
+    TransactionStepStatus,
+    TransactionTypes,
+    WaitForBridgeResultsStep,
+    ZapInStep,
+    ZapOutStep,
+} from "src/state/transactions/types";
+import { buildTransaction, getBridgeStatus, getRoute, SocketApprovalData, SocketRoute } from "../bridge";
+import {
+    addTransactionStepDb,
+    editTransactionStepDb,
+    editTransactionDb,
+    markAsFailedDb,
+    TransactionsDB,
+} from "src/state/transactions/transactionsReducer";
+import Bridge from "src/utils/Bridge";
+import { addNotificationWithTimeout } from "src/state/notification/notifiactionReducer";
+import { setSimulatedSlippage } from "src/state/farms/farmsReducer";
+import { Balances } from "src/state/tokens/types";
+import pools_json, { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 
 export const zapInBase: ZapInBaseFn = async ({
     withBond,

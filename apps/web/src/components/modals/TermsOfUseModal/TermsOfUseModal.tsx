@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
-import styles from "./TermsOfUseModal.module.scss";
+import styles from "./TermsOfUseModal.module.css";
 import { useAppDispatch } from "src/state";
 import useWallet from "src/hooks/useWallet";
 import { ImSpinner8 } from "react-icons/im";

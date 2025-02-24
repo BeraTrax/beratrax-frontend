@@ -5,14 +5,14 @@ import { LiaPowerOffSolid } from "react-icons/lia";
 import { MdOutlineContentCopy, MdOutlineQrCode2 } from "react-icons/md";
 import { checkClaimBtx, claimBtx } from "src/api/account";
 import { notifyError } from "src/api/notify";
-import btxLogo from "src/assets/images/btxLogo.png";
 import GreenLogo from "src/assets/images/greenLogo.png";
 import StakingLogo from "src/assets/images/stakingLogo.png";
 import { EarnTrax } from "src/components/modals/EarnTrax/EarnTrax";
-import { TermsOfUseModal } from "src/components/modals/TermsOfUseModal/TermsOfUseModal";
 import { ExportPrivateKey } from "src/components/modals/ExportPrivateKey/ExportPrivateKey";
 import { ExportPublicKey } from "src/components/modals/ExportPublicKey/ExportPublicKey";
 import SuccessfulEarnTrax from "src/components/modals/SuccessfulEarnTrax/SuccessfulEarnTrax";
+import { TermsOfUseModal } from "src/components/modals/TermsOfUseModal/TermsOfUseModal";
+import { blockExplorersByChainId } from "src/config/constants/urls";
 import { useVaults } from "src/hooks/useVaults";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
@@ -190,7 +190,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                                             <div className="flex items-center">
                                                 <a
                                                     target="_blank"
-                                                    href={`https://bartio.beratrail.io/address/${currentWallet}`}
+                                                    href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
                                                     className="font-arame-mono font-light text-lg text-textWhite leading-5"
                                                 >
                                                     {truncatedAddress}

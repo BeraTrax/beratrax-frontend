@@ -1,27 +1,27 @@
+import { createWeb3Name } from "@web3-name-sdk/core";
 import { notifyError } from "src/api/notify";
 import { defaultChainId } from "src/config/constants";
 import { errorMessages } from "src/config/constants/notifyMessages";
 import store from "src/state";
 import { IClients } from "src/types";
-import { createWeb3Name } from "@web3-name-sdk/core";
 import {
     Address,
-    getAddress,
-    TransactionReceipt,
-    parseUnits,
-    formatUnits,
-    zeroAddress,
-    getContract,
     erc20Abi,
+    formatUnits,
+    getAddress,
+    getContract,
     maxUint256,
+    parseUnits,
+    TransactionReceipt,
+    zeroAddress,
 } from "viem";
 
-import { waitForTransactionReceipt } from "viem/actions";
 import { addressesByChainId } from "src/config/constants/contracts";
-import { CHAIN_ID } from "src/types/enums";
 import { PoolDef } from "src/config/constants/pools_json";
-import { Balances } from "src/state/tokens/types";
 import { SupportedChains } from "src/config/walletConfig";
+import { Balances } from "src/state/tokens/types";
+import { CHAIN_ID } from "src/types/enums";
+import { waitForTransactionReceipt } from "viem/actions";
 
 const web3Name = createWeb3Name();
 
@@ -377,7 +377,7 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
 
     const num = Number(amount);
 
-    if (Math.abs(num) < 0.000001) {
+    if (Math.abs(num) < 0.001) {
         const twoSig = num.toPrecision(2);
         return expandScientific(twoSig);
     }

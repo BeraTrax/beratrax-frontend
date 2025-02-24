@@ -77,6 +77,75 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
                             use the Site in a way that would violate the Gramm-Leach-Bliley Act (GLBA). The Site is
                             intended for users who are at least 18 years old. Persons under the age of 18 are not
                             permitted to use or register for the Site.
+                            <br />
+                            <br />
+                            <div className="space-y-6">
+                                <h2 className="">PLATFORM DISCLOSURES</h2>
+                                <br />
+                                Smart contract risks: DeFi protocols frequently suffer from loss of funds due to
+                                vulnerabilities in smart contracts. At BeraTrax, we prioritize security and have
+                                undergone a full audit by Cyberscope to identify and mitigate potential risks.
+                                Additionally, we have implemented zero-day exploit protection through Spherex to enhance
+                                our security framework. However, while we take extensive precautions to safeguard our
+                                smart contracts, no system is entirely immune to unforeseen vulnerabilities. At the time
+                                of publishing these terms and conditions, we cannot guarantee that security issues will
+                                never arise.
+                                <br />
+                                <br />
+                                APY disclaimer: The Annual Percentage Yield (APY) displayed on BeraTrax represents an
+                                estimate of the potential growth of your liquidity provider (LP) position. This figure
+                                is derived from external factors, including trading fees and liquidity provider
+                                incentives, both of which fluctuate based on market conditions. As these values are
+                                determined by external sources, BeraTrax does not set the APY nor guarantee its
+                                accuracy. It is essential for users to understand that past performance does not
+                                guarantee future returns.
+                                <br />
+                                <br />
+                                Wallet and Custody disclaimer: BeraTrax is a non-custodial platform, meaning we do not
+                                hold or manage user funds. To interact with our platform, we strongly recommend using a
+                                secure Web3 wallet, such as MetaMask. If you opt for Web3Auth, ensure that your linked
+                                social media account is protected with two-factor authentication (2FA), as access to
+                                that account also grants access to your cryptographic keys. Users are solely responsible
+                                for securing their wallets and maintaining control over their private keys, as BeraTrax
+                                cannot recover lost or compromised assets.
+                                <br />
+                                <br />
+                                Impermanent loss risks: Providing liquidity in dual-token pools exposes users to
+                                impermanent loss, which occurs when the relative price of one asset shifts compared to
+                                the other. This risk can significantly impact returns, particularly in volatile markets.
+                                We strongly encourage users to research and fully understand impermanent loss before
+                                participating in liquidity pools.
+                                <br />
+                                <br />
+                                Price risks: The cryptocurrency market is highly volatile, and liquidity provider (LP)
+                                positions are directly affected by price fluctuations. The value of assets in liquidity
+                                pools may increase or decrease unexpectedly, impacting the profitability of your
+                                deposits. BeraTrax advises all users to conduct thorough research before engaging in any
+                                liquidity provision strategy.
+                                <br />
+                                <br />
+                                De-peg risks: BeraTrax offers stablecoin liquidity pools; however, stablecoins are not
+                                immune to de-pegging events. If a stablecoin loses its peg to its underlying asset, it
+                                can lead to severe losses due to both price volatility and impermanent loss. Before
+                                participating in any stablecoin-based vaults, users should research the risks associated
+                                with de-pegging and the specific stablecoins they intend to use.
+                                <br />
+                                <br />
+                                Blockchain risks: Engaging with blockchain-based platforms carries inherent risks,
+                                whether for utility, artistic purposes, or investment. Factors such as network
+                                congestion, smart contract vulnerabilities, regulatory changes, and unforeseen technical
+                                failures can impact the reliability of blockchain applications. BeraTrax urges users to
+                                conduct independent research on blockchain technology and associated risks before
+                                utilizing our platform.
+                                <br />
+                                <br />
+                                Fees: Users may have to pay third party fees & direct fees to BeraTrax depending on the
+                                pool & the current policies. Please see the earn page of docs to learn more about fees &
+                                BeraTrax. For transparency, we will always provide you the simulated slippage for our
+                                automations to swap you into & of any positions.
+                            </div>
+                            <br />
+                            <br />
                             <p className="font-bold pt-2">NON-CUSTODIAL NATURE OF ALL SERVICES</p>
                             BeraTrax operates as a non-custodial platform within the decentralized finance (DeFi)
                             ecosystem. This means BeraTrax does not take custody, control, access, or manage user funds
@@ -107,7 +176,7 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
                             entity, including BeraTrax itself, from accessing or exerting control over user assets. Such
                             contracts may incorporate mechanisms for the accrual of service fees to BeraTrax, with the
                             specifics of these fees comprehensively detailed within our documentation and terms of
-                            service. It is paramount to note that even smart contracts deployed under the auspices of
+                            service. It is paramount to Note: Although BeraTrax does not have a deposit/withdraw fee,  even smart contracts deployed under the auspices of
                             BeraTrax become part of the broader, open-source, and permissionless ecosystem of blockchain
                             contracts, accessible for public use. Once deployed, BeraTrax relinquishes any form of
                             control or ownership over these contracts, aligning with the decentralized and

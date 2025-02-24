@@ -26,6 +26,7 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-        exclude: ["./src/pages/Swap/uniswapTokens.json"],
+        exclude: [
+        ],
     },
 });

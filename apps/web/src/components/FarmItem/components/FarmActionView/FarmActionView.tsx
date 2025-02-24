@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import tokendetailspageleftsideleaves from "src/assets/images/tokendetailspageleftsideleaves.svg";
 import tokendetailspagestoprightleaves from "src/assets/images/tokendetailspagestoprightleaves.svg";
 import BackButton from "src/components/BackButton/BackButton";
+import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { IS_LEGACY } from "src/config/constants";
 import { PoolDef } from "src/config/constants/pools_json";
 import { useDetailInput } from "src/hooks/useDetailInput";
@@ -10,14 +11,13 @@ import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import { FarmDetailInputOptions } from "src/state/farms/types";
+import useTokens from "src/state/tokens/useTokens";
 import { FarmTransactionType } from "src/types/enums";
+import { formatCurrency } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
-import { formatCurrency } from "src/utils/common";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
-import useTokens from "src/state/tokens/useTokens";
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
@@ -77,6 +77,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     marketCap={`$${marketCap}`}
                                     vaultTvl={`$${vaultTvl}`}
                                     description={farm.description}
+                                    source={farm.source}
                                 />
                             </div>
                             <div

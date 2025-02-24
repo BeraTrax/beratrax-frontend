@@ -1,17 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import styles from "./DepositModal.module.scss";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { getCombinedBalance, toEth, toWei } from "src/utils/common";
-import useTokens from "src/state/tokens/useTokens";
-import useFarms from "src/state/farms/hooks/useFarms";
-import { CHAIN_ID } from "src/types/enums";
-import { Address, zeroAddress } from "viem";
+import { notifyError } from "src/api/notify";
 import { getBalance } from "src/api/token";
 import { addressesByChainId } from "src/config/constants/contracts";
 import useWallet from "src/hooks/useWallet";
-import { notifyError } from "src/api/notify";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
+import { useAppDispatch } from "src/state";
+import useFarms from "src/state/farms/hooks/useFarms";
+import useTokens from "src/state/tokens/useTokens";
+import { addTransactionDb } from "src/state/transactions/transactionsReducer";
 import {
     ApproveBridgeStep,
     ApproveZapStep,
@@ -22,9 +18,12 @@ import {
     WaitForBridgeResultsStep,
     ZapInStep,
 } from "src/state/transactions/types";
-import { useAppDispatch } from "src/state";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
 import useTransaction from "src/state/transactions/useTransaction";
+import { CHAIN_ID } from "src/types/enums";
+import { getCombinedBalance, toEth, toWei } from "src/utils/common";
+import { Address, zeroAddress } from "viem";
+import { ModalLayout } from "../ModalLayout/ModalLayout";
+import styles from "./DepositModal.module.css";
 
 interface IProps {
     handleClose: Function;

@@ -1,8 +1,16 @@
+import { getStatus } from "@lifi/sdk";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { backendApi } from "src/api";
+import pools_json from "src/config/constants/pools_json";
+import { SupportedChains } from "src/config/walletConfig";
+import { IClients } from "src/types";
+import { Address, createPublicClient, Hex, http, TransactionReceipt } from "viem";
+import store, { RootState } from "..";
 import {
     ApproveBridgeStep,
     ApproveZapStep,
     BridgeService,
+    EditTransaction,
     InitiateBridgeStep,
     StateInterface,
     Transaction,
@@ -13,14 +21,6 @@ import {
     ZapInStep,
     ZapOutStep,
 } from "./types";
-import { backendApi } from "src/api";
-import { Address, createPublicClient, Hex, http, TransactionReceipt } from "viem";
-import store, { RootState } from "..";
-import pools_json from "src/config/constants/pools_json";
-import { SupportedChains } from "src/config/walletConfig";
-import { IClients } from "src/types";
-import moment from "moment";
-import { getStatus } from "@lifi/sdk";
 
 const initialState: StateInterface = {
     transactions: [],
@@ -44,7 +44,7 @@ export const addTransactionDb = createAsyncThunk(
 
 export const editTransactionDb = createAsyncThunk(
     "transactions/editTransactionDb",
-    async (transaction: Partial<Transaction>, _thunkApi) => {
+    async (transaction: EditTransaction, _thunkApi) => {
         try {
             const res = await backendApi.post(`transaction/save-history-tx/${transaction._id}`, transaction);
             return res.data.data;

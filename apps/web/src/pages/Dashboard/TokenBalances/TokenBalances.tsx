@@ -183,7 +183,7 @@ export const TokenBalances: FC<IProps> = () => {
             {(UIState === UIStateEnum.SHOW_TOKENS_LP || UIState === UIStateEnum.SHOW_TOKENS) && (
                 <>
                     <p className="font-arame-mono font-normal text-[16px] text-textWhite leading-4 uppercase mt-5 ">
-                        Dual Token Balances
+                        Unstaked LP Token Balances
                     </p>
                     <div className={containerClass}>
                         {lpTokens

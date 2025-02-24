@@ -41,11 +41,6 @@ const zapperAbi = [
                 name: "zapOutFee",
                 type: "uint16",
             },
-            {
-                internalType: "address",
-                name: "indexUtilsAddress",
-                type: "address",
-            },
         ],
         stateMutability: "nonpayable",
         type: "constructor",
@@ -83,7 +78,18 @@ const zapperAbi = [
         type: "error",
     },
     {
-        inputs: [],
+        inputs: [
+            {
+                internalType: "uint16",
+                name: "fee",
+                type: "uint16",
+            },
+            {
+                internalType: "uint16",
+                name: "maxFee",
+                type: "uint16",
+            },
+        ],
         name: "FeeTooHigh",
         type: "error",
     },
@@ -135,6 +141,11 @@ const zapperAbi = [
         type: "error",
     },
     {
+        inputs: [],
+        name: "ReentrancyGuardReentrantCall",
+        type: "error",
+    },
+    {
         inputs: [
             {
                 internalType: "address",
@@ -152,8 +163,51 @@ const zapperAbi = [
     },
     {
         inputs: [],
+        name: "TotalRatioZero",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "ZeroAddress",
         type: "error",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "oldEngineAddress",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "newEngineAddress",
+                type: "address",
+            },
+        ],
+        name: "ChangedSpherexEngineAddress",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "oldSphereXAdmin",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "newSphereXAdmin",
+                type: "address",
+            },
+        ],
+        name: "ChangedSpherexOperator",
+        type: "event",
     },
     {
         anonymous: false,
@@ -210,6 +264,57 @@ const zapperAbi = [
             },
         ],
         name: "LpRouterChanged",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "sender",
+                type: "address",
+            },
+        ],
+        name: "NewAllowedSenderOnchain",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "oldAdmin",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "newAdmin",
+                type: "address",
+            },
+        ],
+        name: "SpherexAdminTransferCompleted",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "currentAdmin",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "pendingAdmin",
+                type: "address",
+            },
+        ],
+        name: "SpherexAdminTransferStarted",
         type: "event",
     },
     {
@@ -280,6 +385,12 @@ const zapperAbi = [
             {
                 indexed: false,
                 internalType: "uint256",
+                name: "assetsIn",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
                 name: "shares",
                 type: "uint256",
             },
@@ -288,6 +399,24 @@ const zapperAbi = [
                 internalType: "uint256",
                 name: "fee",
                 type: "uint256",
+            },
+            {
+                components: [
+                    {
+                        internalType: "address",
+                        name: "tokens",
+                        type: "address",
+                    },
+                    {
+                        internalType: "uint256",
+                        name: "amounts",
+                        type: "uint256",
+                    },
+                ],
+                indexed: false,
+                internalType: "struct IZapper.ReturnedAsset[]",
+                name: "returnedAssets",
+                type: "tuple[]",
             },
         ],
         name: "ZapIn",
@@ -342,6 +471,12 @@ const zapperAbi = [
             {
                 indexed: false,
                 internalType: "uint256",
+                name: "assetsOut",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
                 name: "shares",
                 type: "uint256",
             },
@@ -350,6 +485,24 @@ const zapperAbi = [
                 internalType: "uint256",
                 name: "fee",
                 type: "uint256",
+            },
+            {
+                components: [
+                    {
+                        internalType: "address",
+                        name: "tokens",
+                        type: "address",
+                    },
+                    {
+                        internalType: "uint256",
+                        name: "amounts",
+                        type: "uint256",
+                    },
+                ],
+                indexed: false,
+                internalType: "struct IZapper.ReturnedAsset[]",
+                name: "returnedAssets",
+                type: "tuple[]",
             },
         ],
         name: "ZapOut",
@@ -415,6 +568,39 @@ const zapperAbi = [
     },
     {
         inputs: [],
+        name: "acceptSphereXAdminRole",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "newSphereXEngine",
+                type: "address",
+            },
+        ],
+        name: "changeSphereXEngine",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "newSphereXOperator",
+                type: "address",
+            },
+        ],
+        name: "changeSphereXOperator",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "feeRecipient",
         outputs: [
             {
@@ -440,13 +626,19 @@ const zapperAbi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "indexUtils",
-        outputs: [
+        inputs: [
             {
-                internalType: "contract IIndexUtils",
+                internalType: "address",
                 name: "",
                 type: "address",
+            },
+        ],
+        name: "isAssetSingleToken",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
             },
         ],
         stateMutability: "view",
@@ -458,6 +650,19 @@ const zapperAbi = [
         outputs: [
             {
                 internalType: "contract ILpRouter",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "pendingSphereXAdmin",
+        outputs: [
+            {
+                internalType: "address",
                 name: "",
                 type: "address",
             },
@@ -487,6 +692,24 @@ const zapperAbi = [
             },
         ],
         name: "setGovernance",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "asset",
+                type: "address",
+            },
+            {
+                internalType: "bool",
+                name: "isSingleToken",
+                type: "bool",
+            },
+        ],
+        name: "setIsAssetSingleToken",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -558,6 +781,45 @@ const zapperAbi = [
     },
     {
         inputs: [],
+        name: "sphereXAdmin",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "sphereXEngine",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "sphereXOperator",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "stablecoin",
         outputs: [
             {
@@ -593,57 +855,6 @@ const zapperAbi = [
             },
         ],
         name: "swapFromAssets",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "tokenOutAmount",
-                type: "uint256",
-            },
-            {
-                components: [
-                    {
-                        internalType: "address",
-                        name: "tokens",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "amounts",
-                        type: "uint256",
-                    },
-                ],
-                internalType: "struct IZapper.ReturnedAsset[]",
-                name: "returnedAssets",
-                type: "tuple[]",
-            },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
-                name: "asset",
-                type: "address",
-            },
-            {
-                internalType: "address",
-                name: "tokenOut",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "assetsInAmount",
-                type: "uint256",
-            },
-            {
-                internalType: "address",
-                name: "recipient",
-                type: "address",
-            },
-        ],
-        name: "swapFromAssetsWithBond",
         outputs: [
             {
                 internalType: "uint256",
@@ -739,50 +950,12 @@ const zapperAbi = [
         inputs: [
             {
                 internalType: "address",
-                name: "asset",
-                type: "address",
-            },
-            {
-                internalType: "address",
-                name: "tokenIn",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "tokenInAmount",
-                type: "uint256",
-            },
-            {
-                internalType: "address",
-                name: "recipient",
+                name: "newAdmin",
                 type: "address",
             },
         ],
-        name: "swapToAssetsWithBond",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "tokenOutAmount",
-                type: "uint256",
-            },
-            {
-                components: [
-                    {
-                        internalType: "address",
-                        name: "tokens",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "amounts",
-                        type: "uint256",
-                    },
-                ],
-                internalType: "struct IZapper.ReturnedAsset[]",
-                name: "returnedAssets",
-                type: "tuple[]",
-            },
-        ],
+        name: "transferSphereXAdminRole",
+        outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
@@ -871,57 +1044,6 @@ const zapperAbi = [
                 type: "address",
             },
             {
-                internalType: "address",
-                name: "tokenIn",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "tokenInAmount",
-                type: "uint256",
-            },
-            {
-                internalType: "uint256",
-                name: "minShares",
-                type: "uint256",
-            },
-        ],
-        name: "zapInWithBond",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "shares",
-                type: "uint256",
-            },
-            {
-                components: [
-                    {
-                        internalType: "address",
-                        name: "tokens",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "amounts",
-                        type: "uint256",
-                    },
-                ],
-                internalType: "struct IZapper.ReturnedAsset[]",
-                name: "returnedAssets",
-                type: "tuple[]",
-            },
-        ],
-        stateMutability: "payable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "contract IVault",
-                name: "vault",
-                type: "address",
-            },
-            {
                 internalType: "uint256",
                 name: "sharesAmount",
                 type: "uint256",
@@ -976,57 +1098,6 @@ const zapperAbi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "contract IVault",
-                name: "vault",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "sharesAmount",
-                type: "uint256",
-            },
-            {
-                internalType: "address",
-                name: "tokenOut",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "minTokenOutAmount",
-                type: "uint256",
-            },
-        ],
-        name: "zapOutWithBond",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "tokenOutAmount",
-                type: "uint256",
-            },
-            {
-                components: [
-                    {
-                        internalType: "address",
-                        name: "tokens",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "amounts",
-                        type: "uint256",
-                    },
-                ],
-                internalType: "struct IZapper.ReturnedAsset[]",
-                name: "returnedAssets",
-                type: "tuple[]",
-            },
-        ],
-        stateMutability: "nonpayable",
         type: "function",
     },
     {

@@ -1,23 +1,28 @@
+import { dismissNotify, notifyLoading } from "src/api/notify";
 import { approveErc20, getBalance } from "src/api/token";
-import { awaitTransaction, getCombinedBalance, subtractGas, toEth } from "src/utils/common";
-import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "src/api/notify";
-import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
-import { errorMessages, loadingMessages, successMessages } from "src/config/constants/notifyMessages";
-import {
-    SlippageInBaseFn,
-    SlippageOutBaseFn,
-    TokenAmounts,
-    ZapInBaseFn,
-    ZapOutBaseFn,
-    PriceCalculationProps,
-    ZapInFn,
-    ZapOutFn,
-    GetFarmDataProcessedFn,
-    FarmFunctions,
-} from "./types";
+import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
+import zapperAbi from "src/assets/abis/zapperAbi";
 import { addressesByChainId } from "src/config/constants/contracts";
-import { isGasSponsored } from "..";
-import { traceTransactionAssetChange } from "../tenderly";
+import { errorMessages, loadingMessages, successMessages } from "src/config/constants/notifyMessages";
+import pools_json, { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
+import { SupportedChains } from "src/config/walletConfig";
+import store from "src/state";
+import { setSimulatedSlippage } from "src/state/farms/farmsReducer";
+import { addNotificationWithTimeout } from "src/state/notification/notifiactionReducer";
+import { Balances } from "src/state/tokens/types";
+import {
+    editTransactionDb,
+    markAsFailedDb,
+    TransactionsDB
+} from "src/state/transactions/transactionsReducer";
+import {
+    BridgeService,
+    TransactionStepStatus
+} from "src/state/transactions/types";
+import { CrossChainTransactionObject, IClients } from "src/types";
+import Bridge from "src/utils/Bridge";
+import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "src/utils/common";
+import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
 import {
     Address,
     createPublicClient,
@@ -29,37 +34,24 @@ import {
     keccak256,
     maxUint256,
     numberToHex,
+    parseEventLogs,
     StateOverride,
-    zeroAddress,
-    getContract,
+    zeroAddress
 } from "viem";
-import zapperAbi from "src/assets/abis/zapperAbi";
-import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
-import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "src/types";
-import { convertQuoteToRoute, getQuote, getStatus, LiFiStep } from "@lifi/sdk";
-import { SupportedChains } from "src/config/walletConfig";
-import store from "src/state";
+import { isGasSponsored } from "..";
+import { traceTransactionAssetChange } from "../tenderly";
 import {
-    ApproveBridgeStep,
-    ApproveZapStep,
-    BridgeService,
-    TransactionStepStatus,
-    TransactionTypes,
-    WaitForBridgeResultsStep,
-    ZapInStep,
-    ZapOutStep,
-} from "src/state/transactions/types";
-import { buildTransaction, getBridgeStatus, getRoute, SocketApprovalData, SocketRoute } from "../bridge";
-import {
-    addTransactionStepDb,
-    editTransactionStepDb,
-    markAsFailedDb,
-    TransactionsDB,
-} from "src/state/transactions/transactionsReducer";
-import Bridge from "src/utils/Bridge";
-import { addNotificationWithTimeout } from "src/state/notification/notifiactionReducer";
-import { Balances } from "src/state/tokens/types";
-import pools_json, { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
+    FarmFunctions,
+    GetFarmDataProcessedFn,
+    PriceCalculationProps,
+    SlippageInBaseFn,
+    SlippageOutBaseFn,
+    TokenAmounts,
+    ZapInBaseFn,
+    ZapInFn,
+    ZapOutBaseFn,
+    ZapOutFn,
+} from "./types";
 
 export const zapInBase: ZapInBaseFn = async ({
     withBond,
@@ -80,6 +72,10 @@ export const zapInBase: ZapInBaseFn = async ({
 }) => {
     const wethAddress = addressesByChainId[farm.chainId].wethAddress as Address;
     const publicClient = getPublicClient(farm.chainId);
+    const client = await getClients(farm.chainId);
+    const state = store.getState();
+    const prices = state.tokens.prices;
+    const decimals = state.tokens.decimals;
     let zapperTxn;
     const TransactionsStep = new TransactionsDB(id);
     try {
@@ -205,8 +201,11 @@ export const zapInBase: ZapInBaseFn = async ({
                         getPublicClient,
                         getWalletClient
                     );
+                    if (!response.status) {
+                        await TransactionsStep.approveZap(TransactionStepStatus.FAILED);
+                        throw new Error("Error approving vault!");
+                    }
                     await TransactionsStep.approveZap(TransactionStepStatus.COMPLETED);
-                    if (!response.status) throw new Error("Error approving vault!");
                 }
                 // #endregion
                 await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei);
@@ -238,12 +237,12 @@ export const zapInBase: ZapInBaseFn = async ({
 
         if (!zapperTxn.status) {
             store.dispatch(markAsFailedDb(id));
+            await TransactionsStep.zapIn(TransactionStepStatus.FAILED, amountInWei);
             throw new Error(zapperTxn.error);
         } else {
             await TransactionsStep.zapIn(TransactionStepStatus.COMPLETED, amountInWei);
             dismissNotify(id);
 
-            const client = await getClients(farm.chainId);
             const vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
             if (farm.rewardVault) {
                 await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.IN_PROGRESS);
@@ -271,6 +270,60 @@ export const zapInBase: ZapInBaseFn = async ({
                 })
             );
         }
+
+        const logs = parseEventLogs({
+            abi: zapperAbi,
+            logs: zapperTxn.receipt?.logs ?? [],
+        }) as any[];
+
+        const fee = logs[0].args.fee.toString();
+        const vaultShares = logs[0].args.shares.toString();
+        const lpTokens = logs[0].args.tokenInAmount.toString();
+        const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+            amount: asset.amounts.toString(),
+            token: asset.tokens,
+        }));
+
+        // Calculate total value of returned assets
+        const totalReturnedValue =
+            logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+                const tokenPrice = prices[farm.chainId][tokens];
+                const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
+                return acc + tokenAmount * tokenPrice;
+            }, 0) || 0;
+
+        const slippage =
+            Number(toEth(amountInWei)) * prices[farm.chainId][token] -
+            totalReturnedValue -
+            Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
+            Number(toEth(vaultShares)) * prices[farm.chainId][farm.vault_addr];
+
+        const netAmount = toWei(
+            (Number(toEth(vaultShares)) * prices[farm.chainId][farm.vault_addr]) / prices[farm.chainId][token]
+        ).toString();
+
+        const dbTx = await store.dispatch(
+            editTransactionDb({
+                _id: id,
+                from: currentWallet!,
+                amountInWei: amountInWei.toString(),
+                date: new Date().toString(),
+                type: "deposit",
+                farmId: farm.id,
+                max: !!max,
+                token: token === addressesByChainId[farm.chainId].wethAddress ? zeroAddress : token,
+                vaultShares,
+                fee,
+                simulatedSlippage: store.getState().farms.farmDetailInputOptions.simulatedSlippage,
+                actualSlippage: slippage,
+                netAmount,
+                vaultPrice: prices[farm.chainId][farm.vault_addr],
+                tokenPrice: prices[farm.chainId][token],
+                lpTokenPrice: prices[farm.chainId][farm.lp_address],
+                lpTokens,
+                returnedAssets,
+            })
+        );
         // #endregionbn
     } catch (error: any) {
         console.log(error);
@@ -307,6 +360,9 @@ export const zapOutBase: ZapOutBaseFn = async ({
 }) => {
     // notifyLoading(loadingMessages.approvingWithdraw(), { id });
     const TransactionsStep = new TransactionsDB(id);
+    const state = store.getState();
+    const prices = state.tokens.prices;
+    const decimals = state.tokens.decimals;
 
     try {
         const client = await getClients(farm.chainId);
@@ -403,11 +459,12 @@ export const zapOutBase: ZapOutBaseFn = async ({
                 }
             );
         }
-        await TransactionsStep.zapOut(TransactionStepStatus.COMPLETED, amountInWei);
         if (!withdrawTxn.status) {
             store.dispatch(markAsFailedDb(id));
+            await TransactionsStep.zapOut(TransactionStepStatus.FAILED, amountInWei);
             throw new Error(withdrawTxn.error);
         } else {
+            await TransactionsStep.zapOut(TransactionStepStatus.COMPLETED, amountInWei);
             // Bridge after zap out
             if (bridgeChainId && bridgeChainId !== farm.chainId) {
                 const data = await traceTransactionAssetChange({
@@ -479,6 +536,61 @@ export const zapOutBase: ZapOutBaseFn = async ({
                 })
             );
         }
+
+        const logs = parseEventLogs({
+            abi: zapperAbi,
+            logs: withdrawTxn.receipt?.logs ?? [],
+        }) as any[];
+
+        const fee = logs[0].args.fee.toString();
+        const vaultShares = logs[0].args.shares.toString();
+        const lpTokens = logs[0].args.assetsOut.toString();
+        const assetsOut = logs[0].args.tokenOutAmount;
+        const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+            amount: asset.amounts.toString(),
+            token: asset.tokens,
+        }));
+        const returnedAssetsValue =
+            logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+                const tokenPrice = prices[farm.chainId][tokens];
+                const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
+                return acc + tokenAmount * tokenPrice;
+            }, 0) || 0;
+
+        const slippage = Math.max(
+            0,
+            Number(toEth(amountInWei, decimals[farm.chainId][farm.vault_addr])) *
+                prices[farm.chainId][farm.vault_addr] -
+            returnedAssetsValue -
+            Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
+            Number(toEth(assetsOut, decimals[farm.chainId][token])) * prices[farm.chainId][token]
+        );
+
+        const returnedAssetsValueInToken = toWei(returnedAssetsValue / prices[farm.chainId][token]);
+        const netAmount = (BigInt(assetsOut) + BigInt(fee) + BigInt(returnedAssetsValueInToken)).toString();
+
+        const dbTx = await store.dispatch(
+            editTransactionDb({
+                _id: id,
+                amountInWei: amountInWei.toString(),
+                date: new Date().toString(),
+                type: "withdraw",
+                farmId: farm.id,
+                token: token === addressesByChainId[farm.chainId].wethAddress ? zeroAddress : token,
+                vaultShares,
+                fee,
+                simulatedSlippage: store.getState().farms.farmDetailInputOptions.simulatedSlippage,
+                actualSlippage: slippage,
+                netAmount,
+                vaultPrice: prices[farm.chainId][farm.vault_addr],
+                tokenPrice: prices[farm.chainId][token],
+                lpTokenPrice: prices[farm.chainId][farm.lp_address],
+                lpTokens,
+                returnedAssets,
+                from: currentWallet,
+                max: !!max,
+            })
+        );
         //#endregion
     } catch (error: any) {
         console.log(error);
@@ -538,6 +650,14 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
                     },
                     {
                         slot: getHoneyBalanceSlot(currentWallet),
+                        value: numberToHex(amountInWei, { size: 32 }),
+                    },
+                    {
+                        slot: getIbgtAllowanceSlot(currentWallet, farm.zapper_addr),
+                        value: numberToHex(amountInWei, { size: 32 }),
+                    },
+                    {
+                        slot: getIbgtBalanceSlot(currentWallet),
                         value: numberToHex(amountInWei, { size: 32 }),
                     },
                 ],
@@ -627,6 +747,7 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
     const zapAmount = Number(toEth(amountInWei, decimals[farm.chainId][token]));
     const beforeTxAmount = zapAmount * prices[farm.chainId][token] - totalReturnedValue;
     const afterTxAmount = Number(toEth(receviedAmt, farm.decimals)) * prices[farm.chainId][farm.vault_addr];
+    store.dispatch(setSimulatedSlippage(Math.abs(beforeTxAmount - afterTxAmount)));
     let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
     if (slippage < 0) slippage = 0;
 
@@ -716,6 +837,7 @@ export const slippageOut: SlippageOutBaseFn = async ({
     const withdrawAmt = Number(toEth(amountInWei, farm.decimals));
     const afterTxAmount = receivedAmtDollar;
     const beforeTxAmount = withdrawAmt * prices[farm.chainId][farm.vault_addr];
+    store.dispatch(setSimulatedSlippage(Math.abs(beforeTxAmount - afterTxAmount)));
     let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
     if (slippage < 0) slippage = 0;
 
@@ -1153,20 +1275,22 @@ export const calculateDepositableAmounts = ({ balances, prices, farm }: PriceCal
     const tokenAmounts: TokenAmounts[] =
         farm.zap_currencies?.map((item) => ({
             tokenAddress: item.address,
-            tokenSymbol: item.symbol,
+            tokenSymbol: tokenNamesAndImages[item.address].name,
             amount: balances[farm.chainId][item.address].value.toString(),
             amountDollar: balances[farm.chainId][item.address].valueUsd.toString(),
             price: prices[farm.chainId][item.address],
         })) || [];
 
-    // Add lp token
-    tokenAmounts.push({
-        tokenAddress: farm.lp_address,
-        tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
-        amount: balances[farm.chainId][farm.lp_address].value.toString(),
-        amountDollar: balances[farm.chainId][farm.lp_address].valueUsd.toString(),
-        price: prices[farm.chainId][farm.lp_address],
-    });
+    // Add lp token if not already present
+    if (!tokenAmounts.some((token) => token.tokenAddress === farm.lp_address)) {
+        tokenAmounts.push({
+            tokenAddress: farm.lp_address,
+            tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
+            amount: balances[farm.chainId][farm.lp_address].value.toString(),
+            amountDollar: balances[farm.chainId][farm.lp_address].valueUsd.toString(),
+            price: prices[farm.chainId][farm.lp_address],
+        });
+    }
 
     return tokenAmounts;
 };
@@ -1175,21 +1299,25 @@ export const calculateWithdrawableAmounts = ({ balances, prices, farm }: PriceCa
     const tokenAmounts: TokenAmounts[] =
         farm.zap_currencies?.map((item) => ({
             tokenAddress: item.address,
-            tokenSymbol: item.symbol,
+            tokenSymbol: tokenNamesAndImages[item.address].name,
             amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][item.address]).toString(),
             amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
             price: prices[farm.chainId][item.address],
             isPrimaryVault: true,
         })) || [];
 
-    // Add lp token
-    tokenAmounts.push({
-        tokenAddress: farm.lp_address,
-        tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
-        amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][farm.lp_address]).toString(),
-        amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
-        price: prices[farm.chainId][farm.lp_address],
-    });
+    // Add lp token if not already present
+    if (!tokenAmounts.some((token) => token.tokenAddress === farm.lp_address)) {
+        tokenAmounts.push({
+            tokenAddress: farm.lp_address,
+            tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
+            amount: (
+                balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][farm.lp_address]
+            ).toString(),
+            amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
+            price: prices[farm.chainId][farm.lp_address],
+        });
+    }
     return tokenAmounts;
 };
 
@@ -1294,6 +1422,36 @@ function getVaultAllowanceSlot(owner: Address, spender: Address) {
 
 function getVaultBalanceSlot(owner: Address) {
     const mappingSlot = 1n; // _balances is at storage slot 0
+
+    // Step 1: Encode the owner address and the mapping's slot
+    const encoded = encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [owner, mappingSlot]);
+
+    // Compute keccak256 hash of the encoded data to get balanceSlot
+    const balanceSlot = keccak256(encoded);
+
+    return balanceSlot;
+}
+
+function getIbgtAllowanceSlot(owner: Address, spender: Address) {
+    const mappingSlot = 3n; // _allowances is at storage slot 3
+
+    // Step 1: Encode the owner address and the mapping's slot
+    const innerEncoded = encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [owner, mappingSlot]);
+
+    // Compute keccak256 hash of the encoded data to get innerHash
+    const innerHash = keccak256(innerEncoded);
+
+    // Step 2: Encode the spender address and the inner hash
+    const finalEncoded = encodeAbiParameters([{ type: "address" }, { type: "bytes32" }], [spender, innerHash]);
+
+    // Compute keccak256 hash of the final encoded data to get the storage slot
+    const allowanceSlot = keccak256(finalEncoded);
+
+    return allowanceSlot;
+}
+
+function getIbgtBalanceSlot(owner: Address) {
+    const mappingSlot = 2n; // _balances is at storage slot 2
 
     // Step 1: Encode the owner address and the mapping's slot
     const encoded = encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [owner, mappingSlot]);

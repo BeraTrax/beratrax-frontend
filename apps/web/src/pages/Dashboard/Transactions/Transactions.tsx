@@ -1,22 +1,24 @@
-import { FC, useMemo, useRef, useState } from "react";
 import moment from "moment";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
-import { useAppDispatch, useAppSelector } from "src/state";
-import { TransactionStatus, TransactionStepStatus } from "src/state/transactions/types";
-import { formatUnits } from "viem";
-import { IoIosArrowForward } from "react-icons/io";
-import useTransactions from "src/state/transactions/useTransactions";
-import TransactionDetails from "./components/TransactionDetails";
-import { IoChevronUpOutline } from "react-icons/io5";
-import { IoChevronDownOutline } from "react-icons/io5";
-import useTransaction from "src/state/transactions/useTransaction";
+import { FC, useMemo, useRef, useState } from "react";
 import { CiRepeat } from "react-icons/ci";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { IoIosArrowForward } from "react-icons/io";
+import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircle } from "react-icons/io5";
+import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
+import { tokenNamesAndImages } from "src/config/constants/pools_json";
+import { blockExplorersByChainId } from "src/config/constants/urls";
+import { useAppDispatch, useAppSelector } from "src/state";
 import useZapIn from "src/state/farms/hooks/useZapIn";
 import useZapOut from "src/state/farms/hooks/useZapOut";
-import { toEth } from "src/utils/common";
-import { deleteTransactionDb } from "src/state/transactions/transactionsReducer";
 import useTokens from "src/state/tokens/useTokens";
-import { tokenNamesAndImages } from "src/config/constants/pools_json";
+import { deleteTransactionDb } from "src/state/transactions/transactionsReducer";
+import { TransactionStatus, TransactionStepStatus } from "src/state/transactions/types";
+import useTransaction from "src/state/transactions/useTransaction";
+import useTransactions from "src/state/transactions/useTransactions";
+import { formatCurrency, toEth } from "src/utils/common";
+import { Address, formatUnits } from "viem";
+import { useChainId } from "wagmi";
+import TransactionDetails from "./components/TransactionDetails";
 
 const Transactions = () => {
     const [open, setOpen] = useState(false);
@@ -59,7 +61,33 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
     if (!farm || !tx) return null;
     const { zapIn } = useZapIn(farm);
     const { zapOut } = useZapOut(farm);
-    const { type, amountInWei, token, vaultPrice, tokenPrice, steps, date } = tx;
+    const chainId = useChainId();
+    const {
+        type,
+        amountInWei,
+        token,
+        vaultPrice,
+        tokenPrice,
+        steps,
+        date,
+        netAmount,
+        actualSlippage,
+        fee,
+        returnedAssets,
+        vaultShares,
+        farmId,
+    } = tx;
+
+    const filteredReturnedAssets = useMemo(() => {
+        if (!returnedAssets) return [];
+        return returnedAssets.filter((asset) => Number(asset.amount) > 0);
+    }, [returnedAssets]);
+
+    const showExtraInfo = useMemo(() => {
+        if (vaultShares) return true;
+        return false;
+    }, [vaultShares]);
+
     let tokenAmount = 0;
     if (type === "deposit") {
         tokenAmount = Number(formatUnits(BigInt(amountInWei), decimals[farm.chainId][token]));
@@ -129,6 +157,193 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                     <CiRepeat /> Retry
                                 </button>
                             )}
+                            {/* Tooltip for transaction details */}
+                            {showExtraInfo && (
+                                <div className="group relative pb-1">
+                                    <IoInformationCircle
+                                        className="text-xl text-textSecondary cursor-help"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                        <div className="flex flex-col justify-end gap-2">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-textSecondary">
+                                                    {type === "deposit" ? "Zap In Amount:" : "Vault Shares:"}
+                                                </span>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-base">
+                                                        $ {""}
+                                                        {formatCurrency(
+                                                            Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
+                                                                (type === "deposit"
+                                                                    ? tokenPrice || prices[farm.chainId][token]
+                                                                    : vaultPrice ||
+                                                                      prices[farm.chainId][farm.vault_addr])
+                                                        )}
+                                                    </span>
+                                                    <span className="text-xs text-textSecondary">
+                                                        {formatCurrency(formatUnits(BigInt(amountInWei || "0"), 18))}{" "}
+                                                        {type === "deposit"
+                                                            ? tokenNamesAndImages[token].name
+                                                            : "BTX-" + farm.name}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {fee !== undefined && (
+                                                <div className="flex justify-between items-start">
+                                                    <span className="text-textSecondary">BeraTrax Fee:</span>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-base">
+                                                            $
+                                                            {formatCurrency(
+                                                                Number(
+                                                                    toEth(BigInt(fee), decimals[farm.chainId][token])
+                                                                ) * (tokenPrice || prices[farm.chainId][token])
+                                                            )}
+                                                        </span>
+                                                        <span className="text-xs text-textSecondary">
+                                                            {formatCurrency(
+                                                                toEth(BigInt(fee), decimals[farm.chainId][token])
+                                                            )}{" "}
+                                                            {tokenNamesAndImages[token].name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {actualSlippage !== undefined && (
+                                                <div className="flex justify-between items-start">
+                                                    <span className="text-textSecondary">Slippage:</span>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-base">
+                                                            $ {formatCurrency(actualSlippage)}
+                                                        </span>
+                                                        <span className="text-xs text-textSecondary">
+                                                            {formatCurrency(
+                                                                actualSlippage /
+                                                                    (tokenPrice || prices[farm.chainId][token])
+                                                            )}{" "}
+                                                            {tokenNamesAndImages[tx.token].name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {filteredReturnedAssets.length > 0 && (
+                                                <div className="mt-2">
+                                                    <span className="text-textSecondary block mb-1">
+                                                        Returned Assets:
+                                                    </span>
+                                                    {filteredReturnedAssets.map((asset, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex justify-between items-start pl-2"
+                                                        >
+                                                            <span>
+                                                                {tokenNamesAndImages[asset.token as Address]?.name ||
+                                                                    "Unknown"}
+                                                            </span>
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="text-base">
+                                                                    $
+                                                                    {formatCurrency(
+                                                                        Number(toEth(BigInt(asset.amount), 18)) *
+                                                                            (tokenPrice ||
+                                                                                prices[farm.chainId][
+                                                                                    asset.token as Address
+                                                                                ])
+                                                                    )}
+                                                                </span>
+                                                                <span className="text-xs text-textSecondary">
+                                                                    {Number(
+                                                                        formatUnits(BigInt(asset.amount), 18)
+                                                                    ).toLocaleString()}{" "}
+                                                                    {tokenNamesAndImages[asset.token as Address]
+                                                                        ?.name || "Unknown"}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {vaultShares !== undefined && (
+                                                <div className="flex justify-between items-start">
+                                                    <span className="text-textSecondary">
+                                                        {type === "deposit" ? "Vault Shares:" : "Zap Out Amount:"}
+                                                    </span>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-base">
+                                                            ${" "}
+                                                            {type === "deposit"
+                                                                ? formatCurrency(
+                                                                      Number(
+                                                                          toEth(
+                                                                              BigInt(vaultShares),
+                                                                              decimals[farm.chainId][farm.vault_addr]
+                                                                          )
+                                                                      ) *
+                                                                          (vaultPrice ||
+                                                                              prices[farm.chainId][farm.vault_addr])
+                                                                  )
+                                                                : formatCurrency(
+                                                                      Number(
+                                                                          toEth(
+                                                                              BigInt(netAmount || "0"),
+                                                                              decimals[farm.chainId][token]
+                                                                          )
+                                                                      ) * (tokenPrice || prices[farm.chainId][token])
+                                                                  )}
+                                                        </span>
+                                                        <span className="text-xs text-textSecondary">
+                                                            {type === "deposit"
+                                                                ? formatCurrency(
+                                                                      Number(
+                                                                          toEth(
+                                                                              BigInt(vaultShares),
+                                                                              decimals[farm.chainId][farm.vault_addr]
+                                                                          )
+                                                                      )
+                                                                  )
+                                                                : formatCurrency(
+                                                                      Number(
+                                                                          toEth(
+                                                                              BigInt(netAmount || "0"),
+                                                                              decimals[farm.chainId][token]
+                                                                          )
+                                                                      )
+                                                                  )}{" "}
+                                                            {type === "deposit"
+                                                                ? "BTX-" + farm.name
+                                                                : tokenNamesAndImages[token].name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {!tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
+                                <div className="group relative pl-1 pb-1">
+                                    <FaExternalLinkAlt
+                                        className="text-textSecondary cursor-pointer"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(
+                                                `${blockExplorersByChainId[chainId]}/tx/${
+                                                    tx.steps[tx.steps.length - 1].txHash
+                                                }`,
+                                                "_blank"
+                                            );
+                                        }}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                        View transaction on explorer
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <p className="font-league-spartan font-light text-base text-textSecondary leading-5">
                             {moment(date).fromNow()}
@@ -142,17 +357,24 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                             {(
                                 Number(
                                     formatUnits(
-                                        BigInt(amountInWei),
-                                        decimals[farm.chainId][type === "withdraw" ? farm.vault_addr : token]
+                                        BigInt(
+                                            type === "withdraw" ? netAmount || amountInWei : netAmount || amountInWei
+                                        ),
+                                        decimals[farm.chainId][token]
                                     )
                                 ) *
                                 (type === "withdraw"
-                                    ? vaultPrice || prices[farm.chainId][farm.vault_addr]
+                                    ? showExtraInfo
+                                        ? tokenPrice || prices[farm.chainId][token]
+                                        : vaultPrice || prices[farm.chainId][farm.vault_addr]
                                     : (tokenPrice || prices[farm.chainId][token])!)
                             ).toLocaleString()}
                         </p>
                         <p className="font-league-spartan font-light text-base text-textSecondary leading-5">
-                            {tokenAmount.toLocaleString()} {tokenNamesAndImages[token].name}
+                            {netAmount
+                                ? Number(formatUnits(BigInt(netAmount), decimals[farm.chainId][token])).toLocaleString()
+                                : tokenAmount.toLocaleString()}{" "}
+                            {tokenNamesAndImages[token].name}
                         </p>
                     </div>
                 </div>

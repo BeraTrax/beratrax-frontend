@@ -88,7 +88,7 @@ export const EarnTrax: FC<IProps> = ({ setOpenModal, setCongModal }) => {
                                 <b>Purpose of Emission:</b>
                                 <br />
                                 The emission of BTX tokens is designed to reward users for their participation and usage
-                                of the Beratrax platform. It is important to note that BTX emission is not an
+                                of the Beratrax platform. It is important to Note: Although BeraTrax does not have a deposit/withdraw fee,  BTX emission is not an
                                 endorsement of any particular platform or pool. It applies uniformly to all staking
                                 pools within the Beratrax platform.
                             </li>

@@ -1,23 +1,22 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getPricesByTime, getTokenPricesBackend } from "src/api/token";
+import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
+import { Common_Chains_State, pools_chain_ids } from "src/config/constants/pools_json";
+import tokens from "src/config/constants/tokens";
+import { RootState } from "src/state";
+import { CHAIN_ID } from "src/types/enums";
+import { formatCurrency } from "src/utils/common";
+import { Address, erc20Abi, formatUnits, getAddress, getContract, zeroAddress } from "viem";
 import {
     Balances,
+    Decimals,
     GetOldPricesActionPayload,
-    UpdateBalancesActionPayload,
     StateInterface,
     TotalSupplies,
+    UpdateBalancesActionPayload,
     UpdateDecimalsActionPayload,
-    Decimals,
     UpdateTotalSuppliesActionPayload,
 } from "./types";
-import { getPricesByTime, getTokenPricesBackend } from "src/api/token";
-import { CHAIN_ID } from "src/types/enums";
-import { Common_Chains_State, pools_chain_ids } from "src/config/constants/pools_json";
-import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
-import { formatCurrency } from "src/utils/common";
-import tokens from "src/config/constants/tokens";
-import { erc20Abi, formatUnits, getAddress, zeroAddress, getContract } from "viem";
-import { Address } from "viem";
-import { RootState } from "src/state";
 
 const initialState: StateInterface = {
     // Chain-specific data
@@ -61,7 +60,7 @@ export const updatePrices = createAsyncThunk("prices/updatePrices", async (_, th
             data?.[CHAIN_ID.BERACHAIN] &&
             data?.[CHAIN_ID.BERACHAIN]?.["0x6969696969696969696969696969696969696969"]
         ) {
-            // WBERA
+            // wBERA
             data[CHAIN_ID.BERACHAIN]["0x0000000000000000000000000000000000000000"] =
                 data?.[CHAIN_ID.BERACHAIN]?.["0x6969696969696969696969696969696969696969"];
             // BGT

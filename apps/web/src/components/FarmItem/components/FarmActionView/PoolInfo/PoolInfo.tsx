@@ -1,5 +1,4 @@
 import created from "src/assets/images/created.svg";
-import holders from "src/assets/images/holders.svg";
 import marketcap from "src/assets/images/marketcap.svg";
 import volume from "src/assets/images/volume.svg";
 
@@ -29,8 +28,9 @@ interface IProps {
     marketCap: string;
     vaultTvl: string;
     description?: string;
+    source?: string;
 }
-const PoolInfo = ({ marketCap, vaultTvl, description }: IProps) => {
+const PoolInfo = ({ marketCap, vaultTvl, description, source }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
@@ -46,6 +46,13 @@ const PoolInfo = ({ marketCap, vaultTvl, description }: IProps) => {
                         ABOUT
                     </h3>
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
+                    <p className="text-textWhite mt-4 text-[16px] font-light">
+                    You can see the underlying vault on the platform{" "}
+                        <a href={source} target="_blank" className="text-gradientPrimary uppercase hover:underline">
+                            here
+                        </a>
+                        .
+                    </p>
                 </>
             )}
             <div className="mt-4 flex flex-col gap-2">

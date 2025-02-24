@@ -1,7 +1,7 @@
-import { FarmData, IClients } from "src/types";
-import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
-import { FarmTransactionType } from "src/types/enums";
 import { PoolDef } from "src/config/constants/pools_json";
+import { FarmData, IClients } from "src/types";
+import { FarmTransactionType } from "src/types/enums";
+import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
 
 export interface StateInterface {
     farmDetails: FarmDetails;
@@ -18,6 +18,7 @@ export interface FarmDetailInputOptions {
     showInUsd: boolean;
     currencySymbol: string;
     bestFunctionNameForArberaHoney: string;
+    simulatedSlippage: number;
 }
 
 export interface FarmDetails {

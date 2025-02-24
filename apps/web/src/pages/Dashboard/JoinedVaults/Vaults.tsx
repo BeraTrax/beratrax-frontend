@@ -90,7 +90,7 @@ const Vaults: React.FC = () => {
             <div className="flex flex-row gap-x-4 justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                     <p className="font-normal text-[16px] text-textWhite leading-4 uppercase mt-5 mb-4">
-                        Staked Tokens
+                        Staked Vaults
                     </p>
                     <button
                         onClick={refresh}

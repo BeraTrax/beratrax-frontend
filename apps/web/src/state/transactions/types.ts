@@ -31,7 +31,40 @@ export interface Transaction {
     token: Address;
     max: boolean;
     date: string;
+    vaultShares?: string;
+    lpTokenPrice?: number;
+    netAmount?: string;
+    fee?: string;
+    simulatedSlippage?: number;
+    actualSlippage?: number;
+    lpTokens?: string;
+    returnedAssets?: { amount: string; token: string }[];
     steps: TransactionStep[];
+}
+
+export interface EditTransaction {
+    _id: string;
+    amountInWei: string;
+    netAmount: string;
+    from: Address;
+    type: "deposit" | "withdraw";
+    farmId: number;
+    tokenPrice?: number;
+    vaultPrice?: number;
+    lpTokenPrice?: number;
+    token: Address;
+    max: boolean;
+    vaultShares: string;
+    date: string;
+    fee: string;
+    simulatedSlippage: number;
+    actualSlippage: number;
+    lpTokens?: string;
+    returnedAssets?: {
+        amount: string;
+        token: Address;
+    }[];
+    steps?: TransactionStep[];
 }
 
 export type TransactionStep =

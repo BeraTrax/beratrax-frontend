@@ -28,6 +28,7 @@ const initialState: StateInterface = {
         showInUsd: true,
         currencySymbol: "BERA",
         bestFunctionNameForArberaHoney: "",
+        simulatedSlippage: 0,
     },
     error: null,
 };
@@ -164,6 +165,9 @@ const farmsSlice = createSlice({
         setBestFunctionNameForArberaHoney(state, action: { payload: string }) {
             state.farmDetailInputOptions.bestFunctionNameForArberaHoney = action.payload;
         },
+        setSimulatedSlippage(state, action: { payload: number }) {
+            state.farmDetailInputOptions.simulatedSlippage = action.payload;
+        },
     },
     extraReducers(builder) {
         builder.addCase(updateFarmDetails.pending, (state) => {
@@ -197,7 +201,13 @@ const farmsSlice = createSlice({
     },
 });
 
-export const { reset, setAccount, setFarmDetailInputOptions, setCurrencySymbol, setBestFunctionNameForArberaHoney } =
-    farmsSlice.actions;
+export const {
+    reset,
+    setAccount,
+    setFarmDetailInputOptions,
+    setCurrencySymbol,
+    setBestFunctionNameForArberaHoney,
+    setSimulatedSlippage,
+} = farmsSlice.actions;
 
 export default farmsSlice.reducer;

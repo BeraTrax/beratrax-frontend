@@ -78,7 +78,7 @@ const polygonAddresses: Addresses = {
 
 const berachainAddresses: Addresses = {
     factoryAddress: "" as Address,
-    wethAddress: "0xE28AfD8c634946833e89ee3F122C06d7C537E8A8",
+    wethAddress: "0x6969696969696969696969696969696969696969",
     sushiAddress: "" as Address,
     dodoMineAddress: "" as Address,
     dodoTokenAddress: "" as Address,

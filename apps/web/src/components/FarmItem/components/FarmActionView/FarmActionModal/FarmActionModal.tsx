@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import closemodalicon from "src/assets/images/closemodalicon.svg";
 import exchange from "src/assets/images/exchange.svg";
 import DialPad from "src/components/Dialpad/Dialpad";
@@ -6,19 +6,23 @@ import MobileModalContainer from "src/components/MobileModalContainer/MobileModa
 import { Select } from "src/components/Select/Select";
 import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
 
+import CurrencyInput from "react-currency-input-field";
+import { useNavigate } from "react-router-dom";
+import { ConfirmWithdraw } from "src/components/modals/ConfirmWithdraw/ConfirmWithdraw";
 import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
 import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
-import { ConfirmWithdraw } from "src/components/modals/ConfirmWithdraw/ConfirmWithdraw";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import { useDetailInput } from "src/hooks/useDetailInput";
+import useWallet from "src/hooks/useWallet";
 import useWindowSize from "src/hooks/useWindowSize";
 import { useAppDispatch, useAppSelector } from "src/state";
-import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
-import { FarmDetailInputOptions } from "src/state/farms/types";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
 import { updatePoints } from "src/state/account/accountReducer";
+import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
+import { FarmDetailInputOptions } from "src/state/farms/types";
+import useTokens from "src/state/tokens/useTokens";
+import { addTransactionDb } from "src/state/transactions/transactionsReducer";
 import {
     ApproveZapStep,
     StakeIntoRewardVaultStep,
@@ -31,10 +35,6 @@ import {
 import { noExponents, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
-import { useNavigate } from "react-router-dom";
-import CurrencyInput from "react-currency-input-field";
-import useTokens from "src/state/tokens/useTokens";
-import useWallet from "src/hooks/useWallet";
 
 interface FarmActionModalProps {
     open: boolean;
@@ -194,17 +194,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             return true;
         return false;
     }, [farm, transactionType]);
-
-    useEffect(() => {
-        if (
-            Number(
-                farmData?.depositableAmounts.find((e) => e.tokenSymbol.toLowerCase() === farm.zap_symbol?.toLowerCase())
-                    ?.amountDollar
-            ) > 0
-        ) {
-            dispatch(setFarmDetailInputOptions({ currencySymbol: farm.zap_symbol }));
-        }
-    }, [farm, farmData]);
 
     const handleToggleModal = () => {
         if (slippage && slippage > 2) {
@@ -386,7 +375,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                     <div className="	">
                         <p className="text-[18px] leading-[20px]">
                             {transactionType} {transactionType === FarmTransactionType.Deposit ? "into" : "from"} the{" "}
-                            <a href={farm.source} target="_blank" className="text-gradientPrimary uppercase span ">
+                            <a href={farm.source} target="_blank" className="text-gradientPrimary span ">
                                 {farm.url_name}
                             </a>{" "}
                             {isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
@@ -478,7 +467,10 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                             setTimeout(() => restoreCursor(pos), 0);
                         }}
                     />{" "}
-                    {(currencySymbol.toLowerCase() === "bera" || currencySymbol.toLowerCase() === "honey") && (
+                    {(currencySymbol.toLowerCase() === "bera" ||
+                        currencySymbol.toLowerCase() === "honey" ||
+                        (currencySymbol.toLowerCase() === "ibgt" &&
+                            farm.lp_address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b")) && (
                         <div className="flex justify-start items-center ">
                             <p className={"text-[13px]"}>Slippage: &nbsp;</p>
                             <div className={"text-[13px]"}>

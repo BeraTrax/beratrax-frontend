@@ -19,7 +19,7 @@ const PriceLoadingSkeleton = () => {
 };
 
 export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
-    const { averageLp, isLpPriceLoading } = useLp(farm.id);
+    const { lp, isLpPriceLoading } = useLp(farm.id);
     return (
         <div className="relative">
             <div className="z-10">
@@ -32,7 +32,9 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                             <PriceLoadingSkeleton />
                         ) : (
                             <div className="mt-2">
-                                <h1 className="text-textWhite text-5xl font-bold ">${customCommify(averageLp)}</h1>
+                                <h1 className="text-textWhite text-5xl font-bold ">
+                                    ${customCommify(lp?.[0]?.lp || 0)}
+                                </h1>
                                 <div className="flex gap-2 items-center justify-center text-[16px]">
                                     {/* <PriceTrendIcon trend="increase" className="mb-[3px]" />
                                     <p className="text-gradientPrimary ">$50 (2,52%)</p>

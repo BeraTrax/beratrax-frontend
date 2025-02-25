@@ -6,6 +6,18 @@
         "package.json"
       ]
     },
+    "build:config": {
+      "cache": true,
+      "persistent": true,
+      "inputs": ["packages/config/package.json", "packages/config/src/**/*.ts", "packages/config/src/**/*.tsx"],
+      "outputs": ["packages/config/dist"]
+    },
+    "build:ui": {
+      "cache": true,
+      "persistent": true,
+      "inputs": ["packages/ui/package.json", "packages/ui/src/**/*.ts", "packages/ui/src/**/*.tsx"],
+      "outputs": ["packages/ui/dist"]
+    },
     "build:web": {
       "cache": true,
       "persistent": true,

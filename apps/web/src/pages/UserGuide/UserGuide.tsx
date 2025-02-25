@@ -1,3 +1,4 @@
+// import { CustomToast } from '@beratrax/ui';
 import React, { ReactNode } from "react";
 import { AiOutlineExport } from "react-icons/ai";
 import { BsChat, BsDiamondFill, BsQuestion } from "react-icons/bs";
@@ -47,10 +48,11 @@ const UserGuide = () => {
                 <h1 className="font-bold text-4xl leading-none uppercase">
                     💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
                 </h1>
+                {/* <CustomToast /> */}
                 <p>
                     Welcome to <b>BeraTrax</b>, the easiest way to access{" "}
                     <b>
-                        yield-earning vaults, auto-compounded rewards, and Berachain’s Proof of Liquidity system—all
+                        yield-earning vaults, auto-compounded rewards, and Berachain's Proof of Liquidity system—all
                         through your phone.
                     </b>
                     Whether you're new to DeFi or a seasoned yield farmer, BeraTrax is built to{" "}
@@ -82,7 +84,7 @@ const UserGuide = () => {
                     >
                         <b>First-time users? </b>
                         If signing in via social login, BeraTrax will <b>automatically create a wallet</b> for you on
-                        Berachain’s mainnet.
+                        Berachain's mainnet.
                     </IconWithHeading>
 
                     <IconWithHeading
@@ -132,7 +134,7 @@ const UserGuide = () => {
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
                     >
-                        Go to the “Earn” tab a the bottom of your screen (or on the side on desktop) & pick which vault
+                        Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) & pick which vault
                         you want to deposit into, tap it, and open up the details page.{" "}
                     </IconWithHeading>
 
@@ -143,8 +145,8 @@ const UserGuide = () => {
                         stroke="var(--new-gradient-light)"
                         strokeWidth={1}
                     >
-                        If you wish to deposit, just tap deposit, type in your deposit amount (or tap “Max”) and then
-                        confirm. That’s all it takes!
+                        If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then
+                        confirm. That's all it takes!
                     </IconWithHeading>
                 </>
 
@@ -153,9 +155,9 @@ const UserGuide = () => {
                     <hr />
                     <h1 className="text-4xl leading-none uppercase">Exploring the Dashboard</h1>
                     <p>
-                        After signing in, you’ll land on the <b>BeraTrax Dashboard.</b>
+                        After signing in, you'll land on the <b>BeraTrax Dashboard.</b>
                     </p>
-                    <p>Here’s what you’ll see:</p>
+                    <p>Here's what you'll see:</p>
                     {/* Token balances and staked vaults ss with Transactions history */}
                     <img src={userguideimagethree} alt="userguideimagethree" className="m-auto" width={600} />
 
@@ -197,7 +199,7 @@ const UserGuide = () => {
                     <h1 className="text-4xl leading-none uppercase">Depositing into Yield Vaults (Earning Rewards)</h1>
                     <h5>Step 1: Choosing a Vault</h5>
                     <p>
-                        Navigate to the <b>"Earn" page</b>, where you’ll find all available vaults.
+                        Navigate to the <b>"Earn" page</b>, where you'll find all available vaults.
                     </p>
                     {/* EARN PAGE SS */}
                     <img src={userguideimagefour} alt="userguideimagefour" className="m-auto" width={500} />
@@ -273,7 +275,7 @@ const UserGuide = () => {
                     <hr />
                     <h1 className="text-4xl leading-none uppercase">Maximizing Rewards with the BGT Flywheel</h1>
                     <p>
-                        BeraTrax <b>automatically optimizes yield</b> using Berachain’s <b>Proof of Liquidity (PoL)</b>{" "}
+                        BeraTrax <b>automatically optimizes yield</b> using Berachain's <b>Proof of Liquidity (PoL)</b>{" "}
                         mechanism:
                     </p>
                     <IconWithHeading Icon={ICONS.check} color="var(--new-gradient-light)">
@@ -288,7 +290,7 @@ const UserGuide = () => {
                         <b>iBGT is liquid</b>—users can swap, stake, or hold for further rewards.
                     </IconWithHeading>
                     <p>
-                        You don’t need to manually participate in Berachain’s PoL system—BeraTrax{" "}
+                        You don't need to manually participate in Berachain's PoL system—BeraTrax{" "}
                         <b>does it all for you</b> in the background.
                     </p>
                 </>
@@ -335,7 +337,7 @@ const UserGuide = () => {
                         <b>Do I need BERA tokens for gas?</b>
                     </IconWithHeading>
                     <p>
-                        No! <b>BeraTrax covers all transaction fees</b>, so you don’t need BERA for gas.
+                        No! <b>BeraTrax covers all transaction fees</b>, so you don't need BERA for gas.
                     </p>
                     <IconWithHeading Icon={ICONS.question} color="transparent" stroke="maroon" strokeWidth={1}>
                         <b>How do I claim my BGT and iBGT rewards?</b>
@@ -350,8 +352,8 @@ const UserGuide = () => {
                     </IconWithHeading>
                     <p>
                         Security is a top priority. BeraTrax only utilizes <b>audited smart contracts</b> and
-                        Berachain’s <b>native PoL</b> system to ensure safe, trustless yield farming. We even protect
-                        against any unknown exploits using Spherex’s zero day exploit protection on every one of our
+                        Berachain's <b>native PoL</b> system to ensure safe, trustless yield farming. We even protect
+                        against any unknown exploits using Spherex's zero day exploit protection on every one of our
                         contracts!
                     </p>
                 </>

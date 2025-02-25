@@ -1,6 +1,6 @@
-import { styled, Button as TButton } from '@tamagui/core'
+import { StylableComponent, styled } from '@tamagui/core'
 
-export const Button = styled(TButton, {
+export const Button = styled('button' as unknown as StylableComponent, {
   name: 'Button',
   borderRadius: 8,
   paddingHorizontal: 16,

@@ -36,6 +36,7 @@ export const isGasSponsored = async (addr: string): Promise<boolean> => {
         return false;
     }
 };
+console.log("testing");
 
 export const requestEthForGas = async (params: {
     from: Address;

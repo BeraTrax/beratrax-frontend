@@ -1,25 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ethers from "ethers";
 import { resolveDomainFromAddress } from "src/utils/common";
 import { useDispatch } from "react-redux";
 import { incrementErrorCount, resetErrorCount } from "src/state/error/errorReducer";
 import { CHAIN_ID } from "src/types/enums";
 import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
-import { ENTRYPOINT_ADDRESS_V06, providerToSmartAccountSigner } from "permissionless";
-import { Address, EIP1193Provider, Hex, createPublicClient, createWalletClient, custom, getAddress, http } from "viem";
+import { ENTRYPOINT_ADDRESS_V06 } from "permissionless";
+import { Address, Hex, createPublicClient, createWalletClient, getAddress, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { EstimateTxGasArgs, IClients } from "src/types";
-import {
-    createModularAccountAlchemyClient,
-    AlchemyWebSigner,
-    createAlchemySmartAccountClient,
-    AlchemySigner,
-} from "@alchemy/aa-alchemy";
-import { WalletClientSigner, type SmartAccountSigner } from "@aa-sdk/core";
+import { AlchemyWebSigner } from "@alchemy/aa-alchemy";
 import { defaultChainId } from "src/config/constants";
-import useWeb3Auth from "src/hooks/useWeb3Auth";
 import { requestEthForGas } from "src/api";
-import { Connector, useAccount, useChainId, useDisconnect, useWalletClient } from "wagmi";
+import { Connector, useAccount, useChainId, useDisconnect } from "wagmi";
 import { getWalletClient as getWalletClientCore, switchChain as switchChainCore } from "@wagmi/core";
 import { trackTransaction } from "src/utils/analytics";
 

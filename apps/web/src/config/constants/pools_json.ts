@@ -1079,7 +1079,7 @@ export const tokenImages = pools_json.reduce((acc, curr) => {
 
 export const tokenNamesAndImages = pools_json.reduce(
     (acc, curr) => {
-        if(curr.isUpcoming) return acc;
+        if (curr.isUpcoming) return acc;
         acc[curr.token1] = { name: curr.name1.toUpperCase(), logos: [curr.logo1] };
         acc[curr.lp_address] = { name: curr.name.toUpperCase(), logos: [curr.logo1] };
         if (curr.token2 && curr.name2 && curr.logo2) {

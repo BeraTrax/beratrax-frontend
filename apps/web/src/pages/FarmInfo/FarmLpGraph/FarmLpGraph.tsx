@@ -64,38 +64,27 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 
         if (filteredEntries.length === 0) return [];
 
-        // Get current time and adjust to end of day
-        const now = new Date();
-        now.setHours(23, 59, 59, 999);
-        const nowTimestamp = Math.floor(now.getTime() / 1000);
-
+        const now = Date.now() / 1000;
         const firstValidTimestamp = filteredEntries[0].timestamp;
-        let filterTimestamp = nowTimestamp;
+        let filterTimestamp = now;
 
         switch (filter) {
             case "hour":
-                filterTimestamp = nowTimestamp - 60 * 60;
+                filterTimestamp = now - 60 * 60;
                 break;
             case "day":
-                filterTimestamp = nowTimestamp - 24 * 60 * 60;
+                filterTimestamp = now - 24 * 60 * 60;
                 break;
             case "week":
-                filterTimestamp = nowTimestamp - 7 * 24 * 60 * 60;
+                filterTimestamp = now - 7 * 24 * 60 * 60;
                 break;
             case "month":
-                filterTimestamp = nowTimestamp - 30 * 24 * 60 * 60;
+                filterTimestamp = now - 30 * 24 * 60 * 60;
                 break;
         }
 
         // Use the later of filterTimestamp or firstValidTimestamp
         filterTimestamp = Math.max(filterTimestamp, firstValidTimestamp);
-
-        // For week and month views, align timestamps to start of day
-        if (filter === "week" || filter === "month") {
-            const startOfDay = new Date(filterTimestamp * 1000);
-            startOfDay.setHours(0, 0, 0, 0);
-            filterTimestamp = Math.floor(startOfDay.getTime() / 1000);
-        }
 
         // Generate time slots based on the filter type
         const timeSlots: number[] = [];
@@ -104,17 +93,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                 ? 5 * 60 // 5 minutes for hour view
                 : filter === "day"
                 ? 60 * 60 // 1 hour for day view
-                : 24 * 60 * 60; // 1 day for week and month views
+                : filter === "week"
+                ? 24 * 60 * 60 // 1 day for week view
+                : 24 * 60 * 60; // 1 day for month view
 
-        for (let t = filterTimestamp; t <= nowTimestamp; t += interval) {
+        for (let t = filterTimestamp; t <= now; t += interval) {
             timeSlots.push(t);
         }
 
         // Process entries into appropriate time slots
         timeSlots.forEach((slotTime) => {
-            const nextSlotTime = slotTime + interval;
             const slotEntries = filteredEntries.filter(
-                (entry) => entry.timestamp >= slotTime && entry.timestamp < nextSlotTime
+                (entry) => entry.timestamp >= slotTime && entry.timestamp < slotTime + interval
             );
 
             if (slotEntries.length > 0) {
@@ -123,16 +113,6 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                 const avgLp = totalLp / slotEntries.length;
 
                 if (avgLp > 0) {
-                    // For week/month views, if this is the last slot and we have more recent data,
-                    // skip this point as we'll add the most recent data point instead
-                    if (
-                        (filter === "week" || filter === "month") &&
-                        slotTime === timeSlots[timeSlots.length - 1] &&
-                        filteredEntries[filteredEntries.length - 1].timestamp > slotTime
-                    ) {
-                        return;
-                    }
-
                     filteredData.push({
                         date: key,
                         lp: avgLp.toFixed(3),
@@ -141,22 +121,6 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                 }
             }
         });
-
-        // For week and month views, ensure we have the latest data point
-        if ((filter === "week" || filter === "month") && filteredEntries.length > 0) {
-            const latestEntry = filteredEntries[filteredEntries.length - 1];
-            const lastSlotTime = timeSlots[timeSlots.length - 1];
-
-            // Only add the latest point if it's more recent than our last slot
-            if (latestEntry.timestamp > lastSlotTime) {
-                const today = new Date(latestEntry.timestamp * 1000);
-                filteredData.push({
-                    date: `${today.getDate()}/${today.getMonth() + 1}`,
-                    lp: latestEntry.lp.toFixed(3),
-                    timestamp: latestEntry.timestamp,
-                });
-            }
-        }
 
         return filteredData;
     };
@@ -215,3 +179,4 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
     );
 };
 export default FarmLpGraph;
+

@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import { FarmDetailInputOptions } from "src/state/farms/types";
 import useTokens from "src/state/tokens/useTokens";
-import { FarmTransactionType } from "src/types/enums";
+import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
 import { formatCurrency } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
@@ -78,6 +78,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     vaultTvl={`$${vaultTvl}`}
                                     description={farm.description}
                                     source={farm.source}
+                                    showFlywheelChart={farm.originPlatform === FarmOriginPlatform.Infrared}
                                 />
                             </div>
                             <div

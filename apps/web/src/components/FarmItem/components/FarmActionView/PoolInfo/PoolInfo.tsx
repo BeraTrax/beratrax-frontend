@@ -1,3 +1,4 @@
+import farmFunctions from "src/api/pools";
 import created from "src/assets/images/created.svg";
 import flywheelChart from "src/assets/images/flywheelChart.png";
 import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
@@ -31,8 +32,9 @@ interface IProps {
     vaultTvl: string;
     description?: string;
     source?: string;
+    showFlywheelChart?: boolean;
 }
-const PoolInfo = ({ marketCap, vaultTvl, description, source }: IProps) => {
+const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
@@ -57,8 +59,16 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source }: IProps) => {
                     </p>
                 </>
             )}
-            <img src={flywheelChart} alt="Flywheel Chart" className="w-full xl:w-[1200px] h-auto hidden md:block" />
-            <img src={flywheelChartMobile} alt="Flywheel Chart" className="w-full h-auto block md:hidden" />
+            {showFlywheelChart && (
+                <>
+                    <img
+                        src={flywheelChart}
+                        alt="Flywheel Chart"
+                        className="w-full xl:w-[1200px] h-auto hidden md:block"
+                    />
+                    <img src={flywheelChartMobile} alt="Flywheel Chart" className="w-full h-auto block md:hidden" />
+                </>
+            )}
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />

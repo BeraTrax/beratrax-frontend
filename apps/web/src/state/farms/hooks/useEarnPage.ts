@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
+import { FarmData, FarmDataExtended } from "src/types";
+import { FarmSortOptions } from "src/types/enums";
+import useWallet from "../../../hooks/useWallet";
+import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
-import { FarmSortOptions } from "src/types/enums";
-import { useFarmApys } from "./useFarmApy";
-import { FarmData, FarmDataExtended } from "src/types";
-import useWallet from "../../../hooks/useWallet";
 
 const useEarnPage = () => {
     const { externalChainId } = useWallet();
@@ -25,6 +25,7 @@ const useEarnPage = () => {
         });
         if (selectedPlatform) data = data.filter((item) => item.platform === selectedPlatform);
         data = data
+            .filter((item) => !item.isUpcoming)
             .filter((item) => item.token_type === "Token")
             .concat(data.filter((item) => item.token_type === "LP Token"));
         if (!isFetched) return data;
@@ -131,8 +132,13 @@ const useEarnPage = () => {
         return sortFn();
     }, [sortSelected, selectedPlatform, farmDetails, farms, isFetched, externalChainId]);
 
+    const upcomingFarms = useMemo(() => {
+        return farms.filter((item) => item.isUpcoming);
+    }, [farms]);
+
     return {
         sortedFarms,
+        upcomingFarms,
         farms,
         apys,
         farmDetails,

@@ -39,6 +39,13 @@ export const TokenBalances: FC<IProps> = () => {
         lpTokens,
         UIState,
     } = useTokens();
+
+    const filteredLpTokens = useMemo(() => {
+        return lpTokens.filter(
+            (t) => Number(t.usdBalance) > 0.01 && t.address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"
+        );
+    }, [lpTokens]);
+
     const { isConnecting } = useWallet();
     const isLoading = balancesLoading || pricesLoading || isConnecting;
 
@@ -180,15 +187,14 @@ export const TokenBalances: FC<IProps> = () => {
                     {selectedToken ? <TransferToken token={selectedToken} handleClose={handleCloseModal} /> : null}
                 </div>
             )}
-            {(UIState === UIStateEnum.SHOW_TOKENS_LP || UIState === UIStateEnum.SHOW_TOKENS) && (
-                <>
-                    <p className="font-arame-mono font-normal text-[16px] text-textWhite leading-4 uppercase mt-5 ">
-                        Unstaked LP Token Balances
-                    </p>
-                    <div className={containerClass}>
-                        {lpTokens
-                            .filter((t) => Number(t.usdBalance) > 0.01)
-                            .map((token, i) => (
+            {(UIState === UIStateEnum.SHOW_TOKENS_LP || UIState === UIStateEnum.SHOW_TOKENS) &&
+                filteredLpTokens.length > 0 && (
+                    <>
+                        <p className="font-arame-mono font-normal text-[16px] text-textWhite leading-4 uppercase mt-5 ">
+                            Unstaked LP Token Balances
+                        </p>
+                        <div className={containerClass}>
+                            {filteredLpTokens.map((token, i) => (
                                 <div key={i} className={tokenCardStyle} onClick={() => setSelectedToken(token)}>
                                     <span className="flex">
                                         <img
@@ -223,9 +229,9 @@ export const TokenBalances: FC<IProps> = () => {
                                     <div className={tokenCardHoverArrowStyles}>&gt;</div>
                                 </div>
                             ))}
-                    </div>
-                </>
-            )}
+                        </div>
+                    </>
+                )}
         </>
     );
 };

@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
-import { GoArrowDown, GoArrowUp } from "react-icons/go";
 import { IoInformationCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
 import { approveErc20 } from "src/api/token";
 import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
 import FarmRowChip from "src/components/FarmItem/components/FarmRowChip/FarmRowChip";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { VaultMigrator } from "src/components/VaultMigrator/VaultMigrator";
 import { RoutesPaths } from "src/config/constants";
 import useTrax from "src/hooks/useTrax";
@@ -267,7 +265,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     </div>
                     <div className="text-textWhite text-lg font-league-spartan leading-5	">
                         <p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
-                        <div style={{ minWidth: 60 }}>
+                        {/* <div style={{ minWidth: 60 }}>
                             {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
                             {!isLoadingOldData &&
                                 oldPrice &&
@@ -304,7 +302,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                                         </p>
                                     </span>
                                 ))}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

@@ -11,7 +11,8 @@ import useEarnPage from "src/state/farms/hooks/useEarnPage";
 function Farms() {
     const navigate = useNavigate();
     const [openedFarm, setOpenedFarm] = useState<number | undefined>();
-    const { sortedFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
+    const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } =
+        useEarnPage();
 
     return (
         <div className="relative text-textWhite h-full overflow-y-auto overflow-x-hidden font-league-spartan">
@@ -60,6 +61,19 @@ function Farms() {
                               ))}
                 </div>
                 {/* Bottom padding */}
+                {(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) &&
+                    upcomingFarms.length > 0 && (
+                        <div className="flex flex-col mt-2 gap-2">
+                            {upcomingFarms.map((farm, index) => (
+                                <FarmRow
+                                    key={index + "nowallet"}
+                                    farm={farm}
+                                    openedFarm={openedFarm}
+                                    setOpenedFarm={setOpenedFarm}
+                                />
+                            ))}
+                        </div>
+                    )}
                 <div className="h-32"></div>
             </div>
         </div>

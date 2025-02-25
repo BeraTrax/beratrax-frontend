@@ -1,5 +1,5 @@
-import { TamaguiProvider } from '@beratrax/ui';
-import tamaguiConfig from '@beratrax/ui/tamagui.config';
+// import { TamaguiProvider } from '@beratrax/ui';
+// import tamaguiConfig from '@beratrax/ui/tamagui.config';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -31,7 +31,7 @@ export default function RootLayout() {
   }
 
   return (
-    <TamaguiProvider config={tamaguiConfig}>
+    // <TamaguiProvider config={tamaguiConfig}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -39,6 +39,7 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
-    </TamaguiProvider>
+    // </TamaguiProvider>
+    
   );
 }

@@ -1,4 +1,6 @@
 import created from "src/assets/images/created.svg";
+import flywheelChart from "src/assets/images/flywheelChart.png";
+import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
 import marketcap from "src/assets/images/marketcap.svg";
 import volume from "src/assets/images/volume.svg";
 
@@ -47,7 +49,7 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source }: IProps) => {
                     </h3>
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
                     <p className="text-textWhite mt-4 text-[16px] font-light">
-                    You can see the underlying vault on the platform{" "}
+                        You can see the underlying vault on the platform{" "}
                         <a href={source} target="_blank" className="text-gradientPrimary uppercase hover:underline">
                             here
                         </a>
@@ -55,6 +57,8 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source }: IProps) => {
                     </p>
                 </>
             )}
+            <img src={flywheelChart} alt="Flywheel Chart" className="w-full xl:w-[1200px] h-auto hidden md:block" />
+            <img src={flywheelChartMobile} alt="Flywheel Chart" className="w-full h-auto block md:hidden" />
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />

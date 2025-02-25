@@ -129,8 +129,9 @@ const Vaults: React.FC = () => {
             >
                 {!isLoading ? (
                     vaults.length > 0 ? (
-                        vaults.map((vault) => <VaultItem vault={vault} key={vault.id} />)
-                    ) : (
+                        vaults
+                            .filter((vault) => !vault.isUpcoming)
+                            .map((vault) => <VaultItem vault={vault} key={vault.id} />)) : (
                         <EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>
                             <div className="flex flex-col justify-center mb-4">
                                 <iframe

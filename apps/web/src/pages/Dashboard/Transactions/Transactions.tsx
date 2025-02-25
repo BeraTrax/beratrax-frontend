@@ -232,9 +232,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 
                                             {filteredReturnedAssets.length > 0 && (
                                                 <div className="mt-2">
-                                                    <span className="text-textSecondary block mb-1">
-                                                        Returned Assets:
-                                                    </span>
+                                                    <span className="text-textSecondary block mb-1">Returned:</span>
                                                     {filteredReturnedAssets.map((asset, index) => (
                                                         <div
                                                             key={index}
@@ -285,7 +283,8 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                                           )
                                                                       ) *
                                                                           (vaultPrice ||
-                                                                              prices[farm.chainId][farm.vault_addr])
+                                                                              prices[farm.chainId][farm.vault_addr]),
+                                                                      4
                                                                   )
                                                                 : formatCurrency(
                                                                       Number(
@@ -293,7 +292,8 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                                               BigInt(netAmount || "0"),
                                                                               decimals[farm.chainId][token]
                                                                           )
-                                                                      ) * (tokenPrice || prices[farm.chainId][token])
+                                                                      ) * (tokenPrice || prices[farm.chainId][token]),
+                                                                      4
                                                                   )}
                                                         </span>
                                                         <span className="text-xs text-textSecondary">

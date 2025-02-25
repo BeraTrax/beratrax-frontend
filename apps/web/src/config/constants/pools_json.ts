@@ -17,6 +17,7 @@ export interface PoolDef {
     rewardVault?: Address;
     name1: string;
     name2?: string;
+    name3?: string;
     platform: string;
     platform_alt: string;
     total_apy?: number;
@@ -24,13 +25,17 @@ export interface PoolDef {
     platform_logo: string;
     pair1: string;
     pair2?: string;
+    pair3?: string;
     token1: Address;
     token2?: Address;
+    token3?: Address;
     zapper_addr: Address;
     alt1: string;
     alt2?: string;
+    alt3?: string;
     logo1: string;
     logo2?: string;
+    logo3?: string;
     rewards1: string;
     rewards1_alt: string;
     rewards2?: string;
@@ -39,12 +44,16 @@ export interface PoolDef {
     decimals: number;
     decimals1?: number;
     decimals2?: number;
+    decimals3?: number;
     vault_addr: Address;
     zap_symbol?: string;
     apTkn?: Address;
     withdraw_decimals?: number;
     vault_decimals?: number;
     isCurrentWeeksRewardsVault?: boolean;
+    isUpcoming?: boolean;
+    secondary_platform?: string;
+    secondary_platform_logo?: string;
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -254,6 +263,251 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
+        id: 11,
+        isUpcoming: true,
+        chainId: CHAIN_ID.BERACHAIN,
+        token_type: "Token",
+        name: "iBERA",
+        url_name: "iBERA",
+        originPlatform: FarmOriginPlatform.Infrared,
+        source: "https://infrared.finance/ibera",
+        name1: "iBERA",
+        description:
+            "This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform: "Infrared",
+        platform_alt: "Infrared logo",
+        total_apy: 7.24,
+        rewards_apy: 0,
+        platform_logo: "infrared.ico",
+        pair1: "iBERA",
+        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        alt1: "iBGT logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397bb5a6624a856cc84a3a14dcd3fe5/logo.png",
+        rewards1: "infrared.ico",
+        rewards1_alt: "Infrared logo",
+        isDeprecated: false,
+        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        decimals: 18,
+        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
+        zap_symbol: "iBGT",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+            {
+                symbol: "iBGT",
+                address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 12,
+        isUpcoming: true,
+        chainId: CHAIN_ID.BERACHAIN,
+        token_type: "Token",
+        name: "Nect-USDC-Honey",
+        url_name: "iBERA",
+        originPlatform: FarmOriginPlatform.Burrbear,
+        source: "https://app.burrbear.io/#/berachain/pool/0xd10e65a5f8ca6f835f2b1832e37cf150fb955f23000000000000000000000004",
+        name1: "Nect",
+        name2: "USDC",
+        name3: "HONEY",
+        description:
+            "This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDC-Honey, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform: "Burrbear",
+        platform_alt: "Burrbear logo",
+        total_apy: 36.477,
+        rewards_apy: 0,
+        platform_logo: "burrbear.ico",
+        pair1: "Nect",
+        pair2: "USDC",
+        pair3: "HONEY",
+        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        token3: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        alt1: "Nect logo",
+        alt2: "USDC logo",
+        alt3: "HONEY logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c/logo.png",
+        logo3: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
+        rewards1: "infrared.ico",
+        rewards1_alt: "Infrared logo",
+        isDeprecated: false,
+        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        decimals: 18,
+        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
+        zap_symbol: "iBGT",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 13,
+        isUpcoming: true,
+        chainId: CHAIN_ID.BERACHAIN,
+        token_type: "Token",
+        name: "Yeet-wBERA",
+        url_name: "Yeet-wBERA",
+        originPlatform: FarmOriginPlatform.Yeet,
+        source: "https://vault.yeetit.xyz/",
+        name1: "Yeet",
+        name2: "wBERA",
+        description:
+            "This vault is built on Yeet's Yeet-wBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can directly zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Yeet-wBERA, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform: "Yeet",
+        platform_alt: "Yeet logo",
+        total_apy: 10.16,
+        rewards_apy: 0,
+        platform_logo: "yeet.ico",
+        pair1: "Yeet",
+        pair2: "wBERA",
+        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        alt1: "Yeet logo",
+        alt2: "wBERA logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x1740F679325ef3686B2f574e392007A92e4BeD41/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
+        rewards1: "yeet.ico",
+        rewards1_alt: "Yeet logo",
+        isDeprecated: false,
+        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        decimals: 18,
+        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
+        zap_symbol: "iBGT",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 14,
+        isUpcoming: true,
+        chainId: CHAIN_ID.BERACHAIN,
+        token_type: "Token",
+        name: "wBERA-HONEY",
+        url_name: "wBERA-HONEY",
+        originPlatform: FarmOriginPlatform.Kodiak,
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x40c4d0a87157c3c1df26267ac02505d930baeeeb&chain=berachain_mainnet",
+        name1: "wBERA",
+        name2: "HONEY",
+        description:
+            "This vault is built on Kodiak's wBERA-HONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can directly zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-HONEY, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform: "Kodiak",
+        platform_alt: "Kodiak logo",
+        total_apy: 26.29,
+        rewards_apy: 0,
+        platform_logo: "kodiak.jpg",
+        pair1: "wBERA",
+        pair2: "HONEY",
+        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        alt1: "wBERA logo",
+        alt2: "HONEY logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
+        rewards1: "kodiak.ico",
+        rewards1_alt: "Kodiak logo",
+        isDeprecated: false,
+        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        decimals: 18,
+        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
+        zap_symbol: "iBGT",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 15,
+        isUpcoming: true,
+        chainId: CHAIN_ID.BERACHAIN,
+        token_type: "Token",
+        name: "wETH-wBERA",
+        url_name: "wETH-wBERA",
+        originPlatform: FarmOriginPlatform.Kodiak,
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x9659dc8c1565e0bd82627267e3b4eed1a377ebe6?farm=0xf41ecc551e3c7449e74a7a7464bb2674fa76954c&chain=berachain_mainnet",
+        name1: "wETH",
+        name2: "wBERA",
+        description:
+            "This vault is built on Kodiak's wETH-wBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can directly zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wETH-wBERA, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform: "Kodiak",
+        platform_alt: "Kodiak logo",
+        total_apy: 21.32,
+        rewards_apy: 0,
+        platform_logo: "kodiak.jpg",
+        pair1: "wETH",
+        pair2: "wBERA",
+        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        alt1: "wETH logo",
+        alt2: "wBERA logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xE28AfD8c634946833e89ee3F122C06d7C537E8A8/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
+        rewards1: "kodiak.ico",
+        rewards1_alt: "Kodiak logo",
+        isDeprecated: false,
+        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
+        decimals: 18,
+        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
+        zap_symbol: "iBGT",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
         id: 1,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "Token",
@@ -268,6 +522,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform: "Steer",
         platform_alt: "Steer logo",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
@@ -314,6 +570,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform: "Steer",
         platform_alt: "Steer logo",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
@@ -361,6 +619,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform: "Steer",
         platform_alt: "Steer logo",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
@@ -408,6 +668,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform: "Steer",
         platform_alt: "Steer logo",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
@@ -455,6 +717,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform: "Steer",
         platform_alt: "Steer logo",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
@@ -505,6 +769,8 @@ const pools_json: PoolDef[] = [
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
+        secondary_platform: "Kodiak",
+        secondary_platform_logo: "kodiak.jpg",
         pair1: "wBTC",
         pair2: "wETH",
         token1: "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c",

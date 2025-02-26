@@ -379,7 +379,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                                 {farm.url_name}
                             </a>{" "}
                             {isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
-                            {currencySymbol === "BERA" ? ` "Max" excludes a little BERA for gas.` : ""}
+                            {currencySymbol === "BERA" ? ` BeraTrax contracts are continuously audited by CyberScope.` : ""}
                         </p>
                     </div>
                     <div className="my-2 flex justify-center ">

@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 import "./Tabs.css";
 
 interface Props {
@@ -7,5 +8,5 @@ interface Props {
 }
 
 export const Tabs: FC<Props> = ({ children, className }) => {
-    return <div className={`tabs ${className}`}>{children}</div>;
+    return <div className={twMerge("tabs", className)}>{children}</div>;
 };

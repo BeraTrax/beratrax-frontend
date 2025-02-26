@@ -29,7 +29,8 @@ const Vaults: React.FC = () => {
             return 0;
         });
     }, [unsortedVaults]);
-    const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated), [vaults]);
+    const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable), [vaults]);
+    const upgradableVaults = useMemo(() => vaults.filter((vault) => vault.isUpgradable), [vaults]);
     const { balances } = useTokens();
     const { isConnecting, currentWallet, getPublicClient } = useWallet();
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -115,6 +116,7 @@ const Vaults: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-x-4 justify-end items-center lg:flex-row">
                     {deprecatedVaults.length > 0 && <VaultsMigrator />}
+                    {upgradableVaults.length > 0 && <VaultsMigrator />}
                     {rewardsVaultsData.length > 0 && (
                         <DepositToRewardsVault
                             rewardsVaultsData={rewardsVaultsData}

@@ -9,7 +9,7 @@ import useTokens from "../state/tokens/useTokens";
 
 export const useDataRefresh = () => {
     const { reloadApys } = useFarmApys();
-    const { reloadFarmData } = useFarmDetails();
+    const { reloadFarmData, reloadVaultEarnings } = useFarmDetails();
     const { fetchAccountData } = useAccountData();
     const { fetchTransactions } = useTransactions();
     const { prices, reloadPrices, reloadDecimals, reloadSupplies, reloadBalances } = useTokens();
@@ -86,4 +86,8 @@ export const useDataRefresh = () => {
     useEffect(() => {
         fetchTransactions();
     }, [fetchTransactions]);
+
+    useEffect(() => {
+        reloadVaultEarnings();
+    }, [reloadVaultEarnings]);
 };

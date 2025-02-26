@@ -109,10 +109,10 @@ export const UserLeaderboardTable: FC = () => {
             </div>
 
             {/* TABLE ROW */}
-            <div className="text-textWhite flex flex-col gap-2">
+            <div className="overflow-y-auto h-[55vh] xsMobile:h-[48vh] mobile:h-[45vh] lg:h-[50vh] text-textWhite flex flex-col gap-2">
                 {isLoading ? (
-                    // Show 5 skeleton rows while loading
-                    [...Array(5)].map((_, index) => <SkeletonRow key={index} />)
+                    // Show 6 skeleton rows while loading
+                    [...Array(6)].map((_, index) => <SkeletonRow key={index} />)
                 ) : allEntries.length > 0 && page && limit ? (
                     allEntries.map((userTVL) => {
                         const isCurrentUser = userPosition?.address.toLowerCase() === userTVL.address.toLowerCase();
@@ -131,7 +131,7 @@ export const UserLeaderboardTable: FC = () => {
             </div>
 
             {/* Search Bar and Pagination */}
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4">
                 {/* Search Bar */}
                 <div className="flex items-center gap-2 bg-bgDark rounded-2xl px-4 py-4">
                     <FaSearch className="text-textWhite" />

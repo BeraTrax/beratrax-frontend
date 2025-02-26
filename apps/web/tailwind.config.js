@@ -8,6 +8,7 @@ export default {
                 tablet: "768px",
                 xlMobile: "650px",
                 mobile: "500px",
+                xsMobile: "480px",
             },
             fontFamily: {
                 "arame-mono": ["Arame Mono", "sans-serif"],

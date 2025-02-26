@@ -80,7 +80,9 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     vaultTvl={`$${vaultTvl}`}
                                     description={farm.description}
                                     source={farm.source}
-                                    showFlywheelChart={farm.originPlatform === FarmOriginPlatform.Infrared}
+                                    showFlywheelChart={
+                                        farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7
+                                    }
                                     beraApy={
                                         farm.isCurrentWeeksRewardsVault
                                             ? "??? "

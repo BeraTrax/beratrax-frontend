@@ -89,7 +89,12 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                               (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
                                               2
                                           ).toString()}
-                                    underlyingApy={farmApys.rewardsApr.toPrecision(2).slice(0, -1) || "???"}
+                                    underlyingApy={farm.isCurrentWeeksRewardsVault
+                                        ? "??? "
+                                        : toFixedFloor(
+                                              (farm.isUpcoming ? farm.total_apy : farmApys?.rewardsApr) || 0,
+                                              2
+                                          ).toString()}
                                     isAutoCompounded={farm.description?.includes("auto-compounded") || false}
                                 />
                             </div>

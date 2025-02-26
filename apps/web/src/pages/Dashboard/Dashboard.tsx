@@ -1,13 +1,12 @@
+import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
 import ReferralLink from "src/components/ReferralLink/ReferralLink";
+import { useDeviceInfo } from "src/hooks/useDeviceInfo";
 import useWallet from "src/hooks/useWallet";
 import Vaults from "./JoinedVaults/Vaults";
-import Transactions from "./Transactions/Transactions";
 import { TokenBalances } from "./TokenBalances/TokenBalances";
+import Transactions from "./Transactions/Transactions";
 import { TraxReferralEarning } from "./TraxReferralEarning/TraxReferralEarning";
 import { WalletAndStakingPoint } from "./WalletAndStakingPoint/WalletAndStakingPoint";
-import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
-import { useRefCodeLoaded } from "src/state/account/useAccountData";
-import { useDeviceInfo } from "src/hooks/useDeviceInfo";
 
 function Dashboard() {
     const { currentWallet } = useWallet();
@@ -22,8 +21,8 @@ function Dashboard() {
                     <>
                         <TraxReferralEarning />
                         <ReferralLink />
-                        <TokenBalances />
                         <Vaults />
+                        <TokenBalances />
                         <Transactions />
                     </>
                 ) : (

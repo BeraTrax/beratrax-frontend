@@ -81,7 +81,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     description={farm.description}
                                     source={farm.source}
                                     showFlywheelChart={farm.originPlatform === FarmOriginPlatform.Infrared}
-                                    apy={farm.isCurrentWeeksRewardsVault
+                                    beraApy={farm.isCurrentWeeksRewardsVault
                                         ? "??? "
                                         : farmApys && farmApys.apy < 0.01
                                         ? farmApys.apy.toPrecision(2).slice(0, -1)
@@ -89,6 +89,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                               (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
                                               2
                                           ).toString()}
+                                    underlyingApy={farmApys.rewardsApr.toPrecision(2).slice(0, -1) || "???"}
                                     isAutoCompounded={farm.description?.includes("auto-compounded") || false}
                                 />
                             </div>

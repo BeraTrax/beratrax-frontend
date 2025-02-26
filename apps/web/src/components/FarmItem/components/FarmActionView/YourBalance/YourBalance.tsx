@@ -99,6 +99,8 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         );
     };
 
+    if (stakedTokenValueUsd === 0) return null;
+
     return (
         <div className="mt-10 relative">
             {farm.originPlatform === FarmOriginPlatform.Infrared ? (

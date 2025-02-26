@@ -91,7 +91,7 @@ export const UserLeaderboardTable: FC = () => {
     return (
         <div className="grid grid-cols-1 gap-4">
             {/* User Position */}
-            <UserPositionRow userPosition={userPosition} />
+            {isLoading ? <SkeletonRow /> : <UserPositionRow userPosition={userPosition} />}
 
             {/* TABLE HEADING */}
             <div

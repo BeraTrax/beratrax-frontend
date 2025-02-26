@@ -10,10 +10,11 @@ import { useDetailInput } from "src/hooks/useDetailInput";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import { FarmDetailInputOptions } from "src/state/farms/types";
 import useTokens from "src/state/tokens/useTokens";
 import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
-import { formatCurrency } from "src/utils/common";
+import { formatCurrency, toFixedFloor } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
@@ -22,6 +23,7 @@ import YourBalance from "./YourBalance/YourBalance";
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
     const { currentWallet, isConnecting } = useWallet();
+    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const {
         isBalancesLoading: isLoading,
         prices: {
@@ -79,12 +81,26 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     description={farm.description}
                                     source={farm.source}
                                     showFlywheelChart={farm.originPlatform === FarmOriginPlatform.Infrared}
+                                    beraApy={farm.isCurrentWeeksRewardsVault
+                                        ? "??? "
+                                        : farmApys && farmApys.apy < 0.01
+                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                            : toFixedFloor(
+                                                (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
+                                                2
+                                            ).toString()}
+                                    underlyingApy={farm.isCurrentWeeksRewardsVault
+                                        ? "??? "
+                                        : toFixedFloor(
+                                            (farm.isUpcoming ? farm.total_apy : farmApys?.rewardsApr) || 0,
+                                            2
+                                        ).toString()}
+                                    isAutoCompounded={farm.description?.includes("auto-compounded") || false}
                                 />
                             </div>
                             <div
-                                className={`flex gap-2 fixed bottom-4 justify-center ${
-                                    Number(withdrawable?.amount || "0") ? "pr-4" : ""
-                                }`}
+                                className={`flex gap-2 fixed bottom-4 justify-center ${Number(withdrawable?.amount || "0") ? "pr-4" : ""
+                                    }`}
                                 style={{ width: "-webkit-fill-available" }}
                             >
                                 {isConnecting || isLoading ? (
@@ -98,11 +114,10 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     <>
                                         <button
                                             disabled={!currentWallet}
-                                            className={`${
-                                                !currentWallet
+                                            className={`${!currentWallet
                                                     ? "bg-buttonDisabled cursor-not-allowed"
                                                     : "bg-buttonPrimaryLight"
-                                            } lg:max-w-64 w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                                } lg:max-w-64 w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                             onClick={() => {
                                                 !IS_LEGACY &&
                                                     setFarmOptions({ transactionType: FarmTransactionType.Deposit });

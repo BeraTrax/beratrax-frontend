@@ -179,7 +179,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     return (
         <div
             onClick={() => {
-                if (vault.isDeprecated) return;
+                if (vault.isDeprecated && vault.isUpgradable) return;
                 navigate(`${RoutesPaths.Farms}/${vault.vault_addr}`);
             }}
             className={`
@@ -198,7 +198,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 }),
             }}
         >
-            {vault.isDeprecated && <VaultMigrator vault={vault} />}
+            {vault.isDeprecated && vault.isUpgradable && <VaultMigrator vault={vault} />}
             <div className="flex justify-between align-top gap-2">
                 {/* Main Heading */}
                 <div className="flex flex-col gap-2 font-league-spartan text-lg">

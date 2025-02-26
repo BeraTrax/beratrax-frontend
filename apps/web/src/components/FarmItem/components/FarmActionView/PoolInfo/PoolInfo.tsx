@@ -1,4 +1,5 @@
-import farmFunctions from "src/api/pools";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { GoRocket } from "react-icons/go";
 import created from "src/assets/images/created.svg";
 import flywheelChart from "src/assets/images/flywheelChart.png";
 import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
@@ -11,14 +12,18 @@ const StatInfo = ({
     subtitle,
     value,
 }: {
-    iconUrl: string;
+    iconUrl: string | React.ReactNode;
     title: string;
     subtitle?: string;
     value: number | string;
 }) => {
     return (
         <div className="flex items-center gap-4 bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
-            <img src={iconUrl} alt={title} className="flex-shrink-0 flex-grow-0 w-10 h-10" />
+            {typeof iconUrl === "string" ? (
+                <img src={iconUrl} alt={title} className="flex-shrink-0 flex-grow-0 w-10 h-10" />
+            ) : (
+                iconUrl
+            )}
             <div className={"flex-1"}>
                 <h2 className="text-textWhite text-lg font-medium">{title}</h2>
                 {subtitle && <p className="text-textSecondary text-[16px] font-light">{subtitle}</p>}
@@ -33,8 +38,11 @@ interface IProps {
     description?: string;
     source?: string;
     showFlywheelChart?: boolean;
+    beraApy: string;
+    isAutoCompounded: boolean;
+    underlyingApy: string;
 }
-const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart }: IProps) => {
+const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart, beraApy, isAutoCompounded, underlyingApy }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
@@ -42,6 +50,7 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart 
         month: "long",
         day: "numeric",
     });
+
     return (
         <div className=" mt-4 relative">
             {description && (
@@ -72,6 +81,8 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart 
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />
+                <StatInfo title="Underlying APY" value={underlyingApy + "%"} iconUrl={<FaArrowTrendUp color="white" size={25} />} />
+                <StatInfo title={isAutoCompounded ? "BeraTrax auto-compounded APY" : "BeraTrax APY"} value={beraApy + "%"} iconUrl={<GoRocket color="white" size={25} />} />
                 {/* <StatInfo title="Volume" subtitle="Past 24h" value={"$16.5M"} iconUrl={volume} /> */}
                 {/* <StatInfo title="Holders" value={"-"} iconUrl={holders} /> */}
                 {/* <StatInfo title="Circulating Supply" value={"1.0B"} iconUrl={circulatingsupply} /> */}

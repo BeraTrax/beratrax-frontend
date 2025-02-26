@@ -19,7 +19,7 @@ export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                 {farm.url_name}
             </a>{" "}
             {isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
-            {currencySymbol === "ETH" ? ` "Max" excludes a little ETH for gas.` : ""}
+            {currencySymbol === "ETH" ? ` BeraTrax contracts are continuously audited by CyberScope.` : ""}
         </div>
     );
 };

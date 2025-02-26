@@ -10,10 +10,11 @@ import { useDetailInput } from "src/hooks/useDetailInput";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import { FarmDetailInputOptions } from "src/state/farms/types";
 import useTokens from "src/state/tokens/useTokens";
 import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
-import { formatCurrency } from "src/utils/common";
+import { formatCurrency, toFixedFloor } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
@@ -22,6 +23,7 @@ import YourBalance from "./YourBalance/YourBalance";
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
     const { currentWallet, isConnecting } = useWallet();
+    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const {
         isBalancesLoading: isLoading,
         prices: {
@@ -79,6 +81,15 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     description={farm.description}
                                     source={farm.source}
                                     showFlywheelChart={farm.originPlatform === FarmOriginPlatform.Infrared}
+                                    apy={farm.isCurrentWeeksRewardsVault
+                                        ? "??? "
+                                        : farmApys && farmApys.apy < 0.01
+                                        ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                        : toFixedFloor(
+                                              (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
+                                              2
+                                          ).toString()}
+                                    isAutoCompounded={farm.description?.includes("auto-compounded") || false}
                                 />
                             </div>
                             <div

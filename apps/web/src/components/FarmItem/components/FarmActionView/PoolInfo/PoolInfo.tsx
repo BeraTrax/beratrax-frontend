@@ -1,5 +1,6 @@
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { GoRocket } from "react-icons/go";
+import created from "src/assets/images/created.svg";
 import flywheelChart from "src/assets/images/flywheelChart.png";
 import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
 import marketcap from "src/assets/images/marketcap.svg";
@@ -37,10 +38,11 @@ interface IProps {
     description?: string;
     source?: string;
     showFlywheelChart?: boolean;
-    apy: string;
+    beraApy: string;
     isAutoCompounded: boolean;
+    underlyingApy: string;
 }
-const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart, apy, isAutoCompounded }: IProps) => {
+const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart, beraApy, isAutoCompounded, underlyingApy }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
@@ -79,12 +81,12 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart,
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />
-                <StatInfo title="Underlying APY" value={apy + "%"} iconUrl={volume} />
-                <StatInfo title={isAutoCompounded ? "BeraTrax auto-compounded APY" : "BeraTrax APY"} value={apy + "%"} iconUrl={<GoRocket color="white" size={25} />} />
+                <StatInfo title="Underlying APY" value={underlyingApy + "%"} iconUrl={<FaArrowTrendUp color="white" size={25} />} />
+                <StatInfo title={isAutoCompounded ? "BeraTrax auto-compounded APY" : "BeraTrax APY"} value={beraApy + "%"} iconUrl={<GoRocket color="white" size={25} />} />
                 {/* <StatInfo title="Volume" subtitle="Past 24h" value={"$16.5M"} iconUrl={volume} /> */}
                 {/* <StatInfo title="Holders" value={"-"} iconUrl={holders} /> */}
                 {/* <StatInfo title="Circulating Supply" value={"1.0B"} iconUrl={circulatingsupply} /> */}
-                <StatInfo title="Added" value={createdDateString} iconUrl={<FaArrowTrendUp color="white" size={25} />} />
+                <StatInfo title="Added" value={createdDateString} iconUrl={created} />
             </div>
             {/* <p className="mt-2 text-textSecondary text-[12px] font-light leading-[18px]">
                 Uauctor, augue porta dignissim vestibulum, arcu diam lobortis velit, Ut auctor, augue porta dignissim

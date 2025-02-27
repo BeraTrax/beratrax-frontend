@@ -4,7 +4,7 @@ import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
 import { Common_Chains_State, pools_chain_ids } from "src/config/constants/pools_json";
 import tokens from "src/config/constants/tokens";
 import { RootState } from "src/state";
-import { CHAIN_ID } from "src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { formatCurrency } from "src/utils/common";
 import { Address, erc20Abi, formatUnits, getAddress, getContract, zeroAddress } from "viem";
 import {
@@ -275,13 +275,13 @@ export const fetchTotalSupplies = createAsyncThunk(
             tokens.forEach((token) => {
                 addresses[token.chainId]?.add(getAddress(token.address));
             });
-            let balances: TotalSupplies = {};
+            let totalSupplies: TotalSupplies = {};
             await Promise.all(
                 Object.entries(addresses).map(async ([chainId, set]) => {
-                    balances[Number(chainId)] = {};
-                    const arr = Array.from(set);
-                    const res = await Promise.all(
-                        arr.map((item) =>
+                    totalSupplies[Number(chainId)] = {};
+                    const tokens = Array.from(set);
+                    const rawTotalSupplies = await Promise.all(
+                        tokens.map((item) =>
                             getContract({
                                 address: item,
                                 abi: erc20Abi,
@@ -291,22 +291,40 @@ export const fetchTotalSupplies = createAsyncThunk(
                             }).read.totalSupply()
                         )
                     );
+                    // for infrared LP tokens, we need to subtract the balance of the vault to get actual total supply of lp
+                    const infraredVaultBalance = await Promise.all(
+                        tokens.map((item) =>
+                            farms
+                                .filter((e) => e.originPlatform === FarmOriginPlatform.Infrared)
+                                .findIndex((e) => e.lp_address === item) != -1
+                                ? getContract({
+                                      address: item,
+                                      abi: erc20Abi,
+                                      client: {
+                                          public: getPublicClient(Number(chainId)),
+                                      },
+                                  }).read.balanceOf(["0x4Be03f781C497A489E3cB0287833452cA9B9E80B"])
+                                : 0n
+                        )
+                    );
 
-                    res.forEach((item, i) => {
-                        balances[Number(chainId)][arr[i]] = {
-                            supplyWei: item.toString(),
-                            supply: Number(formatUnits(item, 18)),
-                            supplyFormatted: formatCurrency(formatUnits(item, 18)),
-                            supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][arr[i]],
-                            supplyUsdFormatted: formatCurrency(
-                                Number(formatUnits(item, 18)) * prices[Number(chainId)][arr[i]]
-                            ),
-                        };
-                    });
+                    rawTotalSupplies
+                        .map((e, i) => e - infraredVaultBalance[i]) // subtract lp balance of infrared's vault
+                        .forEach((item, i) => {
+                            totalSupplies[Number(chainId)][tokens[i]] = {
+                                supplyWei: item.toString(),
+                                supply: Number(formatUnits(item, 18)),
+                                supplyFormatted: formatCurrency(formatUnits(item, 18)),
+                                supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]],
+                                supplyUsdFormatted: formatCurrency(
+                                    Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]]
+                                ),
+                            };
+                        });
                 })
             );
 
-            return balances;
+            return totalSupplies;
         } catch (error) {
             console.error("Error in fetchTotalSupplies", error);
             return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch total supplies");

@@ -42,7 +42,16 @@ interface IProps {
     isAutoCompounded: boolean;
     underlyingApy: string;
 }
-const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart, beraApy, isAutoCompounded, underlyingApy }: IProps) => {
+const PoolInfo = ({
+    marketCap,
+    vaultTvl,
+    description,
+    source,
+    showFlywheelChart,
+    beraApy,
+    isAutoCompounded,
+    underlyingApy,
+}: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
@@ -81,8 +90,18 @@ const PoolInfo = ({ marketCap, vaultTvl, description, source, showFlywheelChart,
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />
-                <StatInfo title="Underlying APY" value={underlyingApy + "%"} iconUrl={<FaArrowTrendUp color="white" size={25} />} />
-                <StatInfo title={isAutoCompounded ? "BeraTrax auto-compounded APY" : "BeraTrax APY"} value={beraApy + "%"} iconUrl={<GoRocket color="white" size={25} />} />
+                <StatInfo
+                    title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APY"}
+                    value={underlyingApy + "%"}
+                    iconUrl={<FaArrowTrendUp color="white" size={25} />}
+                />
+                {isAutoCompounded && (
+                    <StatInfo
+                        title="BeraTrax auto-compounded APY"
+                        value={beraApy + "%"}
+                        iconUrl={<GoRocket color="white" size={25} />}
+                    />
+                )}
                 {/* <StatInfo title="Volume" subtitle="Past 24h" value={"$16.5M"} iconUrl={volume} /> */}
                 {/* <StatInfo title="Holders" value={"-"} iconUrl={holders} /> */}
                 {/* <StatInfo title="Circulating Supply" value={"1.0B"} iconUrl={circulatingsupply} /> */}

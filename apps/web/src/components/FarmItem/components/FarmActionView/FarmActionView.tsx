@@ -101,7 +101,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                                   2
                                               ).toString()
                                     }
-                                    isAutoCompounded={farm.description?.includes("auto-compounded") || false}
+                                    isAutoCompounded={farm.description?.includes("compounded") || false}
                                 />
                             </div>
                             <div

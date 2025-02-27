@@ -46,13 +46,22 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                     </div>
                     <div className="flex flex-col mt-2 mr-3">
                         <div className="flex items-center gap-2 mb-2 justify-end">
-                            <FarmRowChip text={farm?.platform} color="invert" />
+                            <FarmRowChip
+                                text={[farm.platform, farm.secondary_platform].filter(Boolean).join(" | ")}
+                                color="invert"
+                            />
                             <div className="flex">
                                 <img
                                     alt={farm?.platform_alt}
                                     className="w-4 rounded-full border border-bgDark"
                                     src={`/${farm?.platform_logo}`}
                                 />
+                                {farm.secondary_platform && (
+                                    <img
+                                        className="w-4 rounded-full border border-bgDark"
+                                        src={`/${farm?.secondary_platform_logo}`}
+                                    />
+                                )}
                             </div>
                         </div>
                         <div className="flex">

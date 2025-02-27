@@ -229,13 +229,22 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 {/* Platform */}
                 <div className="flex-col gap-1">
                     <div className="flex items-center gap-1 mb-2 justify-end">
-                        <FarmRowChip text={vault?.platform} color="invert" />
+                        <FarmRowChip
+                            text={[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")}
+                            color="invert"
+                        />
                         <div className="flex">
                             <img
                                 alt={vault?.platform_alt}
                                 className="w-4 rounded-full border border-bgDark"
                                 src={vault?.platform_logo}
                             />
+                            {vault?.secondary_platform && (
+                                <img
+                                    className="w-4 rounded-full border border-bgDark"
+                                    src={vault?.secondary_platform_logo}
+                                />
+                            )}
                         </div>
                     </div>
                     {vaultBalance > 0 && (
@@ -378,4 +387,3 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 };
 
 export default VaultItem;
-

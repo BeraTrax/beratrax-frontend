@@ -137,7 +137,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 
     return (
         <div className="mt-10 relative">
-            {farm.originPlatform === FarmOriginPlatform.Infrared || farm.originPlatform === FarmOriginPlatform.Steer ? (
+            {(farm.originPlatform === FarmOriginPlatform.Infrared || farm.originPlatform === FarmOriginPlatform.Steer) && !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}
                     {renderPositionSection()}

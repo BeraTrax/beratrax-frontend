@@ -264,8 +264,15 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
     // Wrapper function to call handleInput
     const wrapperHandleInput = (value: string) => {
-        // Remove any $ prefix if present
+        // Remove any "$" prefix if present
         value = value.replace(/^\$/, "");
+
+        // Ensure only valid numbers are allowed (with at most one decimal point)
+        if (!/^\d*\.?\d*$/.test(value) || (value.match(/\./g)?.length ?? 0) > 1) {
+            return; // If not a valid number or contains multiple decimal points, ignore input
+        }
+
+        // Create a mock event and call handleInput
         const mockEvent = { target: { value } } as React.ChangeEvent<HTMLInputElement>;
         handleInput(mockEvent);
     };

@@ -48,7 +48,11 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                         TOTAL POINTS FROM <br /> STAKING
                     </p>
                     <p className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
-                        {customCommify(stakingPoints, { minimumFractionDigits: 0, showDollarSign: false })}
+                        {customCommify(stakingPoints, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                            showDollarSign: false,
+                        })}
                     </p>
                     <p
                         className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 

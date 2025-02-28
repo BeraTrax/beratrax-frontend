@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getEarnings, getEarningsForInfrared } from "src/api/farms";
+import { getEarnings, getEarningsForPlatforms } from "src/api/farms";
 import farmFunctions from "src/api/pools";
 import VaultAbi from "src/assets/abis/vault.json";
 import { IS_LEGACY } from "src/config/constants";
@@ -27,6 +27,7 @@ const initialState: StateInterface = {
     vaultEarnings: [],
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
+    isVaultEarningsFirstLoad: false,
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -158,8 +159,8 @@ export const getVaultEarnings = createAsyncThunk("farms/getVaultEarnings", async
         )
             return;
 
-        const iBGTEarnings = await getEarningsForInfrared(currentWallet);
-        return iBGTEarnings;
+        const earnings = await getEarningsForPlatforms(currentWallet);
+        return earnings;
     } catch (error) {
         console.error(error);
         return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch vault earnings");
@@ -210,15 +211,18 @@ const farmsSlice = createSlice({
             state.error = action.payload as string;
         });
         builder.addCase(getVaultEarnings.pending, (state) => {
+            if (!state.vaultEarnings.length) state.isVaultEarningsFirstLoad = true;
             state.isLoadingVaultEarnings = true;
         });
         builder.addCase(getVaultEarnings.fulfilled, (state, action) => {
             state.vaultEarnings = action.payload as VaultEarnings[];
             state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
         });
         builder.addCase(getVaultEarnings.rejected, (state, action) => {
             state.vaultEarnings = [];
             state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
             state.error = action.payload as string;
         });
         builder.addCase(updateEarnings.pending, (state) => {

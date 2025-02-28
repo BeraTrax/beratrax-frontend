@@ -18,6 +18,7 @@
     "@ramp-network/ramp-instant-sdk": "^4.0.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@snapshot-labs/snapshot.js": "^0.12.4",
+    "@tamagui/vite-plugin": "1.121.7",
     "@tanstack/react-query": "^5.51.23",
     "@tanstack/react-query-devtools": "^5.51.23",
     "@tenderly/sdk": "^0.1.14",
@@ -69,6 +70,7 @@
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.13.8",
     "react-tooltip": "^5.3.4",
+    "react-native-web": "^0.19.11",
     "react-uuid": "^2.0.0",
     "reapop": "^4.2.2",
     "recharts": "^2.12.7",
@@ -77,14 +79,13 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.62.1",
     "styled-components": "^5.3.6",
-    "tamagui": "1.125.16",
+    "tamagui": "1.121.7",
     "ua-parser-js": "^2.0.0",
     "uuid": "^9.0.0",
     "viem": "^2.19.4",
     "vite-plugin-svgr": "3.3.0",
     "wagmi": "^2.12.11",
-    "web-vitals": "^2.1.4",
-    "webpack": "^5.75.0"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "vite",

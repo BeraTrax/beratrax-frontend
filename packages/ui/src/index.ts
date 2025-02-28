@@ -1,11 +1,23 @@
-export { config } from "@beratrax/config"
-export * from "@tamagui/toast"
-export * from './components'
 export * from './themes'
-// Export everything from tamagui except Button
+
+export { default as tamaguiConfig } from './tamagui.config'
+
+// Export Tamagui components
 export {
-  Stack,
-  // List specific exports from tamagui, excluding Button
-  styled, Text
-} from "tamagui"
+    Button, createTheme, H1,
+    H2,
+    H3,
+    H4,
+    H5,
+    H6, Image,
+    Label, Paragraph, ScrollView,
+    Stack,
+    Theme,
+    useTheme, XStack,
+    YStack
+} from 'tamagui'
+
+// Re-export some basic example components
+export { Card } from './components/Card'
+export { Demo } from './components/Demo'
 

@@ -1,8 +1,9 @@
 import { styled, YStack } from 'tamagui'
 
-export const Card = styled(YStack, {
+export const Demo = styled(YStack, {
   backgroundColor: '$background',
   borderRadius: '$rounded4',
+  padding: '$4',
   shadowColor: '$shadowColor',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.25,

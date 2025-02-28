@@ -1,0 +1,21 @@
+{
+    "project structure": [
+        "apps/*",
+        "packages/*"
+    ],
+    "project name": "beratrax",
+    "project description": "A DeFi platform that your friends can actually use.",
+    "project version": "0.0.1",
+    "project author": "beratrax-dev",
+    "project license": "MIT",
+    "project homepage": "https://github.com/BeraTrax/beratrax-frontend#readme",
+    "structure": "./project_structure.txt",
+    "project dependencies": [
+        "./package.json",
+        "./apps/website/package.json",
+        "./apps/mobile/package.json",
+        "./packages/core/package.json",
+        "./packages/ui/package.json",
+        "./packages/utils/package.json"
+    ]
+}

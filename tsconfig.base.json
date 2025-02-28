@@ -26,7 +26,10 @@
     "strictNullChecks": true,
     "target": "es2020",
     "types": ["node"],
-    "lib": ["dom", "esnext"]
+    "lib": ["dom", "esnext"],
+    "paths": {
+      "@beratrax/ui": ["packages/ui/src"],
+    }
   },
   "exclude": ["_"],
   "typeAcquisition": {

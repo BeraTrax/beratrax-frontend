@@ -15,8 +15,8 @@
     "build:ui": {
       "cache": true,
       "persistent": true,
-      "inputs": ["packages/ui/package.json", "packages/ui/src/**/*.ts", "packages/ui/src/**/*.tsx"],
-      "outputs": ["packages/ui/dist"]
+      "inputs": ["packages/ui/package.json", "packages/ui/src/tamagui.config.ts"],
+      "outputs": ["packages/ui/dist/**"]
     },
     "build:web": {
       "cache": true,

@@ -9,6 +9,7 @@ export interface StateInterface {
     vaultEarnings: VaultEarnings[];
     isLoadingEarnings: boolean;
     isLoadingVaultEarnings: boolean;
+    isVaultEarningsFirstLoad: boolean;
     isLoading: boolean;
     isFetched: boolean;
     account: string;

@@ -27,6 +27,7 @@ const initialState: StateInterface = {
     vaultEarnings: [],
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
+    isVaultEarningsFirstLoad: false,
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -210,15 +211,18 @@ const farmsSlice = createSlice({
             state.error = action.payload as string;
         });
         builder.addCase(getVaultEarnings.pending, (state) => {
+            if (!state.vaultEarnings.length) state.isVaultEarningsFirstLoad = true;
             state.isLoadingVaultEarnings = true;
         });
         builder.addCase(getVaultEarnings.fulfilled, (state, action) => {
             state.vaultEarnings = action.payload as VaultEarnings[];
             state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
         });
         builder.addCase(getVaultEarnings.rejected, (state, action) => {
             state.vaultEarnings = [];
             state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
             state.error = action.payload as string;
         });
         builder.addCase(updateEarnings.pending, (state) => {

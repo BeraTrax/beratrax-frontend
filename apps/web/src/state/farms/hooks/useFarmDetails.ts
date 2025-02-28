@@ -2,12 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "src/state";
 import useWallet from "../../../hooks/useWallet";
 import useFarms from "./useFarms";
-import {
-    updateFarmDetails,
-    reset,
-    updateEarnings,
-    getVaultEarnings,
-} from "src/state/farms/farmsReducer";
+import { updateFarmDetails, reset, updateEarnings, getVaultEarnings } from "src/state/farms/farmsReducer";
 import useTokens from "../../../state/tokens/useTokens";
 
 const useFarmDetails = () => {
@@ -23,6 +18,7 @@ const useFarmDetails = () => {
         isLoadingEarnings,
         vaultEarnings,
         isLoadingVaultEarnings,
+        isVaultEarningsFirstLoad,
     } = useAppSelector((state) => state.farms);
     const { currentWallet, getPublicClient } = useWallet();
     const dispatch = useAppDispatch();
@@ -67,6 +63,7 @@ const useFarmDetails = () => {
         vaultEarnings,
         isLoadingEarnings,
         isLoadingVaultEarnings,
+        isVaultEarningsFirstLoad,
     };
 };
 

@@ -10,7 +10,7 @@ import { getAddress } from "viem";
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
     const { isConnecting } = useWallet();
     const { balances, isBalancesLoading: isLoading, prices } = useTokens();
-    const { vaultEarnings, isLoadingVaultEarnings } = useFarmDetails();
+    const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
     const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
     const stakedTokenValueFormatted = useMemo(
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
@@ -38,7 +38,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                     YOUR EARNINGS
                 </h3>
                 <div className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
-                    {isLoadingVaultEarnings ? (
+                    {isVaultEarningsFirstLoad ? (
                         <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />
                     ) : (
                         <>

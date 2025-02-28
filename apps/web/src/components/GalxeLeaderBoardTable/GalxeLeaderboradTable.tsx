@@ -296,9 +296,10 @@ const StatsTableRow = ({ isCurrentUser, ...props }: { isCurrentUser?: boolean } 
                                 <p className="text-xs uppercase text-gray-400">Staking Points</p>
                                 <p className="text-lg font-medium">
                                     {customCommify(earnedTraxPointsGalxe, {
-                                        minimumFractionDigits: 5,
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 5,
                                         showDollarSign: false,
-                                    }).slice(0, -2)}
+                                    })}
                                 </p>
                             </div>
 

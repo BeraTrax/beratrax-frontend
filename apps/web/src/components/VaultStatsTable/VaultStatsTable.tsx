@@ -17,6 +17,7 @@ export const VaultStatsTable = () => {
                     <thead>
                         <tr className="text-textBlack text-left tracking-wide uppercase bg-bgPrimary border-b border-borderDark">
                             <th className="p-4 w-[200px]">TITLE</th>
+                            <th className="p-4">PLATFORM</th>
                             <th className="p-4">DEPOSITED TVL</th>
                             <th className="p-4">AVERAGE DEPOSITS</th>
                             <th className="p-4">NO OF DEPOSITS</th>
@@ -35,6 +36,8 @@ export const VaultStatsTable = () => {
                                         averageDeposit,
                                         numberOfDeposits,
                                         isDeprecated,
+                                        originPlatform,
+                                        secondaryPlatform,
                                     }) => (
                                         <tr
                                             key={_id}
@@ -66,22 +69,28 @@ export const VaultStatsTable = () => {
                                                 </div>
                                             </td>
                                             <td className="p-4 ">
+                                                {[originPlatform, secondaryPlatform].filter(Boolean).join(" | ")}
+                                            </td>
+                                            <td className="p-4 ">
                                                 {customCommify(depositedTvl, {
-                                                    minimumFractionDigits: 1,
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 2,
                                                     showDollarSign: true,
-                                                }).slice(0, -2)}
+                                                })}
                                             </td>
                                             <td className="p-4 ">
                                                 {customCommify(averageDeposit, {
-                                                    minimumFractionDigits: 1,
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 2,
                                                     showDollarSign: true,
-                                                }).slice(0, -2)}
+                                                })}
                                             </td>
                                             <td className="p-4 ">
                                                 {customCommify(numberOfDeposits, {
-                                                    minimumFractionDigits: 1,
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 0,
                                                     showDollarSign: false,
-                                                }).slice(0, -2)}
+                                                })}
                                             </td>
                                         </tr>
                                     )

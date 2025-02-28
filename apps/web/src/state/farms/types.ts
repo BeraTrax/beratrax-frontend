@@ -9,6 +9,7 @@ export interface StateInterface {
     vaultEarnings: VaultEarnings[];
     isLoadingEarnings: boolean;
     isLoadingVaultEarnings: boolean;
+    isVaultEarningsFirstLoad: boolean;
     isLoading: boolean;
     isFetched: boolean;
     account: string;
@@ -42,7 +43,10 @@ export interface Earnings {
 }
 export interface VaultEarnings {
     tokenId: string;
-    earnings: string;
+    earnings0: string;
+    token0: string;
+    earnings1?: string;
+    token1?: string;
 }
 
 export interface FetchEarningsAction {

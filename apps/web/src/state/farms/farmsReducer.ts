@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getEarnings, getEarningsForInfrared } from "src/api/farms";
+import { getEarnings, getEarningsForPlatforms } from "src/api/farms";
 import farmFunctions from "src/api/pools";
 import VaultAbi from "src/assets/abis/vault.json";
 import { IS_LEGACY } from "src/config/constants";
@@ -158,8 +158,8 @@ export const getVaultEarnings = createAsyncThunk("farms/getVaultEarnings", async
         )
             return;
 
-        const iBGTEarnings = await getEarningsForInfrared(currentWallet);
-        return iBGTEarnings;
+        const earnings = await getEarningsForPlatforms(currentWallet);
+        return earnings;
     } catch (error) {
         console.error(error);
         return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch vault earnings");

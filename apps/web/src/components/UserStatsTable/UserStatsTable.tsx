@@ -213,9 +213,10 @@ export const UserStatsTable: FC = () => {
                                         </td>
                                         <td className="p-4">
                                             {customCommify(tvl, {
-                                                minimumFractionDigits: 1,
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 2,
                                                 showDollarSign: true,
-                                            }).slice(0, -2)}
+                                            })}
                                         </td>
                                         <td className="p-4">{Number(earnedTrax).toLocaleString("en-us")}</td>
                                         <td className="p-4">{Number(earnedTraxByReferral).toLocaleString("en-us")}</td>

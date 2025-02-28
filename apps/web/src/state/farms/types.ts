@@ -42,7 +42,10 @@ export interface Earnings {
 }
 export interface VaultEarnings {
     tokenId: string;
-    earnings: string;
+    earnings0: string;
+    token0: string;
+    earnings1?: string;
+    token1?: string;
 }
 
 export interface FetchEarningsAction {

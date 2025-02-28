@@ -149,9 +149,10 @@ export const ReferralDashboardTable: FC<ReferralDashboardTableProps> = ({ referr
                                 <td>
                                     <div className={`${styles.tableData}${" " + styles.specificCell}`}>
                                         {customCommify(referral.tvlFromReferrals, {
-                                            minimumFractionDigits: 1,
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 2,
                                             showDollarSign: true,
-                                        }).slice(0, -2)}
+                                        })}
                                     </div>
                                 </td>
                                 <td>

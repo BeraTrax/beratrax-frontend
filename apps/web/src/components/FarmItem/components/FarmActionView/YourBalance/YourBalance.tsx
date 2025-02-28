@@ -7,6 +7,46 @@ import { formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { getAddress } from "viem";
 
+// Reusable component for token earnings
+const TokenEarning = ({
+    earnings,
+    token,
+    chainId,
+    prices,
+}: {
+    earnings: string | number | undefined;
+    token: string | undefined;
+    chainId: number;
+    prices: Record<number, Record<string, number>>;
+}) => {
+    if (!earnings || !token) return null;
+
+    const tokenAddress = token ? getAddress(token) : "";
+    const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
+    const earningsValue = Number(toEth(BigInt(earnings.toString())));
+    const earningsValueUsd = earningsValue * (prices[chainId][tokenAddress] || 0);
+
+    return (
+        <div className="flex-1">
+            <div className="flex items-center gap-x-3">
+                <div className="flex flex-col">
+                    <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+                        ${earningsValueUsd.toFixed(2)}
+                    </h1>
+                </div>
+                <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <span className="text-green-500 text-md">↑</span>
+                </div>
+            </div>
+            <div className="flex items-center gap-x-2 mt-2">
+                <p className="text-green-400/80 text-[16px] font-light">
+                    {earningsValue.toFixed(5)} {tokenName}
+                </p>
+            </div>
+        </div>
+    );
+};
+
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
     const { isConnecting } = useWallet();
     const { balances, isBalancesLoading: isLoading, prices } = useTokens();
@@ -29,71 +69,33 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         );
     }, [vaultEarnings, farm.id]);
 
-    // Render earnings section if farm is from Infrared platform
     const renderEarningsSection = () => {
-
         return (
-            <div className="w-full md:w-1/2">
+            <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">
                     YOUR EARNINGS
                 </h3>
-                <div className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
+                <div className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg flex-1 flex flex-col justify-center">
                     {isVaultEarningsFirstLoad ? (
                         <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />
                     ) : (
                         <>
-                            {farmEarnings?.earnings0 && farmEarnings?.token0 && (
-                                <div className="pb-2">
-                                    <div className="flex items-center gap-x-3">
-                                        <div className="flex flex-col">
-                                            <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                                                $
-                                                {(
-                                                    Number(toEth(BigInt(farmEarnings.earnings0))) *
-                                                    prices[farm.chainId][getAddress(farmEarnings.token0)]
-                                                ).toFixed(2)}
-                                            </h1>
-                                        </div>
-                                        <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
-                                            <span className="text-green-500 text-md">↑</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-x-2 mt-2">
-                                        <p className="text-green-400/80 text-[16px] font-light">
-                                            {Number(toEth(BigInt(farmEarnings.earnings0))).toFixed(5)}{" "}
-                                            {farmEarnings.token0
-                                                ? tokenNamesAndImages[getAddress(farmEarnings.token0)].name
-                                                : ""}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                            {farmEarnings?.earnings1 && farmEarnings?.token1 && (
-                                <div>
-                                    <div className="flex items-center gap-x-3">
-                                        <div className="flex flex-col">
-                                            <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                                                $
-                                                {(
-                                                    Number(toEth(BigInt(farmEarnings.earnings1))) *
-                                                    prices[farm.chainId][getAddress(farmEarnings.token1)]
-                                                ).toFixed(2)}
-                                            </h1>
-                                        </div>
-                                        <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
-                                            <span className="text-green-500 text-md">↑</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-x-2 mt-2">
-                                        <p className="text-green-400/80 text-[16px] font-light">
-                                            {Number(toEth(BigInt(farmEarnings.earnings1 || 0))).toFixed(5)}{" "}
-                                            {farmEarnings.token1
-                                                ? tokenNamesAndImages[getAddress(farmEarnings.token1)].name
-                                                : ""}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
+                            <div className="flex flex-row gap-4">
+                                <TokenEarning
+                                    earnings={farmEarnings.earnings0}
+                                    token={farmEarnings.token0}
+                                    chainId={farm.chainId}
+                                    prices={prices}
+                                />
+                                {farmEarnings?.earnings1 && (
+                                    <TokenEarning
+                                        earnings={farmEarnings.earnings1}
+                                        token={farmEarnings.token1}
+                                        chainId={farm.chainId}
+                                        prices={prices}
+                                    />
+                                )}
+                            </div>
                         </>
                     )}
                 </div>
@@ -101,14 +103,13 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         );
     };
 
-    // Render position section
     const renderPositionSection = () => {
         return (
-            <div className="w-full md:w-1/2">
+            <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">
                     YOUR POSITION
                 </h3>
-                <div className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
+                <div className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg flex-1 flex flex-col justify-center">
                     {isLoading || isConnecting ? (
                         <>
                             <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />
@@ -137,7 +138,9 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 
     return (
         <div className="mt-10 relative">
-            {(farm.originPlatform === FarmOriginPlatform.Infrared || farm.originPlatform === FarmOriginPlatform.Steer) && !farm.isDeprecated ? (
+            {(farm.originPlatform === FarmOriginPlatform.Infrared ||
+                farm.originPlatform === FarmOriginPlatform.Steer) &&
+            !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}
                     {renderPositionSection()}
@@ -150,3 +153,4 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 };
 
 export default YourBalance;
+

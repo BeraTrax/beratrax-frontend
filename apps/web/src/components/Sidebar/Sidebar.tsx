@@ -31,7 +31,7 @@ function Sidebar() {
             target: undefined,
         },
         {
-            title: "BTX Points",
+            title: "Leaderboard",
             icon: <ImStatsDots size={15} />,
             path: RoutesPaths.Leaderboard,
             target: undefined,

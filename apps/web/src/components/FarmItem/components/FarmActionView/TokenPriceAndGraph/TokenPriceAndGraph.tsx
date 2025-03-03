@@ -80,6 +80,14 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     src={farm?.logo2}
                                 />
                             ) : null}
+
+                            {farm?.logo3 ? (
+                                <img
+                                    alt={farm?.alt3}
+                                    className={`w-20 h-20 lg:h-20 lg:w-20 ml-[-10px] max-w-fit rounded-full`}
+                                    src={farm?.logo3}
+                                />
+                            ) : null}
                         </div>
                     </div>
                 </div>

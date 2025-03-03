@@ -3,7 +3,7 @@ import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import useTokens from "src/state/tokens/useTokens";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useWallet from "src/hooks/useWallet";
-import { formatCurrency, toEth } from "src/utils/common";
+import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { getAddress } from "viem";
 
@@ -31,7 +31,7 @@ const TokenEarning = ({
             <div className="flex items-center gap-x-3">
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                        ${earningsValueUsd.toFixed(2)}
+                        ${customCommify(earningsValueUsd.toFixed(2))}
                     </h1>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -40,7 +40,7 @@ const TokenEarning = ({
             </div>
             <div className="flex items-center gap-x-2 mt-2">
                 <p className="text-green-400/80 text-[16px] font-light">
-                    {earningsValue.toFixed(5)} {tokenName}
+                    {customCommify(earningsValue.toFixed(5))} {tokenName}
                 </p>
             </div>
         </div>
@@ -153,4 +153,3 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 };
 
 export default YourBalance;
-

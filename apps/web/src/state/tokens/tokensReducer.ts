@@ -6,7 +6,7 @@ import tokens from "src/config/constants/tokens";
 import { RootState } from "src/state";
 import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { formatCurrency } from "src/utils/common";
-import { Address, erc20Abi, formatUnits, getAddress, getContract, zeroAddress } from "viem";
+import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress } from "viem";
 import {
     Balances,
     Decimals,
@@ -323,6 +323,28 @@ export const fetchTotalSupplies = createAsyncThunk(
                         });
                 })
             );
+
+            // Todo: fix this
+            const actualSupply = await getContract({
+                address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
+                abi: parseAbi(["function getActualSupply() view returns (uint256)"]),
+                client: {
+                    public: getPublicClient(Number(80094)),
+                },
+            }).read.getActualSupply();
+
+            totalSupplies[80094]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"] = {
+                supplyWei: actualSupply.toString(),
+                supply: Number(formatUnits(actualSupply, 18)),
+                supplyFormatted: formatCurrency(formatUnits(actualSupply, 18)),
+                supplyUsd:
+                    Number(formatUnits(actualSupply, 18)) *
+                    prices[Number(80094)]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"],
+                supplyUsdFormatted: formatCurrency(
+                    Number(formatUnits(actualSupply, 18)) *
+                        prices[Number(80094)]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"]
+                ),
+            };
 
             return totalSupplies;
         } catch (error) {

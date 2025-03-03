@@ -30,9 +30,12 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
             [farm.chainId]: { [farm.vault_addr]: vaultPrice },
         },
         totalSupplies,
+        isLoading: isTotalSuppliesLoading,
     } = useTokens();
-    const [marketCap, setMarketCap] = useState<string>("0");
-    const [vaultTvl, setVaultTvl] = useState<string>("0");
+    const [marketCap, setMarketCap] = useState<string | null>(null);
+    const [vaultTvl, setVaultTvl] = useState<string | null>(null);
+    const isMarketCapAndVaultLoading =
+        isTotalSuppliesLoading || marketCap === null || vaultTvl === null || marketCap === "0";
 
     const navigate = useNavigate();
     const { withdrawable, isLoadingFarm } = useDetailInput(farm);
@@ -102,6 +105,8 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                               ).toString()
                                     }
                                     isAutoCompounded={farm.description?.includes("compounded") || false}
+                                    marketCapLoading={isMarketCapAndVaultLoading}
+                                    vaultTvlLoading={isMarketCapAndVaultLoading}
                                 />
                             </div>
                             <div

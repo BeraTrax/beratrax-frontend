@@ -11,11 +11,13 @@ const StatInfo = ({
     title,
     subtitle,
     value,
+    isStatLoading,
 }: {
     iconUrl: string | React.ReactNode;
     title: string;
-    subtitle?: string;
     value: number | string;
+    subtitle?: string;
+    isStatLoading?: boolean;
 }) => {
     return (
         <div className="flex items-center gap-4 bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
@@ -28,7 +30,11 @@ const StatInfo = ({
                 <h2 className="text-textWhite text-lg font-medium">{title}</h2>
                 {subtitle && <p className="text-textSecondary text-[16px] font-light">{subtitle}</p>}
             </div>
-            <h2 className="text-textWhite text-lg font-medium">{value}</h2>
+            {isStatLoading ? (
+                <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />
+            ) : (
+                <h2 className="text-textWhite text-lg font-medium">{value}</h2>
+            )}
         </div>
     );
 };
@@ -41,6 +47,8 @@ interface IProps {
     beraApy: string;
     isAutoCompounded: boolean;
     underlyingApy: string;
+    marketCapLoading?: boolean;
+    vaultTvlLoading?: boolean;
 }
 const PoolInfo = ({
     marketCap,
@@ -51,6 +59,8 @@ const PoolInfo = ({
     beraApy,
     isAutoCompounded,
     underlyingApy,
+    marketCapLoading,
+    vaultTvlLoading,
 }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
@@ -88,8 +98,8 @@ const PoolInfo = ({
                 </>
             )}
             <div className="mt-4 flex flex-col gap-2">
-                <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} />
-                <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} />
+                <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} isStatLoading={marketCapLoading} />
+                <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} isStatLoading={vaultTvlLoading} />
                 <StatInfo
                     title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APY"}
                     value={underlyingApy + "%"}

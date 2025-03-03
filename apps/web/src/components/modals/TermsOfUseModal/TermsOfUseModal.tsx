@@ -15,6 +15,7 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
     const { currentWallet, logout } = useWallet();
     const [agree, setAgree] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPdfError, setIsPdfError] = useState(false);
 
     const handleAgree = async () => {
         if (!currentWallet) return;
@@ -32,12 +33,15 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
             wrapperClassName="lg:w-full"
         >
             <div className="w-full h-[60vh] mb-4">
-                <object
-                    data="/termsOfUse.pdf"
-                    type="application/pdf"
-                    className="w-full h-full rounded-lg"
-                    title="Terms of Use"
-                >
+                {isPdfError ? (
+                    <object
+                        data="/termsOfUse.pdf"
+                        type="application/pdf"
+                        className="w-full h-full rounded-lg"
+                        title="Terms of Use"
+                        onError={() => setIsPdfError(true)}
+                    />
+                ) : (
                     <div className="overflow-y-auto h-[60vh] pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
                         <p>
                             <p className="font-bold py-2 text-2xl">TERMS OF USE</p>
@@ -176,11 +180,12 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
                             entity, including BeraTrax itself, from accessing or exerting control over user assets. Such
                             contracts may incorporate mechanisms for the accrual of service fees to BeraTrax, with the
                             specifics of these fees comprehensively detailed within our documentation and terms of
-                            service. It is paramount to Note: Although BeraTrax does not have a deposit/withdraw fee,  even smart contracts deployed under the auspices of
-                            BeraTrax become part of the broader, open-source, and permissionless ecosystem of blockchain
-                            contracts, accessible for public use. Once deployed, BeraTrax relinquishes any form of
-                            control or ownership over these contracts, aligning with the decentralized and
-                            user-empowered ethos of blockchain technology.
+                            service. It is paramount to Note: Although BeraTrax does not have a deposit/withdraw fee,
+                            even smart contracts deployed under the auspices of BeraTrax become part of the broader,
+                            open-source, and permissionless ecosystem of blockchain contracts, accessible for public
+                            use. Once deployed, BeraTrax relinquishes any form of control or ownership over these
+                            contracts, aligning with the decentralized and user-empowered ethos of blockchain
+                            technology.
                             <br />
                             <br />
                             <p className="font-bold pt-2">USER FEES</p>
@@ -702,7 +707,7 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
                             <p className="font-bold pt-2">badmin@BeraTrax.com</p>
                         </p>
                     </div>
-                </object>
+                )}
             </div>
             <div className={`${styles.checkbox}`}>
                 <input

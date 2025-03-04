@@ -7,7 +7,7 @@ import useApp from "src/hooks/useApp";
 import { useLp } from "src/hooks/useLp";
 import { PoolDef } from "src/config/constants/pools_json";
 
-type GraphFilterType = "hour" | "day" | "week" | "month" | "year" | "all";
+type GraphFilterType = "hour" | "day" | "week" | "month";
 
 const GraphFilter = ({ text, onClick, isSelected }: { text: string; onClick?: () => void; isSelected?: boolean }) => {
     return (
@@ -22,6 +22,26 @@ const GraphFilter = ({ text, onClick, isSelected }: { text: string; onClick?: ()
     );
 };
 
+const formatDate = (timestamp: number, filter: GraphFilterType): string => {
+    const date = new Date(timestamp * 1000);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+
+    switch (filter) {
+        case "hour":
+            return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+        case "day":
+            return `${hours.toString().padStart(2, "0")}:00`;
+        case "week":
+        case "month":
+            return `${day}/${month}`;
+        default:
+            return `${day}/${month}/${date.getFullYear()}`;
+    }
+};
+
 const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
     const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
@@ -30,157 +50,122 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
         { text: "1D", type: "day" },
         { text: "1W", type: "week" },
         { text: "1M", type: "month" },
-        { text: "1Y", type: "year" },
-        { text: "ALL", type: "all" },
     ];
 
     const downsampleData = (data: LP_Prices[], filter: GraphFilterType) => {
-        if (!data || data.length === 0) return;
+        if (!data || data.length === 0) return [];
 
-        const filteredData: { date: string; lp: string }[] = [];
-        const tempMap: { [key: string]: { date: string; lp: number; count: number } } = {};
+        const filteredData: { date: string; lp: string; timestamp: number }[] = [];
 
-        // Get current timestamp to filter data based on selected interval
+        // Filter and sort entries by timestamp
+        const filteredEntries = data
+            .filter((entry) => entry.timestamp && entry.lp && entry.lp > 0)
+            .sort((a, b) => a.timestamp - b.timestamp);
+
+        if (filteredEntries.length === 0) return [];
+
         const now = Date.now() / 1000;
+        const firstValidTimestamp = filteredEntries[0].timestamp;
         let filterTimestamp = now;
 
         switch (filter) {
             case "hour":
-                filterTimestamp = now - 60 * 60; // Last hour
+                filterTimestamp = now - 60 * 60;
                 break;
             case "day":
-                filterTimestamp = now - 24 * 60 * 60; // Last 24 hours
+                filterTimestamp = now - 24 * 60 * 60;
                 break;
             case "week":
-                filterTimestamp = now - 7 * 24 * 60 * 60; // Last 7 days
+                filterTimestamp = now - 7 * 24 * 60 * 60;
                 break;
             case "month":
-                filterTimestamp = now - 30 * 24 * 60 * 60; // Last 30 days
-                break;
-            case "year":
-                filterTimestamp = now - 365 * 24 * 60 * 60; // Last year
-                break;
-            case "all":
-                filterTimestamp = 0; // All data
+                filterTimestamp = now - 30 * 24 * 60 * 60;
                 break;
         }
 
-        const filteredEntries = data.filter((entry) => entry.timestamp >= filterTimestamp);
+        // Use the later of filterTimestamp or firstValidTimestamp
+        filterTimestamp = Math.max(filterTimestamp, firstValidTimestamp);
 
-        filteredEntries.forEach((entry) => {
-            const date = new Date(entry.timestamp * 1000);
-            if (!entry.lp) {
-                entry.lp = 0;
+        // Generate time slots based on the filter type
+        const timeSlots: number[] = [];
+        const interval =
+            filter === "hour"
+                ? 5 * 60 // 5 minutes for hour view
+                : filter === "day"
+                ? 60 * 60 // 1 hour for day view
+                : filter === "week"
+                ? 24 * 60 * 60 // 1 day for week view
+                : 24 * 60 * 60; // 1 day for month view
+
+        for (let t = filterTimestamp; t <= now; t += interval) {
+            timeSlots.push(t);
+        }
+
+        // Process entries into appropriate time slots
+        timeSlots.forEach((slotTime) => {
+            const slotEntries = filteredEntries.filter(
+                (entry) => entry.timestamp >= slotTime && entry.timestamp < slotTime + interval
+            );
+
+            if (slotEntries.length > 0) {
+                const key = formatDate(slotTime, filter);
+                const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
+                const avgLp = totalLp / slotEntries.length;
+
+                if (avgLp > 0) {
+                    filteredData.push({
+                        date: key,
+                        lp: avgLp.toFixed(3),
+                        timestamp: slotTime,
+                    });
+                }
             }
-
-            let key: string;
-
-            // Format the key based on the selected filter
-            switch (filter) {
-                case "hour":
-                    key = `${date.getHours()}:${date.getMinutes()}`;
-                    break;
-                case "day":
-                    key = `${date.getHours()}:00`;
-                    break;
-                case "week":
-                    key = `${date.getDate()}/${date.getMonth() + 1}`;
-                    break;
-                case "month":
-                    key = `${date.getDate()}/${date.getMonth() + 1}`;
-                    break;
-                case "year":
-                case "all":
-                    key = `${date.getMonth() + 1}/${date.getFullYear()}`;
-                    break;
-                default:
-                    key = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-            }
-
-            if (!tempMap[key]) {
-                tempMap[key] = { date: key, lp: entry.lp, count: 0 };
-            }
-
-            tempMap[key].lp += entry.lp;
-            tempMap[key].count++;
         });
-
-        for (const key in tempMap) {
-            const averageLp = tempMap[key].lp / tempMap[key].count;
-            filteredData.push({ date: key, lp: averageLp.toFixed(3) });
-        }
 
         return filteredData;
     };
 
     const { lp, isLpPriceLoading } = useLp(farm.id);
-    const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ];
     const newData = useMemo(() => downsampleData(lp || [], graphFilter), [lp, graphFilter]);
 
     return (
         <div className="z-10 relative">
-            {/* <h1
-                className={`${styles.apy_light} ${lightMode && styles.apy_dark}`}
-                style={{ fontSize: "40px", fontWeight: "bold" }}
-            >
-                LP Price
-            </h1>
-            <div className={styles.specificApy}>
-                <p className={`${styles.apy_light} ${lightMode && styles.apy_dark}`}>
-                    <b>Average Price:</b>
-                </p>
+            <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
                 {isLpPriceLoading ? (
-                    <Skeleton h={20} w={20} />
-                ) : (
-                    <p className={`${styles.apy_light} ${lightMode && styles.apy_dark}`}>{averageLp.toFixed(2)}</p>
-                )}
-            </div> */}
-            <div style={{ marginTop: "10px", width: "100%", height: "200px" }}>
-                {isLpPriceLoading ? (
-                    <Skeleton h={200} w={"100%"} />
+                    <Skeleton h={300} w={"100%"} />
                 ) : (
                     <>
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart width={1200} data={newData} margin={{ top: 100, right: 0, left: 0, bottom: 0 }}>
+                            <AreaChart width={1200} data={newData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
                                 <defs>
                                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#90BB62" stopOpacity={0.8} />
+                                        <stop offset="5%" stopColor="#90BB62" stopOpacity={0.2} />
                                         <stop offset="95%" stopColor="#90BB62" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
+                                <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
+                                <YAxis tick={false} axisLine={false} width={0} />
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}
-                                    formatter={(value: any) => [`${value} LP`, "Price"]}
+                                    formatter={(value: any) => [`$${value}`, "Price"]}
+                                    labelFormatter={(label) => label}
                                 />
-                                {/* <CartesianGrid stroke="#eee" strokeDasharray="5 5" /> */}
-                                <Line
-                                    type="linear"
+                                <Area
+                                    type="monotone"
                                     dataKey="lp"
                                     stroke="#90BB62"
-                                    dot={false}
-                                    fillOpacity={1}
+                                    strokeWidth={2}
                                     fill="url(#colorUv)"
+                                    fillOpacity={1}
+                                    connectNulls
                                 />
-                            </LineChart>
+                            </AreaChart>
                         </ResponsiveContainer>
                     </>
                 )}
             </div>
-            <div className="flex justify-around sm:justify-center sm:gap-4 mt-2">
+            <div className="flex justify-around sm:justify-center sm:gap-4">
                 {graphFiltersList.map((filter, index) => (
                     <GraphFilter
                         key={index}
@@ -194,3 +179,4 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
     );
 };
 export default FarmLpGraph;
+

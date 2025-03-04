@@ -201,18 +201,58 @@ export const customCommify = (
     amount: number | string,
     {
         minimumFractionDigits,
+        maximumFractionDigits,
         showDollarSign,
-    }: { minimumFractionDigits?: number; showDollarSign?: boolean } | undefined = {}
+    }: { minimumFractionDigits?: number; maximumFractionDigits?: number; showDollarSign?: boolean } | undefined = {}
 ) => {
-    if (typeof amount === "string") amount = parseFloat(amount);
-    amount = amount
-        .toLocaleString("en-US", {
-            style: showDollarSign ? "currency" : undefined,
+    // Handle invalid inputs
+    if (amount === null || amount === undefined || isNaN(Number(amount))) {
+        return showDollarSign ? "$0.00" : "0.00";
+    }
+
+    // Convert string to number if needed
+    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+
+    // Handle edge cases
+    if (!isFinite(numAmount)) {
+        return showDollarSign ? "$0.00" : "0.00";
+    }
+
+    // Set default values and ensure they're within valid ranges
+    // Valid range for fraction digits is 0-20
+    let minFractionDigits = minimumFractionDigits !== undefined ? minimumFractionDigits : 2;
+    let maxFractionDigits = maximumFractionDigits !== undefined ? maximumFractionDigits : 2;
+    
+    // Clamp values to valid ranges
+    minFractionDigits = Math.max(0, Math.min(20, minFractionDigits));
+    maxFractionDigits = Math.max(0, Math.min(20, maxFractionDigits));
+    
+    // Ensure min doesn't exceed max
+    if (minFractionDigits > maxFractionDigits) {
+        minFractionDigits = maxFractionDigits;
+    }
+
+    try {
+        // Format the number
+        let formattedAmount = numAmount.toLocaleString("en-US", {
+            style: showDollarSign ? "currency" : "decimal",
             currency: showDollarSign ? "USD" : undefined,
-            minimumFractionDigits: (minimumFractionDigits ?? 2) + 1,
-        })
-        .slice(0, minimumFractionDigits === 0 ? -2 : -1);
-    return amount;
+            minimumFractionDigits: minFractionDigits,
+            maximumFractionDigits: maxFractionDigits,
+        });
+
+        // Remove the dollar sign if it was added but not requested
+        if (!showDollarSign && formattedAmount.startsWith("$")) {
+            formattedAmount = formattedAmount.substring(1);
+        }
+
+        return formattedAmount;
+    } catch (error) {
+        console.error("Error formatting number:", error);
+        // Fallback formatting in case of error
+        const fallbackAmount = showDollarSign ? `$${numAmount.toFixed(2)}` : numAmount.toFixed(2);
+        return fallbackAmount;
+    }
 };
 
 async function* checkForPaymasterApprovalGenerator(client: IClients) {

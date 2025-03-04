@@ -4,9 +4,9 @@ import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
 import { Common_Chains_State, pools_chain_ids } from "src/config/constants/pools_json";
 import tokens from "src/config/constants/tokens";
 import { RootState } from "src/state";
-import { CHAIN_ID } from "src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { formatCurrency } from "src/utils/common";
-import { Address, erc20Abi, formatUnits, getAddress, getContract, zeroAddress } from "viem";
+import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress } from "viem";
 import {
     Balances,
     Decimals,
@@ -275,13 +275,13 @@ export const fetchTotalSupplies = createAsyncThunk(
             tokens.forEach((token) => {
                 addresses[token.chainId]?.add(getAddress(token.address));
             });
-            let balances: TotalSupplies = {};
+            let totalSupplies: TotalSupplies = {};
             await Promise.all(
                 Object.entries(addresses).map(async ([chainId, set]) => {
-                    balances[Number(chainId)] = {};
-                    const arr = Array.from(set);
-                    const res = await Promise.all(
-                        arr.map((item) =>
+                    totalSupplies[Number(chainId)] = {};
+                    const tokens = Array.from(set);
+                    const rawTotalSupplies = await Promise.all(
+                        tokens.map((item) =>
                             getContract({
                                 address: item,
                                 abi: erc20Abi,
@@ -292,21 +292,47 @@ export const fetchTotalSupplies = createAsyncThunk(
                         )
                     );
 
-                    res.forEach((item, i) => {
-                        balances[Number(chainId)][arr[i]] = {
+                    rawTotalSupplies.forEach((item, i) => {
+                        totalSupplies[Number(chainId)][tokens[i]] = {
                             supplyWei: item.toString(),
                             supply: Number(formatUnits(item, 18)),
                             supplyFormatted: formatCurrency(formatUnits(item, 18)),
-                            supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][arr[i]],
+                            supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]],
                             supplyUsdFormatted: formatCurrency(
-                                Number(formatUnits(item, 18)) * prices[Number(chainId)][arr[i]]
+                                Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]]
                             ),
                         };
                     });
+
+                    const stablePools = farms.filter((farm) => farm.isStablePool && farm.chainId === Number(chainId));
+                    await Promise.all(
+                        stablePools.map(async (pool) => {
+                            const actualTotalSupply = await getContract({
+                                address: pool.lp_address,
+                                abi: parseAbi(["function getActualSupply() view returns (uint256)"]),
+                                client: {
+                                    public: getPublicClient(Number(chainId)),
+                                },
+                            }).read.getActualSupply();
+
+                            totalSupplies[Number(chainId)][pool.lp_address] = {
+                                supplyWei: actualTotalSupply.toString(),
+                                supply: Number(formatUnits(actualTotalSupply, 18)),
+                                supplyFormatted: formatCurrency(formatUnits(actualTotalSupply, 18)),
+                                supplyUsd:
+                                    Number(formatUnits(actualTotalSupply, 18)) *
+                                    prices[Number(chainId)][pool.lp_address],
+                                supplyUsdFormatted: formatCurrency(
+                                    Number(formatUnits(actualTotalSupply, 18)) *
+                                        prices[Number(chainId)][pool.lp_address]
+                                ),
+                            };
+                        })
+                    );
                 })
             );
 
-            return balances;
+            return totalSupplies;
         } catch (error) {
             console.error("Error in fetchTotalSupplies", error);
             return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch total supplies");

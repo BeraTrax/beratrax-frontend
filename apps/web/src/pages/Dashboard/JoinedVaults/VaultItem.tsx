@@ -179,7 +179,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     return (
         <div
             onClick={() => {
-                if (vault.isDeprecated) return;
+                if (vault.isDeprecated && vault.isUpgradable) return;
                 navigate(`${RoutesPaths.Farms}/${vault.vault_addr}`);
             }}
             className={`
@@ -198,7 +198,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 }),
             }}
         >
-            {vault.isDeprecated && <VaultMigrator vault={vault} />}
+            {vault.isDeprecated && vault.isUpgradable && <VaultMigrator vault={vault} />}
             <div className="flex justify-between align-top gap-2">
                 {/* Main Heading */}
                 <div className="flex flex-col gap-2 font-league-spartan text-lg">
@@ -209,6 +209,10 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 
                         {vault.alt2 ? (
                             <img className="w-9 h-9 rounded-full -ml-3" alt={vault.alt2} src={vault.logo2} />
+                        ) : null}
+
+                        {vault.alt3 ? (
+                            <img className="w-9 h-9 rounded-full -ml-3" alt={vault.alt3} src={vault.logo3} />
                         ) : null}
                     </div>
                     <div className="flex items-center gap-2">
@@ -229,13 +233,22 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 {/* Platform */}
                 <div className="flex-col gap-1">
                     <div className="flex items-center gap-1 mb-2 justify-end">
-                        <FarmRowChip text={vault?.platform} color="invert" />
+                        <FarmRowChip
+                            text={[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")}
+                            color="invert"
+                        />
                         <div className="flex">
                             <img
                                 alt={vault?.platform_alt}
                                 className="w-4 rounded-full border border-bgDark"
                                 src={vault?.platform_logo}
                             />
+                            {vault?.secondary_platform && (
+                                <img
+                                    className="w-4 rounded-full border border-bgDark"
+                                    src={vault?.secondary_platform_logo}
+                                />
+                            )}
                         </div>
                     </div>
                     {vaultBalance > 0 && (
@@ -378,4 +391,3 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 };
 
 export default VaultItem;
-

@@ -64,11 +64,11 @@ export const WalletAndStakingPoint: React.FC = () => {
     }, [unsortedVaults]);
     // const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated), [vaults]);
 
-    const userEarnedAmountOnVaults = vaults.reduce((acc, vault) => {
-        return acc + vault.userVaultBalance * vault.priceOfSingleToken;
-    }, 0);
-    // const { userVaultBalance, priceOfSingleToken, apys } = vaults[0]
-    // userVaultBalance * priceOfSingleToken
+    const userEarnedAmountOnVaults = vaults
+        .filter((vault) => !vault.isUpcoming)
+        .reduce((acc, vault) => {
+            return acc + vault.userVaultBalance * vault.priceOfSingleToken;
+        }, 0);
 
     const dispatch = useAppDispatch();
 

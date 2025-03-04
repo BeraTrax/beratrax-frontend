@@ -79,6 +79,8 @@ export const useStats = (forGalxe?: boolean) => {
             vaultStatsTemp?.map((vault) => ({
                 ...vault,
                 name: farms.find((farm) => farm.vault_addr === vault.address)?.name,
+                originPlatform: farms.find((farm) => farm.vault_addr === vault.address)?.originPlatform,
+                secondaryPlatform: farms.find((farm) => farm.vault_addr === vault.address)?.secondary_platform,
                 isDeprecated: farms.find((farm) => farm.vault_addr === vault.address)?.isDeprecated,
             })),
         [vaultStatsTemp, farms]

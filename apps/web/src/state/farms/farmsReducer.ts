@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getEarnings } from "src/api/farms";
+import { getEarnings, getEarningsForPlatforms } from "src/api/farms";
 import farmFunctions from "src/api/pools";
 import VaultAbi from "src/assets/abis/vault.json";
 import { IS_LEGACY } from "src/config/constants";
@@ -14,7 +14,9 @@ import {
     FetchEarningsAction,
     FetchFarmDetailsAction,
     StateInterface,
+    VaultEarnings,
 } from "./types";
+import { RootState } from "..";
 
 const initialState: StateInterface = {
     farmDetails: {},
@@ -22,7 +24,10 @@ const initialState: StateInterface = {
     isFetched: false,
     account: "",
     earnings: {},
+    vaultEarnings: [],
     isLoadingEarnings: false,
+    isLoadingVaultEarnings: false,
+    isVaultEarningsFirstLoad: false,
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -142,6 +147,26 @@ export const updateEarnings = createAsyncThunk(
     }
 );
 
+export const selectBalances = (state: RootState) => state.tokens.balances;
+
+export const getVaultEarnings = createAsyncThunk("farms/getVaultEarnings", async (currentWallet: string, thunkApi) => {
+    try {
+        let balances = selectBalances(thunkApi.getState() as RootState);
+        if (
+            !balances ||
+            Object.keys(balances).length === 0 ||
+            Object.values(balances).some((chain) => Array.isArray(chain) && chain.length === 0)
+        )
+            return;
+
+        const earnings = await getEarningsForPlatforms(currentWallet);
+        return earnings;
+    } catch (error) {
+        console.error(error);
+        return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch vault earnings");
+    }
+});
+
 const farmsSlice = createSlice({
     name: "farms",
     initialState: initialState,
@@ -183,6 +208,21 @@ const farmsSlice = createSlice({
             state.isLoading = false;
             state.isFetched = false;
             state.farmDetails = {};
+            state.error = action.payload as string;
+        });
+        builder.addCase(getVaultEarnings.pending, (state) => {
+            if (!state.vaultEarnings.length) state.isVaultEarningsFirstLoad = true;
+            state.isLoadingVaultEarnings = true;
+        });
+        builder.addCase(getVaultEarnings.fulfilled, (state, action) => {
+            state.vaultEarnings = action.payload as VaultEarnings[];
+            state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
+        });
+        builder.addCase(getVaultEarnings.rejected, (state, action) => {
+            state.vaultEarnings = [];
+            state.isLoadingVaultEarnings = false;
+            state.isVaultEarningsFirstLoad = false;
             state.error = action.payload as string;
         });
         builder.addCase(updateEarnings.pending, (state) => {

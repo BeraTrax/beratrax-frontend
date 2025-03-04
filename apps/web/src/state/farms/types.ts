@@ -6,7 +6,10 @@ import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
 export interface StateInterface {
     farmDetails: FarmDetails;
     earnings: Earnings;
+    vaultEarnings: VaultEarnings[];
     isLoadingEarnings: boolean;
+    isLoadingVaultEarnings: boolean;
+    isVaultEarningsFirstLoad: boolean;
     isLoading: boolean;
     isFetched: boolean;
     account: string;
@@ -37,6 +40,13 @@ export interface FetchFarmDetailsAction {
 
 export interface Earnings {
     [farmId: number]: number;
+}
+export interface VaultEarnings {
+    tokenId: string;
+    earnings0: string;
+    token0: string;
+    earnings1?: string;
+    token1?: string;
 }
 
 export interface FetchEarningsAction {

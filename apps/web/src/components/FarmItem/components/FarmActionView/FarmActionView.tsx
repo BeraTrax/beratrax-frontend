@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import tokendetailspageleftsideleaves from "src/assets/images/tokendetailspageleftsideleaves.svg";
 import tokendetailspagestoprightleaves from "src/assets/images/tokendetailspagestoprightleaves.svg";
 import BackButton from "src/components/BackButton/BackButton";
@@ -10,10 +11,11 @@ import { useDetailInput } from "src/hooks/useDetailInput";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import { FarmDetailInputOptions } from "src/state/farms/types";
 import useTokens from "src/state/tokens/useTokens";
-import { FarmTransactionType } from "src/types/enums";
-import { formatCurrency } from "src/utils/common";
+import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
+import { formatCurrency, toFixedFloor } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
@@ -22,15 +24,20 @@ import YourBalance from "./YourBalance/YourBalance";
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
     const { currentWallet, isConnecting } = useWallet();
+    const { openConnectModal } = useConnectModal();
+    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const {
         isBalancesLoading: isLoading,
         prices: {
             [farm.chainId]: { [farm.vault_addr]: vaultPrice },
         },
         totalSupplies,
+        isLoading: isTotalSuppliesLoading,
     } = useTokens();
-    const [marketCap, setMarketCap] = useState<string>("0");
-    const [vaultTvl, setVaultTvl] = useState<string>("0");
+    const [marketCap, setMarketCap] = useState<string | null>(null);
+    const [vaultTvl, setVaultTvl] = useState<string | null>(null);
+    const isMarketCapAndVaultLoading =
+        isTotalSuppliesLoading || marketCap === null || vaultTvl === null || marketCap === "0";
 
     const navigate = useNavigate();
     const { withdrawable, isLoadingFarm } = useDetailInput(farm);
@@ -78,6 +85,30 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     vaultTvl={`$${vaultTvl}`}
                                     description={farm.description}
                                     source={farm.source}
+                                    showFlywheelChart={
+                                        farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7
+                                    }
+                                    beraApy={
+                                        farm.isCurrentWeeksRewardsVault
+                                            ? "??? "
+                                            : farmApys && farmApys.apy < 0.01
+                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                            : toFixedFloor(
+                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
+                                                  2
+                                              ).toString()
+                                    }
+                                    underlyingApy={
+                                        farm.isCurrentWeeksRewardsVault
+                                            ? "??? "
+                                            : toFixedFloor(
+                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.feeApr) || 0,
+                                                  2
+                                              ).toString()
+                                    }
+                                    isAutoCompounded={farm.description?.includes("compounded") || false}
+                                    marketCapLoading={isMarketCapAndVaultLoading}
+                                    vaultTvlLoading={isMarketCapAndVaultLoading}
                                 />
                             </div>
                             <div
@@ -96,24 +127,23 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 ) : (
                                     <>
                                         <button
-                                            disabled={!currentWallet}
                                             className={`${
-                                                !currentWallet
-                                                    ? "bg-buttonDisabled cursor-not-allowed"
-                                                    : "bg-buttonPrimaryLight"
-                                            } lg:max-w-64 w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                                !currentWallet ? "lg:max-w-80" : "lg:max-w-64"
+                                            } bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                             onClick={() => {
-                                                !IS_LEGACY &&
-                                                    setFarmOptions({ transactionType: FarmTransactionType.Deposit });
+                                                !currentWallet
+                                                    ? openConnectModal && openConnectModal()
+                                                    : !IS_LEGACY &&
+                                                      setFarmOptions({ transactionType: FarmTransactionType.Deposit });
                                             }}
                                         >
-                                            {!currentWallet ? "Sign in to Deposit" : FarmTransactionType.Deposit}
+                                            {!currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit}
                                             <br />
                                         </button>
                                         {Number(withdrawable?.amount || "0") && (
                                             <button
                                                 disabled={!currentWallet}
-                                                className={`lg:max-w-64 bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                                className={`lg:max-w-80 bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                                 onClick={() => {
                                                     !IS_LEGACY &&
                                                         setFarmOptions({

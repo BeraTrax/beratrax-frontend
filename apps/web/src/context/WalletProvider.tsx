@@ -1,27 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ethers from "ethers";
-import { resolveDomainFromAddress } from "src/utils/common";
-import { useDispatch } from "react-redux";
-import { incrementErrorCount, resetErrorCount } from "src/state/error/errorReducer";
-import { CHAIN_ID } from "src/types/enums";
-import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
-import { ENTRYPOINT_ADDRESS_V06, providerToSmartAccountSigner } from "permissionless";
-import { Address, EIP1193Provider, Hex, createPublicClient, createWalletClient, custom, getAddress, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { EstimateTxGasArgs, IClients } from "src/types";
 import {
-    createModularAccountAlchemyClient,
-    AlchemyWebSigner,
-    createAlchemySmartAccountClient,
-    AlchemySigner,
+    AlchemyWebSigner
 } from "@alchemy/aa-alchemy";
-import { WalletClientSigner, type SmartAccountSigner } from "@aa-sdk/core";
-import { defaultChainId } from "src/config/constants";
-import useWeb3Auth from "src/hooks/useWeb3Auth";
-import { requestEthForGas } from "src/api";
-import { Connector, useAccount, useChainId, useDisconnect, useWalletClient } from "wagmi";
 import { getWalletClient as getWalletClientCore, switchChain as switchChainCore } from "@wagmi/core";
+import { ENTRYPOINT_ADDRESS_V06 } from "permissionless";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { requestEthForGas } from "src/api";
+import { defaultChainId } from "src/config/constants";
+import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
+import { incrementErrorCount, resetErrorCount } from "src/state/error/errorReducer";
+import { EstimateTxGasArgs, IClients } from "src/types";
+import { CHAIN_ID } from "src/types/enums";
 import { trackTransaction } from "src/utils/analytics";
+import { resolveDomainFromAddress } from "src/utils/common";
+import { Address, createPublicClient, createWalletClient, getAddress, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { Connector, useAccount, useChainId, useDisconnect } from "wagmi";
 
 export interface IWalletContext {
     /**
@@ -153,6 +147,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
     const getWalletClient = useCallback(
         async (chainId: number, _isSocial: boolean | null = isSocial): Promise<IClients["wallet"]> => {
             const pkey = await getPkey();
+            console.log("pkey =>", pkey);
             if (!rainbowkitAddress) throw new Error("provider not found");
             const chain = SupportedChains.find((item) => item.id === chainId);
             if (!chain) throw new Error("chain not found");

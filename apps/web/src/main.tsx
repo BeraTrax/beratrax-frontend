@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { NotificationsProvider, setUpNotifications } from "reapop";
 import { PersistGate } from "redux-persist/integration/react";
 import "src/api/interceptor";
-import { TamaguiInternalConfig, TamaguiProvider, Theme, YStack } from 'tamagui';
+import { TamaguiProvider, Theme, YStack } from 'tamagui';
 import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
 import "./config/walletConfig";
@@ -36,7 +36,7 @@ setUpNotifications({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-        <TamaguiProvider config={tamaguiConfig as unknown as TamaguiInternalConfig} defaultTheme="light">
+        <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
             <Theme name="light">
                 <YStack flex={1} padding="$4" backgroundColor="$background">
                     <Provider store={store}>

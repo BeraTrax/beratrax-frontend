@@ -1,38 +1,22 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": ".",
-    "importHelpers": true,
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
-    "esModuleInterop": true,
-    "preserveSymlinks": true,
-    "incremental": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "strict": true,
     "jsx": "react-jsx",
-    "module": "system",
     "moduleResolution": "node",
-    "noEmitOnError": false,
-    "noImplicitAny": false,
-    "noImplicitReturns": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "useUnknownInCatchVariables": false,
-    "preserveConstEnums": true,
+    "baseUrl": ".",
+
     // DONT DO THIS so jsdoc will remain
     "removeComments": false,
     "skipLibCheck": true,
     "sourceMap": false,
     "strictNullChecks": true,
-    "target": "es2020",
     "types": ["node"],
-    "lib": ["dom", "esnext"],
     "paths": {
-      "@beratrax/ui": ["packages/ui/src"],
+      "@beratrax/ui/*": ["packages/ui/*"],
     }
   },
-  "exclude": ["_"],
-  "typeAcquisition": {
-    "enable": true
-  }
+  "exclude": ["_", "node_modules", "dist", "build", "**/*.test.ts"]
 }

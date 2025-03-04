@@ -7,7 +7,6 @@
     "@aa-sdk/core": "^4.0.0-beta.2",
     "@alchemy/aa-alchemy": "^3.19.0",
     "@alchemy/aa-signers": "^3.19.0",
-    "@beratrax/ui": "*",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@front-finance/link": "^1.0.7",
     "@gatefi/js-sdk": "^0.14.0",
@@ -18,7 +17,9 @@
     "@ramp-network/ramp-instant-sdk": "^4.0.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@snapshot-labs/snapshot.js": "^0.12.4",
-    "@tamagui/vite-plugin": "1.121.7",
+    "@tamagui/core": "1.121.7",
+    "@tamagui/static": "1.121.7",
+    "@tamagui/web": "1.121.7",
     "@tanstack/react-query": "^5.51.23",
     "@tanstack/react-query-devtools": "^5.51.23",
     "@tenderly/sdk": "^0.1.14",
@@ -70,7 +71,6 @@
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.13.8",
     "react-tooltip": "^5.3.4",
-    "react-native-web": "^0.19.11",
     "react-uuid": "^2.0.0",
     "reapop": "^4.2.2",
     "recharts": "^2.12.7",
@@ -79,7 +79,6 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.62.1",
     "styled-components": "^5.3.6",
-    "tamagui": "1.121.7",
     "ua-parser-js": "^2.0.0",
     "uuid": "^9.0.0",
     "viem": "^2.19.4",
@@ -89,8 +88,7 @@
   },
   "scripts": {
     "start": "vite",
-    "start:web": "vite",
-    "build:web": "tsc && vite build",
+    "build": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "find-deadcode": "ts-prune",
     "upgrade-packages": "upgrade-interactive"
@@ -121,7 +119,6 @@
     ]
   },
   "devDependencies": {
-    "@types/gtag.js": "^0.0.20",
     "@types/lodash.merge": "^4.6.9",
     "@vitejs/plugin-react": "^4.3.1",
     "assert": "^2.0.0",
@@ -144,7 +141,8 @@
     "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",
     "url": "^0.11.0",
-    "vite": "^5.4.0"
+    "vite": "^5.4.0",
+    "vite-plugin-node-polyfills": "^0.23.0"
   },
   "resolutions": {
     "@ethereumjs/tx": "4.0.2"

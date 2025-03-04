@@ -1,17 +1,10 @@
 {
-  "include": ["src"],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@beratrax/ui": ["./src"],
-      // "tamagui": ["../../node_modules/tamagui"]
-    },
-    "jsx": "preserve",
-    "outDir": "./dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "outDir": "dist",
+    "declaration": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
   },
-  "references": []
+  "include": ["src"]
 }

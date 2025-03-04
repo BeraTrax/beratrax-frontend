@@ -22,17 +22,18 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:web": "turbo run start:web --filter=@beratrax/website",
-    "build:web": "turbo run build:web --filter=@beratrax/website",
+    "start:web": "turbo run start --filter=@beratrax/website",
+    "build:web": "turbo run build --filter=@beratrax/website",
     "start:mobile": "turbo run start:mobile --filter=mobile",
     "build:mobile": "turbo run build:mobile --filter=mobile",
+    "build:ui": "turbo run build:ui --filter=@beratrax/ui",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
-    "turbo": "1.13.4",
+    "turbo": "^1.10.4",
     "typescript": "5.7.3"
   },
   "workspaces": [
@@ -40,7 +41,7 @@
     "./packages/*"
   ],
   "engines": {
-    "node": "=22.10.0"
+    "node": "=20.18.3"
   },
   "packageManager": "yarn@3.4.1",
   "bugs": {

@@ -21,7 +21,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 22.10.0
+      nodejs: 20.18.3
   pre_build:
     commands:
       - echo Pre build commands started...

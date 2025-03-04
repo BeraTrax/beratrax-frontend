@@ -291,60 +291,46 @@ export const fetchTotalSupplies = createAsyncThunk(
                             }).read.totalSupply()
                         )
                     );
-                    // for infrared LP tokens, we need to subtract the balance of the vault to get actual total supply of lp
-                    const infraredVaultBalance = await Promise.all(
-                        tokens.map((item) =>
-                            farms
-                                .filter((e) => e.originPlatform === FarmOriginPlatform.Infrared)
-                                .findIndex((e) => e.lp_address === item) != -1
-                                ? getContract({
-                                      address: item,
-                                      abi: erc20Abi,
-                                      client: {
-                                          public: getPublicClient(Number(chainId)),
-                                      },
-                                  }).read.balanceOf(["0x4Be03f781C497A489E3cB0287833452cA9B9E80B"])
-                                : 0n
-                        )
-                    );
 
-                    rawTotalSupplies
-                        .map((e, i) => e - infraredVaultBalance[i]) // subtract lp balance of infrared's vault
-                        .forEach((item, i) => {
-                            totalSupplies[Number(chainId)][tokens[i]] = {
-                                supplyWei: item.toString(),
-                                supply: Number(formatUnits(item, 18)),
-                                supplyFormatted: formatCurrency(formatUnits(item, 18)),
-                                supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]],
+                    rawTotalSupplies.forEach((item, i) => {
+                        totalSupplies[Number(chainId)][tokens[i]] = {
+                            supplyWei: item.toString(),
+                            supply: Number(formatUnits(item, 18)),
+                            supplyFormatted: formatCurrency(formatUnits(item, 18)),
+                            supplyUsd: Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]],
+                            supplyUsdFormatted: formatCurrency(
+                                Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]]
+                            ),
+                        };
+                    });
+
+                    const stablePools = farms.filter((farm) => farm.isStablePool && farm.chainId === Number(chainId));
+                    await Promise.all(
+                        stablePools.map(async (pool) => {
+                            const actualTotalSupply = await getContract({
+                                address: pool.lp_address,
+                                abi: parseAbi(["function getActualSupply() view returns (uint256)"]),
+                                client: {
+                                    public: getPublicClient(Number(chainId)),
+                                },
+                            }).read.getActualSupply();
+
+                            totalSupplies[Number(chainId)][pool.lp_address] = {
+                                supplyWei: actualTotalSupply.toString(),
+                                supply: Number(formatUnits(actualTotalSupply, 18)),
+                                supplyFormatted: formatCurrency(formatUnits(actualTotalSupply, 18)),
+                                supplyUsd:
+                                    Number(formatUnits(actualTotalSupply, 18)) *
+                                    prices[Number(chainId)][pool.lp_address],
                                 supplyUsdFormatted: formatCurrency(
-                                    Number(formatUnits(item, 18)) * prices[Number(chainId)][tokens[i]]
+                                    Number(formatUnits(actualTotalSupply, 18)) *
+                                        prices[Number(chainId)][pool.lp_address]
                                 ),
                             };
-                        });
+                        })
+                    );
                 })
             );
-
-            // Todo: fix this
-            const actualSupply = await getContract({
-                address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
-                abi: parseAbi(["function getActualSupply() view returns (uint256)"]),
-                client: {
-                    public: getPublicClient(Number(80094)),
-                },
-            }).read.getActualSupply();
-
-            totalSupplies[80094]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"] = {
-                supplyWei: actualSupply.toString(),
-                supply: Number(formatUnits(actualSupply, 18)),
-                supplyFormatted: formatCurrency(formatUnits(actualSupply, 18)),
-                supplyUsd:
-                    Number(formatUnits(actualSupply, 18)) *
-                    prices[Number(80094)]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"],
-                supplyUsdFormatted: formatCurrency(
-                    Number(formatUnits(actualSupply, 18)) *
-                        prices[Number(80094)]["0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23"]
-                ),
-            };
 
             return totalSupplies;
         } catch (error) {

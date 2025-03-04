@@ -4,6 +4,7 @@ import { Address, zeroAddress } from "viem";
 export interface PoolDef {
     isUpgradable: boolean;
     isDeprecated?: boolean;
+    isStablePool?: boolean;
     id: number;
     stableCoin?: boolean;
     originPlatform?: FarmOriginPlatform;
@@ -306,6 +307,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isStablePool: true,
         lp_address: "0xdE04c469Ad658163e2a5E860a03A86B52f6FA8C8",
         decimals: 18,
         vault_addr: "0xe88e01F2e3eb8E867Bf38E873DCC229264696098",
@@ -360,6 +362,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isStablePool: true,
         lp_address: "0xF961a8f6d8c69E7321e78d254ecAfBcc3A637621",
         decimals: 18,
         vault_addr: "0x7c04723AB200D55d1C826160340c089E7CaAFEea",
@@ -417,6 +420,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Burrbear logo",
         isDeprecated: false,
         isUpgradable: false,
+        isStablePool: true,
         lp_address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
         decimals: 18,
         vault_addr: "0xFD2dE4473577fd5a786E0DFaA611Bbd334fAc8eA",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import tokendetailspageleftsideleaves from "src/assets/images/tokendetailspageleftsideleaves.svg";
 import tokendetailspagestoprightleaves from "src/assets/images/tokendetailspagestoprightleaves.svg";
 import BackButton from "src/components/BackButton/BackButton";
@@ -23,6 +24,7 @@ import YourBalance from "./YourBalance/YourBalance";
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
     const { currentWallet, isConnecting } = useWallet();
+    const { openConnectModal } = useConnectModal();
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const {
         isBalancesLoading: isLoading,
@@ -125,24 +127,23 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 ) : (
                                     <>
                                         <button
-                                            disabled={!currentWallet}
                                             className={`${
-                                                !currentWallet
-                                                    ? "bg-buttonDisabled cursor-not-allowed"
-                                                    : "bg-buttonPrimaryLight"
-                                            } lg:max-w-64 w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                                !currentWallet ? "lg:max-w-80" : "lg:max-w-64"
+                                            } bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                             onClick={() => {
-                                                !IS_LEGACY &&
-                                                    setFarmOptions({ transactionType: FarmTransactionType.Deposit });
+                                                !currentWallet
+                                                    ? openConnectModal && openConnectModal()
+                                                    : !IS_LEGACY &&
+                                                      setFarmOptions({ transactionType: FarmTransactionType.Deposit });
                                             }}
                                         >
-                                            {!currentWallet ? "Sign in to Deposit" : FarmTransactionType.Deposit}
+                                            {!currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit}
                                             <br />
                                         </button>
                                         {Number(withdrawable?.amount || "0") && (
                                             <button
                                                 disabled={!currentWallet}
-                                                className={`lg:max-w-64 bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                                className={`lg:max-w-80 bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                                 onClick={() => {
                                                     !IS_LEGACY &&
                                                         setFarmOptions({

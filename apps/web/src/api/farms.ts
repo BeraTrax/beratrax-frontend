@@ -122,6 +122,7 @@ const getEarningsForInfrared = async (
                 chainId: pool.chainId,
                 farmId: pool.id,
             }));
+
         const depositsByTokenId = deposits.reduce((acc: any, deposit: any) => {
             const tokenId = deposit.tokenId;
             const matchingPool = infraredPools.find((pool) => pool.farmId.toString() === tokenId);
@@ -132,8 +133,10 @@ const getEarningsForInfrared = async (
                     totalShares: BigInt(0),
                     totalValue: BigInt(0),
                     lpAddress: matchingPool.lp_addr || "",
+                    vaultAddress: matchingPool.vault_addr || "",
                     tokenName: deposit.tokenName,
                     platformName: deposit.platformName,
+                    chainId: matchingPool.chainId,
                 };
             }
 
@@ -155,6 +158,7 @@ const getEarningsForInfrared = async (
                     vaultAddress: matchingPool.vault_addr || "",
                     tokenName: withdraw.tokenName,
                     platformName: withdraw.platformName,
+                    chainId: matchingPool.chainId,
                 };
             }
 
@@ -186,23 +190,29 @@ const getEarningsForInfrared = async (
         });
         const lpTokensPerShareResults = await Promise.all(lpTokensPerSharePromises);
 
-        lpTokensPerShareResults.forEach((result) => {
-            if (withdrawsByTokenId[result.tokenId]) {
-                withdrawsByTokenId[result.tokenId].lpTokensPerShare = result.lpTokensPerShare;
-            }
-        });
+        // Create a map of lpTokensPerShare for all pools
+        const lpTokensPerShareMap = lpTokensPerShareResults.reduce((acc: any, result) => {
+            acc[result.tokenId] = result.lpTokensPerShare;
+            return acc;
+        }, {});
 
-        const earningsDifferences = Object.keys(withdrawsByTokenId).map((tokenId: string) => {
-            const withdrawData = withdrawsByTokenId[tokenId];
-            const vaultAddress = withdrawData.vaultAddress;
-            const currentShares = balances[80094][vaultAddress].valueWei;
-            const currentLpTokens = Number(toEth(withdrawData.lpTokensPerShare)) * Number(toEth(BigInt(currentShares)));
-            const earnings =
-                withdrawData.totalValue + toWei(currentLpTokens, 18) - depositsByTokenId[tokenId]?.totalValue;
+        // Calculate earnings for all pools that have deposits
+        const earningsDifferences = Object.keys(depositsByTokenId).map((tokenId: string) => {
+            const depositData = depositsByTokenId[tokenId];
+            const withdrawData = withdrawsByTokenId[tokenId] || {
+                totalValue: BigInt(0),
+                vaultAddress: depositData.vaultAddress,
+            };
+            const vaultAddress = depositData.vaultAddress;
+            const currentShares = balances[depositData.chainId][vaultAddress]?.valueWei || BigInt(0);
+            const lpTokensPerShare = lpTokensPerShareMap[tokenId] || BigInt(0);
+            const currentLpTokens = Number(toEth(lpTokensPerShare)) * Number(toEth(BigInt(currentShares)));
+            const earnings = withdrawData.totalValue + toWei(currentLpTokens, 18) - depositData.totalValue;
+
             return {
                 tokenId,
                 earnings0: earnings.toString(),
-                token0: withdrawData.lpAddress,
+                token0: depositData.lpAddress,
             };
         });
         return earningsDifferences;

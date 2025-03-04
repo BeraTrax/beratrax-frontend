@@ -5,6 +5,7 @@ import {
     getAccountData as getAccountDataApi,
     getReferalEarning as getReferalEarningApi,
     setAccountConnector as setAccountConnectorApi,
+    disableZapWarning as disableZapWarningApi,
     updatePointsEarning,
     sendBtxForXFollow,
     agreeTermsOfUse as agreeTermsOfUseApi,
@@ -146,6 +147,12 @@ export const addAccount = createAsyncThunk(
                         value: existingAccountData.termsOfUseAgreed || false,
                     })
                 );
+                thunkApi.dispatch(
+                    updateAccountField({
+                        field: "disableZapWarning",
+                        value: existingAccountData.disableZapWarning || false,
+                    })
+                );
             }
         } catch (error) {
             console.error("Cannot create new account", error);
@@ -217,6 +224,19 @@ export const agreeTermsOfUse = createAsyncThunk("account/agreeTermsOfUse", async
     }
 });
 
+export const disableZapWarning = createAsyncThunk(
+    "account/disableZapWarning",
+    async ({ address, value }: { address: string; value: boolean }, thunkApi) => {
+        try {
+            await disableZapWarningApi(address, value);
+            thunkApi.dispatch(updateAccountField({ field: "disableZapWarning", value }));
+        } catch (error) {
+            console.error("Error in disableZapWarning", error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to disable zap warning");
+        }
+    }
+);
+
 const accountSlice = createSlice({
     name: "account",
     initialState: initialState,
@@ -249,6 +269,9 @@ const accountSlice = createSlice({
             state.error = action.payload as string;
         });
         builder.addCase(getReferralEarning.rejected, (state, action) => {
+            state.error = action.payload as string;
+        });
+        builder.addCase(disableZapWarning.rejected, (state, action) => {
             state.error = action.payload as string;
         });
     },

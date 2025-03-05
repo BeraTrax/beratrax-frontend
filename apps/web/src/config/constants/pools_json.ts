@@ -5,6 +5,7 @@ export interface PoolDef {
     isUpgradable: boolean;
     isDeprecated?: boolean;
     isStablePool?: boolean;
+    isAutoCompounded?: boolean;
     id: number;
     stableCoin?: boolean;
     originPlatform?: FarmOriginPlatform;
@@ -90,6 +91,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
         decimals: 18,
         vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
@@ -145,6 +147,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         lp_address: "0x2c4a603A2aA5596287A06886862dc29d56DbC354",
         decimals: 18,
         vault_addr: "0x9bC238c1e0f31a5e016Ea484a698Ee7B4c3B219c",
@@ -199,6 +202,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         lp_address: "0x38fdD999Fe8783037dB1bBFE465759e312f2d809",
         decimals: 18,
         vault_addr: "0x45114A8fCFa77967FDb33E87f6284fc119128836",
@@ -253,6 +257,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         lp_address: "0xDd70A5eF7d8CfE5C5134b5f9874b09Fb5Ce812b4",
         decimals: 18,
         vault_addr: "0x76BAe24B0fc180B98A613E3AF19F1A6AE8E4d4F4",
@@ -310,6 +315,8 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Burrbear logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
+        isStablePool: true,
         lp_address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
         decimals: 18,
         vault_addr: "0xFD2dE4473577fd5a786E0DFaA611Bbd334fAc8eA",
@@ -360,6 +367,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         isStablePool: true,
         lp_address: "0xdE04c469Ad658163e2a5E860a03A86B52f6FA8C8",
         decimals: 18,
@@ -415,6 +423,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Infrared logo",
         isDeprecated: false,
         isUpgradable: false,
+        isAutoCompounded: true,
         isStablePool: true,
         lp_address: "0xF961a8f6d8c69E7321e78d254ecAfBcc3A637621",
         decimals: 18,
@@ -680,6 +689,7 @@ const pools_json: PoolDef[] = [
         name: "iBERA",
         url_name: "iBERA",
         originPlatform: FarmOriginPlatform.Infrared,
+        isAutoCompounded: true,
         source: "https://infrared.finance/ibera",
         name1: "iBERA",
         description:

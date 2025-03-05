@@ -64,14 +64,14 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
             </div>
             <div className={styles.buttonsContainer}>
                 <button
-                    className="bg-bgPrimary p-4 rounded-xl w-24"
+                    className="bg-bgPrimary p-4 rounded-xl w-32"
                     onClick={() => {
                         handleClose();
                     }}
                 >
                     Cancel
                 </button>
-                <button className={`bg-bgPrimary p-4 rounded-xl w-24`} disabled={isLoading} onClick={handleUnderstand}>
+                <button className={`bg-bgPrimary p-4 rounded-xl w-32`} disabled={isLoading} onClick={handleUnderstand}>
                     {isLoading ? <ImSpinner8 className={styles.loader} /> : "I understand"}
                 </button>
             </div>

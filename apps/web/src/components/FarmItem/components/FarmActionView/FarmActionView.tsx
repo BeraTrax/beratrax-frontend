@@ -20,6 +20,7 @@ import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
+import Transactions from "src/pages/Dashboard/Transactions/Transactions";
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
@@ -106,10 +107,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                                   2
                                               ).toString()
                                     }
-                                    isAutoCompounded={farm.description?.includes("compounded") || false}
+                                    isAutoCompounded={farm.isAutoCompounded || false}
                                     marketCapLoading={isMarketCapAndVaultLoading}
                                     vaultTvlLoading={isMarketCapAndVaultLoading}
                                 />
+                                <Transactions farmId={farm.id} />
                             </div>
                             <div
                                 className={`flex gap-2 fixed bottom-4 justify-center ${

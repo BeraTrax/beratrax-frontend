@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
-import styles from "./OneTimeZapping.module.css";
+import styles from "./ZappingDisclaimerModal.module.css";
 import { useAppDispatch } from "src/state";
 import useWallet from "src/hooks/useWallet";
 import { ImSpinner8 } from "react-icons/im";
@@ -13,7 +13,7 @@ interface IProps {
     handleSubmit: Function;
 }
 
-export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClose, handleSubmit }) => {
+export const ZappingDisclaimerModal: FC<IProps> = ({ inputToken, outputToken, handleClose, handleSubmit }) => {
     const dispatch = useAppDispatch();
     const { currentWallet } = useWallet();
     const [isLoading, setIsLoading] = useState(false);
@@ -39,11 +39,11 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
                 <div className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
                     <p className="text-2xl font-bold text-center">Important Notice!</p>
                     <p className="text-base">
-                        You are choosing to trade your <span className="font-bold">${inputToken}</span> for a share in
-                        the <span className="font-bold">${outputToken}</span>. You understand that after this
-                        transaction, you now hold <span className="font-bold">${outputToken}</span>, and BeraTrax is
-                        increasing your position in <span className="font-bold">${outputToken}</span>. You recognize the
-                        prices changes of
+                        You are choosing to trade your <span className="font-bold">${inputToken}</span> for
+                        <span className="font-bold"> ${outputToken}</span>. You understand that after this transaction,
+                        you now hold <span className="font-bold">${outputToken}</span>, and BeraTrax is increasing your
+                        position in <span className="font-bold">${outputToken}</span>. You recognize the prices changes
+                        of
                         <span className="font-bold"> ${outputToken}</span> apply to your position, and the price changes
                         of
                         <span className="font-bold"> ${inputToken}</span> are no longer relevant.
@@ -64,7 +64,7 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
             </div>
             <div className={styles.buttonsContainer}>
                 <button
-                    className="bg-bgPrimary p-4 rounded-xl w-32"
+                    className="bg-gray-500 p-4 rounded-xl w-32"
                     onClick={() => {
                         handleClose();
                     }}

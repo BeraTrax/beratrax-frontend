@@ -35,7 +35,7 @@ import {
 import { noExponents, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
-import { OneTimeZapping } from "src/components/modals/OneTimeZapping/OneTimeZapping";
+import { ZappingDisclaimerModal } from "src/components/modals/ZappingDisclaimerModal/ZappingDisclaimerModal";
 
 interface FarmActionModalProps {
     open: boolean;
@@ -569,7 +569,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             ) : null}
 
             {showOneTimeZappingModal ? (
-                <OneTimeZapping
+                <ZappingDisclaimerModal
                     inputToken={currencySymbol}
                     outputToken={farm.name}
                     handleClose={() => {

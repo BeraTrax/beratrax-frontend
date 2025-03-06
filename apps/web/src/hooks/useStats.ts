@@ -1,16 +1,14 @@
-import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { UsersTableColumns } from "src/types/enums";
+import { useEffect, useMemo, useState } from "react";
 import {
-    fetchBoostedApy,
-    fetchCountActiveUsers,
-    fetchUserTVLs,
-    fetchVaultStats,
-    fetchTVLsBasicInfo,
-    fetchTotalBtxPoints,
-    fetchFacetUsersCount,
     fetchAccountConnectorsStats,
+    fetchCountActiveUsers,
+    fetchFacetUsersCount,
+    fetchTotalBtxPoints,
+    fetchUserTVLs,
+    fetchVaultStats
 } from "src/api/stats";
+import { UsersTableColumns } from "src/types/enums";
 import useFarms from "../state/farms/hooks/useFarms";
 import useWallet from "./useWallet";
 
@@ -22,6 +20,10 @@ export const useStats = (forGalxe?: boolean) => {
     const [search, setSearch] = useState("");
     const { farms } = useFarms();
     const { currentWallet, isConnecting } = useWallet();
+
+    useEffect(() => {
+        console.log("currentWallet", currentWallet);
+    }, [currentWallet]);
 
     const { isLoading, error, data, isFetching } = useQuery({
         queryKey: ["stats/tvl", page, sortBy, order, search],

@@ -51,9 +51,15 @@ function App() {
                     appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
                 >
                     <WalletProvider>
-                        <Router>
-                            <Body />
-                        </Router>
+                        {/* <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
+                            <Theme name="light">
+                                <YStack flex={1} padding="$4" backgroundColor="$background"> */}
+                                    <Router>
+                                        <Body />
+                                    </Router>
+                                {/* </YStack>
+                            </Theme>
+                        </TamaguiProvider> */}
                         <ReactHooksWrapper />
                     </WalletProvider>
                     <ReactQueryDevtools />

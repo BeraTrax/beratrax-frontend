@@ -1,6 +1,6 @@
 {
+  "extends": "./../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "Bundler",
     "target": "ES2020",

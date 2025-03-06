@@ -6,7 +6,7 @@ import uuid from "react-uuid";
 import { PoolDef } from "src/config/constants/pools_json";
 import useApp from "src/hooks/useApp";
 import useTrax from "src/hooks/useTrax";
-import useWallet from "src/hooks/useWallet";
+
 import { useAppDispatch, useAppSelector } from "src/state";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
@@ -16,7 +16,7 @@ import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";
 
-const BTXTokenomics = "https://contraxfi.medium.com/contrax-initial-tokenomics-837d062596a4";
+
 interface Props {
     farm: PoolDef;
     openedFarm: number | undefined;
@@ -25,7 +25,6 @@ interface Props {
 
 const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
     const { lightMode } = useApp();
-    const { externalChainId } = useWallet();
     const [dropDown, setDropDown] = useState(false);
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const { farmDetails, isLoading: isFarmLoading } = useFarmDetails();
@@ -48,6 +47,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
         handleNavigation("/earn/" + farm.vault_addr);
     };
 
+
     useEffect(() => {
         if (openedFarm !== farm?.id && dropDown) setDropDown(false);
         // if(!dropDown && openedFarm === farm?.id) setOpenedFarm(undefined)
@@ -68,13 +68,13 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
     return (
         <div
             className={
-                isHighlighted
-                    ? `relative p-[2px] rounded-3xl ${styles.gradientAnimation}`
-                    : `relative rounded-3xl bg-bgDark`
+                isHighlighted ? `relative p-[2px] rounded-3xl ${styles.gradientAnimation}` : `relative rounded-3xl bg-bgDark`
             }
         >
             <div
                 className={`
+
+
                             ${!isHighlighted ? "bg-bgDark" : ""} 
                             py-6 px-4 rounded-3xl relative cursor-pointer
                             `}
@@ -113,10 +113,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                             </div>
                             <div className="flex items-center gap-1">
                                 <FarmRowChip
-                                    text={
-                                        farm?.platform +
-                                        (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")
-                                    }
+                                    text={farm?.platform + (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")}
                                     color="invert"
                                 />
                                 <div className="flex">
@@ -132,6 +129,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                             src={farm?.secondary_platform_logo}
                                         />
                                     )}
+
                                 </div>
                             </div>
                         </div>
@@ -140,8 +138,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                     {/* APY (Desktop) */}
                     <div className="sm:block hidden">
                         <div>
-                            {farmApys &&
-                            toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+                            {farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
                                 <p className="text-textWhite">--</p>
                             ) : (
                                 <div className="flex flex-col justify-end items-end">
@@ -150,19 +147,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                         {farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
                                     </div>
                                     <div className="flex gap-2 items-center">
-                                        <p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">
-                                            APY
-                                        </p>
+                                        <p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</p>
                                     </div>
                                     <p className="text-textWhite text-right">
                                         {farm.isCurrentWeeksRewardsVault
                                             ? "??? "
                                             : farmApys && farmApys.apy < 0.01
-                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
-                                            : toFixedFloor(
-                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
-                                                  2
-                                              ).toString()}
+                                                ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                                : toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
                                         %
                                     </p>
                                     <a id={key} data-tooltip-html={/* tooltip text here */ ""}>
@@ -183,23 +175,17 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                         {
                             <>
                                 <div className="flex gap-2 items-center">
-                                    <p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">
-                                        APY
-                                    </p>
+                                    <p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</p>
                                     <CgInfo className="text-textSecondary hoverable w-4 h-4" />
                                 </div>
-                                {farmApys &&
-                                toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+                                {farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
                                     <p className="text-textWhite text-right">--</p>
                                 ) : (
                                     <>
                                         <p className="text-textWhite text-right">
                                             {farmApys && farmApys.apy < 0.01
                                                 ? farmApys.apy.toPrecision(2).slice(0, -1)
-                                                : toFixedFloor(
-                                                      (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
-                                                      2
-                                                  ).toString()}
+                                                : toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
                                             %
                                             <a id={key2} data-tooltip-html={/* tooltip text here */ ""}>
                                                 {/* Possibly an info icon here */}
@@ -238,23 +224,15 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
 
                 <div className="flex justify-center flex-row items-center">
                     <div className="flex mr-2">
-                        {farm.logo1 ? (
-                            <img alt={farm.alt1} className={`h-11 md:h-14 rounded-full`} src={farm.logo1} />
-                        ) : null}
+                        {farm.logo1 ? <img alt={farm.alt1} className={`h-11 md:h-14 rounded-full`} src={farm.logo1} /> : null}
+
+
 
                         {farm.logo2 ? (
-                            <img
-                                alt={farm.alt2}
-                                className={`w-11 h-11 md:w-14 md:h-14 ml-[-10px] rounded-full`}
-                                src={farm.logo2}
-                            />
+                            <img alt={farm.alt2} className={`w-11 h-11 md:w-14 md:h-14 ml-[-10px] rounded-full`} src={farm.logo2} />
                         ) : null}
                         {farm.logo3 ? (
-                            <img
-                                alt={farm.alt3}
-                                className={`w-11 h-11 md:w-14 md:h-14 ml-[-10px] rounded-full`}
-                                src={farm.logo3}
-                            />
+                            <img alt={farm.alt3} className={`w-11 h-11 md:w-14 md:h-14 ml-[-10px] rounded-full`} src={farm.logo3} />
                         ) : null}
                     </div>
 
@@ -292,28 +270,22 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                                 data-tooltip-html={`<p>
                                             <b>Base APRs</b>
                                         </p>
-                                        ${
-                                            farmApys && Number(farmApys.rewardsApr.toFixed(3))
-                                                ? `<p>LP Rewards: ${farmApys.rewardsApr.toFixed(3)}%</p>`
-                                                : ``
-                                        }
-                                        ${
-                                            farmApys && Number(farmApys.feeApr.toFixed(2))
-                                                ? `<p>Trading Fees: ${farmApys.feeApr.toFixed(3)}%</p>`
-                                                : ``
-                                        }
-                                        ${
-                                            farmApys && Number(farmApys.compounding.toFixed(3))
-                                                ? `<p>Compounding: ${farmApys.compounding.toFixed(3)}%</p>`
-                                                : ``
-                                        }`}
+                                        ${farmApys && Number(farmApys.rewardsApr.toFixed(3))
+                                        ? `<p>LP Rewards: ${farmApys.rewardsApr.toFixed(3)}%</p>`
+                                        : ``
+                                    }
+                                        ${farmApys && Number(farmApys.feeApr.toFixed(2))
+                                        ? `<p>Trading Fees: ${farmApys.feeApr.toFixed(3)}%</p>`
+                                        : ``
+                                    }
+                                        ${farmApys && Number(farmApys.compounding.toFixed(3))
+                                        ? `<p>Compounding: ${farmApys.compounding.toFixed(3)}%</p>`
+                                        : ``
+                                    }`}
                             >
                                 <CgInfo className={`text-textPrimary text-right	 ml-1`} />
                             </a>
-                            <Tooltip
-                                anchorId={key}
-                                className={`shadow-md rounded-md bg-bgDark text-white px-2 py-1 leading-none`}
-                            />
+                            <Tooltip anchorId={key} className={`shadow-md rounded-md bg-bgDark text-white px-2 py-1 leading-none`} />
                         </div>
                     </div>
                 )}
@@ -352,22 +324,6 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                         </div>
                     )}
                 </div>
-
-                {/* <div className={`mobile-view ${lightMode && "mobile-view--light"}`}> */}
-                {/* How much the user has deposited */}
-
-                {/* <div className={`container ${lightMode && "container--light"} deposite`}>
-                        {isFarmLoading && <Skeleton w={50} h={30} />}
-                    </div> */}
-
-                {/* How much the user has Earned */}
-
-                {/* <div className={`container1 ${lightMode && "container1--light"} earned`}>
-                        {isFarmLoading && <Skeleton w={50} h={30} />}
-                    </div> */}
-                {/* </div> */}
-
-                {/* <div className={`w-4 text-textWhite text-xl self-center`}>{true && <Skeleton w={20} h={20} />}</div> */}
             </div>
         </div>
     );

@@ -1,11 +1,20 @@
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from "vite-plugin-svgr";
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), svgr()],
+    plugins: [react(), svgr(), nodePolyfills({
+        globals: {
+            Buffer: true,
+            process: true,
+            global: true,
+        },
+        protocolImports: true,
+    })],
     server: {
         port: 3000,
         open: true,
@@ -14,9 +23,10 @@ export default defineConfig({
     resolve: {
         alias: {
             src: "/src",
-            jsbi: path.resolve(__dirname, "../../node_modules/jsbi/dist/jsbi-cjs.js"),
+            jsbi: path.resolve(__dirname, "./node_modules/jsbi/dist/jsbi-cjs.js"),
             "~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",
             "~@fontsource/inter": "@fontsource/inter",
+            "react-native": "react-native-web",
         },
     },
     build: {
@@ -26,7 +36,6 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-        exclude: [
-        ],
+        exclude: ["./src/pages/Swap/uniswapTokens.json"],
     },
 });

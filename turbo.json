@@ -6,39 +6,19 @@
         "package.json"
       ]
     },
-    "build:web": {
+    "build:config": {
       "cache": true,
       "persistent": true,
-      "inputs": [
-        "yarn.lock",
-        "**/package.json",
-        "src/**.ts",
-        "src/**.tsx"
-      ],
-      "outputs": [
-        "./apps/web/build"
-      ],
-      "dependsOn": [
-        "prepare"
-      ],
-      "env": [
-        "REACT_APP_WEB3AUTH_CLIENT_ID",
-        "REACT_APP_SOCKET_BRIDGE_KEY",
-        "REACT_APP_RAMP_TRANSAK_API_KEY",
-        "REACT_APP_TENDERLY_ACCESS_TOKEN",
-        "REACT_APP_TENDERLY_PROJECT_SLUG",
-        "REACT_APP_TENDERLY_USER_NAME",
-        "REACT_APP_WERT_PARTNER_ID",
-        "REACT_APP_SOCKET_API_KEY",
-        "REACT_APP_INFURA",
-        "REACT_APP_GATEFI_MERCHANT_ID",
-        "REACT_APP_FRONT_URL",
-        "REACT_APP_FRONT_API_KEY",
-        "REACT_APP_FRONT_CLIENT_ID",
-        "REACT_APP_FRONT_URL_SANDBOX",
-        "REACT_APP_FRONT_API_KEY_SANDBOX",
-        "REACT_APP_IS_LEGACY"
-      ]
+      "inputs": ["packages/config/package.json", "packages/config/src/**/*.ts", "packages/config/src/**/*.tsx"],
+      "outputs": ["packages/config/dist"]
+    },
+    "build:ui": {
+      "cache": true,
+      "persistent": true
+    },
+    "build": {
+      "cache": true,
+      "persistent": true
     },
     "build:mobile": {
       "cache": true,
@@ -53,19 +33,9 @@
         "apps/mobile/ios/build/**"
       ]
     },
-    "start:web": {
+    "start": {
       "cache": false,
-      "persistent": true,
-      "dependsOn": [
-        "prepare"
-      ],
-      "inputs": [
-        "apps/web/src/**",
-        "apps/web/index.html",
-        "apps/web/public/**",
-        "apps/web/package.json",
-        "apps/web/vite.config.ts"
-      ]
+      "persistent": true
     },
     "start:mobile": {
       "cache": false,

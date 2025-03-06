@@ -352,6 +352,8 @@ const pools_json: PoolDef[] = [
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "steer.ico",
+        secondary_platform: FarmOriginPlatform.Honeypot,
+        secondary_platform_logo: "honeypot.ico",
         pair1: "wBERA",
         pair2: "HONEY",
         token1: "0x6969696969696969696969696969696969696969",

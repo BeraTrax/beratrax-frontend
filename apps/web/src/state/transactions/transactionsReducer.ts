@@ -24,7 +24,7 @@ import {
 
 const initialState: StateInterface = {
     transactions: [],
-    limit: 20,
+    limit: 60,
     fetchedAll: false,
     error: null,
 };

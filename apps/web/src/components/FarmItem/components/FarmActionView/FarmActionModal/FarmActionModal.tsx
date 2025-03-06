@@ -35,6 +35,7 @@ import {
 import { noExponents, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
+import { OneTimeZapping } from "src/components/modals/OneTimeZapping/OneTimeZapping";
 
 interface FarmActionModalProps {
     open: boolean;
@@ -117,10 +118,13 @@ const QuickDepositButtons = memo(
 );
 
 const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
+    const { disableZapWarning } = useAppSelector((state) => state.account);
     const [confirmDeposit, setConfirmDeposit] = useState<boolean>();
     const { farmDetails } = useFarmDetails();
     const [txId, setTxId] = useState("");
     const [showSlippageModal, setShowSlippageModal] = useState(false);
+    const [showOneTimeZappingModal, setShowOneTimeZappingModal] = useState(false);
+    const [shownOneTimeZappingModal, setShownOneTimeZappingModal] = useState(disableZapWarning);
     const [showNotSlipageModal, setShowNotSlipageModal] = useState(false);
     const [showConfirmWithdrawModal, setShowConfirmWithdrawModal] = useState<boolean>(false);
     const [withdrawModalShown, setWithdrawModalShown] = useState<boolean>(false);
@@ -200,6 +204,8 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             setShowSlippageModal(true);
         } else if (slippage === undefined) {
             setShowNotSlipageModal(true);
+        } else if (!shownOneTimeZappingModal && transactionType === FarmTransactionType.Deposit) {
+            setShowOneTimeZappingModal(true);
         } else {
             handleConfirm();
         }
@@ -559,6 +565,21 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         setShowNotSlipageModal(false);
                     }}
                     handleSubmit={handleConfirm}
+                />
+            ) : null}
+
+            {showOneTimeZappingModal ? (
+                <OneTimeZapping
+                    inputToken={currencySymbol}
+                    outputToken={farm.name}
+                    handleClose={() => {
+                        setShowOneTimeZappingModal(false);
+                    }}
+                    handleSubmit={() => {
+                        setShownOneTimeZappingModal(true);
+                        setShowOneTimeZappingModal(false);
+                        handleConfirm();
+                    }}
                 />
             ) : null}
 

@@ -49,7 +49,7 @@ const TokenEarning = ({
 };
 
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
-    const { isConnecting } = useWallet();
+    const { currentWallet, isConnecting } = useWallet();
     const { balances, isBalancesLoading: isLoading, prices } = useTokens();
     const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
     const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
@@ -135,7 +135,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         );
     };
 
-    if (stakedTokenValueUsd === 0) return null;
+    if (stakedTokenValueUsd === 0 || !currentWallet) return null;
 
     return (
         <div className="mt-10 relative">

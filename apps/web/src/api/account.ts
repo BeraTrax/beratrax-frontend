@@ -81,3 +81,12 @@ export const agreeTermsOfUse = async (address: string) => {
     } = await backendApi.post<{ data: { status: boolean } }>("account/agree-terms-of-use/" + address);
     return status;
 };
+
+export const disableZapWarning = async (address: string, value: boolean) => {
+    const {
+        data: { data: status },
+    } = await backendApi.post<{ data: { status: boolean } }>("account/disable-zap-warning/" + address, {
+        value,
+    });
+    return status;
+};

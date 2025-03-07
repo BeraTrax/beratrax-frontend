@@ -5,7 +5,7 @@ import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useWallet from "src/hooks/useWallet";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
-import { getAddress } from "viem";
+import { Address, getAddress } from "viem";
 
 // Reusable component for token earnings
 const TokenEarning = ({
@@ -21,9 +21,10 @@ const TokenEarning = ({
 }) => {
     if (!earnings || !token) return null;
 
+    const { decimals } = useTokens();
     const tokenAddress = token ? getAddress(token) : "";
     const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
-    const earningsValue = Number(toEth(BigInt(earnings.toString())));
+    const earningsValue = Number(toEth(BigInt(earnings.toString()), decimals[chainId][tokenAddress as Address]));
     const earningsValueUsd = earningsValue * (prices[chainId][tokenAddress] || 0);
 
     return (
@@ -31,7 +32,7 @@ const TokenEarning = ({
             <div className="flex items-center gap-x-3">
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                        ${customCommify(earningsValueUsd.toFixed(2))}
+                        ${customCommify(earningsValueUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                     </h1>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -40,7 +41,7 @@ const TokenEarning = ({
             </div>
             <div className="flex items-center gap-x-2 mt-2">
                 <p className="text-green-400/80 text-[16px] font-light">
-                    {customCommify(earningsValue.toFixed(5))} {tokenName}
+                    {customCommify(earningsValue, { minimumFractionDigits: 2, maximumFractionDigits: 5 })} {tokenName}
                 </p>
             </div>
         </div>
@@ -48,7 +49,7 @@ const TokenEarning = ({
 };
 
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
-    const { isConnecting } = useWallet();
+    const { currentWallet, isConnecting } = useWallet();
     const { balances, isBalancesLoading: isLoading, prices } = useTokens();
     const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
     const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
@@ -134,12 +135,14 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         );
     };
 
-    if (stakedTokenValueUsd === 0) return null;
+    if (stakedTokenValueUsd === 0 || !currentWallet) return null;
 
     return (
         <div className="mt-10 relative">
             {(farm.originPlatform === FarmOriginPlatform.Infrared ||
-                farm.originPlatform === FarmOriginPlatform.Steer) &&
+                farm.originPlatform === FarmOriginPlatform.Steer ||
+                farm.originPlatform === FarmOriginPlatform.Kodiak ||
+                farm.originPlatform === FarmOriginPlatform.Burrbear) &&
             !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}

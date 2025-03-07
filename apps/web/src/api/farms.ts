@@ -1,5 +1,10 @@
 import axios from "axios";
-import { EARNINGS_GRAPH_URL } from "src/config/constants";
+import {
+    BURRBEAR_EARNINGS_GRAPH_URL,
+    EARNINGS_GRAPH_URL,
+    KODIAK_EARNINGS_GRAPH_URL,
+    STEER_PROTOCOL_EARNINGS_GRAPH_URL,
+} from "src/config/constants";
 import { getPricesByTime, getTokenPricesBackend } from "src/api/token";
 import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { toEth, toWei } from "src/utils/common";
@@ -9,6 +14,7 @@ import vaultAbi from "src/assets/abis/vault.json";
 import pools_json from "src/config/constants/pools_json";
 import { berachain } from "viem/chains";
 import { VaultEarnings } from "src/state/farms/types";
+import { tokenNamesAndImages } from "src/config/constants/pools_json";
 
 interface Response {
     deposit: string;
@@ -95,11 +101,29 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
             blockNumber
           }
         }`;
+
         const withdrawResponse = await axios.post(EARNINGS_GRAPH_URL, { query: withdrawsQuery });
         const withdraws = withdrawResponse.data.data.withdraws;
+
+        // Add type field to each deposit and withdrawal object
+        const depositsWithType = deposits.map((deposit: any) => ({
+            ...deposit,
+            type: "deposit",
+        }));
+
+        const withdrawsWithType = withdraws.map((withdraw: any) => ({
+            ...withdraw,
+            type: "withdraw",
+        }));
+
+        // Concatenate the arrays
+        const combinedTransactions = [...depositsWithType, ...withdrawsWithType];
+
+        const burrbearEarnings = await getEarningsForBurrbear(combinedTransactions);
         const infraredEarnings = await getEarningsForInfrared(deposits, withdraws, client, balances);
-        const steerEarnings = await getEarningsForSteer(deposits, withdraws, client, balances);
-        return [...infraredEarnings, ...steerEarnings];
+        const steerEarnings = await getEarningsForSteer(combinedTransactions);
+        const kodiakEarnings = await getEarningsForKodiak(combinedTransactions);
+        return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings];
     } catch (err: any) {
         console.error(err);
         return [];
@@ -221,12 +245,7 @@ const getEarningsForInfrared = async (
         return [];
     }
 };
-const getEarningsForSteer = async (
-    deposits: any,
-    withdraws: any,
-    client: PublicClient,
-    balances: any
-): Promise<VaultEarnings[]> => {
+const getEarningsForSteer = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
     try {
         const steerPools = pools_json
             .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
@@ -243,20 +262,6 @@ const getEarningsForSteer = async (
                     underlyingVault,
                 };
             });
-
-        // Add type field to each deposit and withdrawal object
-        const depositsWithType = deposits.map((deposit: any) => ({
-            ...deposit,
-            type: "deposit",
-        }));
-
-        const withdrawsWithType = withdraws.map((withdraw: any) => ({
-            ...withdraw,
-            type: "withdraw",
-        }));
-
-        // Concatenate the arrays
-        const combinedTransactions = [...depositsWithType, ...withdrawsWithType];
 
         const earnings = await Promise.all(
             steerPools.map(async (pool) => {
@@ -289,22 +294,12 @@ const getEarningsForSteer = async (
                                 fees0
                                 fees1
                                 totalLPTokensIssued
-                                totalAmount0
-                                totalAmount1
-                                token1Balance
                                 token1
-                                token0Symbol
-                                token0Name
-                                token0Decimals
-                                token0Balance
                                 token0
                             }
                         }`;
 
-                    const feeResponse = await axios.post(
-                        `https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-bera/prod/gn`,
-                        { query: feeQuery }
-                    );
+                    const feeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, { query: feeQuery });
 
                     const feeData = feeResponse.data.data.vault;
                     token0 = feeData.token0;
@@ -337,6 +332,44 @@ const getEarningsForSteer = async (
                     acc.lastFee1 = BigInt(feeData.fees1);
                 }
 
+                // Calculate earnings from last transaction to current time if user has a balance
+                if (acc.currentBalance > 0) {
+                    // Get current fees data
+                    const currentFeeQuery = `
+                        query GetCurrentLPFee {
+                            vault(id: "${pool.underlyingVault}") {
+                                fees0
+                                fees1
+                                totalLPTokensIssued
+                            }
+                        }`;
+
+                    const currentFeeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, {
+                        query: currentFeeQuery,
+                    });
+
+                    const currentFeeData = currentFeeResponse.data.data.vault;
+
+                    // Calculate accumulated fees since last transaction
+                    const finalAccumulatedFees0 = BigInt(currentFeeData.fees0) - acc.lastFee0;
+                    const finalAccumulatedFees1 = BigInt(currentFeeData.fees1) - acc.lastFee1;
+
+                    // Calculate user's share of these fees
+                    const finalUserShareOfFees0 =
+                        BigInt(currentFeeData.totalLPTokensIssued) > 0
+                            ? (finalAccumulatedFees0 * acc.currentBalance) / BigInt(currentFeeData.totalLPTokensIssued)
+                            : BigInt(0);
+
+                    const finalUserShareOfFees1 =
+                        BigInt(currentFeeData.totalLPTokensIssued) > 0
+                            ? (finalAccumulatedFees1 * acc.currentBalance) / BigInt(currentFeeData.totalLPTokensIssued)
+                            : BigInt(0);
+
+                    // Add to total earnings
+                    acc.earningsToken0 += finalUserShareOfFees0;
+                    acc.earningsToken1 += finalUserShareOfFees1;
+                }
+
                 // Return only the required fields for VaultEarnings
                 return {
                     tokenId: pool.farmId.toString(),
@@ -350,6 +383,335 @@ const getEarningsForSteer = async (
         return earnings;
     } catch (err: any) {
         console.error(err);
+        return [];
+    }
+};
+
+const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+    try {
+        const kodiakPools = pools_json
+            .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
+            .filter((pool) => pool.originPlatform === FarmOriginPlatform.Kodiak)
+            .map((pool) => {
+                const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1] || "";
+
+                return {
+                    vault_addr: pool.vault_addr,
+                    lp_addr: pool.lp_address,
+                    chainId: pool.chainId,
+                    farmId: pool.id,
+                    underlyingVault,
+                };
+            });
+
+        const earnings = await Promise.all(
+            kodiakPools.map(async (pool) => {
+                const filteredTransactions = combinedTransactions.filter(
+                    (transaction: any) => pool.farmId.toString() === transaction.tokenId
+                );
+
+                // Sort the filtered transactions by blockTimestamp
+                const sortedTransactions = filteredTransactions.sort(
+                    (a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp)
+                );
+
+                let acc = {
+                    currentBalance: BigInt(0),
+                    earningsToken0: 0,
+                    earningsToken1: 0,
+                    lastFee0: 0,
+                    lastFee1: 0,
+                    tokenId: pool.farmId,
+                };
+
+                let lastToken0 = "";
+                let lastToken1 = "";
+                let priceToken0 = 0;
+                let priceToken1 = 0;
+                let decimalsToken0 = 18;
+                let decimalsToken1 = 18;
+
+                // Process transactions sequentially
+                for (const transaction of sortedTransactions) {
+                    const feeQuery = `
+                        query GetLPFee {
+                            kodiakVault(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
+                                _token0 {
+                                    feesUSD
+                                    symbol
+                                    decimals
+                                }
+                                _token1 {
+                                    feesUSD
+                                    symbol
+                                    decimals
+                                }
+                                outputTokenSupply
+                                outputToken {
+                                    decimals
+                                }
+                            }
+                        }`;
+
+                    const feeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: feeQuery });
+
+                    const feeData = feeResponse.data.data.kodiakVault;
+
+                    lastToken0 =
+                        Object.keys(tokenNamesAndImages).find(
+                            (address) =>
+                                tokenNamesAndImages[address].name.toUpperCase() === feeData._token0.symbol.toUpperCase()
+                        ) || feeData._token0.symbol;
+
+                    lastToken1 =
+                        Object.keys(tokenNamesAndImages).find(
+                            (address) =>
+                                tokenNamesAndImages[address].name.toUpperCase() === feeData._token1.symbol.toUpperCase()
+                        ) || feeData._token1.symbol;
+
+                    const accumulatedFees0 = feeData._token0.feesUSD - acc.lastFee0;
+                    const accumulatedFees1 = feeData._token1.feesUSD - acc.lastFee1;
+
+                    // Calculate the user's share of fees based on their balance relative to total LP tokens
+                    const userShareOfFees0 =
+                        acc.currentBalance > 0 && BigInt(feeData.outputTokenSupply) > 0
+                            ? (accumulatedFees0 * Number(toEth(acc.currentBalance, feeData.outputToken.decimals))) /
+                              Number(toEth(feeData.outputTokenSupply, feeData.outputToken.decimals))
+                            : 0;
+
+                    const userShareOfFees1 =
+                        acc.currentBalance > 0 && BigInt(feeData.outputTokenSupply) > 0
+                            ? (accumulatedFees1 * Number(toEth(acc.currentBalance, feeData.outputToken.decimals))) /
+                              Number(toEth(feeData.outputTokenSupply, feeData.outputToken.decimals))
+                            : 0;
+
+                    acc.earningsToken0 += userShareOfFees0;
+                    acc.earningsToken1 += userShareOfFees1;
+
+                    if (transaction.type === "deposit") {
+                        acc.currentBalance += BigInt(transaction.value);
+                    } else if (transaction.type === "withdraw") {
+                        acc.currentBalance -= BigInt(transaction.value);
+                    }
+
+                    acc.lastFee0 = feeData._token0.feesUSD;
+                    acc.lastFee1 = feeData._token1.feesUSD;
+                }
+
+                // Calculate earnings from last transaction to current moment
+                if (acc.currentBalance > 0) {
+                    // Get current fees data
+                    const currentFeeQuery = `
+                        query GetCurrentLPFee {
+                            kodiakVault(id: "${pool.underlyingVault}") {
+                                _token0 {
+                                    feesUSD
+                                    symbol
+                                    decimals
+                                }
+                                _token1 {
+                                    feesUSD
+                                    symbol
+                                    decimals
+                                }
+                                _token0Amount
+                                _token0AmountUSD
+                                _token1Amount
+                                _token1AmountUSD
+                                outputTokenSupply
+                                outputToken {
+                                    decimals
+                                }
+                            }
+                        }`;
+
+                    const currentFeeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: currentFeeQuery });
+
+                    const currentFeeData = currentFeeResponse.data.data.kodiakVault;
+                    priceToken0 =
+                        currentFeeData._token0AmountUSD /
+                        Number(toEth(currentFeeData._token0Amount, currentFeeData._token0.decimals));
+                    priceToken1 =
+                        currentFeeData._token1AmountUSD /
+                        Number(toEth(currentFeeData._token1Amount, currentFeeData._token1.decimals));
+
+                    decimalsToken0 = currentFeeData._token0.decimals;
+                    decimalsToken1 = currentFeeData._token1.decimals;
+
+                    // Calculate accumulated fees since last transaction
+                    const currentAccumulatedFees0 = currentFeeData._token0.feesUSD - acc.lastFee0;
+                    const currentAccumulatedFees1 = currentFeeData._token1.feesUSD - acc.lastFee1;
+
+                    // Calculate user's share of current fees
+                    const currentUserShareOfFees0 =
+                        BigInt(currentFeeData.outputTokenSupply) > 0
+                            ? (currentAccumulatedFees0 *
+                                  Number(toEth(acc.currentBalance, currentFeeData.outputToken.decimals))) /
+                              Number(toEth(currentFeeData.outputTokenSupply, currentFeeData.outputToken.decimals))
+                            : 0;
+
+                    const currentUserShareOfFees1 =
+                        BigInt(currentFeeData.outputTokenSupply) > 0
+                            ? (currentAccumulatedFees1 *
+                                  Number(toEth(acc.currentBalance, currentFeeData.outputToken.decimals))) /
+                              Number(toEth(currentFeeData.outputTokenSupply, currentFeeData.outputToken.decimals))
+                            : 0;
+
+                    // Add current earnings to accumulated earnings
+                    acc.earningsToken0 += currentUserShareOfFees0;
+                    acc.earningsToken1 += currentUserShareOfFees1;
+                }
+
+                return {
+                    tokenId: pool.farmId.toString(),
+                    earnings0:
+                        priceToken0 > 0
+                            ? toWei(acc.earningsToken0 / priceToken0, Number(decimalsToken0)).toString()
+                            : "0",
+                    earnings1:
+                        priceToken1 > 0
+                            ? toWei(acc.earningsToken1 / priceToken1, Number(decimalsToken1)).toString()
+                            : "0",
+                    token0: lastToken0,
+                    token1: lastToken1,
+                };
+            })
+        );
+
+        return earnings;
+    } catch (err: any) {
+        console.error(err);
+        return [];
+    }
+};
+
+const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+    try {
+        const burrbearPools = pools_json
+            .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
+            .filter((pool) => pool.originPlatform === FarmOriginPlatform.Burrbear)
+            .map((pool) => {
+                const underlyingVault = pool.source.match(/pool\/([^/?#]+)/)?.[1] || "";
+
+                return {
+                    vault_addr: pool.vault_addr,
+                    lp_addr: pool.lp_address,
+                    chainId: pool.chainId,
+                    farmId: pool.id,
+                    underlyingVault,
+                };
+            });
+
+        const earnings = await Promise.all(
+            burrbearPools.map(async (pool) => {
+                const filteredTransactions = combinedTransactions.filter(
+                    (transaction: any) => pool.farmId.toString() === transaction.tokenId
+                );
+
+                // Sort the filtered transactions by blockTimestamp
+                const sortedTransactions = filteredTransactions.sort(
+                    (a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp)
+                );
+
+                let acc = {
+                    currentBalance: BigInt(0),
+                    earningsToken0: 0,
+                    lastFee0: 0,
+                    tokenId: pool.farmId,
+                };
+
+                let lastToken0 = pool.lp_addr;
+                let lpPrice = 0;
+
+                // Process transactions sequentially
+                for (const transaction of sortedTransactions) {
+                    const feeQuery = `
+                        query GetLPFee {
+                            pool(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
+                                totalSwapFee
+                                totalLiquidity
+                                tokens {
+                                    priceRate
+                                    address
+                                }
+                            }
+                        }`;
+
+                    const feeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, { query: feeQuery });
+
+                    const feeData = feeResponse.data.data.pool;
+
+                    const accumulatedFees0 = feeData.totalSwapFee - acc.lastFee0;
+                    const lpPrice = feeData.tokens.find(
+                        (token: any) => token.address === pool.lp_addr.toLowerCase()
+                    ).priceRate;
+
+                    // Calculate the user's share of fees based on their balance relative to total LP tokens
+                    const userShareOfFees0 =
+                        acc.currentBalance > 0 && feeData.totalLiquidity > 0
+                            ? (accumulatedFees0 * Number(toEth(acc.currentBalance))) /
+                              Number(feeData.totalLiquidity / lpPrice)
+                            : 0;
+
+                    acc.earningsToken0 += userShareOfFees0;
+
+                    if (transaction.type === "deposit") {
+                        acc.currentBalance += BigInt(transaction.value);
+                    } else if (transaction.type === "withdraw") {
+                        acc.currentBalance -= BigInt(transaction.value);
+                    }
+
+                    acc.lastFee0 = feeData.totalSwapFee;
+                }
+
+                // Calculate earnings from last transaction to current moment
+                if (acc.currentBalance > 0) {
+                    // Get current fees data
+                    const currentFeeQuery = `
+                        query GetCurrentLPFee {
+                            pool(id: "${pool.underlyingVault}") {
+                                totalSwapFee
+                                totalLiquidity
+                                tokens {
+                                    priceRate
+                                    address
+                                }
+                            }
+                        }`;
+
+                    const currentFeeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, {
+                        query: currentFeeQuery,
+                    });
+
+                    const currentFeeData = currentFeeResponse.data.data.pool;
+                    lpPrice = currentFeeData.tokens.find(
+                        (token: any) => token.address === pool.lp_addr.toLowerCase()
+                    ).priceRate;
+
+                    // Calculate accumulated fees since last transaction
+                    const currentAccumulatedFees0 = currentFeeData.totalSwapFee - acc.lastFee0;
+
+                    // Calculate user's share of current fees
+                    const currentUserShareOfFees0 =
+                        currentFeeData.totalLiquidity > 0
+                            ? (currentAccumulatedFees0 * Number(toEth(acc.currentBalance))) /
+                              Number(currentFeeData.totalLiquidity / lpPrice)
+                            : 0;
+
+                    // Add current earnings to accumulated earnings
+                    acc.earningsToken0 += currentUserShareOfFees0;
+                }
+
+                return {
+                    tokenId: pool.farmId.toString(),
+                    earnings0: lpPrice > 0 ? toWei(acc.earningsToken0 / lpPrice).toString() : "0",
+                    token0: lastToken0,
+                };
+            })
+        );
+        return earnings;
+    } catch (error) {
+        console.error(error);
         return [];
     }
 };

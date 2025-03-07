@@ -20,9 +20,17 @@ import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";
 
-const Transactions = () => {
+interface TransactionProps {
+    farmId?: number;
+}
+
+const Transactions: FC<TransactionProps> = ({ farmId }) => {
     const [open, setOpen] = useState(false);
-    const transactions = useAppSelector((state) => state.transactions.transactions.slice(0, 3));
+    const transactions = useAppSelector((state) =>
+        farmId
+            ? state.transactions.transactions.filter((transaction) => transaction.farmId === farmId).slice(0, 3)
+            : state.transactions.transactions.slice(0, 3)
+    );
 
     return (
         <div>
@@ -46,7 +54,7 @@ const Transactions = () => {
                     <Row _id={item._id} key={i} />
                 ))}
             </div>
-            {open && <TransactionsModal setOpenModal={setOpen} />}
+            {open && <TransactionsModal setOpenModal={setOpen} farmId={farmId} />}
         </div>
     );
 };
@@ -384,8 +392,15 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
     );
 };
 
-const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ setOpenModal }) => {
-    const transactions = useAppSelector((state) => state.transactions.transactions);
+const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: number }> = ({
+    setOpenModal,
+    farmId,
+}) => {
+    const transactions = useAppSelector((state) =>
+        farmId
+            ? state.transactions.transactions.filter((transaction) => transaction.farmId === farmId)
+            : state.transactions.transactions
+    );
     const { fetchTransactions, isLoading, fetchedAll } = useTransactions();
     const timeout = useRef<NodeJS.Timeout>();
 

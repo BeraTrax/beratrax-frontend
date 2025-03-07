@@ -23,6 +23,7 @@ export interface StateInterface {
     refCodeLoaded: boolean;
     connector?: string;
     xFollower?: boolean;
+    disableZapWarning?: boolean;
     error?: string | null;
 }
 
@@ -56,6 +57,7 @@ export interface AccountResponse {
     };
     connector?: string;
     xFollower?: boolean;
+    disableZapWarning?: boolean;
 }
 
 export enum Boosts {

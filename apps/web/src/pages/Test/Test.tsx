@@ -16,13 +16,13 @@ import { useConnectors } from "wagmi";
 
 const Test = () => {
     const { openConnectModal } = useConnectModal();
-    const { currentWallet, getWalletClient, getPublicClient } = useWallet();
+    const { getPublicClient } = useWallet();
     const connectors = useConnectors();
     const { dismissNotifyAll, notifyError, notifyLoading, notifySuccess } = useNotify();
     const [url, setUrl] = useState<string>("");
     const [modelOpen, setModelOpen] = useState(false);
     const [model1Open, set1ModelOpen] = useState(false);
-    const { connectWallet, switchExternalChain, getClients } = useWallet();
+    const { getClients } = useWallet();
     const { prices } = useTokens();
     const { platformTVL } = usePlatformTVL();
     const clickMeButtonRef = useRef<HTMLButtonElement>(null);

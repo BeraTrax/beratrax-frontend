@@ -39,13 +39,7 @@
     },
     "start:mobile": {
       "cache": false,
-      "persistent": true,
-      "inputs": [
-        "apps/mobile/src/**",
-        "apps/mobile/index.js",
-        "apps/mobile/package.json",
-        "apps/mobile/metro.config.js"
-      ]
+      "persistent": true
     },
     "lint": {
       "dependsOn": ["^lint"],

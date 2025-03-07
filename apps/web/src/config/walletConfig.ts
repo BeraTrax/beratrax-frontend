@@ -77,20 +77,26 @@ export const SupportedChains = [berachain] as (Chain & {
   iconUrl?: string;
 })[];
 
+// #region Chain config
+const chainConfig = {
+  chainId: "0x" + berachain.id.toString(16),
+  rpcTarget: berachain.rpcUrls.default.http[0],
+  displayName: berachain.name,
+  tickerName: berachain.nativeCurrency.name,
+  ticker: berachain.nativeCurrency.symbol,
+  blockExplorerUrl: blockExplorersByChainId[berachain.id],
+  chainNamespace: CHAIN_NAMESPACES.EIP155,
+}
+// #endregion Chain config
+
+
+
 // #region web3auth config
 const clientId = WEB3AUTH_CLIENT_ID as string;
 
 const PrivateKeyProvider = new EthereumPrivateKeyProvider({
   config: {
-    chainConfig: {
-      chainId: "0x" + berachain.id.toString(16),
-      rpcTarget: berachain.rpcUrls.default.http[0],
-      displayName: berachain.name,
-      tickerName: berachain.nativeCurrency.name,
-      ticker: berachain.nativeCurrency.symbol,
-      blockExplorerUrl: blockExplorersByChainId[berachain.id],
-      chainNamespace: CHAIN_NAMESPACES.EIP155,
-    },
+    chainConfig,
   },
 });
 
@@ -104,14 +110,7 @@ export const getWeb3AuthInstance = (() => {
       instance = new Web3AuthNoModal({
         clientId,
         web3AuthNetwork: "cyan",
-        chainConfig: {
-          chainId: "0x" + berachain.id.toString(16),
-          rpcTarget: berachain.rpcUrls.default.http[0],
-          displayName: berachain.name,
-          tickerName: berachain.nativeCurrency.name,
-          ticker: berachain.nativeCurrency.symbol,
-          chainNamespace: CHAIN_NAMESPACES.EIP155,
-        },
+        chainConfig,
       });
 
       // Initialize adapters only once
@@ -133,15 +132,7 @@ export const getWeb3AuthInstance = (() => {
               clientId,
               web3AuthNetwork: "cyan",
               privateKeyProvider: PrivateKeyProvider,
-              chainConfig: {
-                chainId: "0x" + berachain.id.toString(16),
-                rpcTarget: berachain.rpcUrls.default.http[0],
-                displayName: berachain.name,
-                tickerName: berachain.nativeCurrency.name,
-                ticker: berachain.nativeCurrency.symbol,
-                blockExplorerUrl: blockExplorersByChainId[berachain.id],
-                chainNamespace: CHAIN_NAMESPACES.EIP155,
-              },
+              chainConfig,
             },
           });
           
@@ -169,14 +160,7 @@ export const getWeb3AuthInstance = (() => {
 export const web3AuthInstance = new Web3AuthNoModal({
   clientId,
   web3AuthNetwork: "cyan",
-  chainConfig: {
-    chainId: "0x" + berachain.id.toString(16),
-    rpcTarget: berachain.rpcUrls.default.http[0],
-    displayName: berachain.name,
-    tickerName: berachain.nativeCurrency.name,
-    ticker: berachain.nativeCurrency.symbol,
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-  },
+  chainConfig,
 });
 
 const openloginAdapter = new OpenloginAdapter({

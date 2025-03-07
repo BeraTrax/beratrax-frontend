@@ -29,6 +29,9 @@
         "name": "typescript-plugin-css-modules"
       }
     ],
+    "paths": {
+      "react-outside-click-handler": ["./node_modules/@types/react-outside-click-handler"]
+    },
     "types": [
       "./src/decs2.d.ts",
       "vite-plugin-svgr/client"

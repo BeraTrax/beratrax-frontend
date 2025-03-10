@@ -129,9 +129,14 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 ) : (
                                     <>
                                         <button
-                                            className={`${
-                                                !currentWallet ? "lg:max-w-80" : "lg:max-w-64"
-                                            } bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                                            disabled={farm.originPlatform === FarmOriginPlatform.Burrbear}
+                                            className={`${!currentWallet ? "lg:max-w-80" : "lg:max-w-64"}
+                                            ${
+                                                farm.originPlatform === FarmOriginPlatform.Burrbear
+                                                    ? "bg-gray-500"
+                                                    : "bg-buttonPrimaryLight"
+                                            } 
+                                            bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                                             onClick={() => {
                                                 !currentWallet
                                                     ? openConnectModal && openConnectModal()

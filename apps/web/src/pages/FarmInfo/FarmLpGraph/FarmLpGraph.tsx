@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import styles from "./FarmLpGraph.module.css";
 import { LP_Prices } from "src/api/stats";
-import useApp from "src/hooks/useApp";
 import { useLp } from "src/hooks/useLp";
 import { PoolDef } from "src/config/constants/pools_json";
 
@@ -175,8 +173,11 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                     />
                 ))}
             </div>
+            <div className="text-center my-4">
+                <h2 className="text-xl font-semibold text-textPrimary">Farm LP Price History</h2>
+                <p className="text-sm text-textSecondary">Historical LP Price of this farm</p>
+            </div>
         </div>
     );
 };
 export default FarmLpGraph;
-

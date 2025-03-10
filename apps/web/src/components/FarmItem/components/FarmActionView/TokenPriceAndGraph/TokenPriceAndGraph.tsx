@@ -4,6 +4,8 @@ import { useLp } from "src/hooks/useLp";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import { customCommify } from "src/utils/common";
 import FarmRowChip from "../../FarmRowChip/FarmRowChip";
+import FarmTvlGraph from "src/pages/FarmInfo/FarmTvlGraph/FarmTvlGraph";
+import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
 
 interface TokenPriceProps {
     farm: PoolDef;
@@ -91,7 +93,15 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                         </div>
                     </div>
                 </div>
-                <FarmLpGraph farm={farm} />
+                    <FarmLpGraph farm={farm} />
+                    <div className="flex flex-col w-full gap-6 md:flex-row">
+                        <div className="w-full">
+                            <FarmTvlGraph farm={farm} />
+                        </div>
+                        <div className="w-full">
+                            <FarmApyGraph farm={farm} />
+                        </div>
+                    </div>
             </div>
         </div>
     );

@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { VaultsApy } from "src/api/stats";
-import { useSpecificVaultApy } from "src/hooks/useVaults";
+import { TVLHistory } from "src/api/stats";
+import { useSpecificVaultTvl } from "src/hooks/useVaults";
 import { PoolDef } from "src/config/constants/pools_json";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
@@ -40,7 +40,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
     }
 };
 
-const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
+const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
     const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
     const graphFiltersList: { text: string; type: GraphFilterType }[] = [
@@ -50,14 +50,14 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
         { text: "1M", type: "month" },
     ];
 
-    const downsampleData = (data: VaultsApy[], filter: GraphFilterType) => {
+    const downsampleData = (data: TVLHistory[], filter: GraphFilterType) => {
         if (!data || data.length === 0) return [];
 
-        const filteredData: { date: string; apy: string; timestamp: number }[] = [];
+        const filteredData: { date: string; tvl: string; timestamp: number }[] = [];
 
         // Filter and sort entries by timestamp
         const filteredEntries = data
-            .filter((entry) => entry.timestamp && entry.apy && entry.apy > 0)
+            .filter((entry) => entry.timestamp && entry.tvl && entry.tvl > 0)
             .sort((a, b) => a.timestamp - b.timestamp);
 
         if (filteredEntries.length === 0) return [];
@@ -107,13 +107,13 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 
             if (slotEntries.length > 0) {
                 const key = formatDate(slotTime, filter);
-                const totalApy = slotEntries.reduce((sum, entry) => sum + (entry.apy || 0), 0);
-                const avgApy = totalApy / slotEntries.length;
+                const totalTvl = slotEntries.reduce((sum, entry) => sum + (entry.tvl || 0), 0);
+                const avgTvl = totalTvl / slotEntries.length;
 
-                if (avgApy > 0) {
+                if (avgTvl > 0) {
                     filteredData.push({
                         date: key,
-                        apy: avgApy.toFixed(3),
+                        tvl: avgTvl.toFixed(3),
                         timestamp: slotTime,
                     });
                 }
@@ -123,12 +123,12 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
         return filteredData;
     };
 
-    const { vaultApy, isLoading: isLoadingVaultApy, isFetched: isFetchedVaultApy } = useSpecificVaultApy(farm.id);
-    const newData = useMemo(() => downsampleData(vaultApy || [], graphFilter), [vaultApy, graphFilter]);
+    const { vaultTvl, isLoading: isLoadingVaultTvl, isFetched: isFetchedVaultTvl } = useSpecificVaultTvl(farm.id);
+    const newData = useMemo(() => downsampleData(vaultTvl || [], graphFilter), [vaultTvl, graphFilter]);
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
-                {isLoadingVaultApy ? (
+                {isLoadingVaultTvl ? (
                     <Skeleton h={300} w={"100%"} />
                 ) : (
                     <>
@@ -145,12 +145,12 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}
-                                    formatter={(value: any) => [`${value}%`, "APY"]}
+                                    formatter={(value: any) => [`$${value}`, "Price"]}
                                     labelFormatter={(label) => label}
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="apy"
+                                    dataKey="tvl"
                                     stroke="#90BB62"
                                     strokeWidth={2}
                                     fill="url(#colorUv)"
@@ -173,10 +173,10 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <h2 className="text-xl font-semibold text-textPrimary">Farm APY History</h2>
-                <p className="text-sm text-textSecondary">Historical APY of this farm</p>
+                <h2 className="text-xl font-semibold text-textPrimary">Farm TVL History</h2>
+                <p className="text-sm text-textSecondary">Historical Total Value Locked in this farm</p>
             </div>
         </div>
     );
 };
-export default FarmApyGraph;
+export default FarmTvlGraph;

@@ -13,7 +13,7 @@ import useTokens from "src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { getLpAddressForFarmsPrice } from "src/utils/common";
 import { zeroAddress } from "viem";
-import FarmApyGraph from "../FarmApyGraph/FarmApyGraph";
+import FarmApyGraph from "../FarmApyGraphOld/FarmApyGraph";
 import FarmLpGraph from "../FarmLpGraph/FarmLpGraph";
 import styles from "./styles.module.css";
 

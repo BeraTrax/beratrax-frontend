@@ -16,6 +16,8 @@
     "types": ["node"],
     "paths": {
       "@beratrax/ui/*": ["packages/ui/*"],
+      "@beratrax/web/*": ["apps/web/*"],
+      "@beratrax/mobile/*": ["apps/mobile/*"]
     }
   },
   "exclude": ["_", "node_modules", "dist", "build", "**/*.test.ts"]

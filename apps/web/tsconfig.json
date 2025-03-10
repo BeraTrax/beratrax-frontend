@@ -30,6 +30,7 @@
       }
     ],
     "paths": {
+      "src/*": ["./src/*"],
       "react-outside-click-handler": ["./node_modules/@types/react-outside-click-handler"]
     },
     "types": [

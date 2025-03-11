@@ -173,8 +173,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <h2 className="text-xl font-semibold text-textPrimary">Farm APY History</h2>
-                <p className="text-sm text-textSecondary">Historical APY of this farm</p>
+                <p className="text-sm text-textSecondary">Historical APY of the vault</p>
             </div>
         </div>
     );

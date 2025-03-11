@@ -173,8 +173,7 @@ const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <h2 className="text-xl font-semibold text-textPrimary">Farm TVL History</h2>
-                <p className="text-sm text-textSecondary">Historical Total Value Locked in this farm</p>
+                <p className="text-sm text-textSecondary">Historical Total Value Locked in the vault</p>
             </div>
         </div>
     );

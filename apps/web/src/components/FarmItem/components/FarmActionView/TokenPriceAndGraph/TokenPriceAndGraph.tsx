@@ -6,6 +6,7 @@ import { customCommify } from "src/utils/common";
 import FarmRowChip from "../../FarmRowChip/FarmRowChip";
 import FarmTvlGraph from "src/pages/FarmInfo/FarmTvlGraph/FarmTvlGraph";
 import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
+import { useState } from "react";
 
 interface TokenPriceProps {
     farm: PoolDef;
@@ -20,8 +21,18 @@ const PriceLoadingSkeleton = () => {
     );
 };
 
+type TabType = "price" | "tvl" | "apy";
+
 export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const { lp, isLpPriceLoading } = useLp(farm.id);
+    const [activeTab, setActiveTab] = useState<TabType>("price");
+
+    const tabs = [
+        { id: "price" as TabType, label: "Price" },
+        { id: "tvl" as TabType, label: "TVL" },
+        { id: "apy" as TabType, label: "APY" },
+    ];
+
     return (
         <div className="relative">
             <div className="z-10">
@@ -93,15 +104,28 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                         </div>
                     </div>
                 </div>
-                    <FarmLpGraph farm={farm} />
-                    <div className="flex flex-col w-full gap-6 md:flex-row">
-                        <div className="w-full">
-                            <FarmTvlGraph farm={farm} />
-                        </div>
-                        <div className="w-full">
-                            <FarmApyGraph farm={farm} />
-                        </div>
-                    </div>
+
+                <div className="flex gap-4 mt-6 mb-4">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                                activeTab === tab.id
+                                    ? "bg-gradientSecondary text-textWhite"
+                                    : "text-textSecondary hover:text-textWhite"
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <div>
+                    {activeTab === "price" && <FarmLpGraph farm={farm} />}
+                    {activeTab === "tvl" && <FarmTvlGraph farm={farm} />}
+                    {activeTab === "apy" && <FarmApyGraph farm={farm} />}
+                </div>
             </div>
         </div>
     );

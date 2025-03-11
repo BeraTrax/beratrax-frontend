@@ -111,7 +111,7 @@ const PoolInfo = ({
                         <tbody>
                             {tokenType === FarmType.advanced && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Underlying LP</td>
+                                    <td className="p-4 text-textWhite font-medium">Underlying Token</td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Trading fees to APY
                                     </td>

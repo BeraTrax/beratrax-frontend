@@ -174,8 +174,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <h2 className="text-xl font-semibold text-textPrimary">Farm LP Price History</h2>
-                <p className="text-sm text-textSecondary">Historical LP Price of this farm</p>
+                <p className="text-sm text-textSecondary">Historical Price of the underlying token</p>
             </div>
         </div>
     );

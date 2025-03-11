@@ -13,7 +13,7 @@ const VaultContracts: FC<VaultContractsProps> = ({ farm }) => {
     const contracts = [
         { name: "Vault Contract", address: farm.vault_addr },
         { name: "Zapper Contract", address: farm.zapper_addr },
-        { name: "LP Token", address: farm.lp_address },
+        { name: "Underlying Token", address: farm.lp_address },
         ...(farm.rewardVault ? [{ name: "Reward Vault", address: farm.rewardVault }] : []),
         { name: `Token 1 (${farm.pair1})`, address: farm.token1 },
         ...(farm.token2 ? [{ name: `Token 2 (${farm.pair2})`, address: farm.token2 }] : []),

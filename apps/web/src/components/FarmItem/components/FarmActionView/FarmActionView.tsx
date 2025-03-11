@@ -118,7 +118,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 <VaultContracts farm={farm} />
                             </div>
                             <div
-                                className={`flex gap-2 fixed bottom-4 justify-center ${
+                                className={`z-10 flex gap-2 fixed bottom-4 justify-center ${
                                     Number(withdrawable?.amount || "0") ? "pr-4" : ""
                                 }`}
                                 style={{ width: "-webkit-fill-available" }}

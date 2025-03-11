@@ -111,16 +111,23 @@ const PoolInfo = ({
                         <tbody>
                             {tokenType === FarmType.advanced && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Underlying LP</td>
+                                    <td className="p-4 text-textWhite font-medium">Underlying Token</td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Trading fees to APY
                                     </td>
                                 </tr>
                             )}
 
-                            {isAutoCompounded && originPlatform === FarmOriginPlatform.Infrared && (
+                            {/* TODO: change to dynamic reward token */}
+                            {(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">iBGT</td>
+                                    <td className="p-4 text-textWhite font-medium">
+                                        {originPlatform === FarmOriginPlatform.Infrared
+                                            ? "iBGT"
+                                            : originPlatform === FarmOriginPlatform.Burrbear
+                                            ? "WBERA"
+                                            : "HONEY"}
+                                    </td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Autocompounded to APY
                                     </td>

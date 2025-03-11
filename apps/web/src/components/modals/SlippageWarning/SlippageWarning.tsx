@@ -17,7 +17,7 @@ export const SlippageWarning: FC<IProps> = ({ handleClose, handleSubmit, percent
                 <h1 className="text-red-500">Warning</h1>
                 <p
                     className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}
-                >{`Slipage is higher than normal at ${percentage?.toFixed(2)}%.`}</p>
+                >{`Slippage is higher than normal at ${percentage?.toFixed(2)}%.`}</p>
                 <p className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}>
                     Are you sure you still want to continue?
                 </p>

@@ -125,7 +125,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     const [showSlippageModal, setShowSlippageModal] = useState(false);
     const [showOneTimeZappingModal, setShowOneTimeZappingModal] = useState(false);
     const [shownOneTimeZappingModal, setShownOneTimeZappingModal] = useState(disableZapWarning);
-    const [showNotSlipageModal, setShowNotSlipageModal] = useState(false);
+    const [showNotSlippageModal, setShowNotSlippageModal] = useState(false);
     const [showConfirmWithdrawModal, setShowConfirmWithdrawModal] = useState<boolean>(false);
     const [withdrawModalShown, setWithdrawModalShown] = useState<boolean>(false);
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
@@ -203,7 +203,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
         if (slippage && slippage > 2) {
             setShowSlippageModal(true);
         } else if (slippage === undefined) {
-            setShowNotSlipageModal(true);
+            setShowNotSlippageModal(true);
         } else if (!shownOneTimeZappingModal && transactionType === FarmTransactionType.Deposit) {
             setShowOneTimeZappingModal(true);
         } else {
@@ -559,10 +559,10 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             ) : null}
 
             {/* No Slippage Modal */}
-            {showNotSlipageModal ? (
+            {showNotSlippageModal ? (
                 <SlippageNotCalculate
                     handleClose={() => {
-                        setShowNotSlipageModal(false);
+                        setShowNotSlippageModal(false);
                     }}
                     handleSubmit={handleConfirm}
                 />

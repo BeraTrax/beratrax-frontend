@@ -68,7 +68,7 @@ const pools_json: PoolDef[] = [
     {
         id: 23,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
         originPlatform: FarmOriginPlatform.Steer,
@@ -117,7 +117,7 @@ const pools_json: PoolDef[] = [
     {
         id: 24,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wgBERA",
         url_name: "wBERA-wgBERA",
         originPlatform: FarmOriginPlatform.Burrbear,
@@ -167,7 +167,7 @@ const pools_json: PoolDef[] = [
     {
         id: 22,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "Nect-USDC-Honey",
         url_name: "Nect-USDC-Honey",
         originPlatform: FarmOriginPlatform.Burrbear,
@@ -271,7 +271,7 @@ const pools_json: PoolDef[] = [
     {
         id: 8,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -326,7 +326,7 @@ const pools_json: PoolDef[] = [
     {
         id: 9,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -381,7 +381,7 @@ const pools_json: PoolDef[] = [
     {
         id: 10,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -436,7 +436,7 @@ const pools_json: PoolDef[] = [
     {
         id: 20,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "HONEY-BYUSD",
         url_name: "HONEY-BYUSD",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -492,7 +492,7 @@ const pools_json: PoolDef[] = [
     {
         id: 21,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "USDC-HONEY",
         url_name: "USDC-HONEY",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -548,7 +548,7 @@ const pools_json: PoolDef[] = [
     {
         id: 11,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -595,7 +595,7 @@ const pools_json: PoolDef[] = [
     {
         id: 12,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -642,7 +642,7 @@ const pools_json: PoolDef[] = [
     {
         id: 13,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-YEET",
         url_name: "wBERA-YEET",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -689,7 +689,7 @@ const pools_json: PoolDef[] = [
     {
         id: 14,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-RAMEN",
         url_name: "wBERA-RAMEN",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -736,7 +736,7 @@ const pools_json: PoolDef[] = [
     {
         id: 15,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -784,7 +784,7 @@ const pools_json: PoolDef[] = [
         id: 16,
         isUpcoming: true,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "iBERA",
         url_name: "iBERA",
         originPlatform: FarmOriginPlatform.Infrared,
@@ -834,7 +834,7 @@ const pools_json: PoolDef[] = [
         id: 18,
         isUpcoming: true,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "Yeet-wBERA",
         url_name: "Yeet-wBERA",
         originPlatform: FarmOriginPlatform.Yeet,
@@ -883,7 +883,7 @@ const pools_json: PoolDef[] = [
         id: 19,
         isUpcoming: true,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
         originPlatform: FarmOriginPlatform.Kodiak,
@@ -932,7 +932,7 @@ const pools_json: PoolDef[] = [
     {
         id: 1,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
         originPlatform: FarmOriginPlatform.Steer,
@@ -981,7 +981,7 @@ const pools_json: PoolDef[] = [
     {
         id: 5,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
         originPlatform: FarmOriginPlatform.Steer,
@@ -1031,7 +1031,7 @@ const pools_json: PoolDef[] = [
     {
         id: 4,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wETH-HONEY",
         url_name: "wETH-HONEY",
         originPlatform: FarmOriginPlatform.Steer,
@@ -1081,7 +1081,7 @@ const pools_json: PoolDef[] = [
     {
         id: 2,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "USDC-HONEY",
         url_name: "USDC-HONEY",
         originPlatform: FarmOriginPlatform.Steer,
@@ -1131,7 +1131,7 @@ const pools_json: PoolDef[] = [
     {
         id: 3,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBTC-HONEY",
         url_name: "wBTC-HONEY",
         originPlatform: FarmOriginPlatform.Steer,
@@ -1181,7 +1181,7 @@ const pools_json: PoolDef[] = [
     {
         id: 6,
         chainId: CHAIN_ID.BERACHAIN,
-        token_type: "Token",
+        token_type: "LP Token",
         name: "wBTC-wETH",
         url_name: "wBTC-wETH",
         originPlatform: FarmOriginPlatform.Steer,

@@ -14,13 +14,14 @@ import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import { FarmDetailInputOptions } from "src/state/farms/types";
 import useTokens from "src/state/tokens/useTokens";
-import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
+import { FarmOriginPlatform, FarmTransactionType, FarmType } from "src/types/enums";
 import { formatCurrency, toFixedFloor } from "src/utils/common";
 import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
 import Transactions from "src/pages/Dashboard/Transactions/Transactions";
+import VaultContracts from "./VaultContracts/VaultContracts";
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
@@ -110,8 +111,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     isAutoCompounded={farm.isAutoCompounded || false}
                                     marketCapLoading={isMarketCapAndVaultLoading}
                                     vaultTvlLoading={isMarketCapAndVaultLoading}
+                                    originPlatform={farm.originPlatform}
+                                    tokenType={farm.token_type as FarmType}
                                 />
                                 <Transactions farmId={farm.id} />
+                                <VaultContracts farm={farm} />
                             </div>
                             <div
                                 className={`flex gap-2 fixed bottom-4 justify-center ${

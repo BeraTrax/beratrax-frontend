@@ -47,6 +47,8 @@ export const berachain = /*#__PURE__*/ defineChain({
 //     },
 // });
 
+export const PIMLICO_API_KEY = "pim_9GYmT9bQZJT29JsfnhaSiV";
+
 export const blockExplorersByChainId: { [key: number]: string } = {
   80094: "https://berascan.com",
 };

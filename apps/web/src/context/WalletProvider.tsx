@@ -1,4 +1,3 @@
-import { getWalletClient as getWalletClientCore, switchChain as switchChainCore } from "@wagmi/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { requestEthForGas } from "src/api";
 import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
@@ -6,7 +5,8 @@ import { EstimateTxGasArgs, IClients } from "src/types";
 import { trackTransaction } from "src/utils/analytics";
 import { Address, createPublicClient, createWalletClient, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { Connector, useAccount, useDisconnect } from "wagmi";
+import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
+
 
 export interface IWalletContext {
   currentWallet?: Address;
@@ -28,6 +28,10 @@ interface IProps {
 }
 
 const WalletProvider: React.FC<IProps> = ({ children }) => {
+  // Add these hooks
+  const { data: getWalletClientHook } = useWalletClient({config: rainbowConfig});
+  const { switchChainAsync: switchChainAsyncHook } = useSwitchChain({config: rainbowConfig});
+
   const { address, status, isConnecting: wagmiIsConnecting, isReconnecting: wagmiIsReconnecting, connector } = useAccount();
   const publicClients = useRef<Record<number, IClients["public"]>>({});
   const walletClients = useRef<Record<number, IClients["wallet"]>>({});
@@ -121,8 +125,8 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
         });
       } else {
         // @ts-ignore
-        client = await getWalletClientCore(rainbowConfig, { chainId });
-        await switchChainCore(rainbowConfig, { chainId });
+        client = getWalletClientHook;
+        await switchChainAsyncHook({ chainId });
       }
 
       client = client.extend((client) => ({
@@ -169,7 +173,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       walletClients.current[chainId] = client;
       return client;
     },
-    [address]
+    [address, isSocial, getWalletClientHook, switchChainAsyncHook]
   );
 
   const estimateTxGas = async (args: EstimateTxGasArgs) => {

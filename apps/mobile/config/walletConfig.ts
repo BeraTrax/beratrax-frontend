@@ -1,111 +1,106 @@
 // IMP START - Quick Start
 import { Chain, http } from "viem";
 import { createConfig } from "wagmi";
-import { injected, walletConnect } from 'wagmi/connectors';
-import { chainConfig, SupportedChains, WALLET_CONNECT_PROJECT_ID, WEB3AUTH_CLIENT_ID } from "./chain";
+import { injected, metaMask, safe, walletConnect } from 'wagmi/connectors';
+import { SupportedChains, WALLET_CONNECT_PROJECT_ID, WEB3AUTH_CLIENT_ID, chainConfig } from "./chain";
 
 import * as WebBrowser from "@toruslabs/react-native-web-browser";
-import { IWeb3Auth } from '@web3auth/base';
+import { WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import Web3Auth, { LoginParams, WEB3AUTH_NETWORK } from "@web3auth/react-native-sdk";
+import { Web3AuthNoModal } from '@web3auth/no-modal';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import Web3Auth from "@web3auth/react-native-sdk";
 import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector';
+import Constants, { ExecutionEnvironment } from "expo-constants";
+import * as Linking from "expo-linking";
 import EncryptedStorage from "react-native-encrypted-storage";
-import { createConnector as createWagmiConnector } from 'wagmi';
-// IMP END - Quick Start
+import { createConnector } from 'wagmi';
 
-const scheme = "web3authsfaauth0"; // Or your desired app redirection scheme
-// IMP START - Whitelist bundle ID
-const redirectUrl = `${scheme}://auth`;
-// IMP END - Whitelist bundle ID
+// Define redirect URL for Web3Auth
+// const redirectUrl =
+//   Constants.executionEnvironment == ExecutionEnvironment.Standalone
+//     ? Linking.createURL("web3auth", {})
+//     : Linking.createURL("web3auth", { scheme: "web3authexpoexample" });
 
-// IMP START - Dashboard Registration
-const clientId = WEB3AUTH_CLIENT_ID; // get from https://dashboard.web3auth.io
-// IMP END - Dashboard Registration
+// // Initialize the private key provider for Ethereum
+// const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
+//   config: {
+//     chainConfig
+//   },
+// });
 
-// IMP START - SDK Initialization
-const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
-  config: {
-    chainConfig,
-  },
-});
+// // Initialize the Web3Auth instance
+// const web3auth = new Web3Auth(WebBrowser, EncryptedStorage, {
+//   clientId: WEB3AUTH_CLIENT_ID,
+//   redirectUrl,
+//   network: WEB3AUTH_NETWORK.CYAN,
+//   privateKeyProvider: ethereumPrivateKeyProvider
+// });
 
-const web3auth = new Web3Auth(WebBrowser, EncryptedStorage, {
-  clientId,
-  redirectUrl,
-  network: WEB3AUTH_NETWORK.CYAN,
-  privateKeyProvider: ethereumPrivateKeyProvider
-});
+// // Initialize and export the Web3Auth provider
+// export const web3authProvider = web3auth.provider;
 
-export const web3authProvider = web3auth.provider;
+// // Instantiating Web3Auth - old instance to keep compatibility
+// export const web3AuthInstance = new Web3AuthNoModal({
+//   clientId: WEB3AUTH_CLIENT_ID,
+//   web3AuthNetwork: "cyan",
+//   chainConfig,
+// });
 
-// Create an adapter to make Web3Auth compatible with the connector
-const web3AuthAdapter: IWeb3Auth = {
-  connected: false,
-  connectedAdapterName: null,
-  cachedAdapter: null,
-  status: "ready",
-  provider: web3auth.provider as any, // Type assertion to avoid incompatible provider types
-  // Add minimum required methods to satisfy the interface
-  init: async () => {
-    await web3auth.init();
-    // Return void instead of Web3Auth to match the expected interface
-  },
-  // @ts-ignore
-  connectTo: async (walletName: string, loginParams: LoginParams) => {
-    return web3auth.login(loginParams);
-  },
-  logout: async (options?: { cleanup: boolean }) => {
-    await web3auth.logout();
-    // Return void instead of boolean to match the expected type
-  },
-  getUserInfo: async () => {
-    const userInfo = await web3auth.userInfo();
-    return userInfo || {};
-  },
-};
+// const openloginAdapter = new OpenloginAdapter({
+//   privateKeyProvider: ethereumPrivateKeyProvider,
+//   adapterSettings: {
+//     network: "cyan",
+//     uxMode: "redirect",
+//     replaceUrlOnRedirect: false,
+//   },
+// });
+// web3AuthInstance.configureAdapter(openloginAdapter);
 
-const createSocialWallet = (id: string, name: string, loginProvider: string) => {
-  return {
-    id,
-    name,
-    iconBackground: "white",
-    createConnector: (walletDetails: any) => 
-      createWagmiConnector((config) => {
-        // Use the adapted interface instead of the raw web3auth instance
-        return {
-          ...Web3AuthConnector({
-            web3AuthInstance: web3AuthAdapter,
-            loginParams: {
-              loginProvider,
-            },
-          })(config),
-          ...walletDetails
-        };
-      }),
-  }
-}
 
-const googleWallet = () => createSocialWallet("google", "Google", "google");
-const facebookWallet = () => createSocialWallet("facebook", "Facebook", "facebook");
-const discordWallet = () => createSocialWallet("discord", "Discord", "discord");
-const twitterWallet = () => createSocialWallet("twitter", "Twitter", "twitter");
-const githubWallet = () => createSocialWallet("github", "Github", "github");
+// // Create the social wallet connectors using the compatibility adapter
+// const createSocialWallet = (id: string, name: string, loginProvider: string) => {
+//   return {
+//     id,
+//     name,
+//     iconBackground: "white",
+//     createConnector: (walletDetails: any) => 
+//       createConnector((config) => {
+//         return {
+//           ...Web3AuthConnector({
+//             //@ts-ignore
+//             web3AuthInstance,
+//             loginParams: {
+//               loginProvider,
+//             },
+//           })(config),
+//           ...walletDetails
+//         };
+//       }),
+//   }
+// }
 
-// Create an array of social wallets for easy access
-export const socialWallets = [
-  googleWallet(),
-  facebookWallet(),
-  discordWallet(),
-  twitterWallet(),
-  githubWallet()
-];
+// // Define social wallet options
+// const googleWallet = () => createSocialWallet("google", "Google", "google");
+// const facebookWallet = () => createSocialWallet("facebook", "Facebook", "facebook");
+// const discordWallet = () => createSocialWallet("discord", "Discord", "discord");
+// const twitterWallet = () => createSocialWallet("twitter", "Twitter", "twitter");
+// const githubWallet = () => createSocialWallet("github", "Github", "github");
 
-// Fix transports configuration and add social wallets
-// Explicitly create only the connectors we need to avoid Safe dependency
+// // Create an array of social wallets for easy access
+// export const socialWallets = [
+//   googleWallet(),
+//   facebookWallet(),
+//   discordWallet(),
+//   twitterWallet(),
+//   githubWallet()
+// ];
+
+// Create the Wagmi configuration with social wallets and WalletConnect
 export const wagmiConfig = createConfig({
   chains: SupportedChains as [Chain, ...Chain[]],
   connectors: [
-    // Only include walletConnect and injected
+    // WalletConnect connector
     walletConnect({
       projectId: WALLET_CONNECT_PROJECT_ID,
       showQrModal: true,
@@ -113,15 +108,15 @@ export const wagmiConfig = createConfig({
         themeMode: 'dark',
       },
     }),
-    injected({
-      shimDisconnect: true,
-    }),
-    // Add social wallet connectors
-    googleWallet().createConnector({}),
-    facebookWallet().createConnector({}),
-    discordWallet().createConnector({}),
-    twitterWallet().createConnector({}),
-    githubWallet().createConnector({})
+    injected(),
+    metaMask(),
+    safe(),
+    // Social wallet connectors
+    // googleWallet().createConnector({}),
+    // facebookWallet().createConnector({}),
+    // discordWallet().createConnector({}),
+    // twitterWallet().createConnector({}),
+    // githubWallet().createConnector({})
   ],
   transports: Object.fromEntries(
     SupportedChains.map(chain => [

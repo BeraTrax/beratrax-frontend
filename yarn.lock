@@ -2042,6 +2042,7 @@ __metadata:
     "@ethersproject/abstract-provider": ^5.7.0
     "@front-finance/link": ^1.0.7
     "@gatefi/js-sdk": ^0.14.0
+    "@holyheld/sdk": ^3.2.3
     "@layerzerolabs/scan-client": ^0.0.8
     "@lifi/sdk": ^3.1.5
     "@meshconnect/web-link-sdk": ^2.0.1
@@ -5159,6 +5160,19 @@ __metadata:
   dependencies:
     "@hapi/hoek": ^9.0.0
   checksum: 604dfd5dde76d5c334bd03f9001fce69c7ce529883acf92da96f4fe7e51221bf5e5110e964caca287a6a616ba027c071748ab636ff178ad750547fba611d6014
+  languageName: node
+  linkType: hard
+
+"@holyheld/sdk@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "@holyheld/sdk@npm:3.2.3"
+  dependencies:
+    axios: ^1.6.7
+    axios-retry: ^4.0.0
+    bignumber.js: ^9.1.2
+    dayjs: ^1.11.10
+    viem: ^2.22.23
+  checksum: 862353c45ca0080928f57f058c7227118f0bdfa5f4a5954fd45980490a7db1225c65ac5d2eb5428f6661851b33601b71b1c37add7485098a90dded6d68dd0723
   languageName: node
   linkType: hard
 
@@ -15510,6 +15524,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios-retry@npm:^4.0.0":
+  version: 4.5.0
+  resolution: "axios-retry@npm:4.5.0"
+  dependencies:
+    is-retry-allowed: ^2.2.0
+  peerDependencies:
+    axios: 0.x || 1.x
+  checksum: ec831e566ed3a55d3c3c927c1d42c52f2c2f1a8ea99ff8521d3675c6313f8c77f704c7186299fda08b7dc0f771a2c5471e72d279789d5aade65ec3755ab3a1ff
+  languageName: node
+  linkType: hard
+
 "axios-token-interceptor@npm:^0.2.0":
   version: 0.2.0
   resolution: "axios-token-interceptor@npm:0.2.0"
@@ -15557,6 +15582,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: cb8ce291818effda09240cb60f114d5625909b345e10f389a945320e06acf0bc949d0f8422d25720f5dd421362abee302c99f5e97edec4c156c8939814b23d19
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.6.7":
+  version: 1.8.2
+  resolution: "axios@npm:1.8.2"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: c47a43b79a058aa9e53a65bec9ade35c9f6e76a3999c795a79a2d205fb5f803fd4245497a0209a9727cbbe4f558791dd852ad2c168c5fc030259c11598ed8fd7
   languageName: node
   linkType: hard
 
@@ -18371,7 +18407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.8.15":
+"dayjs@npm:^1.11.10, dayjs@npm:^1.8.15":
   version: 1.11.13
   resolution: "dayjs@npm:1.11.13"
   checksum: f388db88a6aa93956c1f6121644e783391c7b738b73dbc54485578736565c8931bdfba4bb94e9b1535c6e509c97d5deb918bbe1ae6b34358d994de735055cca9
@@ -23734,6 +23770,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-retry-allowed@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "is-retry-allowed@npm:2.2.0"
+  checksum: 3d1103a9290b5d03626756a41054844633eac78bc5d3e3a95b13afeae94fa3cfbcf7f0b5520d83f75f48a25ce7b142fdbac4217dc4b0630f3ea55e866ec3a029
+  languageName: node
+  linkType: hard
+
 "is-root@npm:^2.1.0":
   version: 2.1.0
   resolution: "is-root@npm:2.1.0"
@@ -28591,6 +28634,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 99acb683ff1cf78749f2b4230d3c208b8cdea0b3bf2bff0db564207917ae6833093b203cb7b9853fc8ec642ca0c8c87cd70a50eab9ff9944c55bf990436112b5
+  languageName: node
+  linkType: hard
+
+"ox@npm:0.6.9":
+  version: 0.6.9
+  resolution: "ox@npm:0.6.9"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.1
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+    "@scure/bip32": ^1.5.0
+    "@scure/bip39": ^1.4.0
+    abitype: ^1.0.6
+    eventemitter3: 5.0.1
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 6f35c9710ab3edb8146f0d2a7c482517c8e1cb2adf0cfb7aba23a17209cf7171546ad017cce98dd9e0f60cee5d77ddaaa72961023e4456de093d985b5712c546
   languageName: node
   linkType: hard
 
@@ -36301,6 +36364,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"viem@npm:^2.22.23":
+  version: 2.23.9
+  resolution: "viem@npm:2.23.9"
+  dependencies:
+    "@noble/curves": 1.8.1
+    "@noble/hashes": 1.7.1
+    "@scure/bip32": 1.6.2
+    "@scure/bip39": 1.5.4
+    abitype: 1.0.8
+    isows: 1.0.6
+    ox: 0.6.9
+    ws: 8.18.1
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 468d21d54178f8ad6abaa087e5235df5ea047623bb376aad989252db12dd7c01f3a9139e5c1e94e6e5b15a7ff53b996e2cb8c640e1166e1feff69065651f4731
+  languageName: node
+  linkType: hard
+
 "vite-plugin-svgr@npm:3.3.0":
   version: 3.3.0
   resolution: "vite-plugin-svgr@npm:3.3.0"
@@ -37521,6 +37605,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 91d4d35bc99ff6df483bdf029b9ea4bfd7af1f16fc91231a96777a63d263e1eabf486e13a2353970efc534f9faa43bdbf9ee76525af22f4752cbc5ebda333975
+  languageName: node
+  linkType: hard
+
+"ws@npm:8.18.1":
+  version: 8.18.1
+  resolution: "ws@npm:8.18.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 4658357185d891bc45cc2d42a84f9e192d047e8476fb5cba25b604f7d75ca87ca0dd54cd0b2cc49aeee57c79045a741cb7d0b14501953ac60c790cd105c42f23
   languageName: node
   linkType: hard
 

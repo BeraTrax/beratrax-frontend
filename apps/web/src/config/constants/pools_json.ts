@@ -57,6 +57,7 @@ export interface PoolDef {
     isUpcoming?: boolean;
     secondary_platform?: string;
     secondary_platform_logo?: string;
+    createdAt?: number;
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -101,6 +102,7 @@ const pools_json: PoolDef[] = [
         lp_address: "0x567f32E86BE3e3963CdBc1887b5043B701f113d9",
         decimals: 18,
         vault_addr: "0x066Eb1D1e33027bc36FaF3055cf12C8F892408fA",
+        createdAt: 1741721434,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -151,6 +153,7 @@ const pools_json: PoolDef[] = [
         lp_address: "0xE416C064946112c1626D6700D1081a750B1B1Dd7",
         decimals: 18,
         vault_addr: "0x5490235e55E13CA58e821d873260f4979d650682",
+        createdAt: 1741721434,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -206,6 +209,7 @@ const pools_json: PoolDef[] = [
         lp_address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
         decimals: 18,
         vault_addr: "0xFD2dE4473577fd5a786E0DFaA611Bbd334fAc8eA",
+        createdAt: 1741721434,
         zap_symbol: "HONEY",
         zap_currencies: [
             {

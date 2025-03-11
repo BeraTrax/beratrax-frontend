@@ -83,6 +83,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 <TokenPriceAndGraph farm={farm} />
                                 <YourBalance farm={farm} />
                                 <PoolInfo
+                                    createdAt={farm.createdAt}
                                     marketCap={`$${marketCap}`}
                                     vaultTvl={`$${vaultTvl}`}
                                     description={farm.description}

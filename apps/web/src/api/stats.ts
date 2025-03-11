@@ -65,6 +65,10 @@ interface LP_PricesResponse {
     data: LP_Prices[];
 }
 
+interface VaultTvlResponse {
+    data: TVLHistory[];
+}
+
 export interface TVLHistory {
     tvl: number;
     timestamp: number;
@@ -133,6 +137,16 @@ export const fetchBoostedApy = async () => {
 
 export const fetchSpecificLpPrice = async (id: number) => {
     const res = await backendApi.get<LP_PricesResponse>(`stats/lp/30d?farmId=${id}`);
+    return res.data.data;
+};
+
+export const fetchSpecificVaultTvl = async (id: number) => {
+    const res = await backendApi.get<VaultTvlResponse>(`stats/vault/tvl/30d?farmId=${id}`);
+    return res.data.data;
+};
+
+export const fetchSpecificVaultApy = async (id: number) => {
+    const res = await backendApi.get<VaultsApyResponse>(`stats/vault/apy/30d?farmId=${id}`);
     return res.data.data;
 };
 

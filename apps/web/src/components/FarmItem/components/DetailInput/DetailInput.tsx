@@ -42,7 +42,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
     const { lightMode } = useApp();
     const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
     const [showSlippageModal, setShowSlippageModal] = useState(false);
-    const [showNotSlipageModal, setShowNotSlipageModal] = useState(false);
+    const [showNotSlippageModal, setShowNotSlippageModal] = useState(false);
     const [showZapModal, setShowZapModal] = useState(false);
     const { getPublicClient } = useWallet();
     const {
@@ -106,8 +106,8 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
         e?.preventDefault();
         if (slippage && slippage > 2 && !showSlippageModal) {
             setShowSlippageModal(true);
-        } else if (slippage === undefined && !showNotSlipageModal) {
-            setShowNotSlipageModal(true);
+        } else if (slippage === undefined && !showNotSlippageModal) {
+            setShowNotSlippageModal(true);
         } else {
             let amountInWei = toWei(
                 getTokenAmount(),
@@ -343,10 +343,10 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
                     percentage={slippage || 0}
                 />
             )}
-            {showNotSlipageModal && (
+            {showNotSlippageModal && (
                 <SlippageNotCalculate
                     handleClose={() => {
-                        setShowNotSlipageModal(false);
+                        setShowNotSlippageModal(false);
                     }}
                     handleSubmit={submitHandler}
                 />

@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { LP_Prices } from "src/api/stats";
-import { useLp } from "src/hooks/useLp";
+import { TVLHistory } from "src/api/stats";
+import { useSpecificVaultTvl } from "src/hooks/useVaults";
 import { PoolDef } from "src/config/constants/pools_json";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
@@ -40,7 +40,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
     }
 };
 
-const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
+const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
     const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
     const graphFiltersList: { text: string; type: GraphFilterType }[] = [
@@ -50,14 +50,14 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
         { text: "1M", type: "month" },
     ];
 
-    const downsampleData = (data: LP_Prices[], filter: GraphFilterType) => {
+    const downsampleData = (data: TVLHistory[], filter: GraphFilterType) => {
         if (!data || data.length === 0) return [];
 
-        const filteredData: { date: string; lp: string; timestamp: number }[] = [];
+        const filteredData: { date: string; tvl: string; timestamp: number }[] = [];
 
         // Filter and sort entries by timestamp
         const filteredEntries = data
-            .filter((entry) => entry.timestamp && entry.lp && entry.lp > 0)
+            .filter((entry) => entry.timestamp && entry.tvl && entry.tvl > 0)
             .sort((a, b) => a.timestamp - b.timestamp);
 
         if (filteredEntries.length === 0) return [];
@@ -107,13 +107,13 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 
             if (slotEntries.length > 0) {
                 const key = formatDate(slotTime, filter);
-                const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
-                const avgLp = totalLp / slotEntries.length;
+                const totalTvl = slotEntries.reduce((sum, entry) => sum + (entry.tvl || 0), 0);
+                const avgTvl = totalTvl / slotEntries.length;
 
-                if (avgLp > 0) {
+                if (avgTvl > 0) {
                     filteredData.push({
                         date: key,
-                        lp: avgLp.toFixed(3),
+                        tvl: avgTvl.toFixed(3),
                         timestamp: slotTime,
                     });
                 }
@@ -123,13 +123,12 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
         return filteredData;
     };
 
-    const { lp, isLpPriceLoading } = useLp(farm.id);
-    const newData = useMemo(() => downsampleData(lp || [], graphFilter), [lp, graphFilter]);
-
+    const { vaultTvl, isLoading: isLoadingVaultTvl, isFetched: isFetchedVaultTvl } = useSpecificVaultTvl(farm.id);
+    const newData = useMemo(() => downsampleData(vaultTvl || [], graphFilter), [vaultTvl, graphFilter]);
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
-                {isLpPriceLoading ? (
+                {isLoadingVaultTvl ? (
                     <Skeleton h={300} w={"100%"} />
                 ) : (
                     <>
@@ -151,7 +150,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="lp"
+                                    dataKey="tvl"
                                     stroke="#90BB62"
                                     strokeWidth={2}
                                     fill="url(#colorUv)"
@@ -174,9 +173,9 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <p className="text-sm text-textSecondary">Historical Price of the underlying token</p>
+                <p className="text-sm text-textSecondary">Historical Total Value Locked in the vault</p>
             </div>
         </div>
     );
 };
-export default FarmLpGraph;
+export default FarmTvlGraph;

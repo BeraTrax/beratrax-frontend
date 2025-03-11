@@ -5,6 +5,7 @@ import flywheelChart from "src/assets/images/flywheelChart.png";
 import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
 import marketcap from "src/assets/images/marketcap.svg";
 import volume from "src/assets/images/volume.svg";
+import { FarmOriginPlatform, FarmType } from "src/types/enums";
 
 const StatInfo = ({
     iconUrl,
@@ -49,6 +50,8 @@ interface IProps {
     underlyingApy: string;
     marketCapLoading?: boolean;
     vaultTvlLoading?: boolean;
+    originPlatform?: FarmOriginPlatform;
+    tokenType?: FarmType;
 }
 const PoolInfo = ({
     marketCap,
@@ -61,6 +64,8 @@ const PoolInfo = ({
     underlyingApy,
     marketCapLoading,
     vaultTvlLoading,
+    originPlatform,
+    tokenType,
 }: IProps) => {
     const createdTimestamp = 1739292658;
     const createdDate = new Date(createdTimestamp * 1000);
@@ -97,6 +102,57 @@ const PoolInfo = ({
                     <img src={flywheelChartMobile} alt="Flywheel Chart" className="w-full h-auto block md:hidden" />
                 </>
             )}
+            <div className="mt-6 mb-6">
+                <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest mb-4">
+                    REWARDS BREAKDOWN
+                </h3>
+                <div className="overflow-hidden rounded-xl bg-bgSecondary">
+                    <table className="w-full border-collapse">
+                        <tbody>
+                            {tokenType === FarmType.advanced && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">Underlying Token</td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">
+                                        Trading fees to APY
+                                    </td>
+                                </tr>
+                            )}
+
+                            {/* TODO: change to dynamic reward token */}
+                            {(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">
+                                        {originPlatform === FarmOriginPlatform.Infrared
+                                            ? "iBGT"
+                                            : originPlatform === FarmOriginPlatform.Burrbear
+                                            ? "WBERA"
+                                            : "HONEY"}
+                                    </td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">
+                                        Autocompounded to APY
+                                    </td>
+                                </tr>
+                            )}
+                            {originPlatform === FarmOriginPlatform.Infrared && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">Infrared airdrop</td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+                                </tr>
+                            )}
+                            {originPlatform === FarmOriginPlatform.Burrbear && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">Burrbear airdrop</td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+                                </tr>
+                            )}
+                            <tr>
+                                <td className="p-4 text-textWhite font-medium">BTX airdrop</td>
+                                <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} isStatLoading={marketCapLoading} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} isStatLoading={vaultTvlLoading} />

@@ -40,7 +40,7 @@ function Farms() {
                 <div className="flex flex-col gap-2">
                     {sortedFarms
                         ? sortedFarms
-                              .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+                              .filter((farm) => !farm.isUpcoming && !farm.isDeprecated)
                               .map((farm, index) => (
                                   <FarmRow
                                       key={index + "nowallet"}
@@ -50,7 +50,7 @@ function Farms() {
                                   />
                               ))
                         : farms
-                              .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+                              .filter((farm) => !farm.isUpcoming && !farm.isDeprecated)
                               .map((farm, index) => (
                                   <FarmRow
                                       key={index + "nowallet"}

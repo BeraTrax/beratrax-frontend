@@ -52,6 +52,7 @@ interface IProps {
     vaultTvlLoading?: boolean;
     originPlatform?: FarmOriginPlatform;
     tokenType?: FarmType;
+    createdAt?: number;
 }
 const PoolInfo = ({
     marketCap,
@@ -66,9 +67,9 @@ const PoolInfo = ({
     vaultTvlLoading,
     originPlatform,
     tokenType,
+    createdAt,
 }: IProps) => {
-    const createdTimestamp = 1739292658;
-    const createdDate = new Date(createdTimestamp * 1000);
+    const createdDate = new Date((createdAt ?? 0) * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -111,10 +112,8 @@ const PoolInfo = ({
                         <tbody>
                             {tokenType === FarmType.advanced && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Underlying Token</td>
-                                    <td className="p-4 text-gradientPrimary font-bold text-right">
-                                        Trading fees to APY
-                                    </td>
+                                    <td className="p-4 text-textWhite font-medium">LP Trading fees</td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Inculded in APY</td>
                                 </tr>
                             )}
 
@@ -122,7 +121,8 @@ const PoolInfo = ({
                             {(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
                                 <tr className="border-b border-gray-700">
                                     <td className="p-4 text-textWhite font-medium">
-                                        {originPlatform === FarmOriginPlatform.Infrared
+                                        {originPlatform === FarmOriginPlatform.Infrared &&
+                                        tokenType === FarmType.advanced
                                             ? "iBGT"
                                             : originPlatform === FarmOriginPlatform.Burrbear
                                             ? "WBERA"
@@ -140,10 +140,14 @@ const PoolInfo = ({
                                 </tr>
                             )}
                             {originPlatform === FarmOriginPlatform.Burrbear && (
-                                <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Burrbear airdrop</td>
-                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
-                                </tr>
+                                <>
+                                    <tr className="border-b border-gray-700">
+                                        <td className="p-4 text-textWhite font-medium">Burrbear airdrops</td>
+                                        <td className="p-4 text-gradientPrimary font-bold text-right">
+                                            Included in APY & Future claim
+                                        </td>
+                                    </tr>
+                                </>
                             )}
                             <tr>
                                 <td className="p-4 text-textWhite font-medium">BTX airdrop</td>
@@ -168,16 +172,8 @@ const PoolInfo = ({
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
                 )}
-                {/* <StatInfo title="Volume" subtitle="Past 24h" value={"$16.5M"} iconUrl={volume} /> */}
-                {/* <StatInfo title="Holders" value={"-"} iconUrl={holders} /> */}
-                {/* <StatInfo title="Circulating Supply" value={"1.0B"} iconUrl={circulatingsupply} /> */}
-                <StatInfo title="Added" value={createdDateString} iconUrl={created} />
+                {createdAt && <StatInfo title="Created At" value={createdDateString} iconUrl={created} />}
             </div>
-            {/* <p className="mt-2 text-textSecondary text-[12px] font-light leading-[18px]">
-                Uauctor, augue porta dignissim vestibulum, arcu diam lobortis velit, Ut auctor, augue porta dignissim
-                vestibulumUauctor, augue porta dignissim vestibulum, arcu diam lobortis velit, Ut auctor, augue porta
-                dignissim vestibulum
-            </p> */}
         </div>
     );
 };

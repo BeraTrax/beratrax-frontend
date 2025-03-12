@@ -8,6 +8,8 @@
     "start:mobile": "expo start --tunnel",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --tunnel",
+    "build:ios": "expo build:ios",
+    "build:android": "eas build --platform android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",

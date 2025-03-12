@@ -2,7 +2,7 @@ import '@walletconnect/react-native-compat'
 /**
  * to keep the first import on top
  */
-import { AppKit, createAppKit, defaultWagmiConfig, } from '@reown/appkit-wagmi-react-native'
+import { createAppKit, defaultWagmiConfig } from '@reown/appkit-wagmi-react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { berachain, reownProjectId } from '@/config/chainConfig'
@@ -71,7 +71,7 @@ const RootLayout = () => {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <AppKit />
+          {/* <AppKit /> */}
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>

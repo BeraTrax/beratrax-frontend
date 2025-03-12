@@ -14,9 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "package": "com.beratrax.app"
-      }
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.beratrax.mobile"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +38,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "48976843-5938-408e-94b1-5ba70f26ddda"
+      }
     }
   }
 }

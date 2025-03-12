@@ -12,39 +12,41 @@ import AppProvider from "./context/AppProvider";
 import "./index.css";
 import "./polyfills";
 import store, { persistor } from "./state";
+import { createStore } from "@beratrax/core";
+
+console.log("store", store);
+console.log("persistor", persistor);
 
 createConfig({
-    integrator: "Beratrax",
-    // rpcUrls: {
-    //   [ChainId.ARB]: ['https://arbitrum-example.node.com/'],
-    //   [ChainId.SOL]: ['https://solana-example.node.com/'],
-    // },
+  integrator: "Beratrax",
+  // rpcUrls: {
+  //   [ChainId.ARB]: ['https://arbitrum-example.node.com/'],
+  //   [ChainId.SOL]: ['https://solana-example.node.com/'],
+  // },
 });
 
 // Configuration for toast notifications
 setUpNotifications({
-    defaultProps: {
-        position: "top-right",
-        dismissible: true,
-        showDismissButton: true,
-        dismissAfter: 3000,
-    },
+  defaultProps: {
+    position: "top-right",
+    dismissible: true,
+    showDismissButton: true,
+    dismissAfter: 3000,
+  },
 });
 // supportChatConfig(window, document);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-
-        <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-                <NotificationsProvider>
-                    <AppProvider>
-                        <App />
-                        <Notifications />
-                    </AppProvider>
-                </NotificationsProvider>
-            </PersistGate>
-        </Provider>
-
-    </React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NotificationsProvider>
+          <AppProvider>
+            <App />
+            <Notifications />
+          </AppProvider>
+        </NotificationsProvider>
+      </PersistGate>
+    </Provider>
+  </React.StrictMode>
 );

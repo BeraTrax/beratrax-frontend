@@ -1,0 +1,18 @@
+{
+  "name": "@beratrax/core",
+  "private": true,
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.js",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build:core": "tsc -b"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

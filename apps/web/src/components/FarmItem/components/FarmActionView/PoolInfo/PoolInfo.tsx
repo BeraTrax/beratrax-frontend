@@ -112,7 +112,7 @@ const PoolInfo = ({
                         <tbody>
                             {tokenType === FarmType.advanced && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Trading fees</td>
+                                    <td className="p-4 text-textWhite font-medium">LP Trading fees</td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">Inculded in APY</td>
                                 </tr>
                             )}
@@ -121,7 +121,8 @@ const PoolInfo = ({
                             {(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
                                 <tr className="border-b border-gray-700">
                                     <td className="p-4 text-textWhite font-medium">
-                                        {originPlatform === FarmOriginPlatform.Infrared
+                                        {originPlatform === FarmOriginPlatform.Infrared &&
+                                        tokenType === FarmType.advanced
                                             ? "iBGT"
                                             : originPlatform === FarmOriginPlatform.Burrbear
                                             ? "WBERA"
@@ -142,15 +143,15 @@ const PoolInfo = ({
                                 <>
                                     <tr className="border-b border-gray-700">
                                         <td className="p-4 text-textWhite font-medium">Burrbear airdrops</td>
-                                        <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+                                        <td className="p-4 text-gradientPrimary font-bold text-right">
+                                            Included in APY & Future claim
+                                        </td>
                                     </tr>
                                 </>
                             )}
                             <tr>
                                 <td className="p-4 text-textWhite font-medium">BTX airdrop</td>
-                                <td className="p-4 text-gradientPrimary font-bold text-right">
-                                    Inculded in APY and Future claim
-                                </td>
+                                <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                             </tr>
                         </tbody>
                     </table>

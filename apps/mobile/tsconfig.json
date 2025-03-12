@@ -1,43 +1,22 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": ["expo/tsconfig.base", "../../tsconfig.base.json"],
   "compilerOptions": {
-    "strict": true,
-    "baseUrl": ".",
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
-      ],
-      "components/*": [
-        "./components/*"
-      ],
-      "screens/*": [
-        "./app/*"
-      ],
-      "assets/*": [
-        "./assets/*"
-      ],
-      "hooks/*": [
-        "./hooks/*"
-      ],
-      "constants/*": [
-        "./constants/*"
-      ],
-      "react": [
-        "./node_modules/@types/react"
-      ],
+      ]
     }
   },
   "include": [
-    "app",
-    "components",
-    "assets",
-    "hooks",
-    "constants",
+    "**/*.ts",
+    "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "queries.js"  ]
 }

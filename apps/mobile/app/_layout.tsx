@@ -1,28 +1,81 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppWalletProvider } from '../config/WalletProvider';
+import '@walletconnect/react-native-compat'
+/**
+ * to keep the first import on top
+ */
+import { AppKit, createAppKit, defaultWagmiConfig, } from '@reown/appkit-wagmi-react-native'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export default function RootLayout() {
+import { berachain, reownProjectId } from '@/config/chainConfig'
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { useFonts } from 'expo-font'
+import { Stack } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
+import { useEffect } from 'react'
+import 'react-native-reanimated'
+
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { WagmiProvider } from 'wagmi'
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+
+// 0. Setup queryClient
+const queryClient = new QueryClient();
+
+// 2. Create config
+const metadata = {
+  name: 'Beratrax',
+  description: 'Beratrax',
+  url: 'https://beratrax.com',
+  icons: ['https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png'],
+  redirect: {
+    native: 'beratrax://',
+    universal: 'beratrax.com'
+  }
+}
+
+const chains = [berachain] as const
+
+const wagmiConfig = defaultWagmiConfig({ chains, projectId: reownProjectId, metadata })
+
+// 3. Create modal
+createAppKit({
+  projectId: reownProjectId,
+  wagmiConfig,
+  defaultChain: berachain, // Optional
+  enableAnalytics: true // Optional - defaults to your Cloud configuration
+})
+
+
+const RootLayout = () => {
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
-    <SafeAreaProvider>
-      <AppWalletProvider>
-        <StatusBar style="auto" />
-        <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              title: "Home",
-            }}
-          />
-          <Stack.Screen
-            name="wallet"
-            options={{
-              title: "Wallet",
-            }}
-          />
-        </Stack>
-      </AppWalletProvider>
-    </SafeAreaProvider>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <AppKit />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
+
+export default RootLayout;

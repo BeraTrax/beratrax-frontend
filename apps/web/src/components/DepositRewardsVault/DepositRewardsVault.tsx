@@ -1,6 +1,6 @@
 import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
 import { useState } from "react";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 import useTokens from "src/state/tokens/useTokens";
 import { awaitTransaction } from "src/utils/common";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";

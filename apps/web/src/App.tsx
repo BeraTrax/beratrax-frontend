@@ -13,60 +13,60 @@ import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import { queryClient } from "./config/reactQuery";
 import { rainbowConfig } from "./config/walletConfig";
-import WalletProvider from "./context/WalletProvider";
+import { WalletProvider } from "@beratrax/core/context";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
 
 setHook("notifications", useNotifications);
 
 function App() {
-    useEffect(() => {
-        // Initialize analytics
-        initGA();
+  useEffect(() => {
+    // Initialize analytics
+    initGA();
 
-        // Track daily visit
-        trackDailyDAppVisit();
+    // Track daily visit
+    trackDailyDAppVisit();
 
-        // Track user location using browser's geolocation
-        // if (navigator.geolocation) {
-        //     navigator.geolocation.getCurrentPosition((position) => {
-        //         const location = `${position.coords.latitude},${position.coords.longitude}`;
-        //         trackUserLocation(location);
-        //     });
-        // }
+    // Track user location using browser's geolocation
+    // if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition((position) => {
+    //         const location = `${position.coords.latitude},${position.coords.longitude}`;
+    //         trackUserLocation(location);
+    //     });
+    // }
 
-        // Track user's language
-        trackLanguage();
-    }, []);
+    // Track user's language
+    trackLanguage();
+  }, []);
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <WagmiProvider config={rainbowConfig}>
-                <RainbowKitProvider
-                    theme={darkTheme({
-                        accentColor: "var( --new-color_primary)",
-                        accentColorForeground: "white",
-                    })}
-                    showRecentTransactions={false}
-                    appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
-                >
-                    <WalletProvider>
-                        {/* <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={rainbowConfig}>
+        <RainbowKitProvider
+          theme={darkTheme({
+            accentColor: "var( --new-color_primary)",
+            accentColorForeground: "white",
+          })}
+          showRecentTransactions={false}
+          appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
+        >
+          <WalletProvider>
+            {/* <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
                             <Theme name="light">
                                 <YStack flex={1} padding="$4" backgroundColor="$background"> */}
-                                    <Router>
-                                        <Body />
-                                    </Router>
-                                {/* </YStack>
+            <Router>
+              <Body />
+            </Router>
+            {/* </YStack>
                             </Theme>
                         </TamaguiProvider> */}
-                        <ReactHooksWrapper />
-                    </WalletProvider>
-                    <ReactQueryDevtools />
-                </RainbowKitProvider>
-            </WagmiProvider>
-        </QueryClientProvider>
-    );
+            <ReactHooksWrapper />
+          </WalletProvider>
+          <ReactQueryDevtools />
+        </RainbowKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

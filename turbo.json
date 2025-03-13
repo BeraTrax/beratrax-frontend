@@ -16,6 +16,10 @@
       "cache": true,
       "persistent": true
     },
+    "build:core": {
+      "cache": true,
+      "persistent": true
+    },
     "build": {
       "cache": true,
       "persistent": true

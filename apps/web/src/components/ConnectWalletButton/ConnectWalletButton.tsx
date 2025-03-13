@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 
 const ConnectWalletButton = () => {
     const { connector } = useWallet();

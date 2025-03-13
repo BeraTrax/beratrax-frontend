@@ -6,6 +6,9 @@
   "module": "dist/index.js",
   "types": "dist/index.d.js",
   "exports": {
+    "./context": "./src/context/index.ts",
+    "./state": "./src/state/index.ts",
+    "./hooks": "./src/hooks/index.ts",
     ".": "./src/index.ts"
   },
   "license": "MIT",
@@ -14,5 +17,16 @@
   },
   "devDependencies": {
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@alchemy/aa-alchemy": "^3.19.0",
+    "@alchemy/aa-signers": "^3.19.0",
+    "@lifi/sdk": "^3.1.5",
+    "@rainbow-me/rainbowkit": "^2.2.1",
+    "@web3-name-sdk/core": "^0.3.2",
+    "@web3auth/web3auth-wagmi-connector": "^6.0.0",
+    "permissionless": "^0.1.44",
+    "react-hooks-outside": "^1.0.3",
+    "wagmi": "^2.12.11"
   }
 }

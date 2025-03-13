@@ -1897,7 +1897,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@beratrax/core@workspace:packages/core"
   dependencies:
+    "@alchemy/aa-alchemy": ^3.19.0
+    "@alchemy/aa-signers": ^3.19.0
+    "@lifi/sdk": ^3.1.5
+    "@rainbow-me/rainbowkit": ^2.2.1
+    "@web3-name-sdk/core": ^0.3.2
+    "@web3auth/web3auth-wagmi-connector": ^6.0.0
+    permissionless: ^0.1.44
+    react-hooks-outside: ^1.0.3
     typescript: ^5.8.2
+    wagmi: ^2.12.11
   languageName: unknown
   linkType: soft
 
@@ -14447,6 +14456,23 @@ __metadata:
     "@solana/web3.js": ^1.75.0
     viem: ^2.15.1
   checksum: eda8f5966ecc5290b83b4a6ec4208760ea9ff0bfcea1111011e69fd4f4ee0c0502f08faf2446c850b115c122905648844e5c7d8961782fe5fb8a904e7e0e92ec
+  languageName: node
+  linkType: hard
+
+"@web3-name-sdk/core@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@web3-name-sdk/core@npm:0.3.2"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.0
+    "@ensdomains/ens-validation": ^0.1.0
+  peerDependencies:
+    "@bonfida/spl-name-service": ^2.5.1
+    "@sei-js/core": ^3.1.0
+    "@siddomains/injective-sidjs": 0.0.2-beta
+    "@siddomains/sei-sidjs": ^0.0.4
+    "@solana/web3.js": ^1.75.0
+    viem: ^2.15.1
+  checksum: 8c5c8b4665a43a0cbe06c70e74ce88acece64010c8dced3fed6c8f5ba60edde5d4aefe3eb7ea19103fdcedff5b4ddd674cc473e333da8196793b9aeb3c9802a3
   languageName: node
   linkType: hard
 

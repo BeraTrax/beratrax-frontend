@@ -8,7 +8,7 @@ import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { IS_LEGACY } from "src/config/constants";
 import { PoolDef } from "src/config/constants/pools_json";
 import { useDetailInput } from "src/hooks/useDetailInput";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";

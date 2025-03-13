@@ -10,7 +10,7 @@ import { addressesByChainId } from "src/config/constants/contracts";
 import { PoolDef } from "src/config/constants/pools_json";
 import useApp from "src/hooks/useApp";
 import { useDetailInput } from "src/hooks/useDetailInput";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";

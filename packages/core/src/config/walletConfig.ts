@@ -86,10 +86,8 @@ const chainConfig = {
   ticker: berachain.nativeCurrency.symbol,
   blockExplorerUrl: blockExplorersByChainId[berachain.id],
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-}
+};
 // #endregion Chain config
-
-
 
 // #region web3auth config
 const clientId = WEB3AUTH_CLIENT_ID as string;
@@ -104,7 +102,7 @@ const PrivateKeyProvider = new EthereumPrivateKeyProvider({
 export const getWeb3AuthInstance = (() => {
   let instance: Web3AuthNoModal | null = null;
   let isInitialized = false;
-  
+
   return async () => {
     if (!instance) {
       instance = new Web3AuthNoModal({
@@ -123,9 +121,9 @@ export const getWeb3AuthInstance = (() => {
             replaceUrlOnRedirect: false,
           },
         });
-        
+
         instance.configureAdapter(openloginAdapter);
-        
+
         try {
           const adapters = await getDefaultExternalAdapters({
             options: {
@@ -135,23 +133,23 @@ export const getWeb3AuthInstance = (() => {
               chainConfig,
             },
           });
-          
+
           adapters.forEach((adapter) => {
             instance?.configureAdapter(adapter);
           });
         } catch (error) {
           console.error("Error configuring Web3Auth adapters:", error);
         }
-        
+
         isInitialized = true;
       }
     }
-    
+
     // Check if Web3Auth needs initialization by looking at the status
     if (instance.status !== "ready") {
       await instance.init();
     }
-    
+
     return instance;
   };
 })();
@@ -187,7 +185,7 @@ const createSocialWallet = (id: string, name: string, icon: string, loginProvide
     name,
     iconUrl: icon,
     iconBackground: "white",
-    createConnector: (walletDetails: WalletDetailsParams) => 
+    createConnector: (walletDetails: WalletDetailsParams) =>
       createWagmiConnector((config) => {
         // This is synchronous and returns the connector object directly
         return {
@@ -197,26 +195,29 @@ const createSocialWallet = (id: string, name: string, icon: string, loginProvide
               loginProvider,
             },
           })(config),
-          ...walletDetails
+          ...walletDetails,
         };
       }),
   };
 };
 
-const googleWallet = () => createSocialWallet("google", "Google", googleIcon, "google");
-const facebookWallet = () => createSocialWallet("facebook", "Facebook", facebookIcon, "facebook");
-const discordWallet = () => createSocialWallet("discord", "Discord", discordIcon, "discord");
-const twitterWallet = () => createSocialWallet("twitter", "Twitter", twitterIcon, "twitter");
-const githubWallet = () => createSocialWallet("github", "Github", githubIcon, "github");
+const googleWallet = () => createSocialWallet("google", "Google", googleIcon.toString(), "google");
+const facebookWallet = () => createSocialWallet("facebook", "Facebook", facebookIcon.toString(), "facebook");
+const discordWallet = () => createSocialWallet("discord", "Discord", discordIcon.toString(), "discord");
+const twitterWallet = () => createSocialWallet("twitter", "Twitter", twitterIcon.toString(), "twitter");
+const githubWallet = () => createSocialWallet("github", "Github", githubIcon.toString(), "github");
 
 export const rainbowConfig = getDefaultConfig({
   appName: "Beratrax",
   projectId: walletConnectProjectId,
   chains: SupportedChains as [Chain, ...Chain[]],
-  transports: SupportedChains.reduce((acc, curr) => {
-    acc[curr.id] = http(curr.rpcUrls?.alchemy?.http[0]);
-    return acc;
-  }, {} as { [key: number]: HttpTransport }),
+  transports: SupportedChains.reduce(
+    (acc, curr) => {
+      acc[curr.id] = http(curr.rpcUrls?.alchemy?.http[0]);
+      return acc;
+    },
+    {} as { [key: number]: HttpTransport },
+  ),
   wallets: [
     {
       groupName: "Wallets",

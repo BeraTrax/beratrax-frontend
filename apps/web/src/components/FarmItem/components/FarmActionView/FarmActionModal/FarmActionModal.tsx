@@ -14,7 +14,7 @@ import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageW
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import { useDetailInput } from "src/hooks/useDetailInput";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 import useWindowSize from "src/hooks/useWindowSize";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { updatePoints } from "src/state/account/accountReducer";

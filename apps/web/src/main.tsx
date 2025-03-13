@@ -12,10 +12,6 @@ import AppProvider from "./context/AppProvider";
 import "./index.css";
 import "./polyfills";
 import store, { persistor } from "./state";
-import { createStore } from "@beratrax/core";
-
-console.log("store", store);
-console.log("persistor", persistor);
 
 createConfig({
   integrator: "Beratrax",

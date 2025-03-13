@@ -7,7 +7,7 @@
     "@aa-sdk/core": "^4.0.0-beta.2",
     "@alchemy/aa-alchemy": "^3.19.0",
     "@alchemy/aa-signers": "^3.19.0",
-    "@beratrax/core": "workspace:^",
+    "@beratrax/core": "*",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@front-finance/link": "^1.0.7",
     "@gatefi/js-sdk": "^0.14.0",

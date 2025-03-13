@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import useTokens from "src/state/tokens/useTokens";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import useWallet from "src/hooks/useWallet";
+import { useWallet } from "@beratrax/core/hooks";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { getAddress } from "viem";

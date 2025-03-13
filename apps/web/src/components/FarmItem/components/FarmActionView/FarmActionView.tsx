@@ -112,8 +112,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     isAutoCompounded={farm.isAutoCompounded || false}
                                     marketCapLoading={isMarketCapAndVaultLoading}
                                     vaultTvlLoading={isMarketCapAndVaultLoading}
-                                    originPlatform={farm.originPlatform}
-                                    tokenType={farm.token_type as FarmType}
+                                    farm={farm}
                                 />
                                 <Transactions farmId={farm.id} />
                                 <VaultContracts farm={farm} />

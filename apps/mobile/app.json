@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "com.beratrax.mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -46,6 +46,7 @@
       "eas": {
         "projectId": "48976843-5938-408e-94b1-5ba70f26ddda"
       }
-    }
+    },
+    "owner": "mutahhir"
   }
 }

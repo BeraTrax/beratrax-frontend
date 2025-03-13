@@ -2,17 +2,17 @@ import '@walletconnect/react-native-compat'
 /**
  * to keep the first import on top
  */
-import { createAppKit, defaultWagmiConfig } from '@reown/appkit-wagmi-react-native'
+import { AppKit, createAppKit, defaultWagmiConfig } from '@reown/appkit-wagmi-react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { berachain, reownProjectId } from '@/config/chainConfig'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
 
+import ConnectView from '@/components/ConnectView'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { WagmiProvider } from 'wagmi'
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -37,13 +37,15 @@ const metadata = {
 const chains = [berachain] as const
 
 const wagmiConfig = defaultWagmiConfig({ chains, projectId: reownProjectId, metadata })
-
 // 3. Create modal
 createAppKit({
   projectId: reownProjectId,
   wagmiConfig,
   defaultChain: berachain, // Optional
-  enableAnalytics: true // Optional - defaults to your Cloud configuration
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  features: {
+    socials: ['x', 'discord', 'apple'],
+  }
 })
 
 
@@ -67,11 +69,8 @@ const RootLayout = () => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          {/* <AppKit /> */}
+          <ConnectView />
+          <AppKit />
         </ThemeProvider>
       </QueryClientProvider>
     </WagmiProvider>

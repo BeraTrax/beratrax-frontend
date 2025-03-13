@@ -59,8 +59,7 @@ export const SupportedChains = [berachain] as (Chain & {
 
 
 // #region web3auth config
-export const reownProjectId = process.env.REACT_APP_REOWN_PROJECT_ID as string;
-
+export const reownProjectId = process.env.EXPO_PUBLIC_REOWN_PROJECT_ID as string;
 // const PrivateKeyProvider = new EthereumPrivateKeyProvider({
 //   config: {
 //     chainConfig,

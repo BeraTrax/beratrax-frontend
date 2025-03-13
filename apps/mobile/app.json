@@ -47,6 +47,12 @@
         "projectId": "48976843-5938-408e-94b1-5ba70f26ddda"
       }
     },
-    "owner": "mutahhir"
+    "owner": "mutahhir",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/48976843-5938-408e-94b1-5ba70f26ddda"
+    }
   }
 }

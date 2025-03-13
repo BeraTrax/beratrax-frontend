@@ -1,6 +1,7 @@
 
 // import { CHAIN_NAMESPACES } from '@web3auth/base';
-import { Chain, defineChain } from 'viem';
+import { defaultWagmiConfig } from '@reown/appkit-wagmi-react-native';
+import { Address, Chain, createWalletClient, CustomTransport, defineChain, HttpTransport, JsonRpcAccount, LocalAccount, PublicClient } from 'viem';
 
 
 export const blockExplorersByChainId: { [key: number]: string } = {
@@ -65,3 +66,40 @@ export const reownProjectId = process.env.EXPO_PUBLIC_REOWN_PROJECT_ID as string
 //     chainConfig,
 //   },
 // });
+
+// 2. Create config
+const metadata = {
+  name: 'Beratrax',
+  description: 'Beratrax',
+  url: 'https://beratrax.com',
+  icons: ['https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png'],
+  redirect: {
+    native: 'beratrax://',
+    universal: 'beratrax.com'
+  }
+}
+
+const chains = [berachain] as const
+
+export const wagmiConfig = defaultWagmiConfig({ chains, projectId: reownProjectId, metadata })
+
+export interface IClients {
+  wallet: ReturnType<
+      typeof createWalletClient<CustomTransport | HttpTransport, Chain, JsonRpcAccount | LocalAccount, undefined>
+  >;
+  // wallet:
+  //     | (
+  //           | Awaited<ReturnType<typeof createModularAccountAlchemyClient<Web3AuthSigner>>>
+  //           | WalletClient<CustomTransport, Chain, JsonRpcAccount>
+  //       ) & {
+  //           estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
+  //       };
+  public: PublicClient<HttpTransport, Chain, undefined, undefined>;
+}
+
+export interface EstimateTxGasArgs {
+  data: Address;
+  to: Address;
+  chainId: number;
+  value?: string | bigint;
+}

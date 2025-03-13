@@ -13,7 +13,7 @@ import { ExportPublicKey } from "src/components/modals/ExportPublicKey/ExportPub
 import SuccessfulEarnTrax from "src/components/modals/SuccessfulEarnTrax/SuccessfulEarnTrax";
 import { TermsOfUseModal } from "src/components/modals/TermsOfUseModal/TermsOfUseModal";
 import { blockExplorersByChainId } from "src/config/constants/urls";
-import { useVaults } from "src/hooks/useVaults";
+import { useVaults } from "@beratrax/core/hooks";
 import { useWallet } from "@beratrax/core/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { sendBtxToXFollower, setAccountConnector } from "src/state/account/accountReducer";

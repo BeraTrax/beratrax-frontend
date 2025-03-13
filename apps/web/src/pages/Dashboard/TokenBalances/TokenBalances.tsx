@@ -1,4 +1,4 @@
-import useApp from "src/hooks/useApp";
+import { useApp } from "@beratrax/core/hooks";
 // import useBalances from "src/state/balances/useBalances";
 import { FC, useCallback, useMemo, useState } from "react";
 import { BiSliderAlt } from "react-icons/bi";

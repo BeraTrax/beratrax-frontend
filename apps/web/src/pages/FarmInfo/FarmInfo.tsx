@@ -1,6 +1,6 @@
 import React from "react";
 import "./FarmInfo.css";
-import useApp from "src/hooks/useApp";
+import { useApp } from "@beratrax/core/hooks";
 import FarmDetails from "./FarmDetails/FarmDetails";
 import { useWallet } from "@beratrax/core/hooks";
 import { NotSignedIn } from "src/components/NotSignedIn/NotSignedIn";

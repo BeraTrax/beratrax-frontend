@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { ReferralCard } from "src/components/ReferralCard/ReferralCard";
 import { ReferralDashboardTable } from "src/components/ReferralDashboardTable/ReferralDashboardTable";
-import useApp from "src/hooks/useApp";
+import { useApp } from "@beratrax/core/hooks";
 import { useReferralDashboard } from "src/hooks/useReferralDashboard";
 import { useWallet } from "@beratrax/core/hooks";
 import useAccountData from "src/state/account/useAccountData";

@@ -11,7 +11,7 @@ import "@beratrax/core/walletConfig";
 import { AppProvider } from "@beratrax/core/context";
 import "./index.css";
 import "./polyfills";
-import store, { persistor } from "./state";
+import store, { persistor } from "@beratrax/core/state";
 
 createConfig({
   integrator: "Beratrax",

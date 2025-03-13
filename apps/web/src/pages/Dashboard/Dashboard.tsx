@@ -1,6 +1,6 @@
 import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
 import ReferralLink from "src/components/ReferralLink/ReferralLink";
-import { useDeviceInfo } from "src/hooks/useDeviceInfo";
+import { useDeviceInfo } from "@beratrax/core/hooks";
 import { useWallet } from "@beratrax/core/hooks";
 import Vaults from "./JoinedVaults/Vaults";
 import { TokenBalances } from "./TokenBalances/TokenBalances";

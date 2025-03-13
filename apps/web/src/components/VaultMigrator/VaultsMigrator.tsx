@@ -6,7 +6,7 @@ import { encodeFunctionData, erc20Abi } from "viem";
 import { useState } from "react";
 import { useWallet } from "@beratrax/core/hooks";
 import { awaitTransaction } from "src/utils/common";
-import { useVaults } from "src/hooks/useVaults";
+import { useVaults } from "@beratrax/core/hooks";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import { updatePoints } from "src/state/account/accountReducer";
 import { useAppDispatch } from "src/state";

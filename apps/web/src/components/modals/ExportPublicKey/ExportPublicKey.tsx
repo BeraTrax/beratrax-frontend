@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { BiCopy } from "react-icons/bi";
 import { BsCheckCircle } from "react-icons/bs";
 import QRCode from "react-qr-code";
-import useApp from "src/hooks/useApp";
+import { useApp } from "@beratrax/core/hooks";
 import { useWallet } from "@beratrax/core/hooks";
 import { copyToClipboard } from "src/utils";
 import { ModalLayout } from "../ModalLayout/ModalLayout";

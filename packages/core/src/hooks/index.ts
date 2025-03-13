@@ -9,7 +9,7 @@ import { useLp } from "./useLp";
 import { useMyReferrals } from "./useMyReferrals";
 import useNotify from "./useNotify";
 import usePageTracking from "./usePageTracking";
-import { usePlatformTVL } from "./usePlatformTVL";
+import { usePlatformTVL, usePlatformTVLHistory, useTransactionCount } from "./usePlatformTVL";
 import { useReferralDashboard } from "./useReferralDashboard";
 import { useSlippageWithdraw, useSlippageDeposit } from "./useSlippage";
 import { useSnapshotJoinSpace, useSnapshotSpace } from "./useSnapshot";
@@ -46,6 +46,8 @@ export {
   useMyReferrals,
   usePageTracking,
   usePlatformTVL,
+  usePlatformTVLHistory,
+  useTransactionCount,
   useReferralDashboard,
   useSlippageWithdraw,
   useStats,

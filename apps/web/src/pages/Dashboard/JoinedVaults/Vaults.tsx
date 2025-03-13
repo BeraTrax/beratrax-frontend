@@ -8,7 +8,7 @@ import { VaultsMigrator } from "src/components/VaultMigrator/VaultsMigrator";
 import { RoutesPaths } from "src/config/constants";
 import { addressesByChainId } from "src/config/constants/contracts";
 import { PoolDef } from "src/config/constants/pools_json";
-import { useVaults } from "src/hooks/useVaults";
+import { useVaults } from "@beratrax/core/hooks";
 import { useWallet } from "@beratrax/core/hooks";
 import { useAppDispatch } from "src/state";
 import { updatePoints } from "src/state/account/accountReducer";

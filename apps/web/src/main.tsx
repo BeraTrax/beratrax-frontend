@@ -8,7 +8,7 @@ import "src/api/interceptor";
 import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
 import "./config/walletConfig";
-import AppProvider from "./context/AppProvider";
+import { AppProvider } from "@beratrax/core/context";
 import "./index.css";
 import "./polyfills";
 import store, { persistor } from "./state";

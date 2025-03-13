@@ -9,6 +9,9 @@
     "./context": "./src/context/index.ts",
     "./state": "./src/state/index.ts",
     "./hooks": "./src/hooks/index.ts",
+    "./walletConfig": "./src/config/walletConfig.ts",
+    "./reactQuery": "./src/config/reactQuery.ts",
+    "./supportChat": "./src/config/supportChat.ts",
     ".": "./src/index.ts"
   },
   "license": "MIT",

@@ -201,11 +201,11 @@ const createSocialWallet = (id: string, name: string, icon: string, loginProvide
   };
 };
 
-const googleWallet = () => createSocialWallet("google", "Google", googleIcon.toString(), "google");
-const facebookWallet = () => createSocialWallet("facebook", "Facebook", facebookIcon.toString(), "facebook");
-const discordWallet = () => createSocialWallet("discord", "Discord", discordIcon.toString(), "discord");
-const twitterWallet = () => createSocialWallet("twitter", "Twitter", twitterIcon.toString(), "twitter");
-const githubWallet = () => createSocialWallet("github", "Github", githubIcon.toString(), "github");
+const googleWallet = () => createSocialWallet("google", "Google", googleIcon, "google");
+const facebookWallet = () => createSocialWallet("facebook", "Facebook", facebookIcon, "facebook");
+const discordWallet = () => createSocialWallet("discord", "Discord", discordIcon, "discord");
+const twitterWallet = () => createSocialWallet("twitter", "Twitter", twitterIcon, "twitter");
+const githubWallet = () => createSocialWallet("github", "Github", githubIcon, "github");
 
 export const rainbowConfig = getDefaultConfig({
   appName: "Beratrax",

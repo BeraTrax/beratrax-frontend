@@ -7,7 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import "src/api/interceptor";
 import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
-import "./config/walletConfig";
+import "@beratrax/core/walletConfig";
 import { AppProvider } from "@beratrax/core/context";
 import "./index.css";
 import "./polyfills";

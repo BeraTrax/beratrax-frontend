@@ -35,11 +35,11 @@
     },
     "types": [
       "./src/decs2.d.ts",
-      "vite-plugin-svgr/client"
+      "./src/types/custom.d.ts",
+      "vite/client"
     ]
   },
   "include": [
     "src",
-    "vite.config.ts"
   ]
 }

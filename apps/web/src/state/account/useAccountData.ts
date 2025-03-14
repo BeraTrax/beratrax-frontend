@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { addAccount, updateAccountField, updatePoints } from "src/state/account/accountReducer";
 import useTokens from "../tokens/useTokens";

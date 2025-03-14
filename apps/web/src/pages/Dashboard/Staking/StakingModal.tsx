@@ -8,7 +8,7 @@ import UnStaking from "src/components/Staking/UnStaking";
 import { Tabs } from "src/components/Tabs/Tabs";
 import { CHAIN_ID } from "src/types/enums";
 import { awaitTransaction, toEth, toWei } from "src/utils/common";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import useFarms from "src/state/farms/hooks/useFarms";
 import { useFarmApys } from "src/state/farms/hooks/useFarmApy";
 import { approveErc20, getBalance } from "src/api/token";

@@ -2,7 +2,7 @@ import React from "react";
 import NotificationsSystem, { atalhoTheme, baseTheme, Notification, Theme, useNotifications } from "reapop";
 import NotiCheck from "src/assets/images/noti_check.png";
 import NotiCross from "src/assets/images/noti_cross.png";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import styles from "./Notifications.module.css";
 
 interface IProps {}

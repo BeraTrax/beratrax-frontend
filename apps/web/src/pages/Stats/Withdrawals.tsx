@@ -7,7 +7,7 @@ import pools from "src/config/constants/pools_json";
 import { CHAIN_ID } from "src/types/enums";
 import { customCommify } from "src/utils/common";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { useConstants } from "@beratrax/core/hooks";
+import { useConstants } from "@beratrax/core/src/hooks";
 import useTokens from "src/state/tokens/useTokens";
 import { EARNINGS_GRAPH_URL } from "src/config/constants";
 

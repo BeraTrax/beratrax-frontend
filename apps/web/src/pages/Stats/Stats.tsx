@@ -1,6 +1,6 @@
 import PlatformTVL from "../Dashboard/PlatformTVL/PlatformTVL";
 import { UserStatsTable } from "src/components/UserStatsTable/UserStatsTable";
-import { useStats } from "@beratrax/core/hooks";
+import { useStats } from "@beratrax/core/src/hooks";
 import { StatsCard } from "src/components/StatsCard/StatsCard";
 import { MyReferrals } from "src/components/MyReferrals/MyReferrals";
 import { VaultStatsTable } from "src/components/VaultStatsTable/VaultStatsTable";

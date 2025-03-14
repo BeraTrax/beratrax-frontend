@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "src/state";
-import useWallet from "../../../hooks/useWallet";
-import useFarms from "./useFarms";
+import { useWallet } from "@beratrax/core/src/hooks";
+import useFarms from "@core/state/farms/hooks/useFarms";
 import { updateFarmDetails, reset, updateEarnings, getVaultEarnings } from "src/state/farms/farmsReducer";
-import useTokens from "../../../state/tokens/useTokens";
+import useTokens from "src/state/tokens/useTokens";
 
 const useFarmDetails = () => {
     const { farms } = useFarms();

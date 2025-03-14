@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { RiArrowUpSLine } from "react-icons/ri";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import useTokens from "src/state/tokens/useTokens";
 import { getLpAddressForFarmsPrice, toPreciseNumber } from "src/utils/common";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";

@@ -13,9 +13,9 @@ import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate
 import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
-import { useDetailInput } from "@beratrax/core/hooks";
-import { useWallet } from "@beratrax/core/hooks";
-import { useWindowSize } from "@beratrax/core/hooks";
+import { useDetailInput } from "@beratrax/core/src/hooks/useDetailInput";
+import useWallet from "@beratrax/core/src/hooks/useWallet";
+import { useWindowSize } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { updatePoints } from "src/state/account/accountReducer";
 import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";

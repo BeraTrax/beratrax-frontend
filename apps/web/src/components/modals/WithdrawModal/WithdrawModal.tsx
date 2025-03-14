@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { FC, useEffect, useMemo, useState } from "react";
 import { getWithdrawChainForFarm } from "src/api/transaction";
 import { pools_chain_ids } from "src/config/constants/pools_json";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
 import { RootState, useAppDispatch, useAppSelector } from "src/state";
 import useFarms from "src/state/farms/hooks/useFarms";

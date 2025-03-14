@@ -3,7 +3,7 @@ import { BsClipboardData } from "react-icons/bs";
 import { FaArrowDown, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { ReferralStats } from "src/api/stats";
-import { useConstants } from "@beratrax/core/hooks";
+import { useConstants } from "@beratrax/core/src/hooks";
 import { CHAIN_ID } from "src/types/enums";
 import { customCommify } from "src/utils/common";
 import { v4 as uuid } from "uuid";

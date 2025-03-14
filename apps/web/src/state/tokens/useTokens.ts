@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { updatePrices } from "src/state/tokens/tokensReducer";
-import useFarms from "../farms/hooks/useFarms";
-import { useWallet } from "@beratrax/core/hooks";
+import { useFarms } from "@beratrax/core/src/state/farms/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { fetchBalances, fetchDecimals, fetchTotalSupplies, reset } from "./tokensReducer";
 import { Address, getAddress, zeroAddress } from "viem";
 import { FarmType } from "src/types/enums";

@@ -1,5 +1,5 @@
 import { CSSProperties, FC } from "react";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import styles from "./Skeleton.module.css";
 
 interface IProps {

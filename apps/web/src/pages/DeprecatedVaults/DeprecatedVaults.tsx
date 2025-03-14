@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "src/components/BackButton/BackButton";
-import { useDetailInput } from "@beratrax/core/hooks";
+import { useDetailInput } from "@beratrax/core/src/hooks";
 import pools_json from "src/config/constants/pools_json";
 import { toWei } from "src/utils/common";
 import { CHAIN_ID, FarmTransactionType } from "src/types/enums";

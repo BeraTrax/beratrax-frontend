@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { VaultsApy } from "src/api/stats";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import { useApy } from "src/state/apys/useApy";
 import styles from "./FarmApyGraph.module.css";
 import { PoolDef } from "src/config/constants/pools_json";

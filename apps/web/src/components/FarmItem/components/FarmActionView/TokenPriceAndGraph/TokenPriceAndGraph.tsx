@@ -1,6 +1,6 @@
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { PoolDef } from "src/config/constants/pools_json";
-import { useLp } from "@beratrax/core/hooks";
+import { useLp } from "@beratrax/core/src/hooks";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import { customCommify } from "src/utils/common";
 import FarmRowChip from "../../FarmRowChip/FarmRowChip";

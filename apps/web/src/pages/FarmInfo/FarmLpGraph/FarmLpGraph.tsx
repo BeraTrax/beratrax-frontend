@@ -3,8 +3,8 @@ import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, T
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import styles from "./FarmLpGraph.module.css";
 import { LP_Prices } from "src/api/stats";
-import { useApp } from "@beratrax/core/hooks";
-import { useLp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
+import { useLp } from "@beratrax/core/src/hooks";
 import { PoolDef } from "src/config/constants/pools_json";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";

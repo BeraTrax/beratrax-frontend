@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useAccountData from "src/state/account/useAccountData";
 import { copyToClipboard } from "src/utils";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { FaSquareXTwitter } from "react-icons/fa6";
 

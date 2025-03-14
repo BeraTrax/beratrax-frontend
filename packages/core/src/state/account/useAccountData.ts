@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
-import useWallet from "src/hooks/useWallet";
+import useWallet from "@core/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { addAccount, updateAccountField, updatePoints } from "src/state/account/accountReducer";
 import useTokens from "../tokens/useTokens";
@@ -7,54 +7,51 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { RoutesPaths } from "src/config/constants";
 
 const useAccountData = () => {
-    const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);
-    const { currentWallet } = useWallet();
-    const { reloadBalances } = useTokens();
-    const dispatch = useAppDispatch();
-    const [urlSearchParams] = useSearchParams();
-    const referralCodeFromUrl = urlSearchParams.get("refCode");
+  const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);
+  const { currentWallet } = useWallet();
+  const { reloadBalances } = useTokens();
+  const dispatch = useAppDispatch();
+  const [urlSearchParams] = useSearchParams();
+  const referralCodeFromUrl = urlSearchParams.get("refCode");
 
-    const referralLink = useMemo(
-        () =>
-            referralCode
-                ? `${
-                      window.location.origin.includes("staging") ? "https://beta.beratrax.com" : window.location.origin
-                  }/${encodeURIComponent(referralCode)}`
-                : undefined,
-        [referralCode]
-    );
-    const fetchAccountData = useCallback(async () => {
-        if (!refCodeLoaded) return;
+  const referralLink = useMemo(
+    () =>
+      referralCode
+        ? `${
+            window.location.origin.includes("staging") ? "https://beta.beratrax.com" : window.location.origin
+          }/${encodeURIComponent(referralCode)}`
+        : undefined,
+    [referralCode],
+  );
+  const fetchAccountData = useCallback(async () => {
+    if (!refCodeLoaded) return;
 
-        await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
-        await reloadBalances();
-        if (!currentWallet) return;
-        await dispatch(updatePoints(currentWallet));
-    }, [currentWallet, referrerCode, refCodeLoaded, referralCodeFromUrl]);
+    await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
+    await reloadBalances();
+    if (!currentWallet) return;
+    await dispatch(updatePoints(currentWallet));
+  }, [currentWallet, referrerCode, refCodeLoaded, referralCodeFromUrl]);
 
-    return {
-        fetchAccountData,
-        referralLink,
-    };
+  return {
+    fetchAccountData,
+    referralLink,
+  };
 };
 
 export default useAccountData;
 
 export const useRefCodeLoaded = () => {
-    const { refCode } = useParams();
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
+  const { refCode } = useParams();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (
-            refCode &&
-            !Object.values([RoutesPaths.Home, RoutesPaths.Farms, RoutesPaths.Leaderboard]).includes(refCode)
-        ) {
-            dispatch(updateAccountField({ field: "referrerCode", value: refCode }));
-            navigate(`/`);
-        }
-        dispatch(updateAccountField({ field: "refCodeLoaded", value: true }));
-    }, [refCode]);
+  useEffect(() => {
+    if (refCode && !Object.values([RoutesPaths.Home, RoutesPaths.Farms, RoutesPaths.Leaderboard]).includes(refCode)) {
+      dispatch(updateAccountField({ field: "referrerCode", value: refCode }));
+      navigate(`/`);
+    }
+    dispatch(updateAccountField({ field: "refCodeLoaded", value: true }));
+  }, [refCode]);
 
-    return refCode;
+  return refCode;
 };

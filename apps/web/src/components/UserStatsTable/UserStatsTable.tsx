@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { useStats } from "@beratrax/core/hooks";
+import { useStats } from "@beratrax/core/src/hooks";
 import { customCommify } from "src/utils/common";
-import { useConstants } from "@beratrax/core/hooks";
+import { useConstants } from "@beratrax/core/src/hooks";
 import { FiExternalLink } from "react-icons/fi";
 import { BsClipboardData } from "react-icons/bs";
 import { CHAIN_ID, UsersTableColumns } from "src/types/enums";

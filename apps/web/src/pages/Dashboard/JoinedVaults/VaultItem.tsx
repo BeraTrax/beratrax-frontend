@@ -8,7 +8,7 @@ import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
 import FarmRowChip from "src/components/FarmItem/components/FarmRowChip/FarmRowChip";
 import { VaultMigrator } from "src/components/VaultMigrator/VaultMigrator";
 import { RoutesPaths } from "src/config/constants";
-import { useTrax, useWallet } from "@beratrax/core/hooks";
+import { useTrax, useWallet } from "@beratrax/core/src/hooks";
 import { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";

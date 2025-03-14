@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useWallet } from "@beratrax/core/hooks";
+import useWallet from "@core/hooks/useWallet";
 import { fetchReferrals } from "src/api/referrals";
 import { REFFERED_ACCOUNTS } from "src/config/constants/query";
 

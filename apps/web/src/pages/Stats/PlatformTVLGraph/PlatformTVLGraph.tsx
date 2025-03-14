@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { TVLHistory } from "src/api/stats";
-import { usePlatformTVLHistory } from "@beratrax/core/hooks";
+import { usePlatformTVLHistory } from "@beratrax/core/src/hooks";
 
 type GraphFilterType = "hour" | "day" | "week" | "month" | "year" | "all";
 

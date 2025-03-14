@@ -1,4 +1,4 @@
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { NotSignedIn } from "../NotSignedIn/NotSignedIn";
 
 export const SignInRequiredWrapper = ({ children }: { children: JSX.Element }) => {

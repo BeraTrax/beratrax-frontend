@@ -3,7 +3,7 @@ import { BiCopy } from "react-icons/bi";
 import { BsCheckCircle } from "react-icons/bs";
 import { TiWarningOutline } from "react-icons/ti";
 import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { copyToClipboard } from "src/utils";
 
 interface IProps {

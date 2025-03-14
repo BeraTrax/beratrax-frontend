@@ -13,7 +13,7 @@ import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import { queryClient } from "./config/reactQuery";
 import { rainbowConfig } from "./config/walletConfig";
-import { WalletProvider } from "@beratrax/core/context";
+import { WalletProvider } from "@beratrax/core/src/context";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
 

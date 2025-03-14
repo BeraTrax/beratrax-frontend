@@ -1,7 +1,7 @@
 import { BsClipboardData } from "react-icons/bs";
 import { FiExternalLink } from "react-icons/fi";
-import { useConstants } from "@beratrax/core/hooks";
-import { useStats } from "@beratrax/core/hooks";
+import { useConstants } from "@beratrax/core/src/hooks";
+import { useStats } from "@beratrax/core/src/hooks";
 import { CHAIN_ID } from "src/types/enums";
 import { customCommify } from "src/utils/common";
 

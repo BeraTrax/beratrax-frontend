@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./OneTimeZapping.module.css";
 import { useAppDispatch } from "src/state";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { ImSpinner8 } from "react-icons/im";
 import { disableZapWarning } from "src/state/account/accountReducer";
 

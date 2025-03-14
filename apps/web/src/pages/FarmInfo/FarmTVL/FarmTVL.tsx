@@ -3,7 +3,7 @@ import React from "react";
 import { BsClipboardData } from "react-icons/bs";
 import uuid from "react-uuid";
 import { PoolDef } from "src/config/constants/pools_json";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import useFarms from "src/state/farms/hooks/useFarms";
 import useTokens from "src/state/tokens/useTokens";
 import { getLpAddressForFarmsPrice } from "src/utils/common";

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import { twMerge } from "tailwind-merge";
 import styles from "./ModalLayout.module.css";
 

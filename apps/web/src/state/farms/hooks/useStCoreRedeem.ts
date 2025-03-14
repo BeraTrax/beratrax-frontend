@@ -1,6 +1,6 @@
 import farmFunctions from "src/api/pools";
 import { StCoreFarmFunctions } from "src/api/pools/types";
-import useWallet from "../../../hooks/useWallet";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useMemo, useState } from "react";
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { FARM_REDEEM, FARM_ZAP_IN } from "src/config/constants/query";

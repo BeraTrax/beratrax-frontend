@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { updatePrices } from "src/state/tokens/tokensReducer";
 import useFarms from "../farms/hooks/useFarms";
-import useWallet from "src/hooks/useWallet";
+import useWallet from "@core/hooks/useWallet";
 import { fetchBalances, fetchDecimals, fetchTotalSupplies, reset } from "./tokensReducer";
 import { Address, getAddress, zeroAddress } from "viem";
 import { FarmType } from "src/types/enums";

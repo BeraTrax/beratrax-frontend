@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useWallet from "../../../hooks/useWallet";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { FARM_WITHDRAW } from "src/config/constants/query";
 import farmFunctions from "src/api/pools";

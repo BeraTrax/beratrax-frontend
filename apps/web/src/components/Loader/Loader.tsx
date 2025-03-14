@@ -1,4 +1,4 @@
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import styles from "./Loader.module.css";
 
 const Loader = () => {

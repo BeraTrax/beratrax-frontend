@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { notifyError } from "src/api/notify";
 import { getBalance } from "src/api/token";
 import { addressesByChainId } from "src/config/constants/contracts";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
 import { useAppDispatch } from "src/state";
 import useFarms from "src/state/farms/hooks/useFarms";

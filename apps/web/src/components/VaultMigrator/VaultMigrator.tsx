@@ -6,7 +6,7 @@ import { Vault } from "src/types";
 import { encodeFunctionData, erc20Abi, formatEther } from "viem";
 import { usePublicClient } from "wagmi";
 import { useState } from "react";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { awaitTransaction } from "src/utils/common";
 import { useAppDispatch } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";

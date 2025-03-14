@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import PoolButton from "src/components/PoolButton/PoolButton";
 import { Tabs } from "src/components/Tabs/Tabs";
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 import { FarmTransactionType } from "src/types/enums";
 import { Description } from "../Description/Description";
 import DetailInput from "../DetailInput/DetailInput";

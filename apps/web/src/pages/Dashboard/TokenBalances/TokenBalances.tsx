@@ -1,4 +1,4 @@
-import { useApp } from "@beratrax/core/hooks";
+import { useApp } from "@beratrax/core/src/hooks";
 // import useBalances from "src/state/balances/useBalances";
 import { FC, useCallback, useMemo, useState } from "react";
 import { BiSliderAlt } from "react-icons/bi";
@@ -8,7 +8,7 @@ import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
 import { TransferToken } from "src/components/modals/TransferToken/TransferToken";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { SupportedChains } from "src/config/walletConfig";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { toggleTokenDetailBalances } from "src/state/settings/settingsReducer";
 import useTokens, { UIStateEnum } from "src/state/tokens/useTokens";

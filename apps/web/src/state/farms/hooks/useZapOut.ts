@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import useWallet from "../../../hooks/useWallet";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { FARM_ZAP_OUT } from "src/config/constants/query";
 import farmFunctions from "src/api/pools";
-import useTokens from "../../tokens/useTokens";
+import useTokens from "src/state/tokens/useTokens";
 import { toEth, toWei } from "src/utils/common";
 import { Address } from "viem";
 import { PoolDef } from "src/config/constants/pools_json";

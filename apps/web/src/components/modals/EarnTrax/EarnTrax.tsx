@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { ImSpinner8 } from "react-icons/im";
 import { acceptTerms, getMessage } from "src/api/trax";
-import { useWallet } from "@beratrax/core/hooks";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch } from "src/state";
 import { updateAccountField } from "src/state/account/accountReducer";
 import { CHAIN_ID } from "src/types/enums";

@@ -5,7 +5,7 @@ import useZapIn from "src/state/farms/hooks/useZapIn";
 import useZapOut from "src/state/farms/hooks/useZapOut";
 import { FarmTransactionType } from "src/types/enums";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import useWallet from "src/hooks/useWallet";
+import useWallet from "@core/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
 import { PoolDef } from "src/config/constants/pools_json";

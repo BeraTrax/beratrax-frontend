@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "src/state";
 import { checkPendingTransactionsStatus, getTransactionsDb, reset } from "src/state/transactions/transactionsReducer";
-import useWallet from "../../hooks/useWallet";
+import { useWallet } from "@beratrax/core/src/hooks";
 import { useCallback, useEffect, useState } from "react";
 
 const useTransactions = () => {

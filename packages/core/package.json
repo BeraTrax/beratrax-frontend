@@ -2,19 +2,9 @@
   "name": "@beratrax/core",
   "private": true,
   "version": "0.0.1",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.js",
-  "exports": {
-    "./context": "./src/context/index.ts",
-    "./state": "./src/state/index.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./state/farms/hooks": "./src/state/farms/hooks/index.ts",
-    "./walletConfig": "./src/config/walletConfig.ts",
-    "./reactQuery": "./src/config/reactQuery.ts",
-    "./supportChat": "./src/config/supportChat.ts",
-    ".": "./src/index.ts"
-  },
+  "types": "./src/types/index.ts",
+  "main": "./src/index.ts",
+  "module:jsx": "src",
   "license": "MIT",
   "scripts": {
     "build:core": "tsc -b"

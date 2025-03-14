@@ -1,5 +1,5 @@
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { PoolDef } from "src/config/constants/pools_json";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useLp } from "@beratrax/core/src/hooks";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import { customCommify } from "src/utils/common";

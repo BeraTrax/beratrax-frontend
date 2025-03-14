@@ -5,7 +5,7 @@ import { ReferralDashboardTable } from "src/components/ReferralDashboardTable/Re
 import { useApp } from "@beratrax/core/src/hooks";
 import { useReferralDashboard } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
-import useAccountData from "src/state/account/useAccountData";
+import useAccountData from "@beratrax/core/src/state/account/useAccountData";
 import { copyToClipboard, getPositionSuffix } from "src/utils";
 import styles from "./ReferralDashboard.module.css";
 

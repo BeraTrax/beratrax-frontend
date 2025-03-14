@@ -2,10 +2,10 @@ import { FC, useState } from "react";
 import { BsClipboardData } from "react-icons/bs";
 import { FaArrowDown, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
-import { ReferralStats } from "src/api/stats";
+import { ReferralStats } from "@beratrax/core/src/api/stats";
 import { useConstants } from "@beratrax/core/src/hooks";
-import { CHAIN_ID } from "src/types/enums";
-import { customCommify } from "src/utils/common";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import { v4 as uuid } from "uuid";
 import styles from "./ReferralDashboard.module.css";
 

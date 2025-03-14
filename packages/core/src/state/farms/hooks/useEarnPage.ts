@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { FarmData, FarmDataExtended } from "src/types";
-import { FarmSortOptions } from "src/types/enums";
+import { FarmData, FarmDataExtended } from "@core/types";
+import { FarmSortOptions } from "@core/types/enums";
 import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
@@ -11,7 +11,6 @@ const useEarnPage = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<null | string>(null);
   const [sortSelected, setSortSelected] = useState<FarmSortOptions>(FarmSortOptions.Default);
   const { apys } = useFarmApys();
-
 
   const sortFn = () => {
     let data: FarmDataExtended[] = farms.map((ele) => {
@@ -38,7 +37,7 @@ const useEarnPage = () => {
         break;
       case FarmSortOptions.Deposit_High_to_Low:
         data = data.sort(
-          (a, b) => Number(b.withdrawableAmounts![0].amountDollar) - Number(a.withdrawableAmounts![0].amountDollar)
+          (a, b) => Number(b.withdrawableAmounts![0].amountDollar) - Number(a.withdrawableAmounts![0].amountDollar),
         );
         break;
       case FarmSortOptions.Deposit_Low_to_High:

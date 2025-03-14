@@ -1,9 +1,9 @@
 import { getWalletClient as getWalletClientCore, switchChain as switchChainCore } from "@wagmi/core";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { requestEthForGas } from "src/api";
-import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
-import { EstimateTxGasArgs, IClients } from "src/types";
-import { trackTransaction } from "src/utils/analytics";
+import { requestEthForGas } from "@core/api";
+import { rainbowConfig, SupportedChains, web3AuthInstance } from "@core/config/walletConfig";
+import { EstimateTxGasArgs, IClients } from "@core/types";
+import { trackTransaction } from "@core/utils/analytics";
 import { Address, createPublicClient, createWalletClient, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { Connector, useAccount, useDisconnect } from "wagmi";
@@ -28,13 +28,19 @@ interface IProps {
 }
 
 const WalletProvider: React.FC<IProps> = ({ children }) => {
-  const { address, status, isConnecting: wagmiIsConnecting, isReconnecting: wagmiIsReconnecting, connector } = useAccount();
+  const {
+    address,
+    status,
+    isConnecting: wagmiIsConnecting,
+    isReconnecting: wagmiIsReconnecting,
+    connector,
+  } = useAccount();
   const publicClients = useRef<Record<number, IClients["public"]>>({});
   const walletClients = useRef<Record<number, IClients["wallet"]>>({});
   const { disconnectAsync } = useDisconnect();
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isReconnectingTimeout, setIsReconnectingTimeout] = useState(false);
-  
+
   const isSocial = useMemo(() => {
     return connector?.id === "web3auth";
   }, [connector]);
@@ -51,7 +57,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      
+
       // Set a timeout to stop the reconnecting state after 10 seconds
       reconnectTimeoutRef.current = setTimeout(() => {
         setIsReconnectingTimeout(true);
@@ -169,7 +175,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       walletClients.current[chainId] = client;
       return client;
     },
-    [address]
+    [address],
   );
 
   const estimateTxGas = async (args: EstimateTxGasArgs) => {

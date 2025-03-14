@@ -1,42 +1,42 @@
-import farmFunctions from "src/api/pools";
-import { StCoreFarmFunctions } from "src/api/pools/types";
+import farmFunctions from "@core/api/pools";
+import { StCoreFarmFunctions } from "@core/api/pools/types";
 import useWallet from "../../../hooks/useWallet";
 import { useMemo, useState } from "react";
 import { useIsMutating, useMutation } from "@tanstack/react-query";
-import { FARM_REDEEM, FARM_ZAP_IN } from "src/config/constants/query";
+import { FARM_REDEEM, FARM_ZAP_IN } from "@core/config/constants/query";
 
 const farmId = 301;
 const useStCoreRedeem = () => {
-    const { currentWallet, getPublicClient, getWalletClient, estimateTxGas } = useWallet();
-    const _redeem = async () => {
-        if (!currentWallet) return;
-        await (farmFunctions[farmId] as StCoreFarmFunctions).redeem({
-            currentWallet,
-            getPublicClient,
-            getWalletClient,
-            estimateTxGas,
-        });
-    };
-
-    const {
-        mutate: redeem,
-        mutateAsync: redeemAsync,
-        status,
-    } = useMutation({
-        mutationFn: _redeem,
-        mutationKey: FARM_REDEEM(currentWallet!, farmId || 0),
+  const { currentWallet, getPublicClient, getWalletClient, estimateTxGas } = useWallet();
+  const _redeem = async () => {
+    if (!currentWallet) return;
+    await (farmFunctions[farmId] as StCoreFarmFunctions).redeem({
+      currentWallet,
+      getPublicClient,
+      getWalletClient,
+      estimateTxGas,
     });
+  };
 
-    const redeemIsMutating = useIsMutating({ mutationKey: FARM_REDEEM(currentWallet!, farmId) });
+  const {
+    mutate: redeem,
+    mutateAsync: redeemAsync,
+    status,
+  } = useMutation({
+    mutationFn: _redeem,
+    mutationKey: FARM_REDEEM(currentWallet!, farmId || 0),
+  });
 
-    /**
-     * True if any zap function is runnning
-     */
-    const isLoading = useMemo(() => {
-        return redeemIsMutating > 0;
-    }, [redeemIsMutating]);
+  const redeemIsMutating = useIsMutating({ mutationKey: FARM_REDEEM(currentWallet!, farmId) });
 
-    return { isLoading, redeem: redeemAsync };
+  /**
+   * True if any zap function is runnning
+   */
+  const isLoading = useMemo(() => {
+    return redeemIsMutating > 0;
+  }, [redeemIsMutating]);
+
+  return { isLoading, redeem: redeemAsync };
 };
 
 export default useStCoreRedeem;

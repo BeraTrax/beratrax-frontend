@@ -6,7 +6,7 @@ import { useNotify } from "@beratrax/core/src/hooks";
 import { usePlatformTVL } from "@beratrax/core/src/hooks";
 import { useVaultMigrate } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
-import useTokens from "src/state/tokens/useTokens";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { toPreciseNumber } from "src/utils/common";
 import { useConnectors } from "wagmi";

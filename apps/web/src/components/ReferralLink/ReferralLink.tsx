@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useAccountData from "src/state/account/useAccountData";
+import useAccountData from "@beratrax/core/src/state/account/useAccountData";
 import { copyToClipboard } from "src/utils";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { MdOutlineContentCopy } from "react-icons/md";

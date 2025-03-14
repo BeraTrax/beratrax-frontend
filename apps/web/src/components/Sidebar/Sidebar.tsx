@@ -6,80 +6,80 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as EarnIcon } from "src/assets/images/earn.svg";
 import logo from "src/assets/images/logo.png";
-import { RoutesPaths, isDev } from "src/config/constants";
+import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {
-    const navigate = useNavigate();
-    const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-    const handleNavigation = (route: string, target?: string) => {
-        if (target) window.open(route, target);
-        else navigate(route);
-    };
+  const handleNavigation = (route: string, target?: string) => {
+    if (target) window.open(route, target);
+    else navigate(route);
+  };
 
-    const routes = [
-        {
-            title: "Dashboard",
-            icon: <MdSpaceDashboard size={18} />,
-            path: RoutesPaths.Home,
-        },
-        {
-            title: "Earn",
-            icon: <EarnIcon height={18} width={18} />,
-            path: RoutesPaths.Farms,
-            target: undefined,
-        },
-        {
-            title: "BTX Points",
-            icon: <ImStatsDots size={15} />,
-            path: RoutesPaths.Leaderboard,
-            target: undefined,
-        },
-        {
-            title: "User Guide",
-            icon: <HiDocumentText size={18} />,
-            iconRight: <AiOutlineExport size={12} />,
-            path: RoutesPaths.UserGuide,
-            target: undefined,
-        },
-        {
-            title: "Stats",
-            icon: <ImStatsDots size={15} />,
-            path: RoutesPaths.Stats,
-            isDev: true,
-            target: undefined,
-        },
+  const routes = [
+    {
+      title: "Dashboard",
+      icon: <MdSpaceDashboard size={18} />,
+      path: RoutesPaths.Home,
+    },
+    {
+      title: "Earn",
+      icon: <EarnIcon height={18} width={18} />,
+      path: RoutesPaths.Farms,
+      target: undefined,
+    },
+    {
+      title: "BTX Points",
+      icon: <ImStatsDots size={15} />,
+      path: RoutesPaths.Leaderboard,
+      target: undefined,
+    },
+    {
+      title: "User Guide",
+      icon: <HiDocumentText size={18} />,
+      iconRight: <AiOutlineExport size={12} />,
+      path: RoutesPaths.UserGuide,
+      target: undefined,
+    },
+    {
+      title: "Stats",
+      icon: <ImStatsDots size={15} />,
+      path: RoutesPaths.Stats,
+      isDev: true,
+      target: undefined,
+    },
 
-        {
-            title: "Test",
-            icon: <IoIosFlask size={18} />,
-            path: RoutesPaths.Test_pro_max,
-            isDev: true,
-            target: undefined,
-        },
-    ];
+    {
+      title: "Test",
+      icon: <IoIosFlask size={18} />,
+      path: RoutesPaths.Test_pro_max,
+      isDev: true,
+      target: undefined,
+    },
+  ];
 
-    return (
-        <div className="flex h-screen flex-col border-r border-borderDark p-4 pt-5 uppercase text-sm font-medium tracking-wide	">
-            <img src={logo} alt="beratrax-logo" className="w-[90%] mb-6 mx-auto" />
+  return (
+    <div className="flex h-screen flex-col border-r border-borderDark p-4 pt-5 uppercase text-sm font-medium tracking-wide	">
+      <img src={logo} alt="beratrax-logo" className="w-[90%] mb-6 mx-auto" />
 
-            <div className="mt-6 flex flex-col flex-1">
-                {routes
-                    .filter((e) => Boolean(e.isDev) === isDev)
-                    .map((route) => (
-                        <SidebarItem
-                            key={route.title}
-                            title={route.title}
-                            icon={route.icon}
-                            iconRight={route.iconRight}
-                            onClick={() => handleNavigation(route.path, route.target)}
-                            active={pathname === route.path}
-                        />
-                    ))}
-            </div>
-        </div>
-    );
+      <div className="mt-6 flex flex-col flex-1">
+        {routes
+          .filter((e) => Boolean(e.isDev) === isDev)
+          .map((route) => (
+            <SidebarItem
+              key={route.title}
+              title={route.title}
+              icon={route.icon}
+              iconRight={route.iconRight}
+              onClick={() => handleNavigation(route.path, route.target)}
+              active={pathname === route.path}
+            />
+          ))}
+      </div>
+    </div>
+  );
 }
 
 export default Sidebar;

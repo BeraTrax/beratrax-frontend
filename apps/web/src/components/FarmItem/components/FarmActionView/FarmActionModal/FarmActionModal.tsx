@@ -12,17 +12,17 @@ import { ConfirmWithdraw } from "src/components/modals/ConfirmWithdraw/ConfirmWi
 import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
 import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
+import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useDetailInput } from "@beratrax/core/src/hooks/useDetailInput";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
 import { useWindowSize } from "@beratrax/core/src/hooks";
-import { useAppDispatch, useAppSelector } from "src/state";
-import { updatePoints } from "src/state/account/accountReducer";
-import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { FarmDetailInputOptions } from "src/state/farms/types";
-import useTokens from "src/state/tokens/useTokens";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
+import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
+import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
   ApproveZapStep,
   StakeIntoRewardVaultStep,
@@ -31,7 +31,7 @@ import {
   TransactionTypes,
   WithdrawFromRewardVaultStep,
   ZapInStep,
-} from "src/state/transactions/types";
+} from "@beratrax/core/src/state/transactions/types";
 import { noExponents, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working

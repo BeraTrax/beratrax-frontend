@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import pools from "src/config/constants/pools_json";
+import pools from "@core/config/constants/pools_json";
 
 const useFarms = () => {
-    return { farms: useMemo(() => pools, []) };
+  return { farms: useMemo(() => pools, []) };
 };
 
 export default useFarms;

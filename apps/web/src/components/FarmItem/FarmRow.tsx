@@ -3,7 +3,7 @@ import { CgInfo } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import uuid from "react-uuid";
-import { PoolDef } from "src/config/constants/pools_json";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useApp } from "@beratrax/core/src/hooks";
 import { useTrax } from "@beratrax/core/src/hooks";
 

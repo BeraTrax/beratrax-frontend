@@ -1,5 +1,5 @@
-import useTVL from "src/hooks/useUserTVL";
-import { customCommify } from "src/utils/common";
+import useTVL from "@beratrax/core/src/hooks/useUserTVL";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import styles from "./UserTVL.module.css";
 
 interface Props {}

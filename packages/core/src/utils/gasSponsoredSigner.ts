@@ -2,7 +2,7 @@ import { TransactionReceipt, TransactionRequest, TransactionResponse } from "@et
 import { ExternallyOwnedAccount } from "@ethersproject/abstract-signer";
 import { BytesLike, Deferrable, SigningKey } from "ethers/lib/utils.js";
 import { Wallet, providers } from "ethers";
-import { backendApi } from "src/api";
+import { backendApi } from "@core/api";
 import { sleep } from "./common";
 
 interface SponsoredTransactionRequest {

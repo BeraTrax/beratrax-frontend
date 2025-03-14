@@ -1,16 +1,16 @@
-import { backendApi } from "src/api";
-import { dismissNotify, notifyError, notifyLoading } from "src/api/notify";
-import { notifySuccess } from "src/api/notify";
-import useTokens from "src/state/tokens/useTokens";
-import { Vault } from "src/types";
+import { backendApi } from "@beratrax/core/src/api";
+import { dismissNotify, notifyError, notifyLoading } from "@beratrax/core/src/api/notify";
+import { notifySuccess } from "@beratrax/core/src/api/notify";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { Vault } from "@beratrax/core/src/types";
 import { encodeFunctionData, erc20Abi, formatEther } from "viem";
 import { usePublicClient } from "wagmi";
 import { useState } from "react";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { awaitTransaction } from "src/utils/common";
-import { useAppDispatch } from "src/state";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { updatePoints } from "src/state/account/accountReducer";
+import { awaitTransaction } from "@beratrax/core/src/utils/common";
+import { useAppDispatch } from "@beratrax/core/src/state";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
 
 export const VaultMigrator = ({ vault }: { vault: Vault }) => {
   const dispatch = useAppDispatch();

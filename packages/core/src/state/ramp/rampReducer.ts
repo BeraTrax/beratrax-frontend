@@ -1,75 +1,73 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BridgeChainInfo, BridgeDirection, BridgeStatus, PolyUsdcToArbUsdcArgs, StateInterface } from "./types";
-import { notifyLoading } from "src/api/notify";
-import { awaitTransaction, sleep } from "src/utils/common";
-import { approveErc20, getBalance } from "src/api/token";
-import { buildTransaction, getBridgeStatus, getRoute } from "src/api/bridge";
-import { notifySuccess } from "src/api/notify";
-import { notifyError } from "src/api/notify";
-import { dismissNotify } from "src/api/notify";
+import { notifyLoading } from "@core/api/notify";
+import { awaitTransaction, sleep } from "@core/utils/common";
+import { approveErc20, getBalance } from "@core/api/token";
+import { buildTransaction, getBridgeStatus, getRoute } from "@core/api/bridge";
+import { notifySuccess } from "@core/api/notify";
+import { notifyError } from "@core/api/notify";
+import { dismissNotify } from "@core/api/notify";
 import { v4 as uuid } from "uuid";
 import { RootState } from "..";
 import { constants } from "ethers";
 
 const initialState: StateInterface = {
-    bridgeStates: {
-        [BridgeDirection.USDC_POLYGON_TO_ARBITRUM_USDC]: {
-            isBridging: false,
-        },
-        [BridgeDirection.ETH_POLYGON_TO_ARBITRUM_ETH]: {
-            isBridging: false,
-        },
+  bridgeStates: {
+    [BridgeDirection.USDC_POLYGON_TO_ARBITRUM_USDC]: {
+      isBridging: false,
     },
-    error: null,
+    [BridgeDirection.ETH_POLYGON_TO_ARBITRUM_ETH]: {
+      isBridging: false,
+    },
+  },
+  error: null,
 };
 
 export const checkBridgeStatus = createAsyncThunk(
-    "ramp/checkBridgeStatus",
-    async (args: { refechBalance?: Function; direction: BridgeDirection }, thunkApi) => {
-        try {
-            const notiId = uuid();
-            const int = setInterval(() => {
-                const { ramp } = thunkApi.getState() as RootState;
-                const sourceTxHash = ramp.bridgeStates[args.direction].socketSourceTxHash;
-                if (sourceTxHash) {
-                    thunkApi.dispatch(setBridgeStatus({ status: BridgeStatus.PENDING, direction: args.direction }));
-                    notifyLoading(
-                        { title: "Checking bridge status.", message: "This will take a few minutes..." },
-                        { id: notiId }
-                    );
-                    const sourceChain = BridgeChainInfo[args.direction].sourceChainId;
-                    const dstChain = BridgeChainInfo[args.direction].dstChainId;
-                    getBridgeStatus(sourceTxHash, sourceChain, dstChain).then((res) => {
-                        console.log(res);
-                        if (res.destinationTxStatus === "COMPLETED") {
-                            dismissNotify(notiId);
-                            notifySuccess(
-                                { title: "Success!", message: "Bridging completed" },
-                                { dismissAfter: 0, dismissible: true }
-                            );
-                            thunkApi.dispatch(setSourceTxHash({ hash: "", direction: args.direction }));
-                            thunkApi.dispatch(
-                                setBridgeStatus({ status: BridgeStatus.COMPLETED, direction: args.direction })
-                            );
-                            dismissNotify(notiId);
-                            clearInterval(int);
-                            thunkApi.dispatch(setIsBridging({ value: false, direction: args.direction }));
-                            thunkApi.dispatch(setCheckBridgeStatus({ value: false, direction: args.direction }));
-                            args?.refechBalance && args.refechBalance();
-                        }
-                    });
-                } else {
-                    dismissNotify(notiId);
-                    thunkApi.dispatch(setIsBridging({ value: false, direction: args.direction }));
-                    clearInterval(int);
-                }
-            }, 5000);
-            return int;
-        } catch (error) {
-            console.error("Error in checkBridgeStatus", error);
-            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to check bridge status");
+  "ramp/checkBridgeStatus",
+  async (args: { refechBalance?: Function; direction: BridgeDirection }, thunkApi) => {
+    try {
+      const notiId = uuid();
+      const int = setInterval(() => {
+        const { ramp } = thunkApi.getState() as RootState;
+        const sourceTxHash = ramp.bridgeStates[args.direction].socketSourceTxHash;
+        if (sourceTxHash) {
+          thunkApi.dispatch(setBridgeStatus({ status: BridgeStatus.PENDING, direction: args.direction }));
+          notifyLoading(
+            { title: "Checking bridge status.", message: "This will take a few minutes..." },
+            { id: notiId },
+          );
+          const sourceChain = BridgeChainInfo[args.direction].sourceChainId;
+          const dstChain = BridgeChainInfo[args.direction].dstChainId;
+          getBridgeStatus(sourceTxHash, sourceChain, dstChain).then((res) => {
+            console.log(res);
+            if (res.destinationTxStatus === "COMPLETED") {
+              dismissNotify(notiId);
+              notifySuccess(
+                { title: "Success!", message: "Bridging completed" },
+                { dismissAfter: 0, dismissible: true },
+              );
+              thunkApi.dispatch(setSourceTxHash({ hash: "", direction: args.direction }));
+              thunkApi.dispatch(setBridgeStatus({ status: BridgeStatus.COMPLETED, direction: args.direction }));
+              dismissNotify(notiId);
+              clearInterval(int);
+              thunkApi.dispatch(setIsBridging({ value: false, direction: args.direction }));
+              thunkApi.dispatch(setCheckBridgeStatus({ value: false, direction: args.direction }));
+              args?.refechBalance && args.refechBalance();
+            }
+          });
+        } else {
+          dismissNotify(notiId);
+          thunkApi.dispatch(setIsBridging({ value: false, direction: args.direction }));
+          clearInterval(int);
         }
+      }, 5000);
+      return int;
+    } catch (error) {
+      console.error("Error in checkBridgeStatus", error);
+      return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to check bridge status");
     }
+  },
 );
 
 // export const polyUsdcToArbUsdc = createAsyncThunk(
@@ -149,47 +147,47 @@ export const checkBridgeStatus = createAsyncThunk(
 // );
 
 const rampSlice = createSlice({
-    name: "ramp",
-    initialState: initialState,
-    reducers: {
-        setSourceTxHash: (state: StateInterface, action: { payload: { hash: string; direction: BridgeDirection } }) => {
-            state.bridgeStates[action.payload.direction].socketSourceTxHash = action.payload.hash;
-        },
-        setBridgeStatus: (
-            state: StateInterface,
-            action: { payload: { status: BridgeStatus; direction: BridgeDirection } }
-        ) => {
-            state.bridgeStates[action.payload.direction].status = action.payload.status;
-        },
+  name: "ramp",
+  initialState: initialState,
+  reducers: {
+    setSourceTxHash: (state: StateInterface, action: { payload: { hash: string; direction: BridgeDirection } }) => {
+      state.bridgeStates[action.payload.direction].socketSourceTxHash = action.payload.hash;
+    },
+    setBridgeStatus: (
+      state: StateInterface,
+      action: { payload: { status: BridgeStatus; direction: BridgeDirection } },
+    ) => {
+      state.bridgeStates[action.payload.direction].status = action.payload.status;
+    },
 
-        setIsBridging: (state: StateInterface, action: { payload: { value: boolean; direction: BridgeDirection } }) => {
-            state.bridgeStates[action.payload.direction].isBridging = action.payload.value;
-        },
-        setCheckBridgeStatus: (
-            state: StateInterface,
-            action: { payload: { value: boolean; direction: BridgeDirection } }
-        ) => {
-            state.bridgeStates[action.payload.direction].checkingStatus = action.payload.value;
-        },
+    setIsBridging: (state: StateInterface, action: { payload: { value: boolean; direction: BridgeDirection } }) => {
+      state.bridgeStates[action.payload.direction].isBridging = action.payload.value;
     },
-    extraReducers(builder) {
-        builder.addCase(checkBridgeStatus.pending, (state: StateInterface, action) => {
-            state.bridgeStates[action.meta.arg.direction].checkingStatus = true;
-        });
-        builder.addCase(checkBridgeStatus.rejected, (state: StateInterface, action) => {
-            state.error = action.payload as string;
-        });
-        // builder.addCase(polyUsdcToArbUsdc.pending, (state: StateInterface, action) => {
-        //     state.bridgeStates[action.meta.arg.direction].isBridging = true;
-        // });
-        // builder.addCase(polyUsdcToArbUsdc.fulfilled, (state: StateInterface, action) => {
-        //     state.bridgeStates[action.meta.arg.direction].isBridging = false;
-        // });
-        // builder.addCase(polyUsdcToArbUsdc.rejected, (state: StateInterface, action) => {
-        //     console.log(action.meta);
-        //     state.bridgeStates[action.meta.arg.direction].isBridging = false;
-        // });
+    setCheckBridgeStatus: (
+      state: StateInterface,
+      action: { payload: { value: boolean; direction: BridgeDirection } },
+    ) => {
+      state.bridgeStates[action.payload.direction].checkingStatus = action.payload.value;
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(checkBridgeStatus.pending, (state: StateInterface, action) => {
+      state.bridgeStates[action.meta.arg.direction].checkingStatus = true;
+    });
+    builder.addCase(checkBridgeStatus.rejected, (state: StateInterface, action) => {
+      state.error = action.payload as string;
+    });
+    // builder.addCase(polyUsdcToArbUsdc.pending, (state: StateInterface, action) => {
+    //     state.bridgeStates[action.meta.arg.direction].isBridging = true;
+    // });
+    // builder.addCase(polyUsdcToArbUsdc.fulfilled, (state: StateInterface, action) => {
+    //     state.bridgeStates[action.meta.arg.direction].isBridging = false;
+    // });
+    // builder.addCase(polyUsdcToArbUsdc.rejected, (state: StateInterface, action) => {
+    //     console.log(action.meta);
+    //     state.bridgeStates[action.meta.arg.direction].isBridging = false;
+    // });
+  },
 });
 
 export const { setSourceTxHash, setBridgeStatus, setIsBridging, setCheckBridgeStatus } = rampSlice.actions;

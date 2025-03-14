@@ -2,9 +2,9 @@ import { Outlet, useLocation } from "react-router-dom";
 import BottomBar from "src/components/Bottombar/BottomBar";
 import { InternetConnectionModal } from "src/components/modals/InternetConnectionModal/InternetConnectionModal";
 import Sidebar from "src/components/Sidebar/Sidebar";
-import { RoutesPaths } from "src/config/constants";
-import { useAppSelector } from "src/state";
-import { useRefCodeLoaded } from "src/state/account/useAccountData";
+import { RoutesPaths } from "@beratrax/core/src/config/constants";
+import { useAppSelector } from "@beratrax/core/src/state";
+import { useRefCodeLoaded } from "@beratrax/core/src/state/account/useAccountData";
 
 function Home() {
   const { isOnline } = useAppSelector((state) => state.internet);
@@ -32,10 +32,6 @@ function Home() {
         >
           <Outlet />
           {isBottomBarVisible ? <BottomBar /> : <></>}
-
-
-
-
         </div>
       </div>
       {!isOnline && <InternetConnectionModal />}

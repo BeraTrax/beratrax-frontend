@@ -1,13 +1,13 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import { notifyError } from "src/api/notify";
-import { getBalance } from "src/api/token";
-import { addressesByChainId } from "src/config/constants/contracts";
+import { notifyError } from "@beratrax/core/src/api/notify";
+import { getBalance } from "@beratrax/core/src/api/token";
+import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { useWallet } from "@beratrax/core/src/hooks";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
-import { useAppDispatch } from "src/state";
-import useFarms from "src/state/farms/hooks/useFarms";
-import useTokens from "src/state/tokens/useTokens";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
+import { useAppDispatch } from "@beratrax/core/src/state";
+import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
   ApproveBridgeStep,
   ApproveZapStep,
@@ -17,8 +17,8 @@ import {
   TransactionTypes,
   WaitForBridgeResultsStep,
   ZapInStep,
-} from "src/state/transactions/types";
-import useTransaction from "src/state/transactions/useTransaction";
+} from "@beratrax/core/src/state/transactions/types";
+import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
 import { CHAIN_ID } from "src/types/enums";
 import { getCombinedBalance, toEth, toWei } from "src/utils/common";
 import { Address, zeroAddress } from "viem";

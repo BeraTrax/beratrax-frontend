@@ -26,7 +26,6 @@ const rootReducer = combineReducers({
   transactions: transactionsReducer,
   notification: notificationReducer,
   tokens: tokensReducer,
-
 });
 
 const persistConfig = getPersistConfig({
@@ -71,3 +70,35 @@ export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>(); // Export a hook that can be reused to resolve types
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+// export * from "./account/accountReducer";
+// export * from "./account/types";
+// export * from "./account/useAccountData";
+
+// export * from "./apys/apysReducer";
+// export * from "./apys/types";
+// export * from "./apys/hooks/useApy";
+
+// export * from "./farms/farmsReducer";
+// export * from "./farms/types";
+
+// export * from "./fees/feesReducer";
+// export * from "./fees/types";
+
+// export * from "./internet/internetReducer";
+// export * from "./internet/types";
+
+// export * from "./notification/notifiactionReducer";
+// export * from "./notification/types";
+
+// export * from "./ramp/rampReducer";
+// export * from "./ramp/types";
+
+// export * from "./settings/settingsReducer";
+// export * from "./settings/types";
+
+// export * from "./tokens/tokensReducer";
+// export * from "./tokens/types";
+
+// export * from "./transactions/transactionsReducer";
+// export * from "./transactions/types";

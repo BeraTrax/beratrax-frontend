@@ -1,23 +1,22 @@
 import moment from "moment";
 import React, { useMemo, useState } from "react";
-import { getBalance } from "src/api/token";
+import { getBalance } from "@beratrax/core/src/api/token";
 import Loader from "src/components/Loader/Loader";
 import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
 import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
 import { Select } from "src/components/Select/Select";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { addressesByChainId } from "src/config/constants/contracts";
-import { PoolDef } from "src/config/constants/pools_json";
+import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useApp } from "@beratrax/core/src/hooks";
 import { useDetailInput } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { useAppDispatch, useAppSelector } from "src/state";
-import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import useStCoreRedeem from "src/state/farms/hooks/useStCoreRedeem";
-import { FarmDetailInputOptions } from "src/state/farms/types";
-import useTokens from "src/state/tokens/useTokens";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
+import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import { useFarmDetails, useStCoreRedeem } from "@beratrax/core/src/state/farms/hooks";
+import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
   ApproveBridgeStep,
   ApproveZapStep,
@@ -27,7 +26,7 @@ import {
   TransactionTypes,
   WaitForBridgeResultsStep,
   ZapInStep,
-} from "src/state/transactions/types";
+} from "@beratrax/core/src/state/transactions/types";
 import { FarmTransactionType } from "src/types/enums";
 import { noExponents, toWei } from "src/utils/common";
 import { zeroAddress } from "viem";

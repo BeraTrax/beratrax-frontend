@@ -2,19 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "src/components/BackButton/BackButton";
 import { useDetailInput } from "@beratrax/core/src/hooks";
-import pools_json from "src/config/constants/pools_json";
+import pools_json from "@beratrax/core/src/config/constants/pools_json";
 import { toWei } from "src/utils/common";
 import { CHAIN_ID, FarmTransactionType } from "src/types/enums";
-import { TransactionStep, TransactionStepStatus, TransactionTypes, ZapOutStep } from "src/state/transactions/types";
-import { useAppDispatch } from "src/state";
-import { updatePoints } from "src/state/account/accountReducer";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
-import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import {
+  TransactionStep,
+  TransactionStepStatus,
+  TransactionTypes,
+  ZapOutStep,
+} from "@beratrax/core/src/state/transactions/types";
+import { useAppDispatch } from "@beratrax/core/src/state";
+import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
 import ConfirmFarmActionModal from "src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import { formatUnits } from "ethers/lib/utils";
 import { useReadContract } from "wagmi";
 import { erc20Abi, getAddress } from "viem";
-import useTokens from "src/state/tokens/useTokens";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 
 const DeprecatedVaults: React.FC = () => {
   const selectOption = [

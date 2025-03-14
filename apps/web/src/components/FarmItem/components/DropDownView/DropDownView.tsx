@@ -8,11 +8,11 @@ import { Description } from "../Description/Description";
 import DetailInput from "../DetailInput/DetailInput";
 import Details from "../Details/Details";
 import "./DropDownView.css";
-import { useAppDispatch, useAppSelector } from "src/state";
-import { setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
-import { FarmDetailInputOptions } from "src/state/farms/types";
-import { IS_LEGACY } from "src/config/constants";
-import { PoolDef } from "src/config/constants/pools_json";
+import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import { IS_LEGACY } from "@beratrax/core/src/config/constants";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 export const DropDownView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
   const { lightMode } = useApp();

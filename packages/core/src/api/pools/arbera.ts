@@ -1,10 +1,10 @@
-// import { getBalance } from "src/api/token";
-// import zapperAbi from "src/assets/abis/zapperAbi";
-// import { addressesByChainId } from "src/config/constants/contracts";
-// import pools_json from "src/config/constants/pools_json";
-// import store from "src/state";
-// import { getCombinedBalance, toEth } from "src/utils/common";
-// import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
+// import { getBalance } from "@core/api/token";
+// import zapperAbi from "@core/assets/abis/zapperAbi";
+// import { addressesByChainId } from "@core/config/constants/contracts";
+// import pools_json from "@core/config/constants/pools_json";
+// import store from "@core/state";
+// import { getCombinedBalance, toEth } from "@core/utils/common";
+// import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "@core/utils/slot";
 // import {
 //     Address,
 //     StateOverride,

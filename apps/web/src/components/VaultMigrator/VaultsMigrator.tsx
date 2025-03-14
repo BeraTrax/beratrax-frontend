@@ -1,15 +1,15 @@
-import { backendApi } from "src/api";
-import { dismissNotify, notifyError, notifyLoading } from "src/api/notify";
-import { notifySuccess } from "src/api/notify";
-import useTokens from "src/state/tokens/useTokens";
+import { backendApi } from "@beratrax/core/src/api";
+import { dismissNotify, notifyError, notifyLoading } from "@beratrax/core/src/api/notify";
+import { notifySuccess } from "@beratrax/core/src/api/notify";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { encodeFunctionData, erc20Abi } from "viem";
 import { useState } from "react";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { awaitTransaction } from "src/utils/common";
+import { awaitTransaction } from "@beratrax/core/src/utils/common";
 import { useVaults } from "@beratrax/core/src/hooks";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { updatePoints } from "src/state/account/accountReducer";
-import { useAppDispatch } from "src/state";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+import { useAppDispatch } from "@beratrax/core/src/state";
 import { CgSpinner } from "react-icons/cg";
 
 export const VaultsMigrator = () => {

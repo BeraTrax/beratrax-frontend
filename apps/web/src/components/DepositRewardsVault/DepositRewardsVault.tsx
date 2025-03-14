@@ -1,14 +1,14 @@
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
+import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@beratrax/core/src/api/notify";
 import { useState } from "react";
 import { useWallet } from "@beratrax/core/src/hooks";
-import useTokens from "src/state/tokens/useTokens";
-import { awaitTransaction } from "src/utils/common";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { awaitTransaction } from "@beratrax/core/src/utils/common";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import { CgSpinner } from "react-icons/cg";
-import { PoolDef } from "src/config/constants/pools_json";
-import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import rewardVaultAbi from "@beratrax/core/src/assets/abis/rewardVaultAbi";
 import { encodeFunctionData } from "viem";
-import { approveErc20 } from "src/api/token";
+import { approveErc20 } from "@beratrax/core/src/api/token";
 
 interface DepositToRewardsVaultProps {
   rewardsVaultsData: PoolDef[];

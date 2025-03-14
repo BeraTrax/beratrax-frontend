@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { NotificationsProvider, setUpNotifications } from "reapop";
 import { PersistGate } from "redux-persist/integration/react";
-import "src/api/interceptor";
+import "@beratrax/core/src/api/interceptor";
 import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
 import "@beratrax/core/src/config/walletConfig";

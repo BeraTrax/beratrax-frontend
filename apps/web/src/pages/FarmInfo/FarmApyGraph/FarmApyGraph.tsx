@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { VaultsApy } from "src/api/stats";
+import { VaultsApy } from "@beratrax/core/src/api/stats";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { useApp } from "@beratrax/core/src/hooks";
-import { useApy } from "src/state/apys/useApy";
+import { useApy } from "@beratrax/core/src/state/apys/useApy";
 import styles from "./FarmApyGraph.module.css";
-import { PoolDef } from "src/config/constants/pools_json";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
   const downsampleData = (data: VaultsApy[]) => {

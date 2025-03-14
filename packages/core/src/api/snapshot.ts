@@ -1,8 +1,8 @@
 import { snapshotApi } from ".";
-import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "src/types/snapshot";
+import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "@core/types/snapshot";
 
 export const getSnapshotSpace = async (spaceId: string): Promise<SnapshotSpace> => {
-    const query = `
+  const query = `
         query {
           space(id: "${spaceId}") {
             id
@@ -14,19 +14,19 @@ export const getSnapshotSpace = async (spaceId: string): Promise<SnapshotSpace> 
           }
         }`;
 
-    const response = await snapshotApi.post("", {
-        query,
-    });
+  const response = await snapshotApi.post("", {
+    query,
+  });
 
-    return response.data?.data?.space;
+  return response.data?.data?.space;
 };
 
 export const getSnapshotSpaceProposals = async (
-    spaceId: string,
-    first: number = 20,
-    skip: number = 0
+  spaceId: string,
+  first: number = 20,
+  skip: number = 0,
 ): Promise<SnapshotSpaceProposal[]> => {
-    const query = `
+  const query = `
               query {
                 proposals (
                   first: ${first},
@@ -57,18 +57,18 @@ export const getSnapshotSpaceProposals = async (
                 }
               }`;
 
-    const response = await snapshotApi.post("", {
-        query,
-    });
+  const response = await snapshotApi.post("", {
+    query,
+  });
 
-    return response.data?.data?.proposals;
+  return response.data?.data?.proposals;
 };
 
 export const getSnapshotSpaceProposalsVotesByAddress = async (
-    spaceId: string,
-    address: string
+  spaceId: string,
+  address: string,
 ): Promise<SnapshotSpaceVote[]> => {
-    const query = `
+  const query = `
               query {
                 votes (
                   first: 1000
@@ -91,26 +91,24 @@ export const getSnapshotSpaceProposalsVotesByAddress = async (
                 }
               }`;
 
-    const response = await snapshotApi.post("", {
-        query,
-    });
+  const response = await snapshotApi.post("", {
+    query,
+  });
 
-    return response.data?.data?.votes;
+  return response.data?.data?.votes;
 };
 
 export const getIpfsImageUrls = (body: string) => {
-    const pattern = /ipfs:\/\/.*\)/g;
-    const iterator = body.matchAll(pattern);
-    const images = [];
-    while (true) {
-        const exp = iterator.next();
-        if (!exp.value) break;
-        let result = exp.value[0].replaceAll("ipfs://", "");
-        result = result.replace(")", "");
-        result = `https://snapshot.4everland.link/ipfs/${result}`;
-        images.push(result);
-    }
-    return images;
+  const pattern = /ipfs:\/\/.*\)/g;
+  const iterator = body.matchAll(pattern);
+  const images = [];
+  while (true) {
+    const exp = iterator.next();
+    if (!exp.value) break;
+    let result = exp.value[0].replaceAll("ipfs://", "");
+    result = result.replace(")", "");
+    result = `https://snapshot.4everland.link/ipfs/${result}`;
+    images.push(result);
+  }
+  return images;
 };
-
-

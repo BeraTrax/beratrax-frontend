@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
 import styles from "./FarmLpGraph.module.css";
-import { LP_Prices } from "src/api/stats";
+import { LP_Prices } from "@beratrax/core/src/api/stats";
 import { useApp } from "@beratrax/core/src/hooks";
 import { useLp } from "@beratrax/core/src/hooks";
-import { PoolDef } from "src/config/constants/pools_json";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 

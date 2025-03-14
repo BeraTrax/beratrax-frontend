@@ -2,10 +2,10 @@ import React from "react";
 
 import { BsClipboardData } from "react-icons/bs";
 import uuid from "react-uuid";
-import { PoolDef } from "src/config/constants/pools_json";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useWallet } from "@beratrax/core/src/hooks";
-import useFarms from "src/state/farms/hooks/useFarms";
-import useTokens from "src/state/tokens/useTokens";
+import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { getLpAddressForFarmsPrice } from "src/utils/common";
 import styles from "./FarmTVL.module.css";
 

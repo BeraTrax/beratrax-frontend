@@ -1,6 +1,6 @@
-import { Apys } from "src/state/apys/types";
+import { Apys } from "@core/state/apys/types";
 import { FarmOriginPlatform, FarmType } from "./enums";
-import { FarmDataProcessed } from "src/api/pools/types";
+import { FarmDataProcessed } from "@core/api/pools/types";
 import {
     PublicClient,
     Transport,
@@ -19,8 +19,8 @@ import { ENTRYPOINT_ADDRESS_V07, SmartAccountClient } from "permissionless";
 import { KernelEcdsaSmartAccount } from "permissionless/accounts";
 import { Web3AuthSigner } from "@alchemy/aa-signers/web3auth";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-import { PoolDef } from "src/config/constants/pools_json";
-import { Balances } from "src/state/tokens/types";
+import { PoolDef } from "@core/config/constants/pools_json";
+import { Balances } from "@core/state/tokens/types";
 
 export interface FarmDetails extends PoolDef {
     userVaultBalance: number;

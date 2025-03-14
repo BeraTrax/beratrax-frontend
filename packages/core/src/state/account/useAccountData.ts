@@ -1,10 +1,10 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
 import useWallet from "@core/hooks/useWallet";
-import { useAppDispatch, useAppSelector } from "src/state";
-import { addAccount, updateAccountField, updatePoints } from "src/state/account/accountReducer";
+import { useAppDispatch, useAppSelector } from "@core/state";
+import { addAccount, updateAccountField, updatePoints } from "@core/state/account/accountReducer";
 import useTokens from "../tokens/useTokens";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { RoutesPaths } from "src/config/constants";
+import { RoutesPaths } from "@core/config/constants";
 
 const useAccountData = () => {
   const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);

@@ -1,13 +1,13 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { FC, useEffect, useMemo, useState } from "react";
-import { getWithdrawChainForFarm } from "src/api/transaction";
-import { pools_chain_ids } from "src/config/constants/pools_json";
+import { getWithdrawChainForFarm } from "@beratrax/core/src/api/transaction";
+import { pools_chain_ids } from "@beratrax/core/src/config/constants/pools_json";
 import { useWallet } from "@beratrax/core/src/hooks";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
-import { RootState, useAppDispatch, useAppSelector } from "src/state";
-import useFarms from "src/state/farms/hooks/useFarms";
-import useTokens from "src/state/tokens/useTokens";
-import { addTransactionDb } from "src/state/transactions/transactionsReducer";
+import { RootState, useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
+import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
   ApproveBridgeStep,
   ApproveZapStep,
@@ -18,9 +18,9 @@ import {
   TransactionTypes,
   WaitForBridgeResultsStep,
   ZapOutStep,
-} from "src/state/transactions/types";
-import { CHAIN_ID } from "src/types/enums";
-import { toWei } from "src/utils/common";
+} from "@beratrax/core/src/state/transactions/types";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { toWei } from "@beratrax/core/src/utils/common";
 import { Address } from "viem";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./WithdrawModal.module.css";

@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./TermsOfUseModal.module.css";
-import { useAppDispatch } from "src/state";
+import { useAppDispatch } from "@beratrax/core/src/state";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { ImSpinner8 } from "react-icons/im";
-import { agreeTermsOfUse } from "src/state/account/accountReducer";
+import { agreeTermsOfUse } from "@beratrax/core/src/state/account/accountReducer";
 
 interface IProps {
   setOpenModal: Function;

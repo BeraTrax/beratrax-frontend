@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { ImSpinner8 } from "react-icons/im";
-import { acceptTerms, getMessage } from "src/api/trax";
+import { acceptTerms, getMessage } from "@beratrax/core/src/api/trax";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { useAppDispatch } from "src/state";
-import { updateAccountField } from "src/state/account/accountReducer";
-import { CHAIN_ID } from "src/types/enums";
+import { useAppDispatch } from "@beratrax/core/src/state";
+import { updateAccountField } from "@beratrax/core/src/state/account/accountReducer";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./EarnTrax.module.css";
 

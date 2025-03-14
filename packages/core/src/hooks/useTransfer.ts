@@ -1,6 +1,6 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
-import { TRANSFER_TOKEN } from "src/config/constants/query";
-import { awaitTransaction } from "src/utils/common";
+import { TRANSFER_TOKEN } from "@core/config/constants/query";
+import { awaitTransaction } from "@core/utils/common";
 import { Address, erc20Abi, getContract, zeroAddress } from "viem";
 import useWallet from "./useWallet";
 
@@ -27,7 +27,7 @@ const useTransfer = () => {
         to,
         value: amount,
       }),
-      client
+      client,
     );
     return response;
   };

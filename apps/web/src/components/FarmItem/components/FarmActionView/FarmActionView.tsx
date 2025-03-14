@@ -105,15 +105,16 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                         farm.isCurrentWeeksRewardsVault
                                             ? "??? "
                                             : toFixedFloor(
-                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.feeApr) || 0,
+                                                  (farm.isUpcoming
+                                                      ? farm.total_apy
+                                                      : farmApys?.feeApr + farmApys?.rewardsApr) || 0,
                                                   2
                                               ).toString()
                                     }
                                     isAutoCompounded={farm.isAutoCompounded || false}
                                     marketCapLoading={isMarketCapAndVaultLoading}
                                     vaultTvlLoading={isMarketCapAndVaultLoading}
-                                    originPlatform={farm.originPlatform}
-                                    tokenType={farm.token_type as FarmType}
+                                    farm={farm}
                                 />
                                 <Transactions farmId={farm.id} />
                                 <VaultContracts farm={farm} />

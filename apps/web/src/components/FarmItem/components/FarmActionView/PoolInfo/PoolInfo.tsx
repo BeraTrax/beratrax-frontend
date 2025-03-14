@@ -5,7 +5,9 @@ import flywheelChart from "src/assets/images/flywheelChart.png";
 import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
 import marketcap from "src/assets/images/marketcap.svg";
 import volume from "src/assets/images/volume.svg";
+import btxLogo from "src/assets/images/btxTokenLogo.png";
 import { FarmOriginPlatform, FarmType } from "src/types/enums";
+import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 
 const StatInfo = ({
     iconUrl,
@@ -50,8 +52,7 @@ interface IProps {
     underlyingApy: string;
     marketCapLoading?: boolean;
     vaultTvlLoading?: boolean;
-    originPlatform?: FarmOriginPlatform;
-    tokenType?: FarmType;
+    farm: PoolDef;
     createdAt?: number;
 }
 const PoolInfo = ({
@@ -65,8 +66,7 @@ const PoolInfo = ({
     underlyingApy,
     marketCapLoading,
     vaultTvlLoading,
-    originPlatform,
-    tokenType,
+    farm,
     createdAt,
 }: IProps) => {
     const createdDate = new Date((createdAt ?? 0) * 1000);
@@ -75,6 +75,17 @@ const PoolInfo = ({
         month: "long",
         day: "numeric",
     });
+
+    const { originPlatform, token_type: tokenType, token1, token2, token3 } = farm;
+
+    const token1Image = tokenNamesAndImages[token1]?.logos[0];
+    const token2Image = token2 ? tokenNamesAndImages[token2]?.logos[0] : null;
+    const token3Image = token3 ? tokenNamesAndImages[token3]?.logos[0] : null;
+    const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
+    const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
+    const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
+
+    console.log(tokenNamesAndImages);
 
     return (
         <div className=" mt-4 relative">
@@ -112,7 +123,34 @@ const PoolInfo = ({
                         <tbody>
                             {tokenType === FarmType.advanced && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">LP Trading fees</td>
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center">
+                                            <div className="flex -space-x-2.5 mr-2">
+                                                {token1Image && (
+                                                    <img
+                                                        src={token1Image}
+                                                        alt={token1}
+                                                        className="w-5 h-5 relative z-30"
+                                                    />
+                                                )}
+                                                {token2Image && (
+                                                    <img
+                                                        src={token2Image}
+                                                        alt={token2}
+                                                        className="w-5 h-5 relative z-20"
+                                                    />
+                                                )}
+                                                {token3Image && (
+                                                    <img
+                                                        src={token3Image}
+                                                        alt={token3}
+                                                        className="w-5 h-5 relative z-10"
+                                                    />
+                                                )}
+                                            </div>
+                                            LP Trading fees
+                                        </div>
+                                    </td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">Inculded in APY</td>
                                 </tr>
                             )}
@@ -121,12 +159,25 @@ const PoolInfo = ({
                             {(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
                                 <tr className="border-b border-gray-700">
                                     <td className="p-4 text-textWhite font-medium">
-                                        {originPlatform === FarmOriginPlatform.Infrared &&
-                                        tokenType === FarmType.advanced
-                                            ? "iBGT"
-                                            : originPlatform === FarmOriginPlatform.Burrbear
-                                            ? "WBERA"
-                                            : "HONEY"}
+                                        <div className="flex items-center gap-2">
+                                            {originPlatform === FarmOriginPlatform.Infrared &&
+                                            tokenType === FarmType.advanced ? (
+                                                <>
+                                                    <img src={ibgtLogo} alt="iBGT" className="w-5 h-5" />
+                                                    iBGT
+                                                </>
+                                            ) : originPlatform === FarmOriginPlatform.Burrbear ? (
+                                                <>
+                                                    <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
+                                                    WBERA
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
+                                                    HONEY
+                                                </>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Autocompounded to APY
@@ -135,14 +186,37 @@ const PoolInfo = ({
                             )}
                             {originPlatform === FarmOriginPlatform.Infrared && (
                                 <tr className="border-b border-gray-700">
-                                    <td className="p-4 text-textWhite font-medium">Infrared airdrop</td>
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <img src="/infrared.ico" alt="Infrared" className="w-5 h-5" />
+                                            Infrared airdrop
+                                        </div>
+                                    </td>
                                     <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                                 </tr>
                             )}
                             {originPlatform === FarmOriginPlatform.Burrbear && (
                                 <>
+                                    {farm.name.includes("wgBERA") && (
+                                        <tr className="border-b border-gray-700">
+                                            <td className="p-4 text-textWhite font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
+                                                    Love Scrore airdrop
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-gradientPrimary font-bold text-right">
+                                                Included in APY & Future claim
+                                            </td>
+                                        </tr>
+                                    )}
                                     <tr className="border-b border-gray-700">
-                                        <td className="p-4 text-textWhite font-medium">Burrbear airdrops</td>
+                                        <td className="p-4 text-textWhite font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
+                                                Burrbear airdrop
+                                            </div>
+                                        </td>
                                         <td className="p-4 text-gradientPrimary font-bold text-right">
                                             Included in APY & Future claim
                                         </td>
@@ -150,7 +224,12 @@ const PoolInfo = ({
                                 </>
                             )}
                             <tr>
-                                <td className="p-4 text-textWhite font-medium">BTX airdrop</td>
+                                <td className="p-4 text-textWhite font-medium">
+                                    <div className="flex items-center gap-2">
+                                        <img src={btxLogo} alt="BTX" className="w-5 h-5" />
+                                        BTX airdrop
+                                    </div>
+                                </td>
                                 <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                             </tr>
                         </tbody>

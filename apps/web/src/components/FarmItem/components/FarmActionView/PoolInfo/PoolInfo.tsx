@@ -197,11 +197,24 @@ const PoolInfo = ({
                             )}
                             {originPlatform === FarmOriginPlatform.Burrbear && (
                                 <>
+                                    {farm.name.includes("wgBERA") && (
+                                        <tr className="border-b border-gray-700">
+                                            <td className="p-4 text-textWhite font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
+                                                    Love Scrore airdrop
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-gradientPrimary font-bold text-right">
+                                                Included in APY & Future claim
+                                            </td>
+                                        </tr>
+                                    )}
                                     <tr className="border-b border-gray-700">
                                         <td className="p-4 text-textWhite font-medium">
                                             <div className="flex items-center gap-2">
                                                 <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
-                                                Burrbear airdrops
+                                                Burrbear airdrop
                                             </div>
                                         </td>
                                         <td className="p-4 text-gradientPrimary font-bold text-right">

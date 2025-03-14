@@ -105,7 +105,9 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                         farm.isCurrentWeeksRewardsVault
                                             ? "??? "
                                             : toFixedFloor(
-                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.feeApr) || 0,
+                                                  (farm.isUpcoming
+                                                      ? farm.total_apy
+                                                      : farmApys?.feeApr + farmApys?.rewardsApr) || 0,
                                                   2
                                               ).toString()
                                     }

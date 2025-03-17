@@ -85,8 +85,6 @@ const PoolInfo = ({
     const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
 
-    console.log(tokenNamesAndImages);
-
     return (
         <div className=" mt-4 relative">
             {description && (
@@ -151,7 +149,7 @@ const PoolInfo = ({
                                             LP Trading fees
                                         </div>
                                     </td>
-                                    <td className="p-4 text-gradientPrimary font-bold text-right">Inculded in APY</td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Included in APY</td>
                                 </tr>
                             )}
 
@@ -201,8 +199,8 @@ const PoolInfo = ({
                                         <tr className="border-b border-gray-700">
                                             <td className="p-4 text-textWhite font-medium">
                                                 <div className="flex items-center gap-2">
-                                                    <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
-                                                    Love Scrore airdrop
+                                                    <img src="/smilee.png" alt="Smilee" className="w-5 h-5" />
+                                                    Love Score airdrop
                                                 </div>
                                             </td>
                                             <td className="p-4 text-gradientPrimary font-bold text-right">
@@ -219,6 +217,17 @@ const PoolInfo = ({
                                         </td>
                                         <td className="p-4 text-gradientPrimary font-bold text-right">
                                             Included in APY & Future claim
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-700">
+                                        <td className="p-4 text-textWhite font-medium">
+                                            <div className="flex items-center gap-2">
+                                                <img src="/beraborrow.png" alt="Beraborrow" className="w-5 h-5" />
+                                                Pollen Points (Beraborrow Airdrop)
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-gradientPrimary font-bold text-right">
+                                            4x Pollen Points (Future Claim)
                                         </td>
                                     </tr>
                                 </>

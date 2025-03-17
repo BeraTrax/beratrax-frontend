@@ -204,7 +204,7 @@ const PoolInfo = ({
                                                 </div>
                                             </td>
                                             <td className="p-4 text-gradientPrimary font-bold text-right">
-                                                Included in APY & Future claim
+                                                Non-compounding APR (Future Claim)
                                             </td>
                                         </tr>
                                     )}
@@ -212,11 +212,11 @@ const PoolInfo = ({
                                         <td className="p-4 text-textWhite font-medium">
                                             <div className="flex items-center gap-2">
                                                 <img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
-                                                Burrbear airdrop
+                                                BURR Points (Burrbear Airdrop)
                                             </div>
                                         </td>
                                         <td className="p-4 text-gradientPrimary font-bold text-right">
-                                            Included in APY & Future claim
+                                            Non-compounding APR (Future Claim)
                                         </td>
                                     </tr>
                                     <tr className="border-b border-gray-700">

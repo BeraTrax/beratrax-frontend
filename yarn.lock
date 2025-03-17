@@ -1893,6 +1893,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@beratrax/core@*, @beratrax/core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@beratrax/core@workspace:packages/core"
+  dependencies:
+    "@alchemy/aa-alchemy": ^3.19.0
+    "@alchemy/aa-signers": ^3.19.0
+    "@lifi/sdk": ^3.1.5
+    "@rainbow-me/rainbowkit": ^2.2.1
+    "@web3-name-sdk/core": ^0.3.2
+    "@web3auth/base": ^8.12.4
+    "@web3auth/core": ^4.6.0
+    "@web3auth/default-evm-adapter": ^8.12.4
+    "@web3auth/ethereum-provider": ^8.12.4
+    "@web3auth/metamask-adapter": ^8.12.4
+    "@web3auth/modal": ^8.12.7
+    "@web3auth/no-modal": ^8.12.4
+    "@web3auth/openlogin-adapter": ^8.12.4
+    "@web3auth/wallet-connect-v2-adapter": ^8.12.4
+    "@web3auth/web3auth-wagmi-connector": ^6.0.0
+    permissionless: ^0.1.44
+    react-hooks-outside: ^1.0.3
+    typescript: ^5.8.2
+    viem: ^2.19.4
+    wagmi: ^2.12.11
+  languageName: unknown
+  linkType: soft
+
 "@beratrax/mobile@workspace:apps/mobile":
   version: 0.0.0-use.local
   resolution: "@beratrax/mobile@workspace:apps/mobile"
@@ -1975,6 +2002,7 @@ __metadata:
     "@aa-sdk/core": ^4.0.0-beta.2
     "@alchemy/aa-alchemy": ^3.19.0
     "@alchemy/aa-signers": ^3.19.0
+    "@beratrax/core": "*"
     "@ethersproject/abstract-provider": ^5.7.0
     "@front-finance/link": ^1.0.7
     "@gatefi/js-sdk": ^0.14.0
@@ -14268,6 +14296,23 @@ __metadata:
     "@solana/web3.js": ^1.75.0
     viem: ^2.15.1
   checksum: eda8f5966ecc5290b83b4a6ec4208760ea9ff0bfcea1111011e69fd4f4ee0c0502f08faf2446c850b115c122905648844e5c7d8961782fe5fb8a904e7e0e92ec
+  languageName: node
+  linkType: hard
+
+"@web3-name-sdk/core@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@web3-name-sdk/core@npm:0.3.2"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.0
+    "@ensdomains/ens-validation": ^0.1.0
+  peerDependencies:
+    "@bonfida/spl-name-service": ^2.5.1
+    "@sei-js/core": ^3.1.0
+    "@siddomains/injective-sidjs": 0.0.2-beta
+    "@siddomains/sei-sidjs": ^0.0.4
+    "@solana/web3.js": ^1.75.0
+    viem: ^2.15.1
+  checksum: 8c5c8b4665a43a0cbe06c70e74ce88acece64010c8dced3fed6c8f5ba60edde5d4aefe3eb7ea19103fdcedff5b4ddd674cc473e333da8196793b9aeb3c9802a3
   languageName: node
   linkType: hard
 
@@ -37586,7 +37631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.1, typescript@npm:^5.3.3, typescript@npm:^5.5.4, typescript@npm:^5.7.2, typescript@npm:^5.7.3":
+"typescript@npm:^5.1, typescript@npm:^5.3.3, typescript@npm:^5.5.4, typescript@npm:^5.7.2, typescript@npm:^5.7.3, typescript@npm:^5.8.2":
   version: 5.8.2
   resolution: "typescript@npm:5.8.2"
   bin:
@@ -37626,7 +37671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.1#~builtin<compat/typescript>, typescript@patch:typescript@^5.3.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.5.4#~builtin<compat/typescript>, typescript@patch:typescript@^5.7.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.7.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@^5.1#~builtin<compat/typescript>, typescript@patch:typescript@^5.3.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.5.4#~builtin<compat/typescript>, typescript@patch:typescript@^5.7.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.7.3#~builtin<compat/typescript>, typescript@patch:typescript@^5.8.2#~builtin<compat/typescript>":
   version: 5.8.2
   resolution: "typescript@patch:typescript@npm%3A5.8.2#~builtin<compat/typescript>::version=5.8.2&hash=1f5320"
   bin:

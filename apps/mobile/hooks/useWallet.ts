@@ -1,6 +1,8 @@
-import { useContext } from 'react';
-import { WalletContext } from '../config/WalletProvider';
+import { WalletContext } from "@/config/walletProvider";
+import { useContext } from "react";
 
-export const useWallet = () => {
-  return useContext(WalletContext);
-}; 
+const useWallet = () => {
+    return useContext(WalletContext);
+};
+
+export default useWallet;

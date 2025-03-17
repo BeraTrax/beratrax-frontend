@@ -1,3 +1,6 @@
+import { queryClient } from "@beratrax/core/src/config/reactQuery";
+import { rainbowConfig } from "@beratrax/core/src/config/walletConfig";
+import { WalletProvider } from "@beratrax/core/src/context";
 import { tamaguiConfig } from '@beratrax/ui';
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -13,9 +16,6 @@ import { WagmiProvider } from "wagmi";
 import "./App.css";
 import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
-import { queryClient } from "./config/reactQuery";
-import { rainbowConfig } from "./config/walletConfig";
-import WalletProvider from "./context/WalletProvider";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
 

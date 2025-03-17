@@ -410,3 +410,31 @@ export const colorsDark = {
 
   pinkThemed: colors.pinkDark,
 }
+
+// Add Beratrax brand colors from tailwind config
+export const beratraxColors = {
+  /* Background Colors */
+  bgPrimary: "#72B21F", 
+  bgSecondary: "#151915",
+  bgDark: "#020907",
+  
+  /* Text Colors */
+  textPrimary: "#72B21F", 
+  textSecondary: "#878B82",
+  textGrey: "#878B82",
+  textWhite: "#ffffff",
+  textBlack: "#000000",
+  
+  /* Border Colors */
+  borderDark: "#323D27",
+  borderLight: "#90BB62",
+  
+  /* Button Colors */
+  buttonPrimary: "#72B21F",
+  buttonPrimaryLight: "#A0FF3B",
+  buttonDisabled: "#878B82",
+  
+  /* Gradient Colors */
+  gradientPrimary: "#A0FF3B",
+  gradientSecondary: "#283817",
+}

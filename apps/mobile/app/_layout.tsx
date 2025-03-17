@@ -7,20 +7,19 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { berachain, reownProjectId, wagmiConfig } from '@/config/chainConfig'
 import { Ionicons } from '@expo/vector-icons'
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Tabs } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
 
-import ConnectView from '@/components/ConnectView'
 import WalletProvider from '@/config/walletProvider'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { tamaguiConfig } from '@beratrax/ui'
 import * as Haptics from 'expo-haptics'
 import { StyleSheet } from 'react-native'
+import { TamaguiProvider, Theme } from 'tamagui'
 import { WagmiProvider } from 'wagmi'
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -62,37 +61,42 @@ const RootLayout = () => {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <WalletProvider>
-            <ConnectView />
-            <Tabs
-              screenOptions={{
-                tabBarActiveTintColor: '#3772FF',
-                tabBarInactiveTintColor: colorScheme === 'dark' ? '#888' : '#666',
-                tabBarStyle: styles.tabBar,
-                tabBarShowLabel: true,
-                headerShown: false,
-              }}
-            >
-              {Object.entries(tabOptions).map(([key, value]) => (
-                <Tabs.Screen
-                  key={key}
-                  name={key}
-                  options={{
-                    title: value.label,
-                    ...value
+        {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
+          <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+            <Theme name="dark">
+              <WalletProvider>
+                {/* <ConnectView />
+                <Test /> */}
+                <Tabs
+                  screenOptions={{
+                    tabBarActiveTintColor: '#3772FF',
+                    tabBarInactiveTintColor: colorScheme === 'dark' ? '#888' : '#666',
+                    tabBarStyle: styles.tabBar,
+                    tabBarShowLabel: true,
+                    headerShown: false,
                   }}
-                  listeners={{
-                    tabPress: () => handleTabPress(),
-                  }}
-                />
-              ))}
-            </Tabs>
-            <AppKit />
-          </WalletProvider>
-        </ThemeProvider>
+                >
+                  {Object.entries(tabOptions).map(([key, value]) => (
+                    <Tabs.Screen
+                      key={key}
+                      name={key}
+                      options={{
+                        title: value.label,
+                        ...value
+                      }}
+                      listeners={{
+                        tabPress: () => handleTabPress(),
+                      }}
+                    />
+                  ))}
+                </Tabs>
+                <AppKit />
+              </WalletProvider>
+            </Theme>
+          </TamaguiProvider>
+        {/* </ThemeProvider> */}
       </QueryClientProvider>
-    </WagmiProvider>
+    </WagmiProvider >
   );
 }
 

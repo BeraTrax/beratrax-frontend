@@ -44,15 +44,15 @@
         "origin": false
       },
       "eas": {
-        "projectId": "48976843-5938-408e-94b1-5ba70f26ddda"
+        "projectId": "2bdcbec7-c2a3-45f9-a2ca-547d9da345cc"
       }
     },
-    "owner": "mutahhir",
+    "owner": "beratrax",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/48976843-5938-408e-94b1-5ba70f26ddda"
+      "url": "https://u.expo.dev/2bdcbec7-c2a3-45f9-a2ca-547d9da345cc"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { createFont, createMedia, createTamagui, CreateTamaguiProps, createTokens, isWeb } from 'tamagui';
-import { dark, light } from './';
 import { colors as color } from './../src/color/colors';
+import { dark, defaultTheme, light } from './themes';
 // const size = {
 //   sm: 2,
 //   md: 10,
@@ -506,8 +506,9 @@ const configWithoutAnimations = {
   disableSSR: true,
   onlyAllowShorthands: true,
   themes: {
-    light,
     dark,
+    light,
+    defaultTheme,
   },
   shorthands,
   fonts: allFonts,

@@ -1,4 +1,5 @@
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import { tamaguiConfig } from '@beratrax/ui';
+import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -7,6 +8,7 @@ import { ReactHooksWrapper, setHook } from "react-hooks-outside";
 import { BrowserRouter as Router } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
 import { useNotifications } from "reapop";
+import { TamaguiProvider, Theme } from 'tamagui';
 import { WagmiProvider } from "wagmi";
 import "./App.css";
 import Body from "./Body";
@@ -51,15 +53,13 @@ function App() {
                     appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
                 >
                     <WalletProvider>
-                        {/* <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
-                            <Theme name="light">
-                                <YStack flex={1} padding="$4" backgroundColor="$background"> */}
-                                    <Router>
-                                        <Body />
-                                    </Router>
-                                {/* </YStack>
+                        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+                            <Theme name="dark">
+                                <Router>
+                                    <Body />
+                                </Router>
                             </Theme>
-                        </TamaguiProvider> */}
+                        </TamaguiProvider>
                         <ReactHooksWrapper />
                     </WalletProvider>
                     <ReactQueryDevtools />

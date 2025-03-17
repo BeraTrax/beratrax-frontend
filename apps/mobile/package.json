@@ -13,12 +13,14 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "check-types": "tsc --noEmit"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@beratrax/ui": "*",
     "@expo/ngrok": "^4.1.0",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -57,11 +59,13 @@
     "react-native-svg": "^15.11.2",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
+    "tamagui": "1.121.7",
     "viem": "^2.23.10",
     "wagmi": "^2.14.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.20.0",
+    "@tamagui/babel-plugin": "1.121.7",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",

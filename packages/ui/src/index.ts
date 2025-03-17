@@ -1,3 +1,4 @@
+export * from './color'
 export * from './themes'
 
 export { default as tamaguiConfig } from './tamagui.config'
@@ -20,4 +21,8 @@ export {
 // Re-export some basic example components
 export { Card } from './components/Card'
 export { Demo } from './components/Demo'
+export { Flex, Wow } from './components/FlexBox'
+
+// Export new components
+export { StakingCard } from './components/StakingCard/StakingCard'
 

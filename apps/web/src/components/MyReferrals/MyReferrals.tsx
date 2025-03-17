@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { NotSignedIn } from "../NotSignedIn/NotSignedIn";
-import { useMyReferrals } from "src/hooks/useMyReferrals";
+import { useMyReferrals } from "@beratrax/core/src/hooks";
 
 export const MyReferrals: FC = () => {
     const { currentWallet, referrals } = useMyReferrals();

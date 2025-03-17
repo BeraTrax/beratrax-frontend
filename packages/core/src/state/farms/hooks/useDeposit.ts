@@ -1,0 +1,74 @@
+import { useMemo } from "react";
+import useConstants from "../../../hooks/useConstants";
+import useWallet from "../../../hooks/useWallet";
+import { useIsMutating, useMutation } from "@tanstack/react-query";
+import { FARM_DEPOSIT } from "@core/config/constants/query";
+import farmFunctions from "@core/api/pools";
+import useTokens from "../../tokens/useTokens";
+import { toEth } from "@core/utils/common";
+import { parseUnits } from "viem";
+import { PoolDef } from "@core/config/constants/pools_json";
+
+interface Deposit {
+  depositAmount: number;
+  max?: boolean;
+}
+
+const useDeposit = (farm: PoolDef) => {
+  const { currentWallet, getPublicClient, getWalletClient } = useWallet();
+  const { reloadBalances, reloadSupplies } = useTokens();
+  const { prices, decimals } = useTokens();
+
+  const _deposit = async ({ depositAmount, max }: Deposit) => {
+    if (!currentWallet) return;
+    let amountInWei = parseUnits(depositAmount.toString(), decimals[farm.chainId][farm.lp_address] || 18);
+    await farmFunctions[farm.id].deposit({ amountInWei, currentWallet, getPublicClient, getWalletClient, max });
+    reloadBalances();
+    reloadSupplies();
+  };
+
+  const slippageDeposit = async ({ depositAmount, max }: Deposit) => {
+    if (!currentWallet) return;
+    let amountInWei = parseUnits(depositAmount.toString(), decimals[farm.chainId][farm.lp_address] || 18);
+    //  @ts-expect-error
+    const difference = await farmFunctions[farm.id]?.depositSlippage({
+      amountInWei,
+      currentWallet,
+      getPublicClient,
+      getWalletClient,
+      max,
+      farm,
+    });
+
+    const afterDepositAmount =
+      Number(toEth(difference, decimals[farm.chainId][farm.lp_address])) * prices[farm.chainId][farm.lp_address];
+    const beforeDepositAmount = depositAmount * prices[farm.chainId][farm.lp_address];
+    let slippage = (1 - afterDepositAmount / beforeDepositAmount) * 100;
+    if (slippage < 0) slippage = 0;
+    return { afterDepositAmount, beforeDepositAmount, slippage };
+  };
+
+  const {
+    mutate: deposit,
+    mutateAsync: depositAsync,
+    status,
+  } = useMutation({
+    mutationFn: _deposit,
+    mutationKey: FARM_DEPOSIT(currentWallet!, farm?.id || 0),
+  });
+
+  const depositInIsMutating = useIsMutating({
+    mutationKey: FARM_DEPOSIT(currentWallet!, farm?.id || 0),
+  });
+
+  /**
+   * True if any deposit function is runnning
+   */
+  const isLoading = useMemo(() => {
+    return depositInIsMutating > 0;
+  }, [depositInIsMutating]);
+
+  return { isLoading, depositAsync, status, deposit, slippageDeposit };
+};
+
+export default useDeposit;

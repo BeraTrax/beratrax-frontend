@@ -4,47 +4,45 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { NotificationsProvider, setUpNotifications } from "reapop";
 import { PersistGate } from "redux-persist/integration/react";
-import "src/api/interceptor";
+import "@beratrax/core/src/api/interceptor";
 import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
-import "./config/walletConfig";
-import AppProvider from "./context/AppProvider";
+import "@beratrax/core/src/config/walletConfig";
+import { AppProvider } from "@beratrax/core/src/context";
 import "./index.css";
 import "./polyfills";
-import store, { persistor } from "./state";
+import store, { persistor } from "@beratrax/core/src/state";
 
 createConfig({
-    integrator: "Beratrax",
-    // rpcUrls: {
-    //   [ChainId.ARB]: ['https://arbitrum-example.node.com/'],
-    //   [ChainId.SOL]: ['https://solana-example.node.com/'],
-    // },
+  integrator: "Beratrax",
+  // rpcUrls: {
+  //   [ChainId.ARB]: ['https://arbitrum-example.node.com/'],
+  //   [ChainId.SOL]: ['https://solana-example.node.com/'],
+  // },
 });
 
 // Configuration for toast notifications
 setUpNotifications({
-    defaultProps: {
-        position: "top-right",
-        dismissible: true,
-        showDismissButton: true,
-        dismissAfter: 3000,
-    },
+  defaultProps: {
+    position: "top-right",
+    dismissible: true,
+    showDismissButton: true,
+    dismissAfter: 3000,
+  },
 });
 // supportChatConfig(window, document);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-
-        <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-                <NotificationsProvider>
-                    <AppProvider>
-                        <App />
-                        <Notifications />
-                    </AppProvider>
-                </NotificationsProvider>
-            </PersistGate>
-        </Provider>
-
-    </React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NotificationsProvider>
+          <AppProvider>
+            <App />
+            <Notifications />
+          </AppProvider>
+        </NotificationsProvider>
+      </PersistGate>
+    </Provider>
+  </React.StrictMode>
 );

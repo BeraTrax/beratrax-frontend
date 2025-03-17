@@ -1,5 +1,5 @@
 import { ReactComponent as WalletIcon } from "src/assets/images/walletSvg.svg";
-import useTrax from "src/hooks/useTrax";
+import { useTrax } from "@beratrax/core/src/hooks";
 import { customCommify } from "src/utils/common";
 import styles from "./TraxApy.module.css";
 

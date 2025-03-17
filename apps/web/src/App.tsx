@@ -22,24 +22,24 @@ import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
 setHook("notifications", useNotifications);
 
 function App() {
-    useEffect(() => {
-        // Initialize analytics
-        initGA();
+  useEffect(() => {
+    // Initialize analytics
+    initGA();
 
-        // Track daily visit
-        trackDailyDAppVisit();
+    // Track daily visit
+    trackDailyDAppVisit();
 
-        // Track user location using browser's geolocation
-        // if (navigator.geolocation) {
-        //     navigator.geolocation.getCurrentPosition((position) => {
-        //         const location = `${position.coords.latitude},${position.coords.longitude}`;
-        //         trackUserLocation(location);
-        //     });
-        // }
+    // Track user location using browser's geolocation
+    // if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition((position) => {
+    //         const location = `${position.coords.latitude},${position.coords.longitude}`;
+    //         trackUserLocation(location);
+    //     });
+    // }
 
-        // Track user's language
-        trackLanguage();
-    }, []);
+    // Track user's language
+    trackLanguage();
+  }, []);
 
     return (
         <QueryClientProvider client={queryClient}>

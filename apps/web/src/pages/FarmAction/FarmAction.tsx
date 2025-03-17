@@ -1,6 +1,6 @@
 import { FarmActionView } from "src/components/FarmItem/components/FarmActionView/FarmActionView";
 import { useParams } from "react-router-dom";
-import useEarnPage from "src/state/farms/hooks/useEarnPage";
+import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
 
 export default function FarmAction() {
     const { vaultAddress } = useParams();

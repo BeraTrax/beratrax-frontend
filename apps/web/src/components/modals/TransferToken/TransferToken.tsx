@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 import { UsdToggle } from "src/components/UsdToggle/UsdToggle";
-import { useTransferToken } from "src/hooks/useTransferToken";
+import { useTransferToken } from "@beratrax/core/src/hooks";
 import { Token } from "src/types";
 import { noExponents } from "src/utils/common";
 import { ModalLayout } from "../ModalLayout/ModalLayout";

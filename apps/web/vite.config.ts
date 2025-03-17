@@ -23,6 +23,7 @@ export default defineConfig({
     resolve: {
         alias: {
             src: "/src",
+            "@core": "/../../packages/core/src",
             jsbi: path.resolve(__dirname, "./node_modules/jsbi/dist/jsbi-cjs.js"),
             "~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",
             "~@fontsource/inter": "@fontsource/inter",

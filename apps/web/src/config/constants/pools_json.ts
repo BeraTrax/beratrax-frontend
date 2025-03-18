@@ -124,7 +124,7 @@ const pools_json: PoolDef[] = [
         name: "Nect-wgBERA",
         url_name: "Nect-wgBERA",
         originPlatform: FarmOriginPlatform.Burrbear,
-        source: "https://app.burrbear.io/#/berachain/pool/0x567f32e86be3e3963cdbc1887b5043b701f113d9000000000000000000000006",
+        source: "https://app.burrbear.io/#/berachain/pool/0xe416c064946112c1626d6700d1081a750b1b1dd7000200000000000000000008",
         name1: "Nect",
         name2: "wgBERA",
         description:

@@ -6,6 +6,7 @@ import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
 export interface StateInterface {
     farmDetails: FarmDetails;
     earnings: Earnings;
+    earningsUsd: number;
     vaultEarnings: VaultEarnings[];
     isLoadingEarnings: boolean;
     isLoadingVaultEarnings: boolean;
@@ -57,4 +58,10 @@ export interface FetchEarningsAction {
     balances: Balances;
     totalSupplies: TotalSupplies;
     getPublicClient: (chainId: number) => IClients["public"];
+}
+
+export interface VaultEarningsProp {
+    currentWallet: string;
+    prices: Prices;
+    decimals: Decimals;
 }

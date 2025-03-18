@@ -44,7 +44,7 @@ const useFarmDetails = () => {
 
     const reloadVaultEarnings = useCallback(async () => {
         if (currentWallet) {
-            await dispatch(getVaultEarnings(currentWallet));
+            await dispatch(getVaultEarnings({ currentWallet, prices, decimals }));
         }
     }, [currentWallet, balances]);
 

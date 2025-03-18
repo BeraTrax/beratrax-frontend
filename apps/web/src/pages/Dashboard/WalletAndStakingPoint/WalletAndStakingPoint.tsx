@@ -33,7 +33,7 @@ export const WalletAndStakingPoint: React.FC = () => {
         earnTraxTermsAgreed,
         termsOfUseAgreed,
     } = useAppSelector((state) => state.account);
-    const { earningsUsd, isLoadingVaultEarnings } = useAppSelector((state) => state.farms);
+    const { earningsUsd, isVaultEarningsFirstLoad } = useAppSelector((state) => state.farms);
     const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
     const { openConnectModal } = useConnectModal();
     const { disconnect } = useDisconnect();
@@ -304,7 +304,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                                     TOTAL EARNINGS
                                 </p>
                             </div>
-                            {isLoadingVaultEarnings ? (
+                            {isVaultEarningsFirstLoad ? (
                                 <div className="flex items-center h-[3.75rem] mt-4">
                                     <div className="w-8 h-8 border-4 border-textGrey/30 border-t-textPrimary rounded-full animate-spin"></div>
                                 </div>

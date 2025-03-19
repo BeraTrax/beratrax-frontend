@@ -236,7 +236,7 @@ const PoolInfo = ({
                                 <td className="p-4 text-textWhite font-medium">
                                     <div className="flex items-center gap-2">
                                         <img src={btxLogo} alt="BTX" className="w-5 h-5" />
-                                        BTX airdrop
+                                        BTX Points
                                     </div>
                                 </td>
                                 <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
@@ -260,7 +260,7 @@ const PoolInfo = ({
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
                 )}
-                {createdAt && <StatInfo title="Created At" value={createdDateString} iconUrl={created} />}
+                {createdAt && <StatInfo title="Created On" value={createdDateString} iconUrl={created} />}
             </div>
         </div>
     );

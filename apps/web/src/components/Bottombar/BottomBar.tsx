@@ -47,7 +47,8 @@ function BottomBar() {
             route: RoutesPaths.Buy,
             activeIcon: CoinsActiveIcon,
             nonActiveIcon: CoinsNonActiveIcon,
-            title: "Buy",
+            title: "Buy (thoon!)",
+            target: "noop",
         },
         {
             route: RoutesPaths.UserGuide,
@@ -58,6 +59,7 @@ function BottomBar() {
     ];
 
     const handleNavigation = (route: string, target?: string) => {
+        if (target === "noop") return;
         if (target) window.open(route, target);
         else navigate(route);
     };

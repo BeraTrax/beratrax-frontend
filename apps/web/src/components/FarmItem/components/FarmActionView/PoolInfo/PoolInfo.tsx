@@ -236,7 +236,7 @@ const PoolInfo = ({
                                 <td className="p-4 text-textWhite font-medium">
                                     <div className="flex items-center gap-2">
                                         <img src={btxLogo} alt="BTX" className="w-5 h-5" />
-                                        BTX Points
+                                        BTX Points (BeraTrax Airdrop)
                                     </div>
                                 </td>
                                 <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>

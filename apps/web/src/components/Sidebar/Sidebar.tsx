@@ -2,6 +2,7 @@ import { AiOutlineExport } from "react-icons/ai";
 import { HiDocumentText } from "react-icons/hi";
 import { ImStatsDots } from "react-icons/im";
 import { IoIosFlask } from "react-icons/io";
+import { FaCoins } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as EarnIcon } from "src/assets/images/earn.svg";
@@ -36,6 +37,12 @@ function Sidebar() {
             path: RoutesPaths.Leaderboard,
             target: undefined,
         },
+        {
+            title: "Buy",
+            icon: <FaCoins size={18} />,
+            path: RoutesPaths.Buy,
+            target: undefined,
+        },  
         {
             title: "User Guide",
             icon: <HiDocumentText size={18} />,

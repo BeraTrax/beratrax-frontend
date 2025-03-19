@@ -5,6 +5,8 @@ import EarnActiveIcon from "src/assets/images/earnactiveicon.svg";
 import EarnNonActiveIcon from "src/assets/images/earnnonactiveicon.svg";
 import LeaderboardActiveIcon from "src/assets/images/leaderboardactiveicon.svg";
 import LeaderboardNonActiveIcon from "src/assets/images/leaderboardnonactiveicon.svg";
+import CoinsActiveIcon from "src/assets/images/coinsactiveicon.svg";
+import CoinsNonActiveIcon from "src/assets/images/coinsnonactiveicon.svg";
 import UserGuideActiveIcon from "src/assets/images/userguideactiveicon.svg";
 import UserGuideNonActiveIcon from "src/assets/images/userguidenonactiveicon.svg";
 import { RoutesPaths } from "src/config/constants";
@@ -40,6 +42,12 @@ function BottomBar() {
             activeIcon: LeaderboardActiveIcon,
             nonActiveIcon: LeaderboardNonActiveIcon,
             title: "Leaderboard",
+        },
+        {
+            route: RoutesPaths.Buy,
+            activeIcon: CoinsActiveIcon,
+            nonActiveIcon: CoinsNonActiveIcon,
+            title: "Buy",
         },
         {
             route: RoutesPaths.UserGuide,

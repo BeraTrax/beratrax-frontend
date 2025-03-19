@@ -29,6 +29,7 @@ import {
     okxWallet,
     ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import binanceWallet from '@binance/w3w-rainbow-connector-v2'
 import { createConfig, createConnector as createWagmiConnector } from "wagmi";
 
 export const berachain = /*#__PURE__*/ defineChain({
@@ -270,6 +271,7 @@ export const rainbowConfig = getDefaultConfig({
                 okxWallet,
                 ledgerWallet,
                 rainbowWallet,
+                binanceWallet,
             ],
         },
     ],

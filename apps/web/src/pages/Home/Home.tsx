@@ -16,6 +16,7 @@ function Home() {
         RoutesPaths.Farms,
         RoutesPaths.UserGuide,
         RoutesPaths.Leaderboard,
+        RoutesPaths.Buy,
     ]).includes(pathname);
 
     return (

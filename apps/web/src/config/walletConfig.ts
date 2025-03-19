@@ -271,7 +271,7 @@ export const rainbowConfig = getDefaultConfig({
                 okxWallet,
                 ledgerWallet,
                 rainbowWallet,
-                binanceWallet,
+                // binanceWallet,
             ],
         },
     ],

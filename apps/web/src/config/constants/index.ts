@@ -46,7 +46,7 @@ export const EARNINGS_GRAPH_URL =
 export const EARNINGS_GRAPH_URL_BASE =
     "https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const HOP_EXCHANGE_APY_URL = "https://assets.hop.exchange/v1.1-pool-stats.json";
-export const BACKEND_BASE_URL = "https://beratrax-mainnet-api-10de3bcaddfb.herokuapp.com/api/v1";
+export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1";
 export const TENDERLY_ACCESS_TOKEN = import.meta.env.REACT_APP_TENDERLY_ACCESS_TOKEN;
 export const TENDERLY_PROJECT_SLUG = import.meta.env.REACT_APP_TENDERLY_PROJECT_SLUG;
 export const TENDERLY_USER_NAME = import.meta.env.REACT_APP_TENDERLY_USER_NAME;

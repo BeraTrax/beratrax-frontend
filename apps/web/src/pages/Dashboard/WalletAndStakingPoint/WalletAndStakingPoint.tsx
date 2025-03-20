@@ -297,7 +297,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                             <div
                                 className="absolute w-[26rem] h-[26rem] rounded-full 
                                 bg-[radial-gradient(circle,_theme('colors.bgPrimary')_0%,_transparent_70%)] 
-                                bottom-[-20rem] right-[-8rem] z-10"
+                                bottom-[-10rem] right-[-8rem] z-10"
                             />
                             <div className="flex flex-row items-center gap-x-2 justify-start">
                                 <p className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">
@@ -306,7 +306,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                             </div>
                             {isVaultEarningsFirstLoad ? (
                                 <div className="flex items-center h-[3.75rem] mt-4">
-                                    <div className="w-8 h-8 border-4 border-textGrey/30 border-t-textPrimary rounded-full animate-spin"></div>
+                                    <div className="h-12 w-32 bg-white/30 rounded-md animate-pulse"></div>
                                 </div>
                             ) : (
                                 <p className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
@@ -315,7 +315,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                             )}
                             <p className="pb-8">
                                 <img
-                                    className="w-72 absolute bottom-[-16rem] right-3 z-20"
+                                    className="w-72 absolute bottom-[-5rem] right-3 z-20"
                                     src={StakingLogo}
                                     alt="Staking Icon"
                                 />
@@ -458,25 +458,6 @@ export const WalletAndStakingPoint: React.FC = () => {
                                     </button>
                                 </div> */}
                             </div>
-                        </div>
-                    )}
-                    {currentWallet && (
-                        <div className="mt-10 relative overflow-hidden bg-bgDark border border-borderDark rounded-2xl p-6 shadow-lg z-0">
-                            <div
-                                className="absolute w-[15rem] h-[15rem] rounded-full 
-                                bg-[radial-gradient(circle,_theme('colors.bgPrimary')_0%,_transparent_70%)] 
-                                top-[-8rem] left-[-8rem] opacity-50"
-                            />
-
-                            <div className="flex flex-row items-center gap-x-2 justify-start mb-2">
-                                <p className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">
-                                    TOTAL STAKED
-                                </p>
-                            </div>
-
-                            <p className="font-league-spartan text-5xl font-bold text-textWhite mb-4">
-                                ${formatCurrency(userEarnedAmountOnVaults)}
-                            </p>
                         </div>
                     )}
                 </div>

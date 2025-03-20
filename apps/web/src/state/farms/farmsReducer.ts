@@ -29,7 +29,7 @@ const initialState: StateInterface = {
     vaultEarnings: [],
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
-    isVaultEarningsFirstLoad: false,
+    isVaultEarningsFirstLoad: true,
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -164,23 +164,28 @@ export const getVaultEarnings = createAsyncThunk(
                 return;
 
             const earnings = await getEarningsForPlatforms(currentWallet);
-            const earningsUsd = earnings.reduce((acc, curr) => {
-                const price0 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
-                const earnings0 = Number(
-                    toEth(BigInt(curr.earnings0), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)])
-                );
-                let totalEarnings = earnings0 * price0;
-                // Only calculate for token1 and earnings1 if they exist
-                if (curr.token1 && curr.earnings1) {
-                    const price1 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)];
-                    const earnings1 = Number(
-                        toEth(BigInt(curr.earnings1), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)])
+            const earningsUsd = earnings
+                .filter((earning) => Number(earning.earnings0) > 0)
+                .reduce((acc, curr) => {
+                    const price0 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
+                    const earnings0 = Number(
+                        toEth(BigInt(curr.earnings0), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)])
                     );
-                    totalEarnings += earnings1 * price1;
-                }
+                    let totalEarnings = earnings0 * price0;
+                    // Only calculate for token1 and earnings1 if they exist
+                    if (curr.token1 && curr.earnings1) {
+                        const price1 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)];
+                        const earnings1 = Number(
+                            toEth(
+                                BigInt(curr.earnings1),
+                                decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)]
+                            )
+                        );
+                        totalEarnings += earnings1 * price1;
+                    }
 
-                return acc + totalEarnings;
-            }, 0);
+                    return acc + totalEarnings;
+                }, 0);
 
             return { earnings, earningsUsd };
         } catch (error) {

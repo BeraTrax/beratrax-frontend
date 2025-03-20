@@ -92,6 +92,46 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                             x2 Multiplier - BETA TESTER 🚀
                         </p>
                     )}
+                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_BRONZE) && (
+                        <p
+                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
+                        bg-clip-text text-transparent font-extrabold text-lg
+                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
+                        hover:scale-105 transition-transform duration-200"
+                        >
+                            x1.5 Multiplier - BRIDGE JUMPER 🚀
+                        </p>
+                    )}
+                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_SILVER) && (
+                        <p
+                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
+                        bg-clip-text text-transparent font-extrabold text-lg
+                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
+                        hover:scale-105 transition-transform duration-200"
+                        >
+                            x2 Multiplier - BRIDGE JUMPER 🚀
+                        </p>
+                    )}
+                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_GOLD) && (
+                        <p
+                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
+                        bg-clip-text text-transparent font-extrabold text-lg
+                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
+                        hover:scale-105 transition-transform duration-200"
+                        >
+                            x2.5 Multiplier - BRIDGE JUMPER 🚀
+                        </p>
+                    )}
+                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_PLATINUM) && (
+                        <p
+                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
+                        bg-clip-text text-transparent font-extrabold text-lg
+                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
+                        hover:scale-105 transition-transform duration-200"
+                        >
+                            x3 Multiplier - BRIDGE JUMPER 🚀
+                        </p>
+                    )}
                 </div>
             </div>
 

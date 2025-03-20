@@ -28,6 +28,7 @@ import {
     argentWallet,
     okxWallet,
     ledgerWallet,
+    binanceWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { createConfig, createConnector as createWagmiConnector } from "wagmi";
 
@@ -264,6 +265,7 @@ export const rainbowConfig = getDefaultConfig({
                 githubWallet,
                 injectedWallet,
                 walletConnectWallet,
+                binanceWallet,
                 braveWallet,
                 safeWallet,
                 argentWallet,

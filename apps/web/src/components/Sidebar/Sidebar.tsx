@@ -2,6 +2,7 @@ import { AiOutlineExport } from "react-icons/ai";
 import { HiDocumentText } from "react-icons/hi";
 import { ImStatsDots } from "react-icons/im";
 import { IoIosFlask } from "react-icons/io";
+import { FaCoins } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as EarnIcon } from "src/assets/images/earn.svg";
@@ -14,6 +15,7 @@ function Sidebar() {
     const { pathname } = useLocation();
 
     const handleNavigation = (route: string, target?: string) => {
+        if (target === "noop") return;
         if (target) window.open(route, target);
         else navigate(route);
     };
@@ -36,6 +38,12 @@ function Sidebar() {
             path: RoutesPaths.Leaderboard,
             target: undefined,
         },
+        {
+            title: "Buy (thoon!)",
+            icon: <FaCoins size={18} />,
+            path: RoutesPaths.Buy,
+            target: "noop",
+        },  
         {
             title: "User Guide",
             icon: <HiDocumentText size={18} />,

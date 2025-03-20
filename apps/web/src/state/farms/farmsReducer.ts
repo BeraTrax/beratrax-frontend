@@ -3,9 +3,9 @@ import { getEarnings, getEarningsForPlatforms } from "src/api/farms";
 import farmFunctions from "src/api/pools";
 import VaultAbi from "src/assets/abis/vault.json";
 import { IS_LEGACY } from "src/config/constants";
-import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
 import { sleep, toEth } from "src/utils/common";
-import { Address, erc20Abi, getContract } from "viem";
+import { Address, erc20Abi, getContract, getAddress } from "viem";
 import { getPricesOfLpByTimestamp } from "../tokens/tokensReducer";
 import {
     Earnings,
@@ -15,6 +15,7 @@ import {
     FetchFarmDetailsAction,
     StateInterface,
     VaultEarnings,
+    VaultEarningsProp,
 } from "./types";
 import { RootState } from "..";
 
@@ -24,10 +25,11 @@ const initialState: StateInterface = {
     isFetched: false,
     account: "",
     earnings: {},
+    earningsUsd: 0,
     vaultEarnings: [],
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
-    isVaultEarningsFirstLoad: false,
+    isVaultEarningsFirstLoad: true,
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -149,23 +151,49 @@ export const updateEarnings = createAsyncThunk(
 
 export const selectBalances = (state: RootState) => state.tokens.balances;
 
-export const getVaultEarnings = createAsyncThunk("farms/getVaultEarnings", async (currentWallet: string, thunkApi) => {
-    try {
-        let balances = selectBalances(thunkApi.getState() as RootState);
-        if (
-            !balances ||
-            Object.keys(balances).length === 0 ||
-            Object.values(balances).some((chain) => Array.isArray(chain) && chain.length === 0)
-        )
-            return;
+export const getVaultEarnings = createAsyncThunk(
+    "farms/getVaultEarnings",
+    async ({ currentWallet, prices, decimals }: VaultEarningsProp, thunkApi) => {
+        try {
+            let balances = selectBalances(thunkApi.getState() as RootState);
+            if (
+                !balances ||
+                Object.keys(balances).length === 0 ||
+                Object.values(balances).some((chain) => Array.isArray(chain) && chain.length === 0)
+            )
+                return;
 
-        const earnings = await getEarningsForPlatforms(currentWallet);
-        return earnings;
-    } catch (error) {
-        console.error(error);
-        return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch vault earnings");
+            const earnings = await getEarningsForPlatforms(currentWallet);
+            const earningsUsd = earnings
+                .filter((earning) => Number(earning.earnings0) > 0)
+                .reduce((acc, curr) => {
+                    const price0 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
+                    const earnings0 = Number(
+                        toEth(BigInt(curr.earnings0), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)])
+                    );
+                    let totalEarnings = earnings0 * price0;
+                    // Only calculate for token1 and earnings1 if they exist
+                    if (curr.token1 && curr.earnings1) {
+                        const price1 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)];
+                        const earnings1 = Number(
+                            toEth(
+                                BigInt(curr.earnings1),
+                                decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)]
+                            )
+                        );
+                        totalEarnings += earnings1 * price1;
+                    }
+
+                    return acc + totalEarnings;
+                }, 0);
+
+            return { earnings, earningsUsd };
+        } catch (error) {
+            console.error(error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch vault earnings");
+        }
     }
-});
+);
 
 const farmsSlice = createSlice({
     name: "farms",
@@ -215,7 +243,8 @@ const farmsSlice = createSlice({
             state.isLoadingVaultEarnings = true;
         });
         builder.addCase(getVaultEarnings.fulfilled, (state, action) => {
-            state.vaultEarnings = action.payload as VaultEarnings[];
+            state.vaultEarnings = action.payload?.earnings as VaultEarnings[];
+            state.earningsUsd = action.payload?.earningsUsd as number;
             state.isLoadingVaultEarnings = false;
             state.isVaultEarningsFirstLoad = false;
         });

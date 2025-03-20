@@ -5,6 +5,8 @@ import EarnActiveIcon from "src/assets/images/earnactiveicon.svg";
 import EarnNonActiveIcon from "src/assets/images/earnnonactiveicon.svg";
 import LeaderboardActiveIcon from "src/assets/images/leaderboardactiveicon.svg";
 import LeaderboardNonActiveIcon from "src/assets/images/leaderboardnonactiveicon.svg";
+import CoinsActiveIcon from "src/assets/images/coinsactiveicon.svg";
+import CoinsNonActiveIcon from "src/assets/images/coinsnonactiveicon.svg";
 import UserGuideActiveIcon from "src/assets/images/userguideactiveicon.svg";
 import UserGuideNonActiveIcon from "src/assets/images/userguidenonactiveicon.svg";
 import { RoutesPaths } from "src/config/constants";
@@ -42,6 +44,13 @@ function BottomBar() {
             title: "Leaderboard",
         },
         {
+            route: RoutesPaths.Buy,
+            activeIcon: CoinsActiveIcon,
+            nonActiveIcon: CoinsNonActiveIcon,
+            title: "Buy (thoon!)",
+            target: "noop",
+        },
+        {
             route: RoutesPaths.UserGuide,
             activeIcon: UserGuideActiveIcon,
             nonActiveIcon: UserGuideNonActiveIcon,
@@ -50,6 +59,7 @@ function BottomBar() {
     ];
 
     const handleNavigation = (route: string, target?: string) => {
+        if (target === "noop") return;
         if (target) window.open(route, target);
         else navigate(route);
     };

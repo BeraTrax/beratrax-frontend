@@ -33,6 +33,7 @@ export const WalletAndStakingPoint: React.FC = () => {
         earnTraxTermsAgreed,
         termsOfUseAgreed,
     } = useAppSelector((state) => state.account);
+    const { earningsUsd, isVaultEarningsFirstLoad } = useAppSelector((state) => state.farms);
     const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
     const { openConnectModal } = useConnectModal();
     const { disconnect } = useDisconnect();
@@ -292,25 +293,29 @@ export const WalletAndStakingPoint: React.FC = () => {
 
                     {/* Points for staking */}
                     {currentWallet && (
-                        <div className="mt-20">
-                            {/* Gradient background at bottom right */}
+                        <div className="mt-20 relative">
                             <div
                                 className="absolute w-[26rem] h-[26rem] rounded-full 
                                 bg-[radial-gradient(circle,_theme('colors.bgPrimary')_0%,_transparent_70%)] 
-                                bottom-[-10rem] right-[-8rem]"
+                                bottom-[-10rem] right-[-8rem] z-10"
                             />
                             <div className="flex flex-row items-center gap-x-2 justify-start">
-                                {/* <img src={btxLogo} alt="BTX Logo" className="w-10 h-10" /> */}
                                 <p className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">
-                                    TOTAL STAKED
+                                    TOTAL EARNINGS
                                 </p>
                             </div>
-                            <p className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
-                                ${formatCurrency(userEarnedAmountOnVaults)}
-                            </p>
+                            {isVaultEarningsFirstLoad ? (
+                                <div className="flex items-center h-[3.75rem] mt-4">
+                                    <div className="h-12 w-32 bg-white/30 rounded-md animate-pulse"></div>
+                                </div>
+                            ) : (
+                                <p className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
+                                    ${formatCurrency(earningsUsd)}
+                                </p>
+                            )}
                             <p className="pb-8">
                                 <img
-                                    className="w-72 absolute bottom-[-4rem] right-3"
+                                    className="w-72 absolute bottom-[-5rem] right-3 z-20"
                                     src={StakingLogo}
                                     alt="Staking Icon"
                                 />

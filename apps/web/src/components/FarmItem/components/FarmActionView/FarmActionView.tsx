@@ -134,19 +134,25 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                     </>
                                 ) : (
                                     <>
-                                        <button
-                                            className={`${!currentWallet ? "lg:max-w-80" : "lg:max-w-64"}
+                                        {!farm.isDeprecated && (
+                                            <button
+                                                className={`${!currentWallet ? "lg:max-w-80" : "lg:max-w-64"}
                                             bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
-                                            onClick={() => {
-                                                !currentWallet
-                                                    ? openConnectModal && openConnectModal()
-                                                    : !IS_LEGACY &&
-                                                      setFarmOptions({ transactionType: FarmTransactionType.Deposit });
-                                            }}
-                                        >
-                                            {!currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit}
-                                            <br />
-                                        </button>
+                                                onClick={() => {
+                                                    !currentWallet
+                                                        ? openConnectModal && openConnectModal()
+                                                        : !IS_LEGACY &&
+                                                          setFarmOptions({
+                                                              transactionType: FarmTransactionType.Deposit,
+                                                          });
+                                                }}
+                                            >
+                                                {!currentWallet
+                                                    ? "Sign In/ Up to Deposit"
+                                                    : FarmTransactionType.Deposit}
+                                                <br />
+                                            </button>
+                                        )}
                                         {Number(withdrawable?.amount || "0") && (
                                             <button
                                                 disabled={!currentWallet}

@@ -290,7 +290,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     </div>
                     {!isVaultEarningsFirstLoad ? (
                         <div className="text-textWhite text-lg font-league-spartan leading-5">
-                            <p>${formatCurrency(currentVaultEarningsUsd)}</p>
+                            <p className="text-green-500">+${formatCurrency(currentVaultEarningsUsd)}</p>
                             {/* <div style={{ minWidth: 60 }}>
                             {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
                             {!isLoadingOldData &&
@@ -368,12 +368,14 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     </div>
                 )}
             </div>
-            <div className="flex flex-col items-center gap-y-1">
-                <div className="uppercase font-arame-mono text-textPrimary text-md">
-                    <p>Your Stake</p>
-                </div>
-                <div className="text-textWhite text-md font-league-spartan">
-                    <p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
+            <div className="flex justify-end items-end gap-2">
+                <div className="inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+                    <div className="uppercase font-arame-mono text-textPrimary text-md">
+                        <p>Your Stake</p>
+                    </div>
+                    <div className="text-textWhite text-md font-league-spartan">
+                        <p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
+                    </div>
                 </div>
             </div>
             {rewards > 0n ? (

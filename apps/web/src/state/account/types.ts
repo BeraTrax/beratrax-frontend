@@ -65,4 +65,8 @@ export enum Boosts {
     NFT = "NFT",
     BETA = "BETA",
     BETA_TESTER = "BETA_TESTER",
+    BRIDGE_JUMPER_BRONZE = "BRIDGE_JUMPER_BRONZE", // 1.5x multiplier
+    BRIDGE_JUMPER_SILVER = "BRIDGE_JUMPER_SILVER", // 2.0x multiplier
+    BRIDGE_JUMPER_GOLD = "BRIDGE_JUMPER_GOLD", // 2.5x multiplier
+    BRIDGE_JUMPER_PLATINUM = "BRIDGE_JUMPER_PLATINUM", // 3.0x multiplier
 }

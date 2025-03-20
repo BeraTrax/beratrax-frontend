@@ -14,7 +14,7 @@ import { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { Vault } from "src/types";
-import { awaitTransaction, formatCurrency, toFixedFloor } from "src/utils/common";
+import { awaitTransaction, formatCurrency, toEth, toFixedFloor } from "src/utils/common";
 import { encodeFunctionData, formatEther, getAddress } from "viem";
 import styles from "./VaultItem.module.css";
 
@@ -39,8 +39,20 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const [isClaiming, setIsClaiming] = useState(false);
     const navigate = useNavigate();
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
-    const { reloadFarmData } = useFarmDetails();
-    const { balances, reloadBalances } = useTokens();
+    const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings } = useFarmDetails();
+    const { balances, prices, reloadBalances } = useTokens();
+    const currentVaultEarningsUsd = useMemo(() => {
+        const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
+        if (!currentVaultEarnings) return 0;
+        return (
+            Number(toEth(BigInt(currentVaultEarnings?.earnings0 || 0n))) *
+                prices[vault.chainId][currentVaultEarnings.token0 as `0x${string}`] +
+            (currentVaultEarnings?.token1
+                ? Number(toEth(BigInt(currentVaultEarnings?.earnings1 || 0n))) *
+                  prices[vault.chainId][currentVaultEarnings.token1 as `0x${string}`]
+                : 0)
+        );
+    }, [isVaultEarningsFirstLoad]);
     const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
@@ -274,11 +286,12 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 {/* Your Stake */}
                 <div className="text-textSecondary border-r border-bgPrimary">
                     <div className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
-                        <p>Your Stake</p>
+                        <p>Your Earnings</p>
                     </div>
-                    <div className="text-textWhite text-lg font-league-spartan leading-5	">
-                        <p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
-                        {/* <div style={{ minWidth: 60 }}>
+                    {!isVaultEarningsFirstLoad ? (
+                        <div className="text-textWhite text-lg font-league-spartan leading-5">
+                            <p>${formatCurrency(currentVaultEarningsUsd)}</p>
+                            {/* <div style={{ minWidth: 60 }}>
                             {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
                             {!isLoadingOldData &&
                                 oldPrice &&
@@ -316,7 +329,10 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                                     </span>
                                 ))}
                         </div> */}
-                    </div>
+                        </div>
+                    ) : (
+                        <div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
+                    )}
                 </div>
 
                 {/* APY */}
@@ -351,6 +367,14 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                         </div>
                     </div>
                 )}
+            </div>
+            <div className="flex flex-col items-center gap-y-1">
+                <div className="uppercase font-arame-mono text-textPrimary text-md">
+                    <p>Your Stake</p>
+                </div>
+                <div className="text-textWhite text-md font-league-spartan">
+                    <p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
+                </div>
             </div>
             {rewards > 0n ? (
                 <div className={`grid grid-cols-2`}>

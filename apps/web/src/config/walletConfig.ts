@@ -244,6 +244,9 @@ const githubWallet = () => {
     };
 };
 
+// Setting the coinbase wallet to eoaOnly since smart wallets do not work with Berachain
+coinbaseWallet.preference = "eoaOnly";
+
 export const rainbowConfig = getDefaultConfig({
     appName: "Beratrax",
     projectId: walletConnectProjectId,

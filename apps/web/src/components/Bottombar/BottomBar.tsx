@@ -41,7 +41,7 @@ function BottomBar() {
             route: RoutesPaths.Leaderboard,
             activeIcon: LeaderboardActiveIcon,
             nonActiveIcon: LeaderboardNonActiveIcon,
-            title: "BTX Points",
+            title: "Leaderboard",
         },
         {
             route: RoutesPaths.Buy,

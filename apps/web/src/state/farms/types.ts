@@ -6,7 +6,7 @@ import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
 export interface StateInterface {
     farmDetails: FarmDetails;
     earnings: Earnings;
-    earningsUsd: number;
+    earningsUsd: number | null;
     vaultEarnings: VaultEarnings[];
     isLoadingEarnings: boolean;
     isLoadingVaultEarnings: boolean;

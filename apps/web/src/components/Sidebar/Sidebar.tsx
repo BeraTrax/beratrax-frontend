@@ -15,6 +15,7 @@ function Sidebar() {
     const { pathname } = useLocation();
 
     const handleNavigation = (route: string, target?: string) => {
+        if (target === "noop") return;
         if (target) window.open(route, target);
         else navigate(route);
     };
@@ -38,11 +39,11 @@ function Sidebar() {
             target: undefined,
         },
         {
-            title: "Buy",
+            title: "Buy (thoon!)",
             icon: <FaCoins size={18} />,
             path: RoutesPaths.Buy,
-            target: undefined,
-        },  
+            target: "noop",
+        },
         {
             title: "User Guide",
             icon: <HiDocumentText size={18} />,

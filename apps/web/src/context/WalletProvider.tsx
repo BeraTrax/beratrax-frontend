@@ -353,15 +353,15 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
         };
     }, []);
 
-    useEffect(() => {
-        if (currentWallet) {
-            resolveDomainFromAddress(currentWallet).then((res) => {
-                setDomainName(res);
-            });
-        } else {
-            setDomainName(null);
-        }
-    }, [currentWallet]);
+    // useEffect(() => {
+    //     if (currentWallet) {
+    //         resolveDomainFromAddress(currentWallet).then((res) => {
+    //             setDomainName(res);
+    //         });
+    //     } else {
+    //         setDomainName(null);
+    //     }
+    // }, [currentWallet]);
 
     useEffect(() => {
         if (connector && connector.id !== "web3auth") {

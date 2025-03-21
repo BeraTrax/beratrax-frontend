@@ -25,7 +25,7 @@ const initialState: StateInterface = {
     isFetched: false,
     account: "",
     earnings: {},
-    earningsUsd: 0,
+    earningsUsd: null,
     vaultEarnings: [],
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,

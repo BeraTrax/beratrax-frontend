@@ -219,7 +219,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                                     </div>
                                 </div>
                                 {/* Switch to Berachain */}
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 z-20">
                                     {!isSocial && chainId !== CHAIN_ID.BERACHAIN && (
                                         <button
                                             onClick={() => switchChain({ chainId: CHAIN_ID.BERACHAIN })}
@@ -304,7 +304,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                                     TOTAL EARNINGS
                                 </p>
                             </div>
-                            {isVaultEarningsFirstLoad ? (
+                            {isVaultEarningsFirstLoad || earningsUsd == null ? ( // Handles both null and undefined
                                 <div className="flex items-center h-[3.75rem] mt-4">
                                     <div className="h-12 w-32 bg-white/30 rounded-md animate-pulse"></div>
                                 </div>

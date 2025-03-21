@@ -43,7 +43,7 @@ function Sidebar() {
             icon: <FaCoins size={18} />,
             path: RoutesPaths.Buy,
             target: "noop",
-        },  
+        },
         {
             title: "User Guide",
             icon: <HiDocumentText size={18} />,

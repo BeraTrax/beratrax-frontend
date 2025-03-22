@@ -48,6 +48,7 @@ interface IProps {
     source?: string;
     showFlywheelChart?: boolean;
     beraApy: string;
+    merkleApy: string;
     isAutoCompounded: boolean;
     underlyingApy: string;
     marketCapLoading?: boolean;
@@ -62,6 +63,7 @@ const PoolInfo = ({
     source,
     showFlywheelChart,
     beraApy,
+    merkleApy,
     isAutoCompounded,
     underlyingApy,
     marketCapLoading,
@@ -92,6 +94,19 @@ const PoolInfo = ({
                     <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">
                         ABOUT
                     </h3>
+                    {farm.id === 8 && (
+                        <p className="text-textWhite mt-4 text-[16px] font-light">
+                            JUMPER CAMPAIGN NOTICE: The Boosted APY is only applicable for those who deposited through
+                            the{" "}
+                            <a
+                                href="https://jumper.exchange/quests/rewards-from-beratrax-campaign-2"
+                                target="_blank"
+                                className="text-gradientPrimary uppercase hover:underline"
+                            >
+                                Jumper Campaign.
+                            </a>
+                        </p>
+                    )}
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
                     <p className="text-textWhite mt-4 text-[16px] font-light">
                         You can see the underlying vault on the platform{" "}
@@ -232,6 +247,19 @@ const PoolInfo = ({
                                     </tr>
                                 </>
                             )}
+                            {farm.id === 8 && (
+                                <tr>
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <img src={wberaLogo} alt="BTX" className="w-5 h-5" />
+                                            BERA (Jumper Only)
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">
+                                        Claim from Jumper Campaign
+                                    </td>
+                                </tr>
+                            )}
                             <tr>
                                 <td className="p-4 text-textWhite font-medium">
                                     <div className="flex items-center gap-2">
@@ -253,6 +281,13 @@ const PoolInfo = ({
                     value={underlyingApy + "%"}
                     iconUrl={<FaArrowTrendUp color="white" size={25} />}
                 />
+                {merkleApy !== "0" && (
+                    <StatInfo
+                        title="Additional Merkl APR"
+                        value={merkleApy + "%"}
+                        iconUrl={<GoRocket color="white" size={25} />}
+                    />
+                )}
                 {isAutoCompounded && (
                     <StatInfo
                         title="BeraTrax auto-compounded APY"

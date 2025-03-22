@@ -286,7 +286,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 {/* Your Stake */}
                 <div className="text-textSecondary border-r border-bgPrimary">
                     <div className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
-                        <p>Your Earnings</p>
+                        <p>Earnings</p>
                     </div>
                     {!isVaultEarningsFirstLoad ? (
                         <div className="text-textWhite text-lg font-league-spartan leading-5">

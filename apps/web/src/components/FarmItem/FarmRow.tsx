@@ -63,7 +63,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
         (parseInt(farmData?.withdrawableAmounts[0].amountDollar) > 0 ||
             Number(farmData?.withdrawableAmounts[0].amountDollar) > 0);
 
-    const isHighlighted = farm.isCurrentWeeksRewardsVault;
+    const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted;
 
     return (
         <div
@@ -148,6 +148,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                     <div className="flex justify-between gap-2">
                                         {hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
                                         {farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
+                                        {farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
                                     </div>
                                     <div className="flex gap-2 items-center">
                                         <p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">

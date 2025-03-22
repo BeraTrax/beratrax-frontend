@@ -6,6 +6,7 @@ export interface PoolDef {
     isDeprecated?: boolean;
     isStablePool?: boolean;
     isAutoCompounded?: boolean;
+    isBoosted?: boolean;
     id: number;
     stableCoin?: boolean;
     originPlatform?: FarmOriginPlatform;
@@ -79,7 +80,7 @@ const pools_json: PoolDef[] = [
         name1: "wBERA",
         name2: "HONEY",
         description:
-            "JUMPER CAMPAIGN NOTICE: The Boosted APY is only applicable for those who deposited through the Jumper Campaign. This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You’ll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you’ll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+            "This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You’ll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you’ll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
         stableCoin: false,
         platform: "Infrared",
         platform_alt: "Infrared logo",
@@ -100,6 +101,7 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
+        isBoosted: true,
         lp_address: "0x2c4a603A2aA5596287A06886862dc29d56DbC354",
         decimals: 18,
         vault_addr: "0x9bC238c1e0f31a5e016Ea484a698Ee7B4c3B219c",

@@ -281,17 +281,17 @@ const PoolInfo = ({
                     value={underlyingApy + "%"}
                     iconUrl={<FaArrowTrendUp color="white" size={25} />}
                 />
-                {merkleApy !== "0" && (
-                    <StatInfo
-                        title="Additional Merkl APR"
-                        value={merkleApy + "%"}
-                        iconUrl={<GoRocket color="white" size={25} />}
-                    />
-                )}
                 {isAutoCompounded && (
                     <StatInfo
                         title="BeraTrax auto-compounded APY"
                         value={beraApy + "%"}
+                        iconUrl={<GoRocket color="white" size={25} />}
+                    />
+                )}
+                {merkleApy !== "0" && (
+                    <StatInfo
+                        title="Additional Merkl APR"
+                        value={merkleApy + "%"}
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
                 )}

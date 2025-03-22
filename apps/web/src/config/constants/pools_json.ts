@@ -6,6 +6,7 @@ export interface PoolDef {
     isDeprecated?: boolean;
     isStablePool?: boolean;
     isAutoCompounded?: boolean;
+    isBoosted?: boolean;
     id: number;
     stableCoin?: boolean;
     originPlatform?: FarmOriginPlatform;
@@ -79,7 +80,7 @@ const pools_json: PoolDef[] = [
         name1: "wBERA",
         name2: "HONEY",
         description:
-            "JUMPER CAMPAIGN NOTICE: The Boosted APY is only applicable for those who deposited through the Jumper Campaign. This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You’ll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you’ll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+            "This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You’ll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you’ll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
         stableCoin: false,
         platform: "Infrared",
         platform_alt: "Infrared logo",
@@ -90,7 +91,7 @@ const pools_json: PoolDef[] = [
         pair2: "HONEY",
         token1: "0x6969696969696969696969696969696969696969",
         token2: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
         alt1: "wBERA logo",
         alt2: "HONEY logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
@@ -100,6 +101,7 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
+        isBoosted: true,
         lp_address: "0x2c4a603A2aA5596287A06886862dc29d56DbC354",
         decimals: 18,
         vault_addr: "0x9bC238c1e0f31a5e016Ea484a698Ee7B4c3B219c",
@@ -347,7 +349,7 @@ const pools_json: PoolDef[] = [
         platform_logo: "infrared.ico",
         pair1: "iBGT",
         token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
         alt1: "iBGT logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x46eFC86F0D7455F135CC9df501673739d513E982/logo.png",
         rewards1: "infrared.ico",
@@ -401,7 +403,7 @@ const pools_json: PoolDef[] = [
         pair2: "wBTC",
         token1: "0x6969696969696969696969696969696969696969",
         token2: "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
         alt1: "wBERA logo",
         alt2: "wBTC logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
@@ -456,7 +458,7 @@ const pools_json: PoolDef[] = [
         pair2: "wETH",
         token1: "0x6969696969696969696969696969696969696969",
         token2: "0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
         alt1: "wBERA logo",
         alt2: "wETH logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
@@ -855,7 +857,7 @@ const pools_json: PoolDef[] = [
         platform_logo: "infrared.ico",
         pair1: "iBERA",
         token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
+        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
         alt1: "iBGT logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397bb5a6624a856cc84a3a14dcd3fe5/logo.png",
         rewards1: "infrared.ico",

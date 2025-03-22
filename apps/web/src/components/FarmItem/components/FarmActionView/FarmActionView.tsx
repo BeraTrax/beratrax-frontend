@@ -101,6 +101,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                                   2
                                               ).toString()
                                     }
+                                    merkleApy={farmApys.merklApr?.toFixed(2) || "0"}
                                     underlyingApy={
                                         farm.isCurrentWeeksRewardsVault
                                             ? "??? "

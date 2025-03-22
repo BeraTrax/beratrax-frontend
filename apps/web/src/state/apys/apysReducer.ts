@@ -10,6 +10,7 @@ pools_json.forEach((pool) => {
         compounding: 0,
         feeApr: 0,
         rewardsApr: 0,
+        merklApr: 0,
     };
 });
 

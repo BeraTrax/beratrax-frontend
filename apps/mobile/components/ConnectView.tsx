@@ -4,11 +4,11 @@ import { ConnectButton } from '@reown/appkit-wagmi-react-native'
 import * as Haptics from 'expo-haptics'
 import { useCallback, useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { useTheme } from "tamagui"
+// import { useTheme } from "tamagui"
 import { useAccount, useBalance, useDisconnect } from 'wagmi'
 
 export default function ConnectView() {
-  const theme = useTheme()
+  // const theme = useTheme()
   const {isSocial, currentWallet, isConnecting, connector} = useWallet()
   // Get wallet connection info using wagmi hooks
   const { address, isConnected, status } = useAccount()

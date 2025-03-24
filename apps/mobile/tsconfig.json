@@ -1,5 +1,8 @@
 {
-  "extends": ["expo/tsconfig.base", "../../tsconfig.base.json"],
+  "extends": [
+    "expo/tsconfig.base",
+    "../../tsconfig.base.json"
+  ],
   "compilerOptions": {
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -17,6 +20,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "queries.js"  ]
+    "expo-env.d.ts",
+    "queries.js",
+    "nativewind-env.d.ts"
+  ]
 }

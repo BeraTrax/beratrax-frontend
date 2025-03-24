@@ -1,7 +1,9 @@
 // Find the project and workspace directories
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 const nodeLibs = require('node-libs-react-native');
+const { FileStore } = require('metro-cache');
 
 const projectRoot = __dirname;
 // This can be replaced with `find-yarn-workspace-root`
@@ -18,6 +20,10 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// #3 - Force resolving nested modules to the folders below
+//This line is REQUIRED to make Nativewind work within monorepo packages.
+config.resolver.disableHierarchicalLookup = true;
+
 function convertToNodePrefix(input) {
   return Object.entries(input).reduce((acc, [key, value]) => {
     acc[`node:${key}`] = value;
@@ -25,10 +31,21 @@ function convertToNodePrefix(input) {
   }, {});
 }
 
+
+config.cacheStores = [
+  new FileStore({
+    root: path.join(projectRoot, "node_modules", ".cache", "metro"),
+  }),
+];
+
 // Handle node: protocol imports
 config.resolver.extraNodeModules = {
   ...nodeLibs,
   ...convertToNodePrefix(nodeLibs),
 };
 
-module.exports = config;
+module.exports = withNativeWind(config, { 
+  input: "./../../packages/ui/global.css", 
+  configPath: "./../../packages/ui/tailwind.config.js", 
+  projectRoot, 
+});

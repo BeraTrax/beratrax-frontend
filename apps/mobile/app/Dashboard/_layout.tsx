@@ -1,17 +1,18 @@
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedView } from "@/components/ThemedView"
-import { Card, XStack, YStack, useTheme } from "@beratrax/ui"
+import { Reusable, Button } from "@beratrax/ui"
 import { Ionicons } from '@expo/vector-icons'
-import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native"
+import { Image, ScrollView, StyleSheet, TouchableOpacity, Text } from "react-native"
 
 const Dashboard = () => {
-  const theme = useTheme()
-  
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Wallet Address Section */}
-        <XStack style={styles.addressSection}>
+        <Reusable title="Hello From Beratrax UI" />
+        <Button variant="primary" size="medium" title="Hello From Beratrax UI"  />
+        {/* <Text style={{ color: "white" }}>Hello From Beratrax UI</Text> */}
+        {/* <XStack style={styles.addressSection}> */}
           <ThemedView style={styles.addressPill}>
             <Ionicons name="leaf" size={18} color="#72B21F" style={styles.addressIcon} />
             <ThemedText style={styles.addressText}>0x27...55982F56</ThemedText>
@@ -19,35 +20,33 @@ const Dashboard = () => {
               <Ionicons name="copy-outline" size={16} color="#fff" />
             </TouchableOpacity>
           </ThemedView>
-        </XStack>
+        {/* </XStack> */}
 
         {/* Points from Staking */}
-        <Card variant="secondary" size="medium" style={styles.mainPointsCard}>
+        {/* <Card variant="secondary" size="medium" style={styles.mainPointsCard}>
           <ThemedText style={styles.pointsLabel}>POINTS FROM STAKING</ThemedText>
           <ThemedText style={styles.pointsValue}>418.256</ThemedText>
           <Image 
             source={require('@beratrax/core/src/assets/images/btxTokenLogo.png')} 
             style={styles.jarIcon}
           />
-        </Card>
+        </Card> */}
 
         {/* Points Cards Row */}
-        <XStack style={styles.pointsRow}>
-          {/* Referrals Card */}
+        {/* <XStack style={styles.pointsRow}>
           <Card variant="dark" size="medium" style={styles.halfCard}>
             <ThemedText style={styles.smallCardLabel}>POINTS FROM REFERRALS</ThemedText>
             <ThemedText style={styles.smallCardValue}>143.699</ThemedText>
           </Card>
           
-          {/* Daily Rate Card */}
           <Card variant="primary" size="medium" style={styles.halfCard}>
             <ThemedText style={styles.smallCardLabel}>DAILY RATE</ThemedText>
             <ThemedText style={styles.smallCardValue}>33.699</ThemedText>
           </Card>
-        </XStack>
+        </XStack> */}
 
         {/* Referral Link Section */}
-        <YStack style={styles.referralSection}>
+        {/* <YStack style={styles.referralSection}>
           <ThemedText style={styles.sectionTitle}>YOUR REFERRAL LINK</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
             Share your referral link with friends to earn more Points
@@ -60,13 +59,12 @@ const Dashboard = () => {
               <Ionicons name="copy-outline" size={16} color="#fff" />
             </TouchableOpacity>
           </Card>
-        </YStack>
+        </YStack> */}
 
         {/* Token Balances */}
-        <YStack style={styles.section}>
+        {/* <YStack style={styles.section}>
           <ThemedText style={styles.sectionTitle}>TOKENS BALANCES</ThemedText>
           
-          {/* USDC */}
           <TokenBalanceCard 
             symbol="USDC" 
             balance="4.258866" 
@@ -74,7 +72,6 @@ const Dashboard = () => {
             iconColor="#2775CA"
           />
           
-          {/* BERA */}
           <TokenBalanceCard 
             symbol="BERA" 
             balance="0.1" 
@@ -82,7 +79,6 @@ const Dashboard = () => {
             iconColor="#FF5F52"
           />
           
-          {/* INFRARED */}
           <TokenBalanceCard 
             symbol="INFRARED" 
             balance="0.00015840779" 
@@ -90,17 +86,16 @@ const Dashboard = () => {
             iconColor="#FF5F52"
           />
           
-          {/* POINTS */}
           <TokenBalanceCard 
             symbol="POINTS" 
             balance="8 010" 
             iconColor="#72B21F"
             value="$0.00"
           />
-        </YStack>
+        </YStack> */}
 
         {/* Stacked Tokens */}
-        <YStack style={styles.section}>
+        {/* <YStack style={styles.section}>
           <ThemedText style={styles.sectionTitle}>STACKED TOKENS</ThemedText>
           
           <Card variant="dark" size="medium" style={styles.stakingCard}>
@@ -126,10 +121,10 @@ const Dashboard = () => {
               </YStack>
             </XStack>
           </Card>
-        </YStack>
+        </YStack> */}
 
         {/* Last Transactions */}
-        <YStack style={[styles.section, styles.lastSection]}>
+        {/* <YStack style={[styles.section, styles.lastSection]}>
           <XStack style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>LAST TRANSACTIONS</ThemedText>
             <TouchableOpacity>
@@ -172,85 +167,85 @@ const Dashboard = () => {
             action="Approve zap"
             showActionButtons={true}
           />
-        </YStack>
+        </YStack> */}
       </ScrollView>
     </ThemedView>
   )
 }
 
 // Token Balance Card Component
-const TokenBalanceCard = ({ symbol, balance, value, iconColor }: { symbol: string, balance: string, value: string, iconColor: string }) => {
-  return (
-    <Card variant="dark" size="small" style={styles.tokenCard}>
-      <XStack style={styles.tokenCardContent}>
-        <XStack style={styles.tokenInfo}>
-          <ThemedView style={[styles.tokenIcon, { backgroundColor: iconColor }]}>
-            {symbol === "USDC" && <Ionicons name="logo-usd" size={18} color="#fff" />}
-            {symbol === "BERA" && <Ionicons name="cube" size={18} color="#fff" />}
-            {symbol === "INFRARED" && <Ionicons name="cube" size={18} color="#fff" />}
-            {symbol === "POINTS" && <Ionicons name="leaf" size={18} color="#fff" />}
-          </ThemedView>
-          <YStack>
-            <ThemedText style={styles.tokenSymbol}>{symbol}</ThemedText>
-            <ThemedText style={styles.tokenBalance}>{balance}</ThemedText>
-          </YStack>
-        </XStack>
-        {value && <ThemedText style={styles.tokenValue}>{value}</ThemedText>}
-      </XStack>
-    </Card>
-  )
-}
+// const TokenBalanceCard = ({ symbol, balance, value, iconColor }: { symbol: string, balance: string, value: string, iconColor: string }) => {
+//   return (
+//     <Card variant="dark" size="small" style={styles.tokenCard}>
+//       <XStack style={styles.tokenCardContent}>
+//         <XStack style={styles.tokenInfo}>
+//           <ThemedView style={[styles.tokenIcon, { backgroundColor: iconColor }]}>
+//             {symbol === "USDC" && <Ionicons name="logo-usd" size={18} color="#fff" />}
+//             {symbol === "BERA" && <Ionicons name="cube" size={18} color="#fff" />}
+//             {symbol === "INFRARED" && <Ionicons name="cube" size={18} color="#fff" />}
+//             {symbol === "POINTS" && <Ionicons name="leaf" size={18} color="#fff" />}
+//           </ThemedView>
+//           <YStack>
+//             <ThemedText style={styles.tokenSymbol}>{symbol}</ThemedText>
+//             <ThemedText style={styles.tokenBalance}>{balance}</ThemedText>
+//           </YStack>
+//         </XStack>
+//         {value && <ThemedText style={styles.tokenValue}>{value}</ThemedText>}
+//       </XStack>
+//     </Card>
+//   )
+// }
 
 // Transaction Card Component
-const TransactionCard = ({ type, time, amount, detail, action, showActionButtons = false }: { type: string, time: string, amount: string, detail: string, action: string, showActionButtons: boolean }) => {
-  const getIconByType = (type: string) => {
-    switch(type) {
-      case "HONEY": return <Ionicons name="cube" size={18} color="#FFC107" />;
-      case "BERA": return <Ionicons name="cube" size={18} color="#FF5F52" />;
-      case "APPROVE": return <Ionicons name="checkmark-circle" size={18} color="#72B21F" />;
-      case "ZAP OUT": return <Ionicons name="arrow-up-circle" size={18} color="#72B21F" />;
-      default: return <Ionicons name="cube" size={18} color="#72B21F" />;
-    }
-  }
+// const TransactionCard = ({ type, time, amount, detail, action, showActionButtons = false }: { type: string, time: string, amount: string, detail: string, action: string, showActionButtons: boolean }) => {
+//   const getIconByType = (type: string) => {
+//     switch(type) {
+//       case "HONEY": return <Ionicons name="cube" size={18} color="#FFC107" />;
+//       case "BERA": return <Ionicons name="cube" size={18} color="#FF5F52" />;
+//       case "APPROVE": return <Ionicons name="checkmark-circle" size={18} color="#72B21F" />;
+//       case "ZAP OUT": return <Ionicons name="arrow-up-circle" size={18} color="#72B21F" />;
+//       default: return <Ionicons name="cube" size={18} color="#72B21F" />;
+//     }
+//   }
   
-  return (
-    <Card variant="dark" size="small" style={styles.transactionCard}>
-      <XStack style={styles.transactionCardContent}>
-        <XStack style={styles.transactionInfo}>
-          {getIconByType(type)}
-          <YStack style={styles.transactionDetails}>
-            <ThemedText style={styles.transactionType}>{type}</ThemedText>
-            <ThemedText style={styles.transactionTime}>{time}</ThemedText>
-          </YStack>
-        </XStack>
+//   return (
+//     <Card variant="dark" size="small" style={styles.transactionCard}>
+//       <XStack style={styles.transactionCardContent}>
+//         <XStack style={styles.transactionInfo}>
+//           {getIconByType(type)}
+//           <YStack style={styles.transactionDetails}>
+//             <ThemedText style={styles.transactionType}>{type}</ThemedText>
+//             <ThemedText style={styles.transactionTime}>{time}</ThemedText>
+//           </YStack>
+//         </XStack>
         
-        <YStack style={styles.transactionValueSection}>
-          {amount && <ThemedText style={styles.transactionAmount}>{amount}</ThemedText>}
-          {detail && <ThemedText style={styles.transactionDetail}>{detail}</ThemedText>}
-          {action && <ThemedText style={styles.transactionAction}>{action}</ThemedText>}
+//         <YStack style={styles.transactionValueSection}>
+//           {amount && <ThemedText style={styles.transactionAmount}>{amount}</ThemedText>}
+//           {detail && <ThemedText style={styles.transactionDetail}>{detail}</ThemedText>}
+//           {action && <ThemedText style={styles.transactionAction}>{action}</ThemedText>}
           
-          {showActionButtons && (
-            <XStack style={styles.actionButtons}>
-              <TouchableOpacity style={[styles.actionButton, styles.approveButton]}>
-                <ThemedText style={styles.actionButtonText}>Approve</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionButton, styles.rejectButton]}>
-                <ThemedText style={styles.actionButtonText}>Reject</ThemedText>
-              </TouchableOpacity>
-            </XStack>
-          )}
-        </YStack>
-      </XStack>
-    </Card>
-  )
-}
+//           {showActionButtons && (
+//             <XStack style={styles.actionButtons}>
+//               <TouchableOpacity style={[styles.actionButton, styles.approveButton]}>
+//                 <ThemedText style={styles.actionButtonText}>Approve</ThemedText>
+//               </TouchableOpacity>
+//               <TouchableOpacity style={[styles.actionButton, styles.rejectButton]}>
+//                 <ThemedText style={styles.actionButtonText}>Reject</ThemedText>
+//               </TouchableOpacity>
+//             </XStack>
+//           )}
+//         </YStack>
+//       </XStack>
+//     </Card>
+//   )
+// }
 
 export default Dashboard
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#020907', // Using bgDark from theme
+    // backgroundColor: '#020907', // Using bgDark from theme
   },
   scrollView: {
     flex: 1,

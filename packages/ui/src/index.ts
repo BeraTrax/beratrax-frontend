@@ -5,7 +5,7 @@ export { default as tamaguiConfig } from './tamagui.config'
 
 // Export Tamagui components
 export {
-    Button, createTheme, H1,
+    createTheme, H1,
     H2,
     H3,
     H4,
@@ -19,10 +19,11 @@ export {
 } from 'tamagui'
 
 // Re-export some basic example components
-export { Card } from './components/Card'
-export { Demo } from './components/Demo'
-export { Flex, Wow } from './components/FlexBox'
+// export { Card } from './components/Card'
+// export { Demo } from './components/Demo'
+// export { Flex, Wow } from './components/FlexBox'
 
 // Export new components
-export { StakingCard } from './components/StakingCard/StakingCard'
+// export { StakingCard } from './components/StakingCard/StakingCard'
 
+export * from './components'

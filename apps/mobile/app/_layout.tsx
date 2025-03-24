@@ -1,3 +1,4 @@
+import '@beratrax/ui/global.css'
 import '@walletconnect/react-native-compat'
 /**
  * to keep the first import on top
@@ -15,10 +16,10 @@ import 'react-native-reanimated'
 
 import WalletProvider from '@/config/walletProvider'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { tamaguiConfig } from '@beratrax/ui'
+// import { tamaguiConfig } from '@beratrax/ui'
 import * as Haptics from 'expo-haptics'
 import { StyleSheet } from 'react-native'
-import { TamaguiProvider, Theme } from 'tamagui'
+// import { TamaguiProvider, Theme } from 'tamagui'
 import { WagmiProvider } from 'wagmi'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -63,8 +64,8 @@ const RootLayout = () => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
-        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-          <Theme name="dark">
+        {/* <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+          <Theme name="dark"> */}
             <WalletProvider>
               <SafeAreaProvider>
                 {/* <ConnectView />
@@ -94,8 +95,8 @@ const RootLayout = () => {
                 <AppKit />
               </SafeAreaProvider>
             </WalletProvider>
-          </Theme>
-        </TamaguiProvider>
+          {/* </Theme>
+        </TamaguiProvider> */}
         {/* </ThemeProvider> */}
       </QueryClientProvider>
     </WagmiProvider >

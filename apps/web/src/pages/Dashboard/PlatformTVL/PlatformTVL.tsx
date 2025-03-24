@@ -1,5 +1,5 @@
 import { usePlatformTVL } from "@beratrax/core/src/hooks";
-import { customCommify } from "src/utils/common";
+import { customCommify } from "@beratrax/core/src/utils/common";
 
 interface Props {}
 

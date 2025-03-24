@@ -1,10 +1,3 @@
-import moment from "moment";
-import { FC, useMemo, useRef, useState } from "react";
-import { CiRepeat } from "react-icons/ci";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { IoIosArrowForward } from "react-icons/io";
-import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircle } from "react-icons/io5";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
 import { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
@@ -14,7 +7,14 @@ import { deleteTransactionDb } from "@beratrax/core/src/state/transactions/trans
 import { TransactionStatus, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
-import { formatCurrency, toEth } from "src/utils/common";
+import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
+import moment from "moment";
+import { FC, useMemo, useRef, useState } from "react";
+import { CiRepeat } from "react-icons/ci";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { IoIosArrowForward } from "react-icons/io";
+import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircle } from "react-icons/io5";
+import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";

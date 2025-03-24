@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@core/state";
 import useWallet from "../../../hooks/useWallet";
-import useFarms from "./useFarms";
-import { updateFarmDetails, reset, updateEarnings, getVaultEarnings } from "@core/state/farms/farmsReducer";
+
 import useTokens from "../../../state/tokens/useTokens";
+import { useAppDispatch, useAppSelector } from "./../../../state";
+import { getVaultEarnings, reset, updateEarnings, updateFarmDetails } from "./../../../state/farms/farmsReducer";
+import useFarms from "./useFarms";
 
 const useFarmDetails = () => {
   const { farms } = useFarms();

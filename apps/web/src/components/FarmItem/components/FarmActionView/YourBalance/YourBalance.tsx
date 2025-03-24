@@ -1,10 +1,10 @@
-import { useMemo } from "react";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
-import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { customCommify, formatCurrency, toEth } from "src/utils/common";
-import { FarmOriginPlatform } from "src/types/enums";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
+import { customCommify, formatCurrency, toEth } from "@beratrax/core/src/utils/common";
+import { useMemo } from "react";
 import { getAddress } from "viem";
 
 // Reusable component for token earnings

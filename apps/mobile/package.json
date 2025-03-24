@@ -5,7 +5,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "start:mobile": "expo start -c ",
+    "start:mobile": "expo start --go --clear ",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --tunnel",
     "build:ios": "expo build:ios",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@beratrax/ui": "*",
+    "@expo/metro-config": "^0.19.12",
     "@expo/ngrok": "^4.1.0",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -46,7 +47,7 @@
     "expo-updates": "~0.27.3",
     "expo-web-browser": "~14.0.2",
     "install": "^0.13.0",
-    "npx": "^10.2.2",
+    "node-libs-react-native": "^1.2.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.7",

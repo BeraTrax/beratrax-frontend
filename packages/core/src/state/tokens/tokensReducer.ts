@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getPricesByTime, getTokenPricesBackend } from "@core/api/token";
-import rewardVaultAbi from "@core/assets/abis/rewardVaultAbi";
-import { Common_Chains_State, pools_chain_ids } from "@core/config/constants/pools_json";
-import tokens from "@core/config/constants/tokens";
-import { RootState } from "@core/state";
-import { CHAIN_ID, FarmOriginPlatform } from "@core/types/enums";
-import { formatCurrency } from "@core/utils/common";
 import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress } from "viem";
+import { getPricesByTime, getTokenPricesBackend } from "./../../api/token";
+import rewardVaultAbi from "./../../assets/abis/rewardVaultAbi";
+import { Common_Chains_State, pools_chain_ids } from "./../../config/constants/pools_json";
+import tokens from "./../../config/constants/tokens";
+import { RootState } from "./../../state";
+import { CHAIN_ID } from "./../../types/enums";
+import { formatCurrency } from "./../../utils/common";
 import {
   Balances,
   Decimals,

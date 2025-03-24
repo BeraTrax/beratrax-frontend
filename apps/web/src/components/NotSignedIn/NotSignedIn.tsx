@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { ReactComponent as WalletSvg } from "src/assets/images/walletSvg.svg";
+import { ReactComponent as WalletSvg } from "@beratrax/core/src/assets/images/walletSvg.svg";
 import styles from "./NotSignedIn.module.css";
+import { FC } from "react";
 
 interface Props {
     heading?: string;

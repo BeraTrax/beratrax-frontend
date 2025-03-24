@@ -1,15 +1,14 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { formatUnits } from "viem";
-import { formatDistance } from "date-fns";
-import { FiExternalLink } from "react-icons/fi";
+import { EARNINGS_GRAPH_URL } from "@beratrax/core/src/config/constants";
 import pools from "@beratrax/core/src/config/constants/pools_json";
-import { CHAIN_ID } from "src/types/enums";
-import { customCommify } from "src/utils/common";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { useConstants } from "@beratrax/core/src/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import { EARNINGS_GRAPH_URL } from "@beratrax/core/src/config/constants";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { customCommify } from "@beratrax/core/src/utils/common";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistance } from "date-fns";
+import { useState } from "react";
+import { FiExternalLink } from "react-icons/fi";
+import { formatUnits } from "viem";
 
 const ITEMS_PER_PAGE = 100;
 

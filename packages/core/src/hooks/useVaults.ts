@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Vault } from "@core/types";
+import { Vault } from "./../types";
 import { useFarmApys } from "../state/farms/hooks/useFarmApy";
 import useFarms from "../state/farms/hooks/useFarms";
 import useTokens from "../state/tokens/useTokens";

@@ -1,12 +1,10 @@
+import { useApp, useReferralDashboard, useWallet } from "@beratrax/core/src/hooks";
+import useAccountData from "@beratrax/core/src/state/account/useAccountData";
+import { copyToClipboard, getPositionSuffix } from "@beratrax/core/src/utils";
 import React, { useMemo, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { ReferralCard } from "src/components/ReferralCard/ReferralCard";
 import { ReferralDashboardTable } from "src/components/ReferralDashboardTable/ReferralDashboardTable";
-import { useApp } from "@beratrax/core/src/hooks";
-import { useReferralDashboard } from "@beratrax/core/src/hooks";
-import { useWallet } from "@beratrax/core/src/hooks";
-import useAccountData from "@beratrax/core/src/state/account/useAccountData";
-import { copyToClipboard, getPositionSuffix } from "src/utils";
 import styles from "./ReferralDashboard.module.css";
 
 const ReferralDashboard: React.FC = () => {

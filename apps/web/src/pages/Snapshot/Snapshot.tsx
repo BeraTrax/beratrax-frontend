@@ -1,19 +1,16 @@
+
+import { SNAPSHOT_APP_NAME, SNAPSHOT_SPACE_ID } from "@beratrax/core/src/config/constants";
 import {
   useSnapshotJoinSpace,
   useSnapshotSpace,
-  useSnapshotSpaceProposals,
-  useSnapshotVote,
+  useSnapshotSpaceProposals
 } from "@beratrax/core/src/hooks/useSnapshot";
-import "./Snapshot.css";
+import { useMemo, useState } from "react";
+import PoolButton from "src/components/PoolButton/PoolButton";
 import { ProposalCard } from "src/components/ProposalCard/ProposalCard";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import tokens from "@beratrax/core/src/config/constants/tokens";
-import { useMemo, useState } from "react";
 import { Tabs } from "src/components/Tabs/Tabs";
-import PoolButton from "src/components/PoolButton/PoolButton";
-import { SNAPSHOT_APP_NAME, SNAPSHOT_SPACE_ID } from "@beratrax/core/src/config/constants";
-import { CHAIN_ID } from "src/types/enums";
+import "./Snapshot.css";
 
 export const Snapshot = () => {
   const { joinSpace, loadingJoinSpace } = useSnapshotJoinSpace();

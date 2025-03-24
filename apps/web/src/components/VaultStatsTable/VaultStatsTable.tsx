@@ -1,9 +1,8 @@
+import { useConstants, useStats } from "@beratrax/core/src/hooks";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import { BsClipboardData } from "react-icons/bs";
 import { FiExternalLink } from "react-icons/fi";
-import { useConstants } from "@beratrax/core/src/hooks";
-import { useStats } from "@beratrax/core/src/hooks";
-import { CHAIN_ID } from "src/types/enums";
-import { customCommify } from "src/utils/common";
 
 export const VaultStatsTable = () => {
   const { vaultStats } = useStats();

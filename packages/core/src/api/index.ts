@@ -1,13 +1,7 @@
+import { Network, Tenderly } from "@tenderly/sdk";
 import axios from "axios";
-import {
-  Tenderly,
-  Network,
-  SimulationParametersOverrides,
-  EncodedStateOverride,
-  EncodeStateRequest,
-  StateOverride,
-} from "@tenderly/sdk";
 
+import { Address, Hex } from "viem";
 import {
   BACKEND_BASE_URL,
   SNAPSHOT_GRAPHQL_URL,
@@ -15,8 +9,7 @@ import {
   TENDERLY_ACCESS_TOKEN,
   TENDERLY_PROJECT_SLUG,
   TENDERLY_USER_NAME,
-} from "@core/config/constants";
-import { Address, Hex } from "viem";
+} from "./../config/constants";
 
 export const backendApi = axios.create({
   // baseURL: "http://localhost:8000/api/v1/",

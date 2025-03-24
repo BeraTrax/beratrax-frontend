@@ -1,7 +1,7 @@
-import { useMemo } from "react";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useAppSelector } from "@beratrax/core/src/state";
-import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
+import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { useMemo } from "react";
 
 export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
   const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);

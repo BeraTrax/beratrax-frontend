@@ -1,11 +1,12 @@
+
 import { useEffect, useState } from "react";
-import { toEth, toWei } from "@core/utils/common";
-import useWallet from "./useWallet";
-import useTokens from "../state/tokens/useTokens";
-import farmFunctions from "@core/api/pools";
-import { Address, zeroAddress } from "viem";
-import { PoolDef } from "@core/config/constants/pools_json";
 import { v4 as uuid } from "uuid";
+import { Address, zeroAddress } from "viem";
+import useTokens from "../state/tokens/useTokens";
+import farmFunctions from "./../api/pools";
+import { PoolDef } from "./../config/constants/pools_json";
+import { toEth, toWei } from "./../utils/common";
+import useWallet from "./useWallet";
 
 export const useSlippageDeposit = (maxAmounts: number[], tokens: Address[], farm: PoolDef) => {
   const [slippageAmounts, setSlippageAmounts] = useState<{ [key: string]: number }>({});

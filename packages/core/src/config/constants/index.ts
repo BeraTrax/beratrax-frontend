@@ -1,7 +1,4 @@
-import dotenv from "dotenv";
-
-dotenv.config();
-import { CHAIN_ID } from "@core/types/enums";
+import { CHAIN_ID } from "./../../types/enums";
 
 export const RoutesPaths = {
   Home: "/",

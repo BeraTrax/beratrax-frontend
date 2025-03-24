@@ -1,9 +1,4 @@
 import { createWeb3Name } from "@web3-name-sdk/core";
-import { notifyError } from "@core/api/notify";
-import { defaultChainId } from "@core/config/constants";
-import { errorMessages } from "@core/config/constants/notifyMessages";
-import store from "@core/state";
-import { IClients } from "@core/types";
 import {
   Address,
   erc20Abi,
@@ -15,13 +10,17 @@ import {
   TransactionReceipt,
   zeroAddress,
 } from "viem";
-
-import { addressesByChainId } from "@core/config/constants/contracts";
-import { PoolDef } from "@core/config/constants/pools_json";
-import { SupportedChains } from "@core/config/walletConfig";
-import { Balances } from "@core/state/tokens/types";
-import { CHAIN_ID } from "@core/types/enums";
+import { notifyError } from "./../api/notify";
+import { defaultChainId } from "./../config/constants";
+import { errorMessages } from "./../config/constants/notifyMessages";
+import store from "./../state";
+import { IClients } from "./../types";
 import { waitForTransactionReceipt } from "viem/actions";
+import { addressesByChainId } from "./../config/constants/contracts";
+import { PoolDef } from "./../config/constants/pools_json";
+import { SupportedChains } from "./../config/walletConfig";
+import { Balances } from "./../state/tokens/types";
+import { CHAIN_ID } from "./../types/enums";
 
 const web3Name = createWeb3Name();
 

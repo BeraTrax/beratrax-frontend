@@ -1,5 +1,5 @@
 import { FC } from "react";
-import errorIcon from "../../../assets/images/Error.png";
+import errorIcon from "@beratrax/core/src/assets/images/Error.png";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 
 interface IProps {

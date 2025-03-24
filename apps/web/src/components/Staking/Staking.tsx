@@ -1,6 +1,5 @@
 import { ImSpinner8 } from "react-icons/im";
-import { toEth } from "src/utils/common";
-
+import { toEth } from "@beratrax/core/src/utils/common";
 interface StakingProps {
     userStake: bigint;
     btxBalance: string;

@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getEarnings, getEarningsForPlatforms } from "@core/api/farms";
-import farmFunctions from "@core/api/pools";
-import VaultAbi from "@core/assets/abis/vault.json";
-import { IS_LEGACY } from "@core/config/constants";
-import { FarmOriginPlatform, FarmTransactionType } from "@core/types/enums";
-import { sleep, toEth } from "@core/utils/common";
 import { Address, erc20Abi, getContract } from "viem";
+import { RootState } from "..";
 import { getPricesOfLpByTimestamp } from "../tokens/tokensReducer";
+import { getEarnings, getEarningsForPlatforms } from "./../../api/farms";
+import farmFunctions from "./../../api/pools";
+import VaultAbi from "./../../assets/abis/vault.json";
+import { IS_LEGACY } from "./../../config/constants";
+import { FarmOriginPlatform, FarmTransactionType } from "./../../types/enums";
+import { sleep, toEth } from "./../../utils/common";
 import {
   Earnings,
   FarmDetailInputOptions,
@@ -16,7 +17,6 @@ import {
   StateInterface,
   VaultEarnings,
 } from "./types";
-import { RootState } from "..";
 
 const initialState: StateInterface = {
   farmDetails: {},

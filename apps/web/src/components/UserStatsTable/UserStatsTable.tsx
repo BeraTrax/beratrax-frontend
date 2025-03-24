@@ -1,11 +1,10 @@
+import { useConstants, useStats } from "@beratrax/core/src/hooks";
+import { CHAIN_ID, UsersTableColumns } from "@beratrax/core/src/types/enums";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import { FC } from "react";
-import { useStats } from "@beratrax/core/src/hooks";
-import { customCommify } from "src/utils/common";
-import { useConstants } from "@beratrax/core/src/hooks";
-import { FiExternalLink } from "react-icons/fi";
 import { BsClipboardData } from "react-icons/bs";
-import { CHAIN_ID, UsersTableColumns } from "src/types/enums";
 import { FaArrowDown, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import { FiExternalLink } from "react-icons/fi";
 import { v4 as uuid } from "uuid";
 
 export const UserStatsTable: FC = () => {

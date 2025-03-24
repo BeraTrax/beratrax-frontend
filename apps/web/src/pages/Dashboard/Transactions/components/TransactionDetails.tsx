@@ -1,12 +1,11 @@
 import React from "react";
 import { FaRegCircle } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
-
-import CheckMark from "src/assets/images/checkmark.png";
+import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
-import { formatCurrency } from "src/utils/common";
+import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
 

@@ -1,11 +1,11 @@
-import { FC, useEffect, useMemo } from "react";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useNotification } from "@beratrax/core/src/state/notification/useNotification";
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { formatBalance } from "@beratrax/core/src/utils/common";
+import { FC, useEffect, useMemo } from "react";
+import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
 import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
-import { FarmTransactionType } from "src/types/enums";
-import { formatBalance } from "src/utils/common";
 
 interface DepositInfo {
   amount: string;

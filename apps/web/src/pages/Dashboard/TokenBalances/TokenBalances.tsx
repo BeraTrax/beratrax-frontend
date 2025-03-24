@@ -1,5 +1,11 @@
 import { useApp } from "@beratrax/core/src/hooks";
-// import useBalances from "@beratrax/core/src/state/balances/useBalances";
+import { SupportedChains } from "@beratrax/core/src/config/walletConfig";
+import { useWallet } from "@beratrax/core/src/hooks";
+import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
+import { toggleTokenDetailBalances } from "@beratrax/core/src/state/settings/settingsReducer";
+import useTokens, { UIStateEnum } from "@beratrax/core/src/state/tokens/useTokens";
+import { Token } from "@beratrax/core/src/types";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { FC, useCallback, useMemo, useState } from "react";
 import { BiSliderAlt } from "react-icons/bi";
 import { TbListDetails } from "react-icons/tb";
@@ -7,13 +13,6 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
 import { TransferToken } from "src/components/modals/TransferToken/TransferToken";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { SupportedChains } from "@beratrax/core/src/config/walletConfig";
-import { useWallet } from "@beratrax/core/src/hooks";
-import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
-import { toggleTokenDetailBalances } from "@beratrax/core/src/state/settings/settingsReducer";
-import useTokens, { UIStateEnum } from "@beratrax/core/src/state/tokens/useTokens";
-import { Token } from "src/types";
-import { CHAIN_ID } from "src/types/enums";
 import { zeroAddress } from "viem";
 
 interface IProps {}

@@ -12,12 +12,11 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
 import { useNotifications } from "reapop";
 import { TamaguiProvider, Theme } from 'tamagui';
-import { WagmiProvider } from "wagmi";
 import "./App.css";
 import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import "./styles/global.css";
-import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
+import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
 
 setHook("notifications", useNotifications);
 
@@ -41,32 +40,30 @@ function App() {
     trackLanguage();
   }, []);
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <WagmiProvider config={rainbowConfig}>
-                <RainbowKitProvider
-                    theme={darkTheme({
-                        accentColor: "var( --new-color_primary)",
-                        accentColorForeground: "white",
-                    })}
-                    showRecentTransactions={false}
-                    appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
-                >
-                    <WalletProvider>
-                        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-                            <Theme name="dark">
-                                <Router>
-                                    <Body />
-                                </Router>
-                            </Theme>
-                        </TamaguiProvider>
-                        <ReactHooksWrapper />
-                    </WalletProvider>
-                    <ReactQueryDevtools />
-                </RainbowKitProvider>
-            </WagmiProvider>
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider
+        theme={darkTheme({
+          accentColor: "var( --new-color_primary)",
+          accentColorForeground: "white",
+        })}
+        showRecentTransactions={false}
+        appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
+      >
+        <WalletProvider>
+          <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+            <Theme name="dark">
+              <Router>
+                <Body />
+              </Router>
+            </Theme>
+          </TamaguiProvider>
+          <ReactHooksWrapper />
+        </WalletProvider>
+        <ReactQueryDevtools />
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

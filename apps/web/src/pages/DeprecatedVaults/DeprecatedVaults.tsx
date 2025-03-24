@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import BackButton from "src/components/BackButton/BackButton";
-import { useDetailInput } from "@beratrax/core/src/hooks";
 import pools_json from "@beratrax/core/src/config/constants/pools_json";
-import { toWei } from "src/utils/common";
-import { CHAIN_ID, FarmTransactionType } from "src/types/enums";
+import { useDetailInput } from "@beratrax/core/src/hooks";
+import { useAppDispatch } from "@beratrax/core/src/state";
+import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
   TransactionStep,
   TransactionStepStatus,
   TransactionTypes,
   ZapOutStep,
 } from "@beratrax/core/src/state/transactions/types";
-import { useAppDispatch } from "@beratrax/core/src/state";
-import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
-import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
-import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
-import ConfirmFarmActionModal from "src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
+import { CHAIN_ID, FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { toWei } from "@beratrax/core/src/utils/common";
 import { formatUnits } from "ethers/lib/utils";
-import { useReadContract } from "wagmi";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BackButton from "src/components/BackButton/BackButton";
+import ConfirmFarmActionModal from "src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import { erc20Abi, getAddress } from "viem";
-import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { useReadContract } from "wagmi";
 
 const DeprecatedVaults: React.FC = () => {
   const selectOption = [

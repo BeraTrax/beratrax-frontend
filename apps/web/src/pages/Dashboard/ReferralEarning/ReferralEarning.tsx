@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { getReferralEarning } from "@beratrax/core/src/state/account/accountReducer";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
-import { customCommify } from "src/utils/common";
+import { getReferralEarning } from "@beratrax/core/src/state/account/accountReducer";
+import { customCommify } from "@beratrax/core/src/utils/common";
+import { useEffect } from "react";
 
 const ReferralEarning = () => {
   const { currentWallet } = useWallet();

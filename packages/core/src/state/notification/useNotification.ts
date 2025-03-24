@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from "@core/state";
-import { clearAllNotificationsAction } from "@core/state/notification/notifiactionReducer";
+import { useAppDispatch, useAppSelector } from "./../../state";
+import { clearAllNotificationsAction } from "./notifiactionReducer";
 
 export const useNotification = () => {
   const { notifications } = useAppSelector((state) => state.notification);

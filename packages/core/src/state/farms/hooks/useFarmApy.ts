@@ -1,7 +1,7 @@
-import { useMemo, useCallback } from "react";
-import { PoolDef } from "@core/config/constants/pools_json";
-import { useAppDispatch, useAppSelector } from "@core/state";
-import { fetchApys } from "@core/state/apys/apysReducer";
+import { useCallback, useMemo } from "react";
+import { PoolDef } from "./../../../config/constants/pools_json";
+import { useAppDispatch, useAppSelector } from "./../../../state";
+import { fetchApys } from "./../../../state/apys/apysReducer";
 
 /**
  * Gets Apy of Farm

@@ -1,7 +1,7 @@
-import { CHAIN_ID } from "@core/types/enums";
+import { Address } from "viem";
 import bgtLogo from "./../../assets/images/bgt.png";
 import btxLogo from "./../../assets/images/btxTokenLogo.png";
-import { Address } from "viem";
+import { CHAIN_ID } from "./../../types/enums";
 
 const tokens: { address: Address; name: string; logo: string; decimals: number; chainId: number }[] = [
   {

@@ -1,22 +1,22 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { encodeFunctionData, getContract, erc20Abi, Address, zeroAddress } from "viem";
+import { approveErc20, getBalance } from "@beratrax/core/src/api/token";
+import stakingAbi from "@beratrax/core/src/assets/abis/stakingAbi";
+import btxLogo from "@beratrax/core/src/assets/images/btxTokenLogo.png";
 import closemodalicon from "@beratrax/core/src/assets/images/closemodalicon.svg";
-import PoolButton from "src/components/PoolButton/PoolButton";
+import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
+import { useWallet } from "@beratrax/core/src/hooks";
+import { useFarmApys, useFarms } from "@beratrax/core/src/state/farms/hooks";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { awaitTransaction, toEth, toWei } from "@beratrax/core/src/utils/common";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { FaCircleCheck } from "react-icons/fa6";
+import { ImSpinner8 } from "react-icons/im";
 import MobileModalContainer from "src/components/MobileModalContainer/MobileModalContainer";
+import PoolButton from "src/components/PoolButton/PoolButton";
 import Staking from "src/components/Staking/Staking";
 import UnStaking from "src/components/Staking/UnStaking";
 import { Tabs } from "src/components/Tabs/Tabs";
-import { CHAIN_ID } from "@beratrax/core/src/types/enums";
-import { awaitTransaction, toEth, toWei } from "@beratrax/core/src/utils/common";
-import { useWallet } from "@beratrax/core/src/hooks";
-import { useFarms, useFarmApys } from "@beratrax/core/src/state/farms/hooks";
-import { approveErc20, getBalance } from "@beratrax/core/src/api/token";
-import stakingAbi from "@beratrax/core/src/assets/abis/stakingAbi";
+import { Address, encodeFunctionData, getContract } from "viem";
 import stakingModalStyles from "./StakingModal.module.css";
-import { ImSpinner8 } from "react-icons/im";
-import { FaCircleCheck } from "react-icons/fa6";
-import btxLogo from "./../../../assets/images/btxTokenLogo.png";
-import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 
 interface StakingModalProps {
   open: boolean;

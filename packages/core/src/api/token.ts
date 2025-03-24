@@ -1,7 +1,7 @@
-import { awaitTransaction } from "@core/utils/common";
+import { Address, encodeFunctionData, erc20Abi, getContract, maxUint256, PublicClient, zeroAddress } from "viem";
 import { backendApi } from ".";
-import { PublicClient, Address, erc20Abi, getContract, maxUint256, zeroAddress, encodeFunctionData } from "viem";
-import { IClients } from "@core/types";
+import { IClients } from "./../types";
+import { awaitTransaction } from "./../utils/common";
 
 export const getSpecificTokenPrice = async (tokenAddress: Address, chainId: number) => {
   const res = await getTokenPricesBackend();

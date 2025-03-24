@@ -1,5 +1,5 @@
 import React from "react";
-import { toWei } from "src/utils/common";
+import { toWei } from "@beratrax/core/src/utils/common";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./NativeUSDC.module.css";
 

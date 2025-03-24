@@ -1,25 +1,26 @@
+
 import { getStatus } from "@lifi/sdk";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { backendApi } from "@core/api";
-import pools_json from "@core/config/constants/pools_json";
-import { SupportedChains } from "@core/config/walletConfig";
-import { IClients } from "@core/types";
 import { Address, createPublicClient, Hex, http, TransactionReceipt } from "viem";
 import store, { RootState } from "..";
+import { backendApi } from "./../../api";
+import pools_json from "./../../config/constants/pools_json";
+import { SupportedChains } from "./../../config/walletConfig";
+import { IClients } from "./../../types";
 import {
-  ApproveBridgeStep,
-  ApproveZapStep,
-  BridgeService,
-  EditTransaction,
-  InitiateBridgeStep,
-  StateInterface,
-  Transaction,
-  TransactionStep,
-  TransactionStepStatus,
-  TransactionTypes,
-  WaitForBridgeResultsStep,
-  ZapInStep,
-  ZapOutStep,
+    ApproveBridgeStep,
+    ApproveZapStep,
+    BridgeService,
+    EditTransaction,
+    InitiateBridgeStep,
+    StateInterface,
+    Transaction,
+    TransactionStep,
+    TransactionStepStatus,
+    TransactionTypes,
+    WaitForBridgeResultsStep,
+    ZapInStep,
+    ZapOutStep,
 } from "./types";
 
 const initialState: StateInterface = {

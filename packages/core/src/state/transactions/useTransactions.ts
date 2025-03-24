@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from "@core/state";
-import { checkPendingTransactionsStatus, getTransactionsDb, reset } from "@core/state/transactions/transactionsReducer";
-import useWallet from "../../hooks/useWallet";
 import { useCallback, useEffect, useState } from "react";
+import useWallet from "../../hooks/useWallet";
+import { useAppDispatch, useAppSelector } from "./../../state";
+import { checkPendingTransactionsStatus, getTransactionsDb, reset } from "./transactionsReducer";
 
 const useTransactions = () => {
   const dispatch = useAppDispatch();

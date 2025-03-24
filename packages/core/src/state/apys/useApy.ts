@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { fetchSpecificFarmApy } from "@core/api/stats";
-import { VAULT_APY_GRAPH } from "@core/config/constants/query";
+import { fetchSpecificFarmApy } from "./../../api/stats";
+import { VAULT_APY_GRAPH } from "./../../config/constants/query";
 
 export const useApy = (id: number) => {
   const { data, isLoading } = useQuery({

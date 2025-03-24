@@ -1,11 +1,12 @@
+
 import { useMemo, useState } from "react";
-import useFarms from "../state/farms/hooks/useFarms";
-import useWallet from "./useWallet";
 import { Address, erc20Abi, getContract, zeroAddress } from "viem";
 import { estimateGas, getBalance, getGasPrice, waitForTransactionReceipt } from "viem/actions";
+import useFarms from "../state/farms/hooks/useFarms";
+import { CHAIN_ID } from "./../types/enums";
 import useNotify from "./useNotify";
+import useWallet from "./useWallet";
 import useWeb3Auth from "./useWeb3Auth";
-import { CHAIN_ID } from "@core/types/enums";
 
 const useVaultMigrate = () => {
   const { farms } = useFarms();

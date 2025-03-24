@@ -1,6 +1,7 @@
+
 import React, { useMemo } from "react";
-import { useAppDispatch, useAppSelector } from "@core/state";
-import { toggleTheme, toggleSupportChat as _toggleSupportChat } from "@core/state/settings/settingsReducer";
+import { useAppDispatch, useAppSelector } from "./../state";
+import { toggleSupportChat as _toggleSupportChat, toggleTheme } from "./../state/settings/settingsReducer";
 
 export const AppContext = React.createContext({
   lightMode: true,

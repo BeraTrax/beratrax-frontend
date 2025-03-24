@@ -20,6 +20,7 @@ import * as Haptics from 'expo-haptics'
 import { StyleSheet } from 'react-native'
 import { TamaguiProvider, Theme } from 'tamagui'
 import { WagmiProvider } from 'wagmi'
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -41,7 +42,7 @@ createAppKit({
 const RootLayout = () => {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    LeagueSpartan: require('@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf'),
   });
 
   useEffect(() => {
@@ -62,9 +63,10 @@ const RootLayout = () => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
-          <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-            <Theme name="dark">
-              <WalletProvider>
+        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+          <Theme name="dark">
+            <WalletProvider>
+              <SafeAreaProvider>
                 {/* <ConnectView />
                 <Test /> */}
                 <Tabs
@@ -81,8 +83,7 @@ const RootLayout = () => {
                       key={key}
                       name={key}
                       options={{
-                        title: value.label,
-                        ...value
+                        ...value,
                       }}
                       listeners={{
                         tabPress: () => handleTabPress(),
@@ -91,9 +92,10 @@ const RootLayout = () => {
                   ))}
                 </Tabs>
                 <AppKit />
-              </WalletProvider>
-            </Theme>
-          </TamaguiProvider>
+              </SafeAreaProvider>
+            </WalletProvider>
+          </Theme>
+        </TamaguiProvider>
         {/* </ThemeProvider> */}
       </QueryClientProvider>
     </WagmiProvider >
@@ -119,7 +121,7 @@ const tabOptions = {
   Dashboard: {
     name: 'Dashboard',
     icon: 'home-outline',
-    label: 'Dashboard',
+    title: 'Dashboard',
     tabBarIcon: ({ color, size }: { color: string, size: number }) => (
       <Ionicons name="home-outline" size={size} color={color} />
     ),
@@ -128,7 +130,7 @@ const tabOptions = {
   Earn: {
     name: 'Earn',
     icon: 'wallet-outline',
-    label: 'Earn',
+    title: 'Earn',
     tabBarIcon: ({ color, size }: { color: string, size: number }) => (
       <Ionicons name="wallet-outline" size={size} color={color} />
     ),
@@ -137,7 +139,7 @@ const tabOptions = {
   'User Guide': {
     name: 'User Guide',
     icon: 'book-outline',
-    label: 'User Guide',
+    title: 'User Guide',
     tabBarIcon: ({ color, size }: { color: string, size: number }) => (
       <Ionicons name="book-outline" size={size} color={color} />
     ),
@@ -146,7 +148,7 @@ const tabOptions = {
   Stats: {
     name: 'Stats',
     icon: 'bookmark-outline',
-    label: 'Stats',
+    title: 'Stats',
     tabBarIcon: ({ color, size }: { color: string, size: number }) => (
       <Ionicons name="bookmark-outline" size={size} color={color} />
     ),

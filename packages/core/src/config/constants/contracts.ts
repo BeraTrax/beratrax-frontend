@@ -1,4 +1,4 @@
-import { CHAIN_ID } from "@core/types/enums";
+import { CHAIN_ID } from "./../../types/enums";
 import { Address } from "viem";
 
 export interface Addresses {

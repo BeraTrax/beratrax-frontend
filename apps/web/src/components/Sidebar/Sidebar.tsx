@@ -1,12 +1,12 @@
+import { ReactComponent as EarnIcon } from "@beratrax/core/src/assets/images/earn.svg";
+import logo from "@beratrax/core/src/assets/images/logo.png";
+import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
 import { AiOutlineExport } from "react-icons/ai";
 import { HiDocumentText } from "react-icons/hi";
 import { ImStatsDots } from "react-icons/im";
 import { IoIosFlask } from "react-icons/io";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ReactComponent as EarnIcon } from "src/assets/images/earn.svg";
-import logo from "src/assets/images/logo.png";
-import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {

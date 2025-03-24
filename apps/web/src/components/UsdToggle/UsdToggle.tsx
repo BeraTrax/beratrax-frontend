@@ -1,6 +1,6 @@
+import { ReactComponent as CoinStack } from "@beratrax/core/src/assets/images/coinStack.svg";
 import { FC } from "react";
 import { FaDollarSign } from "react-icons/fa";
-import { ReactComponent as CoinStack } from "src/assets/images/coinStack.svg";
 import styles from "./UsdToggle.module.css";
 
 interface IProps {

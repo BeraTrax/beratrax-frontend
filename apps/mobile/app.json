@@ -4,7 +4,7 @@
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png",
     "scheme": "com.beratrax.mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

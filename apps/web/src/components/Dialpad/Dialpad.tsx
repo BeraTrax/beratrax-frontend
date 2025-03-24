@@ -1,5 +1,5 @@
+import depositmodalbackspacecross from "@beratrax/core/src/assets/images/depositmodalbackspacecross.svg";
 import { FC, useEffect } from "react";
-import depositmodalbackspacecross from "src/assets/images/depositmodalbackspacecross.svg";
 
 interface DialPadProps {
     inputValue: string; // The current value

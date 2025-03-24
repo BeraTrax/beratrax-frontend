@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@core/state";
-import { updatePrices } from "@core/state/tokens/tokensReducer";
-import useFarms from "../farms/hooks/useFarms";
-import useWallet from "@core/hooks/useWallet";
-import { fetchBalances, fetchDecimals, fetchTotalSupplies, reset } from "./tokensReducer";
 import { Address, getAddress, zeroAddress } from "viem";
-import { FarmType } from "@core/types/enums";
-import { defaultChainId } from "@core/config/constants";
-import { Token } from "@core/types";
-import { getNativeCoinInfo } from "@core/utils/common";
-import customTokens from "@core/config/constants/tokens";
+import useFarms from "../farms/hooks/useFarms";
+import { useAppDispatch, useAppSelector } from "./../";
+import { defaultChainId } from "./../../config/constants";
+import customTokens from "./../../config/constants/tokens";
+import useWallet from "./../../hooks/useWallet";
+import { Token } from "./../../types";
+import { FarmType } from "./../../types/enums";
+import { getNativeCoinInfo } from "./../../utils/common";
+import { fetchBalances, fetchDecimals, fetchTotalSupplies, reset, updatePrices } from "./tokensReducer";
 
 export enum UIStateEnum {
   "SHOW_TOKENS" = "SHOW_TOKENS",

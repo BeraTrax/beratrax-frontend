@@ -1,3 +1,9 @@
+import userguideimagefive from "@beratrax/core/src/assets/images/userguideimagefive.png";
+import userguideimagefour from "@beratrax/core/src/assets/images/userguideimagefour.jpg";
+import userguideimageone from "@beratrax/core/src/assets/images/userguideimageone.png";
+import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
+import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
+import userguideimagetwo from "@beratrax/core/src/assets/images/userguideimagetwo.png";
 import React, { ReactNode } from "react";
 import { AiOutlineExport } from "react-icons/ai";
 import { BsChat, BsDiamondFill, BsQuestion } from "react-icons/bs";
@@ -11,12 +17,6 @@ import {
     PiNumberCircleTwoLight,
 } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import userguideimagefive from "src/assets/images/userguideimagefive.png";
-import userguideimagefour from "src/assets/images/userguideimagefour.jpg";
-import userguideimageone from "src/assets/images/userguideimageone.png";
-import userguideimagesix from "src/assets/images/userguideimagesix.png";
-import userguideimagethree from "src/assets/images/userguideimagethree.png";
-import userguideimagetwo from "src/assets/images/userguideimagetwo.png";
 
 const IconWithHeading: React.FC<{ Icon: IconType; children?: ReactNode } & IconBaseProps> = ({
     Icon,

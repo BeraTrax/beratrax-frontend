@@ -1,10 +1,10 @@
-import { Token } from "@core/types";
-import useTokens from "../state/tokens/useTokens";
 import { FormEvent, useEffect, useState } from "react";
+import useTokens from "../state/tokens/useTokens";
+import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "./../api/notify";
+import { errorMessages, loadingMessages, successMessages } from "./../config/constants/notifyMessages";
+import { Token } from "./../types";
+import { resolveEnsDomain, toWei } from "./../utils/common";
 import useTransfer from "./useTransfer";
-import { resolveEnsDomain, toWei } from "@core/utils/common";
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@core/api/notify";
-import { errorMessages, loadingMessages, successMessages } from "@core/config/constants/notifyMessages";
 
 export const useTransferToken = (token: Token, handleClose: Function) => {
   const { reloadBalances } = useTokens();

@@ -1,13 +1,13 @@
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import { useApp } from "@beratrax/core/src/hooks";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { getLpAddressForFarmsPrice, toPreciseNumber } from "@beratrax/core/src/utils/common";
 import { useMemo } from "react";
 import { RiArrowUpSLine } from "react-icons/ri";
-import { useApp } from "@beratrax/core/src/hooks";
-import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import { getLpAddressForFarmsPrice, toPreciseNumber } from "src/utils/common";
-import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
-import "./Details.css";
 import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import "./Details.css";
 
 interface Props {
   farm: PoolDef;

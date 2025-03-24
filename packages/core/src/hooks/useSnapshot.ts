@@ -1,13 +1,13 @@
 import snapshot from "@snapshot-labs/snapshot.js";
-import { SNAPSHOT_APP_NAME, SNAPSHOT_HUB_URL, SNAPSHOT_SPACE_ID } from "@core/config/constants";
-import { useEthersWeb3Provider } from "@core/config/walletConfig";
 import { useEffect, useMemo, useState } from "react";
-import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "@core/types/snapshot";
 import {
   getSnapshotSpace,
   getSnapshotSpaceProposals,
   getSnapshotSpaceProposalsVotesByAddress,
-} from "@core/api/snapshot";
+} from "./../api/snapshot";
+import { SNAPSHOT_HUB_URL, SNAPSHOT_SPACE_ID } from "./../config/constants";
+import { useEthersWeb3Provider } from "./../config/walletConfig";
+import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "./../types/snapshot";
 import useNotify from "./useNotify";
 import useWallet from "./useWallet";
 

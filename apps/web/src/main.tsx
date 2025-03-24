@@ -12,6 +12,8 @@ import { AppProvider } from "@beratrax/core/src/context";
 import "./index.css";
 import "./polyfills";
 import store, { persistor } from "@beratrax/core/src/state";
+import { WagmiProvider } from "wagmi";
+import { rainbowConfig } from "@beratrax/core/src/config/walletConfig";
 
 createConfig({
   integrator: "Beratrax",
@@ -34,15 +36,17 @@ setUpNotifications({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <NotificationsProvider>
-          <AppProvider>
-            <App />
-            <Notifications />
-          </AppProvider>
-        </NotificationsProvider>
-      </PersistGate>
-    </Provider>
+    <WagmiProvider config={rainbowConfig}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <NotificationsProvider>
+            <AppProvider>
+              <App />
+              <Notifications />
+            </AppProvider>
+          </NotificationsProvider>
+        </PersistGate>
+      </Provider>
+    </WagmiProvider>
   </React.StrictMode>
 );

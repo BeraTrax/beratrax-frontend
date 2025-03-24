@@ -1,26 +1,19 @@
-import { Apys } from "@core/state/apys/types";
-import { FarmOriginPlatform, FarmType } from "./enums";
-import { FarmDataProcessed } from "@core/api/pools/types";
 import {
-    PublicClient,
-    Transport,
-    Chain,
     Address,
-    WalletClient,
-    Account,
-    CustomTransport,
-    JsonRpcAccount,
+    Chain,
     createWalletClient,
-    HttpTransport,
+    CustomTransport,
     Hex,
+    HttpTransport,
+    JsonRpcAccount,
     LocalAccount,
+    PublicClient
 } from "viem";
-import { ENTRYPOINT_ADDRESS_V07, SmartAccountClient } from "permissionless";
-import { KernelEcdsaSmartAccount } from "permissionless/accounts";
-import { Web3AuthSigner } from "@alchemy/aa-signers/web3auth";
-import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-import { PoolDef } from "@core/config/constants/pools_json";
-import { Balances } from "@core/state/tokens/types";
+import { FarmDataProcessed } from "./../api/pools/types";
+import { PoolDef } from "./../config/constants/pools_json";
+import { Apys } from "./../state/apys/types";
+import { Balances } from "./../state/tokens/types";
+import { FarmType } from "./enums";
 
 export interface FarmDetails extends PoolDef {
     userVaultBalance: number;

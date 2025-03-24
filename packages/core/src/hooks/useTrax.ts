@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useAppSelector } from "@core/state";
+import { useAppSelector } from "./../state";
 import { useVaults } from "./useVaults";
 
 const useTrax = () => {

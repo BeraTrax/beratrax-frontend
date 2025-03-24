@@ -1,10 +1,10 @@
+import created from "@beratrax/core/src/assets/images/created.svg";
+import flywheelChart from "@beratrax/core/src/assets/images/flywheelChart.png";
+import flywheelChartMobile from "@beratrax/core/src/assets/images/flywheelChartMobile.png";
+import marketcap from "@beratrax/core/src/assets/images/marketcap.svg";
+import volume from "@beratrax/core/src/assets/images/volume.svg";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { GoRocket } from "react-icons/go";
-import created from "src/assets/images/created.svg";
-import flywheelChart from "src/assets/images/flywheelChart.png";
-import flywheelChartMobile from "src/assets/images/flywheelChartMobile.png";
-import marketcap from "src/assets/images/marketcap.svg";
-import volume from "src/assets/images/volume.svg";
 
 const StatInfo = ({
     iconUrl,

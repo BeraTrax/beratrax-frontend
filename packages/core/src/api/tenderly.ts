@@ -1,11 +1,13 @@
 import {
-  Network,
-  SimulationParametersOverrides,
   EncodedStateOverride,
   EncodeStateRequest,
+  Network,
+  SimulationParametersOverrides,
   StateOverride,
 } from "@tenderly/sdk";
+import { Address, createPublicClient, Hex, http, zeroAddress } from "viem";
 import { tenderlyApi } from ".";
+import { defaultChainId, tenderlyRpcs } from "./../config/constants";
 import {
   AssetChanges,
   BalanceDiffs,
@@ -13,10 +15,7 @@ import {
   SimulationResponse,
   TenderlySimulateTransactionBody,
   TraceTransactionResponse,
-} from "@core/types/tenderly";
-import { Address, createPublicClient, Hex, http, parseUnits, zeroAddress } from "viem";
-import { defaultChainId, TENDERLY_ACCESS_TOKEN, tenderlyRpcs } from "@core/config/constants";
-import { CHAIN_ID } from "@core/types/enums";
+} from "./../types/tenderly";
 
 // #region Utility functions
 const mapStateOverridesToEncodeStateRequest = (

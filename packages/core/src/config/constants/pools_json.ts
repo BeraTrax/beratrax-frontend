@@ -1,4 +1,4 @@
-import { CHAIN_ID, FarmOriginPlatform } from "@core/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "./../../types/enums";
 import { Address, zeroAddress } from "viem";
 
 export interface PoolDef {

@@ -1,15 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BridgeChainInfo, BridgeDirection, BridgeStatus, PolyUsdcToArbUsdcArgs, StateInterface } from "./types";
-import { notifyLoading } from "@core/api/notify";
-import { awaitTransaction, sleep } from "@core/utils/common";
-import { approveErc20, getBalance } from "@core/api/token";
-import { buildTransaction, getBridgeStatus, getRoute } from "@core/api/bridge";
-import { notifySuccess } from "@core/api/notify";
-import { notifyError } from "@core/api/notify";
-import { dismissNotify } from "@core/api/notify";
 import { v4 as uuid } from "uuid";
 import { RootState } from "..";
-import { constants } from "ethers";
+import { getBridgeStatus } from "./../../api/bridge";
+import { dismissNotify, notifyLoading, notifySuccess } from "./../../api/notify";
+import { BridgeChainInfo, BridgeDirection, BridgeStatus, StateInterface } from "./types";
 
 const initialState: StateInterface = {
   bridgeStates: {

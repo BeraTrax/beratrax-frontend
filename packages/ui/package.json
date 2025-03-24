@@ -14,6 +14,7 @@
     "build:ui": "tsc -b"
   },
   "dependencies": {
+    "@beratrax/core": "*",
     "@tamagui/config": "1.121.7",
     "@tamagui/core": "1.121.7",
     "@tamagui/font-inter": "1.121.7",
@@ -24,6 +25,7 @@
     "@tamagui/web": "1.121.7",
     "react": "^18.2.0",
     "react-native": "^0.78.0",
+    "react-native-svg": "^15.11.2",
     "tamagui": "1.121.7"
   },
   "devDependencies": {

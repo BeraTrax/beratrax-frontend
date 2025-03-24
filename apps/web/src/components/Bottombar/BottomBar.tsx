@@ -1,13 +1,13 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import DashboardActiveIcon from "src/assets/images/dashboardactiveicon.svg";
-import DashboardNonActiveIcon from "src/assets/images/dashboardnonactiveicon.svg";
-import EarnActiveIcon from "src/assets/images/earnactiveicon.svg";
-import EarnNonActiveIcon from "src/assets/images/earnnonactiveicon.svg";
-import LeaderboardActiveIcon from "src/assets/images/leaderboardactiveicon.svg";
-import LeaderboardNonActiveIcon from "src/assets/images/leaderboardnonactiveicon.svg";
-import UserGuideActiveIcon from "src/assets/images/userguideactiveicon.svg";
-import UserGuideNonActiveIcon from "src/assets/images/userguidenonactiveicon.svg";
+import DashboardActiveIcon from "@beratrax/core/src/assets/images/dashboardactiveicon.svg";
+import DashboardNonActiveIcon from "@beratrax/core/src/assets/images/dashboardnonactiveicon.svg";
+import EarnActiveIcon from "@beratrax/core/src/assets/images/earnactiveicon.svg";
+import EarnNonActiveIcon from "@beratrax/core/src/assets/images/earnnonactiveicon.svg";
+import LeaderboardActiveIcon from "@beratrax/core/src/assets/images/leaderboardactiveicon.svg";
+import LeaderboardNonActiveIcon from "@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg";
+import UserGuideActiveIcon from "@beratrax/core/src/assets/images/userguideactiveicon.svg";
+import UserGuideNonActiveIcon from "@beratrax/core/src/assets/images/userguidenonactiveicon.svg";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
+import { useLocation, useNavigate } from "react-router-dom";
 import BottombarItem from "./BottombarItem";
 
 type RouteButtonType = {

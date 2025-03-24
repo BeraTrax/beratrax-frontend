@@ -1,6 +1,6 @@
-import useWallet from "./useWallet";
-import { approveErc20 } from "@core/api/token";
 import { Address } from "viem";
+import { approveErc20 } from "./../api/token";
+import useWallet from "./useWallet";
 
 export const useApprovalErc20 = () => {
   const { currentWallet, getClients, getPublicClient, getWalletClient } = useWallet();

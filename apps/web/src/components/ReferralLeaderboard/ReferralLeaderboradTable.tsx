@@ -1,15 +1,14 @@
-import { FC, useEffect, useState, useMemo } from "react";
+import leaderboardtablepetalbrown from "@beratrax/core/src/assets/images/leaderboardtablepetalbrown.svg";
+import leaderboardtablepetalgrey from "@beratrax/core/src/assets/images/leaderboardtablepetalgrey.svg";
+import leaderboardtablepetalyellow from "@beratrax/core/src/assets/images/leaderboardtablepetalyellow.svg";
+import { useConstants, useStats } from "@beratrax/core/src/hooks";
+import { CHAIN_ID, UsersTableColumns } from "@beratrax/core/src/types/enums";
+import { customCommify } from "@beratrax/core/src/utils/common";
+import { FC, useEffect, useMemo, useState } from "react";
 import { BsClipboardData } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { IoChevronDownOutline, IoChevronUpOutline } from "react-icons/io5";
-import leaderboardtablepetalbrown from "src/assets/images/leaderboardtablepetalbrown.svg";
-import leaderboardtablepetalgrey from "src/assets/images/leaderboardtablepetalgrey.svg";
-import leaderboardtablepetalyellow from "src/assets/images/leaderboardtablepetalyellow.svg";
-import { useConstants } from "@beratrax/core/src/hooks";
-import { useStats } from "@beratrax/core/src/hooks";
-import { CHAIN_ID, UsersTableColumns } from "src/types/enums";
-import { customCommify } from "src/utils/common";
 
 const selectRandomPetal = () => {
   const petals = [leaderboardtablepetalbrown, leaderboardtablepetalyellow, leaderboardtablepetalgrey];

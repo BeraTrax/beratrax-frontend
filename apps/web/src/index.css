@@ -23,7 +23,7 @@ code {
 /* Arame-Mono font, every variation of font */
 @font-face {
     font-family: "Arame Mono";
-    src: url("/src/assets/fonts/ArameMono/0Arame-Regular.otf") format("opentype");
+    src: url("@beratrax/core/src/assets/fonts/ArameMono/0Arame-Regular.otf") format("opentype");
     font-weight: 100 900; /* Supports a range of weights */
     font-style: normal;
 }
@@ -31,7 +31,7 @@ code {
 /* League Spartan font, every variation of font */
 @font-face {
     font-family: "League Spartan";
-    src: url("/src/assets//fonts//LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+    src: url("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
     font-weight: 100 900; /* Supports a range of weights */
     font-style: normal;
 }
@@ -83,8 +83,8 @@ code {
         --new-gradient-dark: #283817;
         --new-gradient-light: #a0ff3b;
 
-        --new-top-to-bottom-curved: url("src/assets/images/backgroundGradient.svg");
-        --new-bottom-right-gradient: url("src/assets/images/ellipse.svg");
+        --new-top-to-bottom-curved: url("@beratrax/core/src/assets/images/backgroundGradient.svg");
+        --new-bottom-right-gradient: url("@beratrax/core/src/assets/images/ellipse.svg");
 
         --side-bar-width: 256px;
     }

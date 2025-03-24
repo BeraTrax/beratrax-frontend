@@ -1,5 +1,5 @@
 import { FC } from "react";
-import logo from "src/assets/images/logo.png";
+import logo from "@beratrax/core/src/assets/images/logo.png";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
 import styles from "./Maintainance.module.css";
 

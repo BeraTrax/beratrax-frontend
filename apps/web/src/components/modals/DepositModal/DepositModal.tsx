@@ -1,9 +1,7 @@
-import { FC, useEffect, useMemo, useState } from "react";
 import { notifyError } from "@beratrax/core/src/api/notify";
 import { getBalance } from "@beratrax/core/src/api/token";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { useWallet } from "@beratrax/core/src/hooks";
-import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
 import { useAppDispatch } from "@beratrax/core/src/state";
 import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
@@ -19,11 +17,13 @@ import {
   ZapInStep,
 } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
-import { CHAIN_ID } from "src/types/enums";
-import { getCombinedBalance, toEth, toWei } from "src/utils/common";
+import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { getCombinedBalance, toEth, toWei } from "@beratrax/core/src/utils/common";
+import { FC, useEffect, useMemo, useState } from "react";
+import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
 import { Address, zeroAddress } from "viem";
 import { ModalLayout } from "../ModalLayout/ModalLayout";
-import styles from "./DepositModal.module.css";
+import styles from "./DepositModal.module.css"
 
 interface IProps {
   handleClose: Function;

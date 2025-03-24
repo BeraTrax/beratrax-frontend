@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { logPageView } from "@core/utils/analytics";
+import { logPageView } from "./../utils/analytics";
 
 function usePageTracking() {
   const location = useLocation();

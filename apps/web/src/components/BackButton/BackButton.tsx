@@ -1,6 +1,6 @@
+import backiconarrow from "@beratrax/core/src/assets/images/backiconarrow.svg";
+import backiconbg from "@beratrax/core/src/assets/images/backiconbg.svg";
 import { FC } from "react";
-import backiconarrow from "src/assets/images/backiconarrow.svg";
-import backiconbg from "src/assets/images/backiconbg.svg";
 
 interface IProps {
     onClick: () => void;

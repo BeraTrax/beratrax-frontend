@@ -1,15 +1,14 @@
-import React, { useMemo, useState } from "react";
-import { buildTransaction, getRoute } from "@core/api/bridge";
-import { CHAIN_ID } from "@core/types/enums";
-import useWallet from "./useWallet";
-import { awaitTransaction, toEth } from "@core/utils/common";
-import useTokens from "../state/tokens/useTokens";
-import { approveErc20 } from "@core/api/token";
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@core/api/notify";
-import { v4 as uuid } from "uuid";
 import { BigNumber } from "ethers";
-import { IClients } from "@core/types";
-import { addressesByChainId } from "@core/config/constants/contracts";
+import { useMemo, useState } from "react";
+import { v4 as uuid } from "uuid";
+import useTokens from "../state/tokens/useTokens";
+import { buildTransaction, getRoute } from "./../api/bridge";
+import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "./../api/notify";
+import { approveErc20 } from "./../api/token";
+import { addressesByChainId } from "./../config/constants/contracts";
+import { CHAIN_ID } from "./../types/enums";
+import { awaitTransaction, toEth } from "./../utils/common";
+import useWallet from "./useWallet";
 
 const usdcAddr = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
 const usdceAddress = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";

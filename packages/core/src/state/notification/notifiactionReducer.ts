@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppDispatch } from "@core/state/index";
+import { AppDispatch } from "./../../state/index";
 
 export type NotificationType = "success" | "error" | "warning" | "info" | "loading";
 

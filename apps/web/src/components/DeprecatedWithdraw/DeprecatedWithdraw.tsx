@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import { TiWarningOutline } from "react-icons/ti";
 import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { useVaults } from "@beratrax/core/src/hooks";
-import { customCommify } from "src/utils/common";
+import { customCommify } from "@beratrax/core/src/utils/common";
+import React, { useMemo } from "react";
+import { TiWarningOutline } from "react-icons/ti";
 import styles from "./DeprecatedWithdraw.module.css";
 
 interface IProps {}

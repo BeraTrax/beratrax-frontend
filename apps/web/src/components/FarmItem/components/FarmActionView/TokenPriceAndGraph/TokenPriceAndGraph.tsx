@@ -1,8 +1,8 @@
-import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useLp } from "@beratrax/core/src/hooks";
+import { customCommify } from "@beratrax/core/src/utils/common";
+import { Skeleton } from "src/components/Skeleton/Skeleton";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
-import { customCommify } from "src/utils/common";
 import FarmRowChip from "../../FarmRowChip/FarmRowChip";
 
 interface TokenPriceProps {

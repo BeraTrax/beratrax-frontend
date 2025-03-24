@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import useAccountData from "@beratrax/core/src/state/account/useAccountData";
-import { copyToClipboard } from "src/utils";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { MdOutlineContentCopy } from "react-icons/md";
+import useAccountData from "@beratrax/core/src/state/account/useAccountData";
+import { copyToClipboard } from "@beratrax/core/src/utils";
+import React, { useState } from "react";
 import { FaSquareXTwitter } from "react-icons/fa6";
+import { MdOutlineContentCopy } from "react-icons/md";
 
 interface IProps {}
 

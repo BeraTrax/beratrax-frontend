@@ -1,16 +1,7 @@
-import moment from "moment";
-import React, { useMemo, useState } from "react";
 import { getBalance } from "@beratrax/core/src/api/token";
-import Loader from "src/components/Loader/Loader";
-import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
-import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
-import { Select } from "src/components/Select/Select";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
-import { useApp } from "@beratrax/core/src/hooks";
-import { useDetailInput } from "@beratrax/core/src/hooks";
-import { useWallet } from "@beratrax/core/src/hooks";
+import { useApp, useDetailInput, useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
 import { useFarmDetails, useStCoreRedeem } from "@beratrax/core/src/state/farms/hooks";
@@ -27,8 +18,15 @@ import {
   WaitForBridgeResultsStep,
   ZapInStep,
 } from "@beratrax/core/src/state/transactions/types";
-import { FarmTransactionType } from "src/types/enums";
-import { noExponents, toWei } from "src/utils/common";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { noExponents, toWei } from "@beratrax/core/src/utils/common";
+import moment from "moment";
+import React, { useMemo, useState } from "react";
+import Loader from "src/components/Loader/Loader";
+import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
+import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
+import { Select } from "src/components/Select/Select";
+import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { zeroAddress } from "viem";
 import { UsdToggle } from "../../../UsdToggle/UsdToggle";
 import styles from "./DetailInput.module.css";

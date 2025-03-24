@@ -1,14 +1,13 @@
 import axios from "axios";
-import { EARNINGS_GRAPH_URL } from "@core/config/constants";
-import { getPricesByTime, getTokenPricesBackend } from "@core/api/token";
-import { CHAIN_ID, FarmOriginPlatform } from "@core/types/enums";
-import { toEth, toWei } from "@core/utils/common";
-import store from "@core/state";
-import { getContract, createPublicClient, http, PublicClient } from "viem";
-import vaultAbi from "@core/assets/abis/vault.json";
-import pools_json from "@core/config/constants/pools_json";
+import { createPublicClient, getContract, http, PublicClient } from "viem";
 import { berachain } from "viem/chains";
-import { VaultEarnings } from "@core/state/farms/types";
+import vaultAbi from "./../assets/abis/vault.json";
+import { EARNINGS_GRAPH_URL } from "./../config/constants";
+import pools_json from "./../config/constants/pools_json";
+import store from "./../state";
+import { VaultEarnings } from "./../state/farms/types";
+import { CHAIN_ID, FarmOriginPlatform } from "./../types/enums";
+import { toEth, toWei } from "./../utils/common";
 
 interface Response {
   deposit: string;

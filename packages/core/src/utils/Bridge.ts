@@ -1,23 +1,23 @@
-import { approveErc20 } from "@core/api/token";
-import { SupportedChains } from "@core/config/walletConfig";
-import { IClients } from "@core/types";
-import { CHAIN_ID } from "@core/types/enums";
+import { waitForMessageReceived } from "@layerzerolabs/scan-client";
 import {
   Address,
   createPublicClient,
+  encodeFunctionData,
+  formatUnits,
   Hex,
   http,
-  zeroAddress,
+  numberToHex,
   padHex,
   parseEventLogs,
-  encodeFunctionData,
   parseUnits,
-  formatUnits,
-  numberToHex,
+  zeroAddress,
 } from "viem";
-import { waitForMessageReceived } from "@layerzerolabs/scan-client";
-import { addressesByChainId } from "@core/config/constants/contracts";
-import { getAllowanceSlot } from "@core/config/constants/storageSlots";
+import { approveErc20 } from "./../api/token";
+import { addressesByChainId } from "./../config/constants/contracts";
+import { getAllowanceSlot } from "./../config/constants/storageSlots";
+import { SupportedChains } from "./../config/walletConfig";
+import { IClients } from "./../types";
+import { CHAIN_ID } from "./../types/enums";
 
 class Bridge {
   private currentWallet: Address;

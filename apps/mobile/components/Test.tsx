@@ -1,11 +1,8 @@
 // For React Native
 import { Wow } from "@beratrax/ui"
 import { StyleSheet, View } from 'react-native'
-// import { useTheme } from 'tamagui'
 
 export default function Test() {
-  // const theme = useTheme()
-  
   return (
     <View style={styles.container}>
       <Wow />

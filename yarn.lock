@@ -1934,7 +1934,6 @@ __metadata:
     "@react-navigation/bottom-tabs": ^7.2.0
     "@react-navigation/native": ^7.0.14
     "@reown/appkit-wagmi-react-native": ^1.2.2
-    "@tamagui/babel-plugin": 1.121.7
     "@tanstack/react-query": ^5.67.3
     "@types/jest": ^29.5.12
     "@types/react": ~18.3.12
@@ -1972,7 +1971,6 @@ __metadata:
     react-native-web: ~0.19.13
     react-native-webview: 13.12.5
     react-test-renderer: 18.3.1
-    tamagui: 1.121.7
     typescript: ^5.3.3
     viem: ^2.23.10
     wagmi: ^2.14.13
@@ -10286,19 +10284,6 @@ __metadata:
   dependencies:
     "@babel/core": ^7.25.2
   checksum: 4042b4492eb2733ec359453c62847ee58e49726a13ccecd24f01bfb92c16813837b607d579c4c5f6b4b84ef4a039f6a9ee1cb579e947233568a664773f7cd323
-  languageName: node
-  linkType: hard
-
-"@tamagui/babel-plugin@npm:1.121.7":
-  version: 1.121.7
-  resolution: "@tamagui/babel-plugin@npm:1.121.7"
-  dependencies:
-    "@babel/generator": ^7.25.5
-    "@babel/helper-plugin-utils": ^7.24.8
-    "@babel/template": ^7.25.0
-    "@babel/traverse": ^7.25.4
-    "@tamagui/static": 1.121.7
-  checksum: e8253336e4c3ab093b66ae0dd0f3552f66a30814ecbb7cf1f3ce138d244c9a0a253a29bf5272eff17328de56804ea9a417cf281cea9e8789d7a6bb510216527d
   languageName: node
   linkType: hard
 

@@ -7,7 +7,7 @@ const UserGuide = () => {
   return (
     <ThemedView style={styles.container}>
     <ThemedText type="title">User Guide</ThemedText>
-    <Link href="/Dashboard" style={styles.link}>
+    <Link href=".." style={styles.link}>
       <ThemedText type="link">Go to home screen!</ThemedText>
     </Link>
   </ThemedView>

@@ -234,17 +234,19 @@ const PoolInfo = ({
                                             Non-compounding APR (Future Claim)
                                         </td>
                                     </tr>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="p-4 text-textWhite font-medium">
-                                            <div className="flex items-center gap-2">
-                                                <img src="/beraborrow.png" alt="Beraborrow" className="w-5 h-5" />
-                                                Pollen Points (Beraborrow Airdrop)
-                                            </div>
-                                        </td>
-                                        <td className="p-4 text-gradientPrimary font-bold text-right">
-                                            4x Pollen Points (Future Claim)
-                                        </td>
-                                    </tr>
+                                    {farm.id !== 24 ? (
+                                        <tr className="border-b border-gray-700">
+                                            <td className="p-4 text-textWhite font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <img src="/beraborrow.png" alt="Beraborrow" className="w-5 h-5" />
+                                                    Pollen Points (Beraborrow Airdrop)
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-gradientPrimary font-bold text-right">
+                                                4x Pollen Points (Future Claim)
+                                            </td>
+                                        </tr>
+                                    ) : null}
                                 </>
                             )}
                             {farm.id === 8 && (

@@ -633,6 +633,9 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                                 tokens {
                                     priceRate
                                     address
+                                    token {
+                                        latestUSDPrice
+                                    }
                                 }
                             }
                         }`;
@@ -642,9 +645,15 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                     const feeData = feeResponse.data.data.pool;
 
                     const accumulatedFees0 = feeData.totalSwapFee - acc.lastFee0;
-                    const lpPrice = feeData.tokens.find(
-                        (token: any) => token.address === pool.lp_addr.toLowerCase()
-                    ).priceRate;
+                    let lpPrice = feeData.tokens.find((token: any) => token.address === pool.lp_addr.toLowerCase())
+                        ?.token.latestUSDPrice;
+
+                    if (lpPrice === undefined) {
+                        const priceData = await getPricesByTime([
+                            { address: pool.lp_addr, timestamp: Number(transaction.blockTimestamp), chainId: 80094 },
+                        ]);
+                        lpPrice = priceData?.[80094][pool.lp_addr][0].price;
+                    }
 
                     // Calculate the user's share of fees based on their balance relative to total LP tokens
                     const userShareOfFees0 =
@@ -675,6 +684,9 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                                 tokens {
                                     priceRate
                                     address
+                                    token {
+                                        latestUSDPrice
+                                    }
                                 }
                             }
                         }`;
@@ -684,9 +696,15 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                     });
 
                     const currentFeeData = currentFeeResponse.data.data.pool;
-                    lpPrice = currentFeeData.tokens.find(
-                        (token: any) => token.address === pool.lp_addr.toLowerCase()
-                    ).priceRate;
+                    lpPrice = currentFeeData.tokens.find((token: any) => token.address === pool.lp_addr.toLowerCase())
+                        ?.token.latestUSDPrice;
+
+                    if (lpPrice === undefined) {
+                        const priceData = await getPricesByTime([
+                            { address: pool.lp_addr, timestamp: Math.floor(Date.now() / 1000), chainId: 80094 },
+                        ]);
+                        lpPrice = priceData?.[80094][pool.lp_addr][0].price || 0;
+                    }
 
                     // Calculate accumulated fees since last transaction
                     const currentAccumulatedFees0 = currentFeeData.totalSwapFee - acc.lastFee0;
@@ -715,3 +733,4 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
         return [];
     }
 };
+

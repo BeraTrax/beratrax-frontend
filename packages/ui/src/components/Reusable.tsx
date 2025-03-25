@@ -22,7 +22,7 @@ export const Reusable = ({ variant = "primary", size = "medium", className, titl
     className
   );
   return (
-    <Text className={buttonStyles + " " + className}>
+    <Text className={buttonStyles + " " + className + " " + "text-white bg-red-500"}>
       {title}
     </Text>
   );

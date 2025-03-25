@@ -17,11 +17,15 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    ".",
+    "nativewind-env.d.ts",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "queries.js",
-    "nativewind-env.d.ts"
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".expo"
   ]
 }

@@ -1,59 +1,36 @@
-import { styled, YStack } from 'tamagui'
+import { View, ViewProps } from "react-native";
+import { twMerge } from "tailwind-merge";
 
-export const Card = styled(YStack, {
-  name: 'Card',
-  backgroundColor: '$background',
-  borderRadius: '$rounded4',
-  borderColor: '$borderColor',
-  borderWidth: 1,
-  shadowColor: '$shadowColor',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
-  elevation: 5,
-  variants: {
-    size: {
-      small: {
-        padding: '$2',
-        fontSize: '$1',
-      },
-      medium: {
-        padding: '$4',
-        fontSize: '$2',
-      },
-      large: {
-        padding: '$6',
-        fontSize: '$3',
-      },
-      xlarge: {
-        padding: '$8',
-        fontSize: '$4',
-      },
-      xxlarge: {
-        padding: '$10',
-        fontSize: '$5',
-      },
-    },
-    variant: {
-      primary: {
-        backgroundColor: '$bgPrimary',
-        borderColor: '$borderLight',
-        color: '$textWhite',
-      },
-      secondary: {
-        backgroundColor: '$bgSecondary',
-        borderColor: '$borderDark',
-        color: '$textWhite',
-      },
-      dark: {
-        backgroundColor: '$bgDark',
-        borderColor: '$borderDark',
-        color: '$textWhite',
-      }
-    }
-  },
-  defaultVariants: {
-    size: 'small',
-    variant: 'primary',
-  }
-})
+interface CardProps extends ViewProps {
+  variant?: "primary" | "secondary" | "dark";
+  size?: "small" | "medium" | "large" | "xlarge" | "xxlarge";
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const Card = ({ 
+  variant = "primary", 
+  size = "small", 
+  className, 
+  children, 
+  ...props 
+}: CardProps) => {
+  const cardStyles = twMerge(
+    "rounded-lg shadow-md",
+    variant === "primary" && "bg-[#72B21F] border border-[#90BB62]",
+    variant === "secondary" && "bg-[#151915] border border-[#323D27]",
+    variant === "dark" && "bg-[#020907] border border-[#323D27]",
+    size === "small" && "p-2",
+    size === "medium" && "p-4",
+    size === "large" && "p-6",
+    size === "xlarge" && "p-8",
+    size === "xxlarge" && "p-10",
+    className
+  );
+  
+  return (
+    <View className={cardStyles} {...props}>
+      {children}
+    </View>
+  );
+};

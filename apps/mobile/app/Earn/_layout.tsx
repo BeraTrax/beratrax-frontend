@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedView } from "@/components/ThemedView"
 import { Link } from "expo-router"
-import { StyleSheet, View, Text } from "react-native"
+import { StyleSheet } from "react-native"
 
 const Earn = () => {
   return (

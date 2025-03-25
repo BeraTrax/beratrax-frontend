@@ -1,11 +1,9 @@
 // For React Native
-import { Wow } from "@beratrax/ui"
 import { StyleSheet, View } from 'react-native'
 
 export default function Test() {
   return (
     <View style={styles.container}>
-      <Wow />
       {/* <Flex>
       <Card variant="secondary" size="medium" style={styles.card}>
         <Text style={styles.cardText}>Secondary Card</Text>

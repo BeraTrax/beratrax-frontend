@@ -7,5 +7,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "app.d.ts", "tailwind.config.js", "nativewind-env.d.ts"]
+  "include": ["."],
+  "exclude": ["node_modules", "dist", "build", ".turbo"]
 }

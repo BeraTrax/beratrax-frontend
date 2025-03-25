@@ -1,5 +1,5 @@
-import '@beratrax/ui/global.css'
 import '@walletconnect/react-native-compat'
+import './../global.css'
 /**
  * to keep the first import on top
  */
@@ -19,7 +19,8 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import * as Haptics from 'expo-haptics'
 import { StyleSheet } from 'react-native'
 import { WagmiProvider } from 'wagmi'
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+// import 'nattivewind/css';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -62,35 +63,37 @@ const RootLayout = () => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
-          <WalletProvider>
-            <SafeAreaProvider>
-                {/* <ConnectView />
+        <WalletProvider>
+          <SafeAreaProvider>
+            <SafeAreaView style={{flex:1}}>
+              {/* <ConnectView />
                 <Test /> */}
-                <Tabs
-                  screenOptions={{
-                    tabBarActiveTintColor: '#3772FF',
-                    tabBarInactiveTintColor: colorScheme === 'dark' ? '#888' : '#666',
-                    tabBarStyle: styles.tabBar,
-                    tabBarShowLabel: true,
-                    headerShown: false,
-                  }}
-                >
-                  {Object.entries(tabOptions).map(([key, value]) => (
-                    <Tabs.Screen
-                      key={key}
-                      name={key}
-                      options={{
-                        ...value,
-                      }}
-                      listeners={{
-                        tabPress: () => handleTabPress(),
-                      }}
-                    />
-                  ))}
-                </Tabs>
-                <AppKit />
-              </SafeAreaProvider>
-            </WalletProvider>
+              <Tabs
+                screenOptions={{
+                  tabBarActiveTintColor: '#3772FF',
+                  tabBarInactiveTintColor: colorScheme === 'dark' ? '#888' : '#666',
+                  tabBarStyle: styles.tabBar,
+                  tabBarShowLabel: true,
+                  headerShown: false,
+                }}
+              >
+                {Object.entries(tabOptions).map(([key, value]) => (
+                  <Tabs.Screen
+                    key={key}
+                    name={key}
+                    options={{
+                      ...value,
+                    }}
+                    listeners={{
+                      tabPress: () => handleTabPress(),
+                    }}
+                  />
+                ))}
+              </Tabs>
+              <AppKit />
+            </SafeAreaView>
+          </SafeAreaProvider>
+        </WalletProvider>
         {/* </ThemeProvider> */}
       </QueryClientProvider>
     </WagmiProvider >

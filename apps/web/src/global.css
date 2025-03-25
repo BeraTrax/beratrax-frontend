@@ -1,3 +1,4 @@
+@config "../tailwind.config.js";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,4 +89,18 @@ code {
 
         --side-bar-width: 256px;
     }
+}
+
+/* React Native Web specific resets */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Make View behave like a div */
+div[data-class="view"] {
+  display: flex;
+  flex-direction: column;
 }

@@ -1,6 +1,12 @@
+import animate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 const config = {
-    content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+    content: [
+        "./index.html", 
+        "./src/**/*.{js,jsx,ts,tsx}", 
+        "./../../packages/ui/src/**/*.{js,jsx,ts,tsx}",
+    ],
     theme: {
         extend: {
             screens: {
@@ -71,7 +77,7 @@ const config = {
         },
     },
 
-    plugins: [],
+    plugins: [animate],
 };
 
 export default config;

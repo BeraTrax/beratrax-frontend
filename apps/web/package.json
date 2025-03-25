@@ -81,6 +81,7 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.62.1",
     "styled-components": "^5.3.6",
+    "tailwindcss-animate": "^1.0.7",
     "tamagui": "1.121.7",
     "ua-parser-js": "^2.0.0",
     "uuid": "^9.0.0",

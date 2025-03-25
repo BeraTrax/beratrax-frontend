@@ -1,3 +1,4 @@
+import "./global.css";
 import { createConfig } from "@lifi/sdk";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -9,7 +10,6 @@ import App from "./App";
 import Notifications from "./components/Notifications/Notifications";
 import "@beratrax/core/src/config/walletConfig";
 import { AppProvider } from "@beratrax/core/src/context";
-import "./index.css";
 import "./polyfills";
 import store, { persistor } from "@beratrax/core/src/state";
 import { WagmiProvider } from "wagmi";

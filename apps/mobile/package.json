@@ -5,7 +5,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "start:mobile": "expo start --go --reset-cache ",
+    "start:mobile": "expo start --go --reset-cache --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --tunnel",
     "build:ios": "expo build:ios",
@@ -46,8 +46,7 @@
     "expo-system-ui": "~4.0.8",
     "expo-updates": "~0.27.3",
     "expo-web-browser": "~14.0.2",
-    "install": "^0.13.0",
-    "nativewind": "^4.0.0",
+    "nativewind": "^4.1.23",
     "node-libs-react-native": "^1.2.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",

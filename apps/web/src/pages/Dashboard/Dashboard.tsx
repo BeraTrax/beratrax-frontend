@@ -7,7 +7,7 @@ import { TokenBalances } from "./TokenBalances/TokenBalances";
 import Transactions from "./Transactions/Transactions";
 import { TraxReferralEarning } from "./TraxReferralEarning/TraxReferralEarning";
 import { WalletAndStakingPoint } from "./WalletAndStakingPoint/WalletAndStakingPoint";
-
+import { Button } from "@beratrax/ui";
 function Dashboard() {
   const { currentWallet } = useWallet();
   useDeviceInfo();
@@ -16,6 +16,12 @@ function Dashboard() {
     // TODO: figure out why scroll is not working without overflow
     <div className="overflow-auto font-arame-mono" id="dashboard">
       <WalletAndStakingPoint />
+      <Button className="bg-red-500" />
+
+      <div className="bg-red-500">
+        <Button />
+      </div>
+      
       <div className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
         {currentWallet ? (
           <>

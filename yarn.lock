@@ -1954,10 +1954,9 @@ __metadata:
     expo-system-ui: ~4.0.8
     expo-updates: ~0.27.3
     expo-web-browser: ~14.0.2
-    install: ^0.13.0
     jest: ^29.2.1
     jest-expo: ~52.0.6
-    nativewind: ^4.0.0
+    nativewind: ^4.1.23
     node-libs-react-native: ^1.2.1
     react: 18.3.1
     react-dom: 18.3.1
@@ -1994,7 +1993,8 @@ __metadata:
     "@tamagui/web": 1.121.7
     "@types/react": ^18.2.0
     "@types/react-dom": ^18.2.0
-    nativewind: ^4.0.0
+    class-variance-authority: 0.7.1
+    nativewind: 4.1.23
     react: ^18.2.0
     react-native: ^0.78.0
     react-native-svg: ^15.11.2
@@ -2101,6 +2101,7 @@ __metadata:
     styled-components: ^5.3.6
     tailwind-merge: ^2.5.5
     tailwindcss: ^3.4.16
+    tailwindcss-animate: ^1.0.7
     tamagui: 1.121.7
     ts-prune: ^0.10.3
     typescript: ^5.5.4
@@ -17950,6 +17951,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"class-variance-authority@npm:0.7.1":
+  version: 0.7.1
+  resolution: "class-variance-authority@npm:0.7.1"
+  dependencies:
+    clsx: ^2.1.1
+  checksum: e05ba26ef9ec38f7c675047ce366b067d60af6c954dba08f7802af19a9460a534ae752d8fe1294fff99d0fa94a669b16ccebd87e8a20f637c0736cf2751dd2c5
+  languageName: node
+  linkType: hard
+
 "classnames@npm:^2.3.0, classnames@npm:^2.5.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
@@ -18056,7 +18066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:2.1.1, clsx@npm:^2.0.0":
+"clsx@npm:2.1.1, clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: acd3e1ab9d8a433ecb3cc2f6a05ab95fe50b4a3cfc5ba47abb6cbf3754585fcb87b84e90c822a1f256c4198e3b41c7f6c391577ffc8678ad587fc0976b24fd57
@@ -24059,13 +24069,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"install@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "install@npm:0.13.0"
-  checksum: 645bad1253115309c64d791c901caa8acd61a4012731015e3ee5eef88baaca026f3a48dc15a73a2827f7f5b05609804968ea1e3c6525dc0b3a21241837b9cf59
-  languageName: node
-  linkType: hard
-
 "interface-blockstore@npm:^4.0.0":
   version: 4.0.1
   resolution: "interface-blockstore@npm:4.0.1"
@@ -28478,7 +28481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nativewind@npm:^4.0.0":
+"nativewind@npm:4.1.23, nativewind@npm:^4.1.23":
   version: 4.1.23
   resolution: "nativewind@npm:4.1.23"
   dependencies:
@@ -35103,6 +35106,15 @@ __metadata:
   version: 2.6.0
   resolution: "tailwind-merge@npm:2.6.0"
   checksum: 18976c4096920bc6125f1dc837479805de996d86bcc636f98436f65c297003bde89ffe51dfd325b7c97fc71b1dbba8505459dd96010e7b181badd29aea996440
+  languageName: node
+  linkType: hard
+
+"tailwindcss-animate@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "tailwindcss-animate@npm:1.0.7"
+  peerDependencies:
+    tailwindcss: "*"
+  checksum: c1760983eb3fec0c8421e95082bf308e6845df43e2f90862386366e82545c801b26b4d189c4cd23d6915252b76d18005c8e5f591f8b119944c7fb8650d0f8bce
   languageName: node
   linkType: hard
 

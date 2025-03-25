@@ -17,10 +17,9 @@ import 'react-native-reanimated'
 import WalletProvider from '@/config/walletProvider'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import * as Haptics from 'expo-haptics'
-import { StyleSheet } from 'react-native'
+import { NativeModules, StyleSheet } from 'react-native'
 import { WagmiProvider } from 'wagmi'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-// import 'nattivewind/css';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -58,6 +57,13 @@ const RootLayout = () => {
   const handleTabPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
+  
+  // useEffect(() => {
+  //   NativeModules.KCKeepAwake.activate();
+  //   return () => {
+  //     NativeModules.KCKeepAwake.deactivate();
+  //   };
+  // }, []);
 
   return (
     <WagmiProvider config={wagmiConfig}>

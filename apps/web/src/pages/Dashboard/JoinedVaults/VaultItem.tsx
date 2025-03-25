@@ -39,7 +39,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const [isClaiming, setIsClaiming] = useState(false);
     const navigate = useNavigate();
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
-    const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings } = useFarmDetails();
+    const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
     const { balances, prices, reloadBalances } = useTokens();
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
@@ -288,7 +288,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     <div className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
                         <p>Earnings</p>
                     </div>
-                    {!isVaultEarningsFirstLoad ? (
+                    {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
                         <div className="text-textWhite text-lg font-league-spartan leading-5">
                             <p className="text-green-500">+${formatCurrency(currentVaultEarningsUsd)}</p>
                             {/* <div style={{ minWidth: 60 }}>

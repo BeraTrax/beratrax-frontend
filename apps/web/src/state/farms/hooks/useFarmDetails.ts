@@ -15,6 +15,7 @@ const useFarmDetails = () => {
         isFetched,
         account,
         earnings,
+        earningsUsd,
         isLoadingEarnings,
         vaultEarnings,
         isLoadingVaultEarnings,
@@ -60,6 +61,7 @@ const useFarmDetails = () => {
         reloadVaultEarnings,
         farmDetails,
         earnings,
+        earningsUsd,
         vaultEarnings,
         isLoadingEarnings,
         isLoadingVaultEarnings,
@@ -68,3 +70,4 @@ const useFarmDetails = () => {
 };
 
 export default useFarmDetails;
+

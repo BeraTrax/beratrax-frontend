@@ -286,50 +286,67 @@ const getEarningsForSteer = async (combinedTransactions: any): Promise<VaultEarn
                     tokenId: pool.farmId,
                 };
 
-                // Process transactions sequentially
-                for (const transaction of sortedTransactions) {
-                    const feeQuery = `
-                        query GetLPFee {
-                            vault(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
+                // Batch all transactions into a single GraphQL query
+                if (sortedTransactions.length > 0) {
+                    // Construct a batched query with aliases for each transaction
+                    const batchedFeeQuery = `
+                        query GetBatchedLPFees {
+                            ${sortedTransactions
+                                .map(
+                                    (transaction: any, index: number) => `
+                            vault${index}: vault(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
                                 fees0
                                 fees1
                                 totalLPTokensIssued
                                 token1
                                 token0
-                            }
+                            }`
+                                )
+                                .join("\n")}
                         }`;
 
-                    const feeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, { query: feeQuery });
+                    // Make a single API call for all transactions
+                    const batchedFeeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, {
+                        query: batchedFeeQuery,
+                    });
+                    const batchedFeeData = batchedFeeResponse.data.data;
 
-                    const feeData = feeResponse.data.data.vault;
-                    token0 = feeData.token0;
-                    token1 = feeData.token1;
+                    // Process each transaction with the batched data
+                    for (let i = 0; i < sortedTransactions.length; i++) {
+                        const transaction = sortedTransactions[i];
+                        const feeData = batchedFeeData[`vault${i}`];
 
-                    const accumulatedFees0 = BigInt(feeData.fees0) - acc.lastFee0;
-                    const accumulatedFees1 = BigInt(feeData.fees1) - acc.lastFee1;
+                        if (!feeData) continue; // Skip if data is missing
 
-                    // Calculate the user's share of fees based on their balance relative to total LP tokens
-                    const userShareOfFees0 =
-                        acc.currentBalance > 0 && BigInt(feeData.totalLPTokensIssued) > 0
-                            ? (accumulatedFees0 * acc.currentBalance) / BigInt(feeData.totalLPTokensIssued)
-                            : BigInt(0);
+                        token0 = feeData.token0;
+                        token1 = feeData.token1;
 
-                    const userShareOfFees1 =
-                        acc.currentBalance > 0 && BigInt(feeData.totalLPTokensIssued) > 0
-                            ? (accumulatedFees1 * acc.currentBalance) / BigInt(feeData.totalLPTokensIssued)
-                            : BigInt(0);
+                        const accumulatedFees0 = BigInt(feeData.fees0) - acc.lastFee0;
+                        const accumulatedFees1 = BigInt(feeData.fees1) - acc.lastFee1;
 
-                    acc.earningsToken0 += userShareOfFees0;
-                    acc.earningsToken1 += userShareOfFees1;
+                        // Calculate the user's share of fees based on their balance relative to total LP tokens
+                        const userShareOfFees0 =
+                            acc.currentBalance > 0 && BigInt(feeData.totalLPTokensIssued) > 0
+                                ? (accumulatedFees0 * acc.currentBalance) / BigInt(feeData.totalLPTokensIssued)
+                                : BigInt(0);
 
-                    if (transaction.type === "deposit") {
-                        acc.currentBalance += BigInt(transaction.value);
-                    } else if (transaction.type === "withdraw") {
-                        acc.currentBalance -= BigInt(transaction.value);
+                        const userShareOfFees1 =
+                            acc.currentBalance > 0 && BigInt(feeData.totalLPTokensIssued) > 0
+                                ? (accumulatedFees1 * acc.currentBalance) / BigInt(feeData.totalLPTokensIssued)
+                                : BigInt(0);
+
+                        acc.earningsToken0 += userShareOfFees0;
+                        acc.earningsToken1 += userShareOfFees1;
+
+                        if (transaction.type === "deposit") {
+                            acc.currentBalance += BigInt(transaction.value);
+                        } else if (transaction.type === "withdraw") {
+                            acc.currentBalance -= BigInt(transaction.value);
+                        }
+
+                        acc.lastFee0 = BigInt(feeData.fees0);
+                        acc.lastFee1 = BigInt(feeData.fees1);
                     }
-
-                    acc.lastFee0 = BigInt(feeData.fees0);
-                    acc.lastFee1 = BigInt(feeData.fees1);
                 }
 
                 // Calculate earnings from last transaction to current time if user has a balance
@@ -431,58 +448,69 @@ const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEar
                 let decimalsToken0 = 18;
                 let decimalsToken1 = 18;
 
-                // Process transactions sequentially
-                for (const transaction of sortedTransactions) {
-                    const feeQuery = `
-                        query GetLPFee {
-                            kodiakVault(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
-                                _token0 {
-                                    feesUSD
-                                    symbol
-                                    decimals
-                                }
-                                _token1 {
-                                    feesUSD
-                                    symbol
-                                    decimals
-                                }
-                                outputTokenSupply
-                                outputToken {
-                                    decimals
-                                }
+                // Prepare a single batch query for all transactions
+                let batchQuery = "query GetLPFees {";
+
+                sortedTransactions.forEach((transaction: any, index: number) => {
+                    batchQuery += `
+                        tx${index}: kodiakVault(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
+                            _token0 {
+                                feesUSD
+                                symbol
+                                decimals
                             }
-                        }`;
+                            _token1 {
+                                feesUSD
+                                symbol
+                                decimals
+                            }
+                            outputTokenSupply
+                            outputToken {
+                                decimals
+                            }
+                        }
+                    `;
+                });
 
-                    const feeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: feeQuery });
+                batchQuery += "}";
 
-                    const feeData = feeResponse.data.data.kodiakVault;
+                // Execute the batch query
+                const feeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: batchQuery });
+                const feeData = feeResponse.data.data;
+
+                // Process each transaction with its corresponding response
+                for (let i = 0; i < sortedTransactions.length; i++) {
+                    const transaction = sortedTransactions[i];
+                    const vaultData = feeData[`tx${i}`];
 
                     lastToken0 =
                         Object.keys(tokenNamesAndImages).find(
                             (address) =>
-                                tokenNamesAndImages[address].name.toUpperCase() === feeData._token0.symbol.toUpperCase()
-                        ) || feeData._token0.symbol;
+                                tokenNamesAndImages[address].name.toUpperCase() ===
+                                vaultData._token0.symbol.toUpperCase()
+                        ) || vaultData._token0.symbol;
 
                     lastToken1 =
                         Object.keys(tokenNamesAndImages).find(
                             (address) =>
-                                tokenNamesAndImages[address].name.toUpperCase() === feeData._token1.symbol.toUpperCase()
-                        ) || feeData._token1.symbol;
+                                tokenNamesAndImages[address].name.toUpperCase() ===
+                                vaultData._token1.symbol.toUpperCase()
+                        ) || vaultData._token1.symbol;
 
-                    const accumulatedFees0 = feeData._token0.feesUSD - acc.lastFee0;
-                    const accumulatedFees1 = feeData._token1.feesUSD - acc.lastFee1;
+                    const accumulatedFees0 = vaultData._token0.feesUSD - acc.lastFee0;
+                    const accumulatedFees1 = vaultData._token1.feesUSD - acc.lastFee1;
 
                     // Calculate the user's share of fees based on their balance relative to total LP tokens
                     const userShareOfFees0 =
-                        acc.currentBalance > 0 && BigInt(feeData.outputTokenSupply) > 0
-                            ? (accumulatedFees0 * Number(toEth(acc.currentBalance, feeData.outputToken.decimals))) /
-                              Number(toEth(feeData.outputTokenSupply, feeData.outputToken.decimals))
+                        acc.currentBalance > 0 && BigInt(vaultData.outputTokenSupply) > 0
+                            ? (accumulatedFees0 * Number(toEth(acc.currentBalance, vaultData.outputToken.decimals))) /
+                              Number(toEth(vaultData.outputTokenSupply, vaultData.outputToken.decimals))
                             : 0;
 
                     const userShareOfFees1 =
-                        acc.currentBalance > 0 && BigInt(feeData.outputTokenSupply) > 0
-                            ? (accumulatedFees1 * Number(toEth(acc.currentBalance, feeData.outputToken.decimals))) /
-                              Number(toEth(feeData.outputTokenSupply, feeData.outputToken.decimals))
+                        acc.currentBalance > 0 && BigInt(vaultData.outputTokenSupply) > 0
+                            ? (accumulatedFees1 * Number(toEth(acc.currentBalance, vaultData.outputToken.decimals))) /
+                              Number(toEth(vaultData.outputTokenSupply, vaultData.outputToken.decimals))
                             : 0;
 
                     acc.earningsToken0 += userShareOfFees0;
@@ -494,8 +522,8 @@ const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEar
                         acc.currentBalance -= BigInt(transaction.value);
                     }
 
-                    acc.lastFee0 = feeData._token0.feesUSD;
-                    acc.lastFee1 = feeData._token1.feesUSD;
+                    acc.lastFee0 = vaultData._token0.feesUSD;
+                    acc.lastFee1 = vaultData._token1.feesUSD;
                 }
 
                 // Calculate earnings from last transaction to current moment
@@ -623,11 +651,15 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                 let lastToken0 = pool.lp_addr;
                 let lpPrice = 0;
 
-                // Process transactions sequentially
-                for (const transaction of sortedTransactions) {
-                    const feeQuery = `
-                        query GetLPFee {
-                            pool(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
+                // Batch all transactions into a single GraphQL query
+                if (sortedTransactions.length > 0) {
+                    // Construct a batched query with aliases for each transaction
+                    const batchedFeeQuery = `
+                        query GetBatchedLPFees {
+                            ${sortedTransactions
+                                .map(
+                                    (transaction: any, index: number) => `
+                            pool${index}: pool(id: "${pool.underlyingVault}", block: {number: ${transaction.blockNumber}}) {
                                 totalSwapFee
                                 totalLiquidity
                                 tokens {
@@ -637,40 +669,56 @@ const getEarningsForBurrbear = async (combinedTransactions: any): Promise<VaultE
                                         latestUSDPrice
                                     }
                                 }
-                            }
+                            }`
+                                )
+                                .join("\n")}
                         }`;
 
-                    const feeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, { query: feeQuery });
+                    // Make a single API call for all transactions
+                    const batchedFeeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, {
+                        query: batchedFeeQuery,
+                    });
+                    const batchedFeeData = batchedFeeResponse.data.data;
 
-                    const feeData = feeResponse.data.data.pool;
+                    // Process each transaction with the batched data
+                    for (let i = 0; i < sortedTransactions.length; i++) {
+                        const transaction = sortedTransactions[i];
+                        const feeData = batchedFeeData[`pool${i}`];
 
-                    const accumulatedFees0 = feeData.totalSwapFee - acc.lastFee0;
-                    let lpPrice = feeData.tokens.find((token: any) => token.address === pool.lp_addr.toLowerCase())
-                        ?.token.latestUSDPrice;
+                        if (!feeData) continue; // Skip if data is missing
 
-                    if (lpPrice === undefined) {
-                        const priceData = await getPricesByTime([
-                            { address: pool.lp_addr, timestamp: Number(transaction.blockTimestamp), chainId: 80094 },
-                        ]);
-                        lpPrice = priceData?.[80094][pool.lp_addr][0].price;
+                        const accumulatedFees0 = feeData.totalSwapFee - acc.lastFee0;
+                        let lpPrice = feeData.tokens.find((token: any) => token.address === pool.lp_addr.toLowerCase())
+                            ?.token.latestUSDPrice;
+
+                        if (lpPrice === undefined) {
+                            const priceData = await getPricesByTime([
+                                {
+                                    address: pool.lp_addr,
+                                    timestamp: Number(transaction.blockTimestamp),
+                                    chainId: 80094,
+                                },
+                            ]);
+                            lpPrice = priceData?.[80094][pool.lp_addr][0].price;
+                        }
+
+                        // Calculate the user's share of fees based on their balance relative to total LP tokens
+                        const userShareOfFees0 =
+                            acc.currentBalance > 0 && feeData.totalLiquidity > 0
+                                ? (accumulatedFees0 * Number(toEth(acc.currentBalance))) /
+                                  Number(feeData.totalLiquidity / lpPrice)
+                                : 0;
+
+                        acc.earningsToken0 += userShareOfFees0;
+
+                        if (transaction.type === "deposit") {
+                            acc.currentBalance += BigInt(transaction.value);
+                        } else if (transaction.type === "withdraw") {
+                            acc.currentBalance -= BigInt(transaction.value);
+                        }
+
+                        acc.lastFee0 = feeData.totalSwapFee;
                     }
-
-                    // Calculate the user's share of fees based on their balance relative to total LP tokens
-                    const userShareOfFees0 =
-                        acc.currentBalance > 0 && feeData.totalLiquidity > 0
-                            ? (accumulatedFees0 * Number(toEth(acc.currentBalance))) /
-                              Number(feeData.totalLiquidity / lpPrice)
-                            : 0;
-
-                    acc.earningsToken0 += userShareOfFees0;
-
-                    if (transaction.type === "deposit") {
-                        acc.currentBalance += BigInt(transaction.value);
-                    } else if (transaction.type === "withdraw") {
-                        acc.currentBalance -= BigInt(transaction.value);
-                    }
-
-                    acc.lastFee0 = feeData.totalSwapFee;
                 }
 
                 // Calculate earnings from last transaction to current moment

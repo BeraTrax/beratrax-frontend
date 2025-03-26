@@ -40,16 +40,17 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const navigate = useNavigate();
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
     const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
-    const { balances, prices, reloadBalances } = useTokens();
+    const { balances, prices, decimals, reloadBalances } = useTokens();
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
         if (!currentVaultEarnings) return 0;
+
         return (
-            Number(toEth(BigInt(currentVaultEarnings?.earnings0 || 0n))) *
-                prices[vault.chainId][currentVaultEarnings.token0 as `0x${string}`] +
+            Number(toEth(BigInt(currentVaultEarnings?.earnings0 || 0n), decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)])) *
+                prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
             (currentVaultEarnings?.token1
-                ? Number(toEth(BigInt(currentVaultEarnings?.earnings1 || 0n))) *
-                  prices[vault.chainId][currentVaultEarnings.token1 as `0x${string}`]
+                ? Number(toEth(BigInt(currentVaultEarnings?.earnings1 || 0n), decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)])) *
+                  prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
                 : 0)
         );
     }, [isVaultEarningsFirstLoad]);

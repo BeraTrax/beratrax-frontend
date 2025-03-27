@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 
 export const TestBox = () => {
-  console.log('TestBox rendering with direct styles');
   return (
     <View>
       <View style={styles.container}>

@@ -1,7 +1,9 @@
 import animate from "tailwindcss-animate";
+import nativewind from "nativewind/preset";
 
 /** @type {import('tailwindcss').Config} */
 const config = {
+    presets: [nativewind],
     content: [
         "./index.html", 
         "./src/**/*.{js,jsx,ts,tsx}", 

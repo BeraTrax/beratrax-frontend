@@ -17,7 +17,7 @@ import 'react-native-reanimated'
 import WalletProvider from '@/config/walletProvider'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import * as Haptics from 'expo-haptics'
-import { NativeModules, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { WagmiProvider } from 'wagmi'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // Prevent the splash screen from auto-hiding before asset loading is complete.

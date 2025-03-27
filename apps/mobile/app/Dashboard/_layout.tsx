@@ -1,7 +1,7 @@
 import { LocalNested } from "@/components/LocalNested"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedView } from "@/components/ThemedView"
-import { Button, Reusable, TestBox } from "@beratrax/ui"
+import { Button, ButtonTwo, Reusable, TestBox, WalletAndStakingPoint } from "@beratrax/ui"
 import { Ionicons } from '@expo/vector-icons'
 import { Image, ScrollView, StyleSheet, TouchableOpacity, Text } from "react-native"
 
@@ -13,6 +13,8 @@ const Dashboard = () => {
 
         {/* <Reusable title="Hello From Beratrax UI" /> */}
         <Button />
+        <WalletAndStakingPoint />
+        <ButtonTwo />
 
         <LocalNested className="p-4">
           <Text>Local nested</Text>
@@ -25,7 +27,7 @@ const Dashboard = () => {
               <Ionicons name="copy-outline" size={16} color="#fff" />
             </TouchableOpacity>
           </ThemedView>
-        <TestBox />
+        {/* <TestBox /> */}
       </ScrollView>
     </ThemedView>
   )

@@ -4,6 +4,7 @@ import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { TVLHistory } from "src/api/stats";
 import { useSpecificVaultTvl } from "src/hooks/useVaults";
 import { PoolDef } from "src/config/constants/pools_json";
+import { formatCurrency } from "src/utils/common";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 
@@ -119,12 +120,18 @@ const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
                 }
             }
         });
-
         return filteredData;
     };
 
     const { vaultTvl, isLoading: isLoadingVaultTvl, isFetched: isFetchedVaultTvl } = useSpecificVaultTvl(farm.id);
     const newData = useMemo(() => downsampleData(vaultTvl || [], graphFilter), [vaultTvl, graphFilter]);
+    const [minTvl, maxTvl] = useMemo(() => {
+        if (!newData || newData.length === 0) return [0, 100];
+    
+        const values = newData.map(d => parseFloat(d.tvl));
+        return [Math.min(...values), Math.max(...values)];
+    }, [newData]);
+    
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
@@ -141,11 +148,11 @@ const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
-                                <YAxis tick={false} axisLine={false} width={0} />
+                                <YAxis tick={false} tickFormatter={(value) => `$${formatCurrency(value)}`} axisLine={false} width={0} domain={[minTvl * 0.9, maxTvl * 1.1]} />
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}
-                                    formatter={(value: any) => [`$${value}`, "Price"]}
+                                    formatter={(value: any) => [`$${formatCurrency(value)}`, "TVL"]}
                                     labelFormatter={(label) => label}
                                 />
                                 <Area

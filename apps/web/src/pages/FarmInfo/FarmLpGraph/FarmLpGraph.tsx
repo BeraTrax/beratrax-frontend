@@ -4,6 +4,7 @@ import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { LP_Prices } from "src/api/stats";
 import { useLp } from "src/hooks/useLp";
 import { PoolDef } from "src/config/constants/pools_json";
+import { formatCurrency } from "src/utils/common";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 
@@ -126,6 +127,13 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
     const { lp, isLpPriceLoading } = useLp(farm.id);
     const newData = useMemo(() => downsampleData(lp || [], graphFilter), [lp, graphFilter]);
 
+    const [minLp, maxLp] = useMemo(() => {
+        if (!newData || newData.length === 0) return [0, 100];
+    
+        const values = newData.map(d => parseFloat(d.lp));
+        return [Math.min(...values), Math.max(...values)];
+    }, [newData]);
+
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
@@ -142,11 +150,11 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
-                                <YAxis tick={false} axisLine={false} width={0} />
+                                <YAxis tick={false} axisLine={false} width={0} domain={[minLp * 0.9, maxLp * 1.1]} />
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}
-                                    formatter={(value: any) => [`$${value}`, "Price"]}
+                                    formatter={(value: any) => [`$${formatCurrency(value)}`, "Price"]}
                                     labelFormatter={(label) => label}
                                 />
                                 <Area

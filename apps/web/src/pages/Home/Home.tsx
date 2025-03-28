@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
-import BottomBar from "src/components/Bottombar/BottomBar";
-import { InternetConnectionModal } from "src/components/modals/InternetConnectionModal/InternetConnectionModal";
-import Sidebar from "src/components/Sidebar/Sidebar";
+import BottomBar from "web/src/components/Bottombar/BottomBar";
+import { InternetConnectionModal } from "web/src/components/modals/InternetConnectionModal/InternetConnectionModal";
+import Sidebar from "web/src/components/Sidebar/Sidebar";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useAppSelector } from "@beratrax/core/src/state";
 import { useRefCodeLoaded } from "@beratrax/core/src/state/account/useAccountData";

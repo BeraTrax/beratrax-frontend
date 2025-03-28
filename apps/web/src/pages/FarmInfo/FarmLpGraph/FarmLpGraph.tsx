@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import styles from "./FarmLpGraph.module.css";
 import { LP_Prices } from "@beratrax/core/src/api/stats";
 import { useApp } from "@beratrax/core/src/hooks";

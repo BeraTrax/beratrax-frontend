@@ -5,8 +5,8 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { getLpAddressForFarmsPrice, toPreciseNumber } from "@beratrax/core/src/utils/common";
 import { useMemo } from "react";
 import { RiArrowUpSLine } from "react-icons/ri";
-import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
-import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
+import FarmApyGraph from "web/src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
+import FarmLpGraph from "web/src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import "./Details.css";
 
 interface Props {

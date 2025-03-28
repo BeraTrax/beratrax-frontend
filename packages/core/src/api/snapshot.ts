@@ -1,5 +1,5 @@
 import { snapshotApi } from ".";
-import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "@core/types/snapshot";
+import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "../types/snapshot";
 
 export const getSnapshotSpace = async (spaceId: string): Promise<SnapshotSpace> => {
   const query = `

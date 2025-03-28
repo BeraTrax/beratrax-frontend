@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./SuccessfulEarnTrax.module.css";
 
 interface IProps {

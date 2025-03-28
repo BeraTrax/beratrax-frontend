@@ -5,7 +5,10 @@
     "declaration": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "src/*": ["./src/*"],
+    },
   },
   "include": ["."],
   "exclude": ["node_modules", "dist", "build", ".turbo"]

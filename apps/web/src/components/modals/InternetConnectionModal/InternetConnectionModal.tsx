@@ -1,6 +1,6 @@
 import logo from "@beratrax/core/src/assets/images/logo.png";
 import { FC } from "react";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./InternetConnectionModal.module.css";
 
 export const InternetConnectionModal: FC = () => {

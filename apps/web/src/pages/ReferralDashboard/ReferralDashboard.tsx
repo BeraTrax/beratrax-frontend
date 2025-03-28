@@ -3,8 +3,8 @@ import useAccountData from "@beratrax/core/src/state/account/useAccountData";
 import { copyToClipboard, getPositionSuffix } from "@beratrax/core/src/utils";
 import React, { useMemo, useState } from "react";
 import ReactDOMServer from "react-dom/server";
-import { ReferralCard } from "src/components/ReferralCard/ReferralCard";
-import { ReferralDashboardTable } from "src/components/ReferralDashboardTable/ReferralDashboardTable";
+import { ReferralCard } from "web/src/components/ReferralCard/ReferralCard";
+import { ReferralDashboardTable } from "web/src/components/ReferralDashboardTable/ReferralDashboardTable";
 import styles from "./ReferralDashboard.module.css";
 
 const ReferralDashboard: React.FC = () => {

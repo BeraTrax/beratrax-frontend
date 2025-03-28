@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "src/pages/Dashboard/Dashboard";
-import Farms from "src/pages/Farms/Farms";
+import Dashboard from "web/src/pages/Dashboard/Dashboard";
+import Farms from "web/src/pages/Farms/Farms";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import { usePageTracking } from "@beratrax/core/src/hooks";

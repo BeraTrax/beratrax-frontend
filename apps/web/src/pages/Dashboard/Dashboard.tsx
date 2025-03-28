@@ -1,5 +1,5 @@
-import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
-import ReferralLink from "src/components/ReferralLink/ReferralLink";
+import { EmptyComponent } from "web/src/components/EmptyComponent/EmptyComponent";
+import ReferralLink from "web/src/components/ReferralLink/ReferralLink";
 import { useDeviceInfo } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
 import Vaults from "./JoinedVaults/Vaults";

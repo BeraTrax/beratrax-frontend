@@ -27,7 +27,8 @@ export const defaultChainId = CHAIN_ID.BERACHAIN; // Berachain
 export const defaultNetworkName = "berachain";
 export const walletConnectProjectId = process.env.EXPO_PUBLIC_WALLET_CONNECT_PROJECT_ID as string;
 export const isDev = process.env.EXPO_PUBLIC_NODE_ENV === "development";
-export const isStagging = window.location.hostname.includes("staging.beratrax.com");
+// export const isStagging = window.location.hostname.includes("staging.beratrax.com");
+export const isStagging = false;  // TODO: fix this
 export const GATEFI_MERCHANT_ID = process.env.EXPO_PUBLIC_GATEFI_MERCHANT_ID as string;
 export const SOCKET_BRIDGE_KEY = process.env.EXPO_PUBLIC_SOCKET_BRIDGE_KEY;
 export const SOCKET_API_KEY = process.env.EXPO_PUBLIC_SOCKET_BRIDGE_KEY;

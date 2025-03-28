@@ -6,10 +6,10 @@ import {
   useSnapshotSpaceProposals
 } from "@beratrax/core/src/hooks/useSnapshot";
 import { useMemo, useState } from "react";
-import PoolButton from "src/components/PoolButton/PoolButton";
-import { ProposalCard } from "src/components/ProposalCard/ProposalCard";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { Tabs } from "src/components/Tabs/Tabs";
+import PoolButton from "web/src/components/PoolButton/PoolButton";
+import { ProposalCard } from "web/src/components/ProposalCard/ProposalCard";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
+import { Tabs } from "web/src/components/Tabs/Tabs";
 import "./Snapshot.css";
 
 export const Snapshot = () => {

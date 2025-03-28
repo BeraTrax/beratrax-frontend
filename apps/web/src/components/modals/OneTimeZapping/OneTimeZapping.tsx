@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./OneTimeZapping.module.css";
 import { useAppDispatch } from "@beratrax/core/src/state";
 import { useWallet } from "@beratrax/core/src/hooks";

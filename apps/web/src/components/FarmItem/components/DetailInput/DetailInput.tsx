@@ -22,13 +22,13 @@ import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { noExponents, toWei } from "@beratrax/core/src/utils/common";
 import moment from "moment";
 import React, { useMemo, useState } from "react";
-import Loader from "src/components/Loader/Loader";
-import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
-import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
-import { Select } from "src/components/Select/Select";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import Loader from "web/src/components/Loader/Loader";
+import { SlippageNotCalculate } from "web/src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
+import { SlippageWarning } from "web/src/components/modals/SlippageWarning/SlippageWarning";
+import { Select } from "web/src/components/Select/Select";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { zeroAddress } from "viem";
-import { UsdToggle } from "../../../UsdToggle/UsdToggle";
+import { UsdToggle } from "web/src/components/UsdToggle/UsdToggle";
 import styles from "./DetailInput.module.css";
 
 interface Props {

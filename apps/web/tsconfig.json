@@ -23,17 +23,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "useDefineForClassFields": true,
-    "baseUrl": ".",
     "plugins": [
       {
         "name": "typescript-plugin-css-modules"
       }
     ],
-    "paths": {
-      "src/*": ["./src/*"],
-      "@core/*": ["./../../packages/core/src/*"],
-      "react-outside-click-handler": ["./node_modules/@types/react-outside-click-handler"]
-    },
     "types": [
       "./src/decs2.d.ts",
       "vite-plugin-svgr/client"

@@ -1,7 +1,7 @@
 import React from "react";
-import PoolButton from "src/components/PoolButton/PoolButton";
-import { Tabs } from "src/components/Tabs/Tabs";
-import { UserLeaderboardTable } from "src/components/UserLeaderboradTable/UserLeaderboradTable";
+import PoolButton from "web/src/components/PoolButton/PoolButton";
+import { Tabs } from "web/src/components/Tabs/Tabs";
+import { UserLeaderboardTable } from "web/src/components/UserLeaderboradTable/UserLeaderboradTable";
 
 enum Tab {
     LeaderBoard = "BTX Points",

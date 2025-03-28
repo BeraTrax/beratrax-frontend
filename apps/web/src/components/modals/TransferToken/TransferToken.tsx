@@ -2,8 +2,8 @@ import { useTransferToken } from "@beratrax/core/src/hooks";
 import { Token } from "@beratrax/core/src/types";
 import { noExponents } from "@beratrax/core/src/utils/common";
 import { FC, useMemo } from "react";
-import { UsdToggle } from "src/components/UsdToggle/UsdToggle";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { UsdToggle } from "web/src/components/UsdToggle/UsdToggle";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 
 interface IProps {
     token: Token;

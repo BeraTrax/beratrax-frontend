@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { VaultsApy } from "@beratrax/core/src/api/stats";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { useApp } from "@beratrax/core/src/hooks";
 import { useApy } from "@beratrax/core/src/state/apys/useApy";
 import styles from "./FarmApyGraph.module.css";

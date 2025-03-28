@@ -7,11 +7,11 @@ import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { useState } from "react";
 import { RiArrowDownSLine } from "react-icons/ri";
-import PoolButton from "src/components/PoolButton/PoolButton";
-import { Tabs } from "src/components/Tabs/Tabs";
-import { Description } from "../Description/Description";
-import DetailInput from "../DetailInput/DetailInput";
-import Details from "../Details/Details";
+import PoolButton from "web/src/components/PoolButton/PoolButton";
+import { Tabs } from "web/src/components/Tabs/Tabs";
+import { Description } from "web/src/components/FarmItem/components/Description/Description";
+import DetailInput from "web/src/components/FarmItem/components/DetailInput/DetailInput";
+import Details from "web/src/components/FarmItem/components/Details/Details";
 import "./DropDownView.css";
 
 export const DropDownView: React.FC<{ farm: PoolDef }> = ({ farm }) => {

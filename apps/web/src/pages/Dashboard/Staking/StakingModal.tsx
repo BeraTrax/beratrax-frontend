@@ -10,11 +10,11 @@ import { awaitTransaction, toEth, toWei } from "@beratrax/core/src/utils/common"
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { ImSpinner8 } from "react-icons/im";
-import MobileModalContainer from "src/components/MobileModalContainer/MobileModalContainer";
-import PoolButton from "src/components/PoolButton/PoolButton";
-import Staking from "src/components/Staking/Staking";
-import UnStaking from "src/components/Staking/UnStaking";
-import { Tabs } from "src/components/Tabs/Tabs";
+import MobileModalContainer from "web/src/components/MobileModalContainer/MobileModalContainer";
+import PoolButton from "web/src/components/PoolButton/PoolButton";
+import Staking from "web/src/components/Staking/Staking";
+import UnStaking from "web/src/components/Staking/UnStaking";
+import { Tabs } from "web/src/components/Tabs/Tabs";
 import { Address, encodeFunctionData, getContract } from "viem";
 import stakingModalStyles from "./StakingModal.module.css";
 

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { ProposalProgressBar } from "../ProposalProgressBar/ProposalProgressBar";
+import { ProposalProgressBar } from "web/src/components/ProposalProgressBar/ProposalProgressBar";
 import "./ProposalCard.css";
 import { SnapshotSpaceVote } from "@beratrax/core/src/types/snapshot";
 import { useSnapshotVote } from "@beratrax/core/src/hooks/useSnapshot";
-import { Skeleton } from "../Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import moment from "moment";
 import { getIpfsImageUrls } from "@beratrax/core/src/api/snapshot";
 import { SNAPSHOT_SPACE_ID } from "@beratrax/core/src/config/constants";

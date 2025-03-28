@@ -1,6 +1,6 @@
 import { backendApi } from ".";
-import { Order, AccountDetails } from "@core/types";
-import { UsersTableColumns } from "@core/types/enums";
+import { Order, AccountDetails } from "../types";
+import { UsersTableColumns } from "../types/enums";
 
 interface UserStatsResponse {
   data: AccountDetails[];

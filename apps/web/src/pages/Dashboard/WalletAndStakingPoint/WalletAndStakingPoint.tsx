@@ -7,11 +7,11 @@ import { checkClaimBtx, claimBtx } from "@beratrax/core/src/api/account";
 import { notifyError } from "@beratrax/core/src/api/notify";
 import GreenLogo from "@beratrax/core/src/assets/images/greenLogo.png";
 import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
-import { EarnTrax } from "src/components/modals/EarnTrax/EarnTrax";
-import { ExportPrivateKey } from "src/components/modals/ExportPrivateKey/ExportPrivateKey";
-import { ExportPublicKey } from "src/components/modals/ExportPublicKey/ExportPublicKey";
-import SuccessfulEarnTrax from "src/components/modals/SuccessfulEarnTrax/SuccessfulEarnTrax";
-import { TermsOfUseModal } from "src/components/modals/TermsOfUseModal/TermsOfUseModal";
+import { EarnTrax } from "web/src/components/modals/EarnTrax/EarnTrax";
+import { ExportPrivateKey } from "web/src/components/modals/ExportPrivateKey/ExportPrivateKey";
+import { ExportPublicKey } from "web/src/components/modals/ExportPublicKey/ExportPublicKey";
+import SuccessfulEarnTrax from "web/src/components/modals/SuccessfulEarnTrax/SuccessfulEarnTrax";
+import { TermsOfUseModal } from "web/src/components/modals/TermsOfUseModal/TermsOfUseModal";
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useVaults } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
@@ -23,7 +23,7 @@ import { copyToClipboard } from "@beratrax/core/src/utils";
 import { trackLogin } from "@beratrax/core/src/utils/analytics";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
-import StakingModal from "../Staking/StakingModal";
+import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 export const WalletAndStakingPoint: React.FC = () => {
   const {

@@ -14,7 +14,7 @@ import { CiRepeat } from "react-icons/ci";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircle } from "react-icons/io5";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";

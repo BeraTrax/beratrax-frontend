@@ -1,7 +1,7 @@
-import { CHAIN_ID } from "@core/types/enums";
+import { CHAIN_ID } from "../types/enums";
 import { socketTechApi } from ".";
-import { addressesByChainId } from "@core/config/constants/contracts";
-import { toEth } from "@core/utils/common";
+import { addressesByChainId } from "../config/constants/contracts";
+import { toEth } from "../utils/common";
 import { getTokenPricesBackend } from "./token";
 import { Address } from "viem";
 

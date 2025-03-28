@@ -5,7 +5,7 @@ import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch } from "@beratrax/core/src/state";
 import { updateAccountField } from "@beratrax/core/src/state/account/accountReducer";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./EarnTrax.module.css";
 
 interface IProps {

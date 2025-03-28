@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { BiCopy } from "react-icons/bi";
 import { BsCheckCircle } from "react-icons/bs";
 import QRCode from "react-qr-code";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 
 interface IProps {
   setOpenModal: Function;

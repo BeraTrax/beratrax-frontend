@@ -20,9 +20,9 @@ import useTransaction from "@beratrax/core/src/state/transactions/useTransaction
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { getCombinedBalance, toEth, toWei } from "@beratrax/core/src/utils/common";
 import { FC, useEffect, useMemo, useState } from "react";
-import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
+import TransactionDetails from "web/src/pages/Dashboard/Transactions/components/TransactionDetails";
 import { Address, zeroAddress } from "viem";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./DepositModal.module.css"
 
 interface IProps {

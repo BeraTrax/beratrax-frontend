@@ -1,8 +1,8 @@
-import { approveErc20, getBalance } from "@core/api/token";
-import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "@core/utils/common";
-import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "@core/api/notify";
-import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "@core/utils/slot";
-import { errorMessages, loadingMessages, successMessages } from "@core/config/constants/notifyMessages";
+import { approveErc20, getBalance } from "../../api/token";
+import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "../../utils/common";
+import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "../../api/notify";
+import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "../../utils/slot";
+import { errorMessages, loadingMessages, successMessages } from "../../config/constants/notifyMessages";
 import {
   SlippageInBaseFn,
   SlippageOutBaseFn,
@@ -15,7 +15,7 @@ import {
   GetFarmDataProcessedFn,
   FarmFunctions,
 } from "./types";
-import { addressesByChainId } from "@core/config/constants/contracts";
+import { addressesByChainId } from "../../config/constants/contracts";
 import { isGasSponsored } from "..";
 import { traceTransactionAssetChange } from "../tenderly";
 import {
@@ -34,12 +34,12 @@ import {
   getContract,
   parseEventLogs,
 } from "viem";
-import zapperAbi from "@core/assets/abis/zapperAbi";
-import rewardVaultAbi from "@core/assets/abis/rewardVaultAbi";
-import vaultAbi from "@core/assets/abis/vault.json";
-import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "@core/types";
-import { SupportedChains } from "@core/config/walletConfig";
-import store from "@core/state";
+import zapperAbi from "../../assets/abis/zapperAbi";
+import rewardVaultAbi from "../../assets/abis/rewardVaultAbi";
+import vaultAbi from "../../assets/abis/vault.json";
+import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "../../types";
+import { SupportedChains } from "../../config/walletConfig";
+import store from "../../state";
 import {
   ApproveBridgeStep,
   ApproveZapStep,
@@ -49,7 +49,7 @@ import {
   WaitForBridgeResultsStep,
   ZapInStep,
   ZapOutStep,
-} from "@core/state/transactions/types";
+} from "../../state/transactions/types";
 import { buildTransaction, getBridgeStatus, getRoute, SocketApprovalData, SocketRoute } from "../bridge";
 import {
   addTransactionStepDb,
@@ -57,12 +57,12 @@ import {
   editTransactionDb,
   markAsFailedDb,
   TransactionsDB,
-} from "@core/state/transactions/transactionsReducer";
-import Bridge from "@core/utils/Bridge";
-import { addNotificationWithTimeout } from "@core/state/notification/notifiactionReducer";
-import { setSimulatedSlippage } from "@core/state/farms/farmsReducer";
-import { Balances } from "@core/state/tokens/types";
-import pools_json, { PoolDef, tokenNamesAndImages } from "@core/config/constants/pools_json";
+} from "../../state/transactions/transactionsReducer";
+import Bridge from "../../utils/Bridge";
+import { addNotificationWithTimeout } from "../../state/notification/notifiactionReducer";
+import { setSimulatedSlippage } from "../../state/farms/farmsReducer";
+import { Balances } from "../../state/tokens/types";
+import pools_json, { PoolDef, tokenNamesAndImages } from "../../config/constants/pools_json";
 
 export const zapInBase: ZapInBaseFn = async ({
   withBond,
@@ -1470,3 +1470,4 @@ function getBalanceSlot(owner: Address) {
   const balanceSlot = keccak256(encoded);
   return balanceSlot;
 }
+

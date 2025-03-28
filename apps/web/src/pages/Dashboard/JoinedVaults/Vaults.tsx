@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import stakingAbi from "@beratrax/core/src/assets/abis/stakingAbi";
-import { DepositToRewardsVault } from "src/components/DepositRewardsVault/DepositRewardsVault";
-import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
-import { VaultsMigrator } from "src/components/VaultMigrator/VaultsMigrator";
+import { DepositToRewardsVault } from "web/src/components/DepositRewardsVault/DepositRewardsVault";
+import { EmptyComponent } from "web/src/components/EmptyComponent/EmptyComponent";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
+import { VaultsMigrator } from "web/src/components/VaultMigrator/VaultsMigrator";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";

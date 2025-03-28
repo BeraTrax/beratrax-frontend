@@ -9,7 +9,7 @@ import uuid from "react-uuid";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useFarmApy, useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import { toFixedFloor } from "@beratrax/core/src/utils/common";
-import { Skeleton } from "../Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";

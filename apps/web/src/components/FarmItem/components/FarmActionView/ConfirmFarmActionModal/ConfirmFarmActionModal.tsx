@@ -4,8 +4,8 @@ import useTransactions from "@beratrax/core/src/state/transactions/useTransactio
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { formatBalance } from "@beratrax/core/src/utils/common";
 import { FC, useEffect, useMemo } from "react";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
-import TransactionDetails from "src/pages/Dashboard/Transactions/components/TransactionDetails";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
+import TransactionDetails from "web/src/pages/Dashboard/Transactions/components/TransactionDetails";
 
 interface DepositInfo {
   amount: string;

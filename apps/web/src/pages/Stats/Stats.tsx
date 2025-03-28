@@ -1,9 +1,9 @@
-import PlatformTVL from "../Dashboard/PlatformTVL/PlatformTVL";
-import { UserStatsTable } from "src/components/UserStatsTable/UserStatsTable";
+import PlatformTVL from "web/src/pages/Dashboard/PlatformTVL/PlatformTVL";
+import { UserStatsTable } from "web/src/components/UserStatsTable/UserStatsTable";
 import { useStats } from "@beratrax/core/src/hooks";
-import { StatsCard } from "src/components/StatsCard/StatsCard";
-import { MyReferrals } from "src/components/MyReferrals/MyReferrals";
-import { VaultStatsTable } from "src/components/VaultStatsTable/VaultStatsTable";
+import { StatsCard } from "web/src/components/StatsCard/StatsCard";
+import { MyReferrals } from "web/src/components/MyReferrals/MyReferrals";
+import { VaultStatsTable } from "web/src/components/VaultStatsTable/VaultStatsTable";
 import PlatformTVLGraph from "./PlatformTVLGraph/PlatformTVLGraph";
 
 function Stats() {

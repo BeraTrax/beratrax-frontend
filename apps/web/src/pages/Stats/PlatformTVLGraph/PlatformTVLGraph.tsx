@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { TVLHistory } from "@beratrax/core/src/api/stats";
 import { usePlatformTVLHistory } from "@beratrax/core/src/hooks";
 

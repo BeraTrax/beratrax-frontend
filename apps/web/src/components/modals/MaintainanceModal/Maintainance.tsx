@@ -1,6 +1,6 @@
 import { FC } from "react";
 import logo from "@beratrax/core/src/assets/images/logo.png";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./Maintainance.module.css";
 
 export const Maintainance: FC = () => {

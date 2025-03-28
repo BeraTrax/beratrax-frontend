@@ -3,7 +3,7 @@ import "./FarmInfo.css";
 import { useApp } from "@beratrax/core/src/hooks";
 import FarmDetails from "./FarmDetails/FarmDetails";
 import { useWallet } from "@beratrax/core/src/hooks";
-import { NotSignedIn } from "src/components/NotSignedIn/NotSignedIn";
+import { NotSignedIn } from "web/src/components/NotSignedIn/NotSignedIn";
 
 const FarmInfo: React.FC = () => {
   const { lightMode } = useApp();

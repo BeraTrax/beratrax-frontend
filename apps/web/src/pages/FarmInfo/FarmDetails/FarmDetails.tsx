@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { PoolFees } from "@beratrax/core/src/api/fees";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useApp } from "@beratrax/core/src/hooks";
@@ -13,8 +13,8 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { getLpAddressForFarmsPrice } from "@beratrax/core/src/utils/common";
 import { zeroAddress } from "viem";
-import FarmApyGraph from "../FarmApyGraph/FarmApyGraph";
-import FarmLpGraph from "../FarmLpGraph/FarmLpGraph";
+import FarmApyGraph from "web/src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
+import FarmLpGraph from "web/src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import styles from "./styles.module.css";
 
 const FarmDetails = () => {

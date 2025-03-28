@@ -2,9 +2,9 @@ import closemodalicon from "@beratrax/core/src/assets/images/closemodalicon.svg"
 import exchange from "@beratrax/core/src/assets/images/exchange.svg";
 import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
-import DialPad from "src/components/Dialpad/Dialpad";
-import MobileModalContainer from "src/components/MobileModalContainer/MobileModalContainer";
-import { Select } from "src/components/Select/Select";
+import DialPad from "web/src/components/Dialpad/Dialpad";
+import MobileModalContainer from "web/src/components/MobileModalContainer/MobileModalContainer";
+import { Select } from "web/src/components/Select/Select";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useWindowSize } from "@beratrax/core/src/hooks";
 import { useDetailInput } from "@beratrax/core/src/hooks/useDetailInput";
@@ -28,12 +28,12 @@ import {
 import { noExponents, toWei } from "@beratrax/core/src/utils/common";
 import CurrencyInput from "react-currency-input-field";
 import { useNavigate } from "react-router-dom";
-import { ConfirmWithdraw } from "src/components/modals/ConfirmWithdraw/ConfirmWithdraw";
-import { OneTimeZapping } from "src/components/modals/OneTimeZapping/OneTimeZapping";
-import { SlippageNotCalculate } from "src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
-import { SlippageWarning } from "src/components/modals/SlippageWarning/SlippageWarning";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
-import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
+import { ConfirmWithdraw } from "web/src/components/modals/ConfirmWithdraw/ConfirmWithdraw";
+import { OneTimeZapping } from "web/src/components/modals/OneTimeZapping/OneTimeZapping";
+import { SlippageNotCalculate } from "web/src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
+import { SlippageWarning } from "web/src/components/modals/SlippageWarning/SlippageWarning";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
+import ConfirmFarmActionModal from "web/src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
 
 interface FarmActionModalProps {

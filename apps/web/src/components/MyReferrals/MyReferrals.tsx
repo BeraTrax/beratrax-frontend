@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { NotSignedIn } from "../NotSignedIn/NotSignedIn";
+import { NotSignedIn } from "web/src/components/NotSignedIn/NotSignedIn";
 import { useMyReferrals } from "@beratrax/core/src/hooks";
 
 export const MyReferrals: FC = () => {

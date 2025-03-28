@@ -1,6 +1,6 @@
 import { getHook } from "react-hooks-outside";
 import { Notification } from "reapop";
-import { NotifyMessage } from "@core/types";
+import { NotifyMessage } from "../types";
 
 export const notifySuccess = (successMessage: NotifyMessage, options?: Partial<Notification>) => {
   const { notify } = getHook("notifications");

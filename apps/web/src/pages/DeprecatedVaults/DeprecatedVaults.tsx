@@ -16,8 +16,8 @@ import { toWei } from "@beratrax/core/src/utils/common";
 import { formatUnits } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "src/components/BackButton/BackButton";
-import ConfirmFarmActionModal from "src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
+import BackButton from "web/src/components/BackButton/BackButton";
+import ConfirmFarmActionModal from "web/src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import { erc20Abi, getAddress } from "viem";
 import { useReadContract } from "wagmi";
 

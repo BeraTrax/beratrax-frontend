@@ -10,9 +10,9 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { BiSliderAlt } from "react-icons/bi";
 import { TbListDetails } from "react-icons/tb";
 import OutsideClickHandler from "react-outside-click-handler";
-import { EmptyComponent } from "src/components/EmptyComponent/EmptyComponent";
-import { TransferToken } from "src/components/modals/TransferToken/TransferToken";
-import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { EmptyComponent } from "web/src/components/EmptyComponent/EmptyComponent";
+import { TransferToken } from "web/src/components/modals/TransferToken/TransferToken";
+import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { zeroAddress } from "viem";
 
 interface IProps {}

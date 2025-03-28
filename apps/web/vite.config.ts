@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
     envPrefix: "EXPO_PUBLIC_",
     resolve: {
       alias: {
-        src: "/src",
+        "web/src": "/src",
         "@core": "/../../packages/core/src",
         jsbi: path.resolve(__dirname, "./node_modules/jsbi/dist/jsbi-cjs.js"),
         "~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",

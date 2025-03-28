@@ -5,8 +5,8 @@ import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "src/components/BackButton/BackButton";
-import FarmRow from "src/components/FarmItem/FarmRow";
+import BackButton from "web/src/components/BackButton/BackButton";
+import FarmRow from "web/src/components/FarmItem/FarmRow";
 
 function Farms() {
   const navigate = useNavigate();

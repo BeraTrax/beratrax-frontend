@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ModalLayout } from "../ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 
 interface IProps {
     handleClose: Function;

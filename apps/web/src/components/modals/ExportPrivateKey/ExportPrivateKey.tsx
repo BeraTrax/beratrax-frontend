@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { BiCopy } from "react-icons/bi";
 import { BsCheckCircle } from "react-icons/bs";
 import { TiWarningOutline } from "react-icons/ti";
-import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
+import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 
 interface IProps {
   setOpenModal: Function;

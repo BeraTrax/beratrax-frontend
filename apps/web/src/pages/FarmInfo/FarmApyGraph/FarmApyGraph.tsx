@@ -125,6 +125,13 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 
     const { vaultApy, isLoading: isLoadingVaultApy, isFetched: isFetchedVaultApy } = useSpecificVaultApy(farm.id);
     const newData = useMemo(() => downsampleData(vaultApy || [], graphFilter), [vaultApy, graphFilter]);
+    const [minApy, maxApy] = useMemo(() => {
+        if (!newData || newData.length === 0) return [0, 100];
+    
+        const values = newData.map(d => parseFloat(d.apy));
+        return [Math.min(...values), Math.max(...values)];
+    }, [newData]);
+    
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
@@ -141,7 +148,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
-                                <YAxis tick={false} axisLine={false} width={0} />
+                                <YAxis tick={false} axisLine={false} width={0} domain={[minApy * 0.9, maxApy * 1.1]} />
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}

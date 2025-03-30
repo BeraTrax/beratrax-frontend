@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Account, Client, createWalletClient, custom, CustomTransport } from "viem";
 import { arbitrum } from "viem/chains";
-import { getWeb3AuthInstance } from "./../config/walletConfig";
+import { getWeb3AuthInstance } from "core/src/config/walletConfig";
 
 const useWeb3Auth = () => {
   const [connected, setConnected] = useState(false);

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchReferrals } from "./../api/referrals";
-import { REFFERED_ACCOUNTS } from "./../config/constants/query";
+import { fetchReferrals } from "core/src/api/referrals";
+import { REFFERED_ACCOUNTS } from "core/src/config/constants/query";
 import useWallet from "./useWallet";
 
 export const useMyReferrals = () => {

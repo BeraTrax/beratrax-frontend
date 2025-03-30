@@ -1,13 +1,13 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Address } from "viem";
-import useWallet from "../../../hooks/useWallet";
-import { toEth, toWei } from "../../../utils/common";
-import useTokens from "../../tokens/useTokens";
-import farmFunctions from "./../../../api/pools";
-import { PoolDef } from "./../../../config/constants/pools_json";
-import { FARM_ZAP_IN } from "./../../../config/constants/query";
-import { useAppDispatch } from "./../../../state";
+import useWallet from "core/src/hooks/useWallet";
+import { toEth, toWei } from "core/src/utils/common";
+import useTokens from "core/src/state/tokens/useTokens";
+import farmFunctions from "core/src/api/pools";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { FARM_ZAP_IN } from "core/src/config/constants/query";
+import { useAppDispatch } from "core/src/state";
 
 export interface ZapIn {
   zapAmount: number;

@@ -1,7 +1,7 @@
-import { PoolDef } from "../../config/constants/pools_json";
-import { Balances, Decimals, Prices } from "../../state/tokens/types";
-import { EstimateTxGasArgs, IClients } from "../../types";
-import { awaitTransaction } from "../../utils/common";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { Balances, Decimals, Prices } from "core/src/state/tokens/types";
+import { EstimateTxGasArgs, IClients } from "core/src/types";
+import { awaitTransaction } from "core/src/utils/common";
 import { Address } from "viem";
 
 export interface ZapInArgs {

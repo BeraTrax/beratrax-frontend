@@ -7,7 +7,7 @@ import {
 } from "@tenderly/sdk";
 import { Address, createPublicClient, Hex, http, zeroAddress } from "viem";
 import { tenderlyApi } from ".";
-import { defaultChainId, tenderlyRpcs } from "./../config/constants";
+import { defaultChainId, tenderlyRpcs } from "core/src/config/constants";
 import {
   AssetChanges,
   BalanceDiffs,
@@ -15,7 +15,7 @@ import {
   SimulationResponse,
   TenderlySimulateTransactionBody,
   TraceTransactionResponse,
-} from "./../types/tenderly";
+} from "core/src/types/tenderly";
 
 // #region Utility functions
 const mapStateOverridesToEncodeStateRequest = (

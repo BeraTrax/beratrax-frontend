@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "../state";
-import { setOffline } from "../state/internet/internetReducer";
-import useAccountData from "../state/account/useAccountData";
-import useFarmDetails from "../state/farms/hooks/useFarmDetails";
-import useTransactions from "../state/transactions/useTransactions";
-import { useFarmApys } from "../state/farms/hooks/useFarmApy";
-import useTokens from "../state/tokens/useTokens";
+import { useAppDispatch } from "core/src/state";
+import { setOffline } from "core/src/state/internet/internetReducer";
+import useAccountData from "core/src/state/account/useAccountData";
+import useFarmDetails from "core/src/state/farms/hooks/useFarmDetails";
+import useTransactions from "core/src/state/transactions/useTransactions";
+import { useFarmApys } from "core/src/state/farms/hooks/useFarmApy";
+import useTokens from "core/src/state/tokens/useTokens";
 
 export const useDataRefresh = () => {
     const { reloadApys } = useFarmApys();

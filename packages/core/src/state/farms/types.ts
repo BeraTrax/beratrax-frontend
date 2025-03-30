@@ -1,7 +1,7 @@
-import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
-import { PoolDef } from "./../../config/constants/pools_json";
-import { FarmData, IClients } from "./../../types";
-import { FarmTransactionType } from "./../../types/enums";
+import { Balances, Decimals, Prices, TotalSupplies } from "core/src/state/tokens/types";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { FarmData, IClients } from "core/src/types";
+import { FarmTransactionType } from "core/src/types/enums";
 
 export interface StateInterface {
   farmDetails: FarmDetails;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchAllFeesPool } from "./../../api/fees";
+import { fetchAllFeesPool } from "core/src/api/fees";
 import { StateInterface } from "./types";
 
 const initialState: StateInterface = {

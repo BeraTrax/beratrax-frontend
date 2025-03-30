@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useAppSelector } from "./../state";
-import { useVaults } from "./useVaults";
+import { useAppSelector } from "core/src/state";
+import { useVaults } from "core/src/hooks/useVaults";
 
 const useTrax = () => {
   const { estimatedTraxPerDay } = useAppSelector((state) => state.account);

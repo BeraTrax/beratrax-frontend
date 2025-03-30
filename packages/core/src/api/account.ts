@@ -1,4 +1,4 @@
-import { AccountResponse } from "../state/account/types";
+import { AccountResponse } from "core/src/state/account/types";
 import { backendApi } from ".";
 
 export const postAccountData = async (address: string, referrerCode?: string) => {

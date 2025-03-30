@@ -24,12 +24,12 @@ import { Web3AuthConnector } from "@web3auth/web3auth-wagmi-connector";
 import { providers } from "ethers";
 import { defineChain, http, WalletClient, type HttpTransport } from "viem";
 import { createConnector as createWagmiConnector } from "wagmi";
-import discordIcon from "./../assets/images/discordapp-icon.svg";
-import facebookIcon from "./../assets/images/facebook-icon.svg";
-import githubIcon from "./../assets/images/github-icon.svg";
-import googleIcon from "./../assets/images/google-logo.svg";
-import twitterIcon from "./../assets/images/twitter-icon.svg";
-import { blockExplorersByChainId } from "./constants/urls";
+import discordIcon from "core/src/assets/images/discordapp-icon.svg";
+import facebookIcon from "core/src/assets/images/facebook-icon.svg";
+import githubIcon from "core/src/assets/images/github-icon.svg";
+import googleIcon from "core/src/assets/images/google-logo.svg";
+import twitterIcon from "core/src/assets/images/twitter-icon.svg";
+import { blockExplorersByChainId } from "core/src/config/constants/urls";
 
 export const berachain = /*#__PURE__*/ defineChain({
   id: 80094,

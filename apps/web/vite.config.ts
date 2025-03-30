@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "web/src": "/src",
-        "@core": "/../../packages/core/src",
+        "core/src": "/../../packages/core/src",
         jsbi: path.resolve(__dirname, "./node_modules/jsbi/dist/jsbi-cjs.js"),
         "~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",
         "~@fontsource/inter": "@fontsource/inter",

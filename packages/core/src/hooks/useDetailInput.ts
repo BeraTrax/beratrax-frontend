@@ -1,16 +1,16 @@
 
 import React, { useEffect, useState } from "react";
-import { PoolDef } from "./../config/constants/pools_json";
-import { useAppDispatch, useAppSelector } from "./../state";
-import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "./../state/farms/farmsReducer";
-import useDeposit from "./../state/farms/hooks/useDeposit";
-import useFarmDetails from "./../state/farms/hooks/useFarmDetails";
-import useWithdraw from "./../state/farms/hooks/useWithdraw";
-import useZapIn from "./../state/farms/hooks/useZapIn";
-import useZapOut from "./../state/farms/hooks/useZapOut";
-import useTokens from "./../state/tokens/useTokens";
-import { FarmTransactionType } from "./../types/enums";
-import { limitDecimals } from "./../utils";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { useAppDispatch, useAppSelector } from "core/src/state";
+import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "core/src/state/farms/farmsReducer";
+import useDeposit from "core/src/state/farms/hooks/useDeposit";
+import useFarmDetails from "core/src/state/farms/hooks/useFarmDetails";
+import useWithdraw from "core/src/state/farms/hooks/useWithdraw";
+import useZapIn from "core/src/state/farms/hooks/useZapIn";
+import useZapOut from "core/src/state/farms/hooks/useZapOut";
+import useTokens from "core/src/state/tokens/useTokens";
+import { FarmTransactionType } from "core/src/types/enums";
+import { limitDecimals } from "core/src/utils";
 import useWallet from "./useWallet";
 
 export const useDetailInput = (farm: PoolDef) => {

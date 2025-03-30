@@ -1,5 +1,5 @@
-import { CHAIN_ID, FarmOriginPlatform } from "./../../types/enums";
 import { Address, zeroAddress } from "viem";
+import { CHAIN_ID, FarmOriginPlatform } from "core/src/types/enums";
 
 export interface PoolDef {
   isUpgradable: boolean;
@@ -1240,3 +1240,4 @@ export const tokenNamesAndImages = pools_json.reduce(
     },
   } as Record<string, { name: string; logos: string[] }>,
 );
+

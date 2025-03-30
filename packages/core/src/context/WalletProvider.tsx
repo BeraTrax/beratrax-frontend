@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Address, createPublicClient, createWalletClient, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
-import { requestEthForGas } from "./../api";
+import { requestEthForGas } from "core/src/api";
 import { rainbowConfig, SupportedChains, web3AuthInstance } from "./../config/walletConfig";
-import { EstimateTxGasArgs, IClients } from "./../types";
-import { trackTransaction } from "./../utils/analytics";
+import { EstimateTxGasArgs, IClients } from "core/src/types";
+import { trackTransaction } from "core/src/utils/analytics";
 
 
 export interface IWalletContext {

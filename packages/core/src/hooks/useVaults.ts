@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Vault } from "./../types";
-import { useFarmApys } from "../state/farms/hooks/useFarmApy";
-import useFarms from "../state/farms/hooks/useFarms";
-import useTokens from "../state/tokens/useTokens";
+import { Vault } from "core/src/types";
+import { useFarmApys } from "core/src/state/farms/hooks/useFarmApy";
+import useFarms from "core/src/state/farms/hooks/useFarms";
+import useTokens from "core/src/state/tokens/useTokens";
 
 export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: boolean } => {
   const { farms } = useFarms();

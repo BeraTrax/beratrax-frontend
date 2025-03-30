@@ -1,7 +1,7 @@
 import { Address, getAddress, zeroAddress } from "viem";
-import { addressesByChainId } from "./../../config/constants/contracts";
-import { IClients } from "./../../types";
-import { CHAIN_ID } from "./../../types/enums";
+import { addressesByChainId } from "core/src/config/constants/contracts";
+import { IClients } from "core/src/types";
+import { CHAIN_ID } from "core/src/types/enums";
 
 export enum BridgeDirection {
   USDC_POLYGON_TO_ARBITRUM_USDC = "USDC_POLYGON_TO_ARBITRUM_USDC",

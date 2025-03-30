@@ -1,9 +1,9 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
-import useWallet from "../../../hooks/useWallet";
-import farmFunctions from "./../../../api/pools";
-import { StCoreFarmFunctions } from "./../../../api/pools/types";
-import { FARM_REDEEM } from "./../../../config/constants/query";
+import useWallet from "core/src/hooks/useWallet";
+import farmFunctions from "core/src/api/pools";
+import { StCoreFarmFunctions } from "core/src/api/pools/types";
+import { FARM_REDEEM } from "core/src/config/constants/query";
 
 const farmId = 301;
 const useStCoreRedeem = () => {

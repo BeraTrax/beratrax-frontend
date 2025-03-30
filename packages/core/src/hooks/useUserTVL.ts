@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { FarmDataProcessed } from "./../api/pools/types";
-import { useAppSelector } from "./../state";
+import { FarmDataProcessed } from "core/src/api/pools/types";
+import { useAppSelector } from "core/src/state";
 
 const useTVL = () => {
   const { farmDetails } = useAppSelector((state) => state.farms);

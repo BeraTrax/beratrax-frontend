@@ -19,6 +19,8 @@
       "@beratrax/web/*": ["apps/web/*"],
       "@beratrax/mobile/*": ["apps/mobile/*"],
       "web/src/*": ["apps/web/src/*"],
+      "core/src/*": ["packages/core/src/*"],
+      "react-outside-click-handler": ["./node_modules/@types/react-outside-click-handler"]
     }
   },
   "exclude": ["_", "node_modules", "dist", "build", "**/*.test.ts"]

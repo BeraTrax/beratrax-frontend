@@ -21,7 +21,7 @@ import useTrax from "./useTrax";
 import useTVL from "./useUserTVL";
 import useVaultMigrate from "./useVaultMigrate";
 import { useVaults } from "./useVaults";
-import useTokens from "../state/tokens/useTokens";
+import useTokens from "core/src/state/tokens/useTokens";
 import useWallet from "./useWallet";
 import useWeb3Auth from "./useWeb3Auth";
 import useWindowSize from "./useWindowSize";

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchReferralDashboard } from "./../api/stats";
+import { fetchReferralDashboard } from "core/src/api/stats";
 
 export const useReferralDashboard = () => {
   const { isLoading, error, data, isFetching } = useQuery({

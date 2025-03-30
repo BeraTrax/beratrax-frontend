@@ -10,17 +10,17 @@ import {
   TransactionReceipt,
   zeroAddress,
 } from "viem";
-import { notifyError } from "./../api/notify";
-import { defaultChainId } from "./../config/constants";
-import { errorMessages } from "./../config/constants/notifyMessages";
-import store from "./../state";
-import { IClients } from "./../types";
+import { notifyError } from "core/src/api/notify";
+import { defaultChainId } from "core/src/config/constants";
+import { errorMessages } from "core/src/config/constants/notifyMessages";
+import store from "core/src/state";
+import { IClients } from "core/src/types";
 import { waitForTransactionReceipt } from "viem/actions";
-import { addressesByChainId } from "./../config/constants/contracts";
-import { PoolDef } from "./../config/constants/pools_json";
-import { SupportedChains } from "./../config/walletConfig";
-import { Balances } from "./../state/tokens/types";
-import { CHAIN_ID } from "./../types/enums";
+import { addressesByChainId } from "core/src/config/constants/contracts";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { SupportedChains } from "core/src/config/walletConfig";
+import { Balances } from "core/src/state/tokens/types";
+import { CHAIN_ID } from "core/src/types/enums";
 
 const web3Name = createWeb3Name();
 

@@ -1,8 +1,8 @@
-import { approveErc20, getBalance } from "../../api/token";
-import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "../../utils/common";
-import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "../../api/notify";
-import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "../../utils/slot";
-import { errorMessages, loadingMessages, successMessages } from "../../config/constants/notifyMessages";
+import { approveErc20, getBalance } from "core/src/api/token";
+import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "core/src/utils/common";
+import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "core/src/api/notify";
+import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "core/src/utils/slot";
+import { errorMessages, loadingMessages, successMessages } from "core/src/config/constants/notifyMessages";
 import {
   SlippageInBaseFn,
   SlippageOutBaseFn,
@@ -15,9 +15,9 @@ import {
   GetFarmDataProcessedFn,
   FarmFunctions,
 } from "./types";
-import { addressesByChainId } from "../../config/constants/contracts";
-import { isGasSponsored } from "..";
-import { traceTransactionAssetChange } from "../tenderly";
+import { addressesByChainId } from "core/src/config/constants/contracts";
+import { isGasSponsored } from "core/src/api";
+import { traceTransactionAssetChange } from "core/src/api/tenderly";
 import {
   Address,
   createPublicClient,
@@ -34,12 +34,12 @@ import {
   getContract,
   parseEventLogs,
 } from "viem";
-import zapperAbi from "../../assets/abis/zapperAbi";
-import rewardVaultAbi from "../../assets/abis/rewardVaultAbi";
-import vaultAbi from "../../assets/abis/vault.json";
-import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "../../types";
-import { SupportedChains } from "../../config/walletConfig";
-import store from "../../state";
+import zapperAbi from "core/src/assets/abis/zapperAbi";
+import rewardVaultAbi from "core/src/assets/abis/rewardVaultAbi";
+import vaultAbi from "core/src/assets/abis/vault.json";
+import { CrossChainBridgeWithdrawObject, CrossChainTransactionObject, IClients } from "core/src/types";
+import { SupportedChains } from "core/src/config/walletConfig";
+import store from "core/src/state";
 import {
   ApproveBridgeStep,
   ApproveZapStep,
@@ -49,20 +49,20 @@ import {
   WaitForBridgeResultsStep,
   ZapInStep,
   ZapOutStep,
-} from "../../state/transactions/types";
-import { buildTransaction, getBridgeStatus, getRoute, SocketApprovalData, SocketRoute } from "../bridge";
+} from "core/src/state/transactions/types";
+import { buildTransaction, getBridgeStatus, getRoute, SocketApprovalData, SocketRoute } from "core/src/api/bridge";
 import {
   addTransactionStepDb,
   editTransactionStepDb,
   editTransactionDb,
   markAsFailedDb,
   TransactionsDB,
-} from "../../state/transactions/transactionsReducer";
-import Bridge from "../../utils/Bridge";
-import { addNotificationWithTimeout } from "../../state/notification/notifiactionReducer";
-import { setSimulatedSlippage } from "../../state/farms/farmsReducer";
-import { Balances } from "../../state/tokens/types";
-import pools_json, { PoolDef, tokenNamesAndImages } from "../../config/constants/pools_json";
+} from "core/src/state/transactions/transactionsReducer";
+import Bridge from "core/src/utils/Bridge";
+import { addNotificationWithTimeout } from "core/src/state/notification/notifiactionReducer";
+import { setSimulatedSlippage } from "core/src/state/farms/farmsReducer";
+import { Balances } from "core/src/state/tokens/types";
+import pools_json, { PoolDef, tokenNamesAndImages } from "core/src/config/constants/pools_json";
 
 export const zapInBase: ZapInBaseFn = async ({
   withBond,

@@ -12,12 +12,12 @@ import {
   parseUnits,
   zeroAddress,
 } from "viem";
-import { approveErc20 } from "./../api/token";
-import { addressesByChainId } from "./../config/constants/contracts";
-import { getAllowanceSlot } from "./../config/constants/storageSlots";
-import { SupportedChains } from "./../config/walletConfig";
-import { IClients } from "./../types";
-import { CHAIN_ID } from "./../types/enums";
+import { approveErc20 } from "core/src/api/token";
+import { addressesByChainId } from "core/src/config/constants/contracts";
+import { getAllowanceSlot } from "core/src/config/constants/storageSlots";
+import { SupportedChains } from "core/src/config/walletConfig";
+import { IClients } from "core/src/types";
+import { CHAIN_ID } from "core/src/types/enums";
 
 class Bridge {
   private currentWallet: Address;

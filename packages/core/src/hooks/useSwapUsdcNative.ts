@@ -1,14 +1,14 @@
 import { BigNumber } from "ethers";
 import { useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
-import useTokens from "../state/tokens/useTokens";
-import { buildTransaction, getRoute } from "./../api/bridge";
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "./../api/notify";
-import { approveErc20 } from "./../api/token";
-import { addressesByChainId } from "./../config/constants/contracts";
-import { CHAIN_ID } from "./../types/enums";
-import { awaitTransaction, toEth } from "./../utils/common";
-import useWallet from "./useWallet";
+import useTokens from "core/src/state/tokens/useTokens";
+import { buildTransaction, getRoute } from "core/src/api/bridge";
+import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "core/src/api/notify";
+import { approveErc20 } from "core/src/api/token";
+import { addressesByChainId } from "core/src/config/constants/contracts";
+import { CHAIN_ID } from "core/src/types/enums";
+import { awaitTransaction, toEth } from "core/src/utils/common";
+import useWallet from "core/src/hooks/useWallet";
 
 const usdcAddr = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
 const usdceAddress = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";

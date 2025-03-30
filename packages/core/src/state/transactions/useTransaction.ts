@@ -1,8 +1,8 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
-import useTokens from "../tokens/useTokens";
-import pools_json from "./../../config/constants/pools_json";
-import { RootState, useAppSelector } from "./../../state";
+import useTokens from "core/src/state/tokens/useTokens";
+import pools_json from "core/src/config/constants/pools_json";
+import { RootState, useAppSelector } from "core/src/state";
 
 const selectTransactionById = createSelector(
   (state: RootState) => state.transactions.transactions,

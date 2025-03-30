@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FRONT_API_KEY, FRONT_CLIENT_ID, FRONT_URL } from "../config/constants";
+import { FRONT_API_KEY, FRONT_CLIENT_ID, FRONT_URL } from "core/src/config/constants";
 
 export const frontApi = axios.create({
   baseURL: FRONT_URL,

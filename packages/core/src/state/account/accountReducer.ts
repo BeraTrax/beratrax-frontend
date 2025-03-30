@@ -9,7 +9,7 @@ import {
   updatePointsEarning,
   sendBtxForXFollow,
   agreeTermsOfUse as agreeTermsOfUseApi,
-} from "./../../api/account";
+} from "core/src/api/account";
 
 const initialState: StateInterface = {
   estimatedTraxPerDay: [],

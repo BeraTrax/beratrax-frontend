@@ -4,12 +4,12 @@ import {
   getSnapshotSpace,
   getSnapshotSpaceProposals,
   getSnapshotSpaceProposalsVotesByAddress,
-} from "./../api/snapshot";
-import { SNAPSHOT_HUB_URL, SNAPSHOT_SPACE_ID } from "./../config/constants";
-import { useEthersWeb3Provider } from "./../config/walletConfig";
-import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "./../types/snapshot";
-import useNotify from "./useNotify";
-import useWallet from "./useWallet";
+} from "core/src/api/snapshot";
+import { SNAPSHOT_HUB_URL, SNAPSHOT_SPACE_ID } from "core/src/config/constants";
+import { useEthersWeb3Provider } from "core/src/config/walletConfig";
+import { SnapshotSpace, SnapshotSpaceProposal, SnapshotSpaceVote } from "core/src/types/snapshot";
+import useNotify from "core/src/hooks/useNotify";
+import useWallet from "core/src/hooks/useWallet";
 
 const client = new snapshot.Client712(SNAPSHOT_HUB_URL);
 

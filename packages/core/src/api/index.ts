@@ -9,7 +9,7 @@ import {
   TENDERLY_ACCESS_TOKEN,
   TENDERLY_PROJECT_SLUG,
   TENDERLY_USER_NAME,
-} from "./../config/constants";
+} from "core/src/config/constants";
 
 export const backendApi = axios.create({
   // baseURL: "http://localhost:8000/api/v1/",
@@ -78,3 +78,4 @@ export const tenderly = new Tenderly({
   projectName: TENDERLY_PROJECT_SLUG!,
   network: Network.ARBITRUM_ONE,
 });
+

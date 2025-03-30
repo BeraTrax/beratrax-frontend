@@ -2,7 +2,7 @@
 
 import { FarmFunctions } from "./types";
 // import arbera from "./arbera";
-import pools_json from "./../../config/constants/pools_json";
+import pools_json from "core/src/config/constants/pools_json";
 import { createFarmInterface } from "./common";
 
 const baseFarmFunctions = pools_json.reduce(

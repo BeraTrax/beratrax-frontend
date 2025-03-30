@@ -1,4 +1,4 @@
-import { UserVVL } from "./../../types";
+import { UserVVL } from "core/src/types";
 
 export interface StateInterface {
   /** Code of person whose link used to come on site  */

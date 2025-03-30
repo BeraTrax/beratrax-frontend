@@ -1,10 +1,9 @@
 import { useCallback, useEffect } from "react";
-import useWallet from "../../../hooks/useWallet";
-
-import useTokens from "../../../state/tokens/useTokens";
-import { useAppDispatch, useAppSelector } from "./../../../state";
-import { getVaultEarnings, reset, updateEarnings, updateFarmDetails } from "./../../../state/farms/farmsReducer";
-import useFarms from "./useFarms";
+import useWallet from "core/src/hooks/useWallet";
+import useTokens from "core/src/state/tokens/useTokens";
+import { useAppDispatch, useAppSelector } from "core/src/state";
+import { getVaultEarnings, reset, updateEarnings, updateFarmDetails } from "core/src/state/farms/farmsReducer";
+import useFarms from "core/src/state/farms/hooks/useFarms";
 
 const useFarmDetails = () => {
   const { farms } = useFarms();
@@ -69,3 +68,4 @@ const useFarmDetails = () => {
 };
 
 export default useFarmDetails;
+

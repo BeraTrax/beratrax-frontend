@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import useFarms from "../state/farms/hooks/useFarms";
+import useFarms from "core/src/state/farms/hooks/useFarms";
 import {
   fetchAccountConnectorsStats,
   fetchCountActiveUsers,
@@ -8,9 +8,9 @@ import {
   fetchTotalBtxPoints,
   fetchUserTVLs,
   fetchVaultStats,
-} from "./../api/stats";
-import { UsersTableColumns } from "./../types/enums";
-import useWallet from "./useWallet";
+} from "core/src/api/stats";
+import { UsersTableColumns } from "core/src/types/enums";
+import useWallet from "core/src/hooks/useWallet";
 
 export const useStats = (forGalxe?: boolean) => {
   const [page, setPage] = useState<number>(1);

@@ -1,12 +1,12 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { parseUnits } from "viem";
-import useWallet from "../../../hooks/useWallet";
-import useTokens from "../../tokens/useTokens";
-import farmFunctions from "./../../../api/pools";
-import { PoolDef } from "./../../../config/constants/pools_json";
-import { FARM_DEPOSIT } from "./../../../config/constants/query";
-import { toEth } from "./../../../utils/common";
+import useWallet from "core/src/hooks/useWallet";
+import useTokens from "core/src/state/tokens/useTokens";
+import farmFunctions from "core/src/api/pools";
+import { PoolDef } from "core/src/config/constants/pools_json";
+import { FARM_DEPOSIT } from "core/src/config/constants/query";
+import { toEth } from "core/src/utils/common";
 
 interface Deposit {
   depositAmount: number;

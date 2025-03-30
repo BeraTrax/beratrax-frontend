@@ -1,4 +1,4 @@
-import { PoolDef } from "./../../config/constants/pools_json";
+import { PoolDef } from "core/src/config/constants/pools_json";
 
 export interface StateInterface {
   apys: { [farmId: number]: Apys };

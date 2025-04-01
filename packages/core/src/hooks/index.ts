@@ -12,18 +12,14 @@ import usePageTracking from "./usePageTracking";
 import { usePlatformTVL, usePlatformTVLHistory, useTransactionCount } from "./usePlatformTVL";
 import { useReferralDashboard } from "./useReferralDashboard";
 import { useSlippageWithdraw, useSlippageDeposit } from "./useSlippage";
-import { useSnapshotJoinSpace, useSnapshotSpace } from "./useSnapshot";
 import { useStats } from "./useStats";
-import useSwapUsdcNative from "./useSwapUsdcNative";
 import useTransfer from "./useTransfer";
 import { useTransferToken } from "./useTransferToken";
 import useTrax from "./useTrax";
 import useTVL from "./useUserTVL";
-import useVaultMigrate from "./useVaultMigrate";
 import { useVaults } from "./useVaults";
 import useTokens from "core/src/state/tokens/useTokens";
 import useWallet from "./useWallet";
-import useWeb3Auth from "./useWeb3Auth";
 import useWindowSize from "./useWindowSize";
 
 // Export all hooks
@@ -32,12 +28,9 @@ export {
   useApprovalErc20,
   useConstants,
   useNotify,
-  useSnapshotJoinSpace,
-  useSnapshotSpace,
   useSlippageDeposit,
   useTokens,
   useWallet,
-  useWeb3Auth,
   useWindowSize,
   useDataRefresh,
   useDetailInput,
@@ -51,11 +44,9 @@ export {
   useReferralDashboard,
   useSlippageWithdraw,
   useStats,
-  useSwapUsdcNative,
   useTransfer,
   useTransferToken,
   useTrax,
   useTVL,
-  useVaultMigrate,
   useVaults,
 };

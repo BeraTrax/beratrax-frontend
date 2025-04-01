@@ -11,7 +11,6 @@ import accountReducer from "./account/accountReducer";
 import feesReducer from "./fees/feesReducer";
 import internetReducer from "./internet/internetReducer";
 import notificationReducer from "./notification/notifiactionReducer";
-import rampReducer from "./ramp/rampReducer";
 import tokensReducer from "./tokens/tokensReducer";
 import transactionsReducer from "./transactions/transactionsReducer";
 
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
   internet: internetReducer,
   apys: apysReducer,
   farms: farmsReducer,
-  ramp: rampReducer,
   fees: feesReducer,
   transactions: transactionsReducer,
   notification: notificationReducer,

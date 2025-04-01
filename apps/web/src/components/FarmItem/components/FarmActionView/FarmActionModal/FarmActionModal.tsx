@@ -99,13 +99,12 @@ const QuickDepositButtons = memo(
           type="button"
           onClick={onClick}
           className={`px-5 py-2 font-light rounded-2xl text-[16px] transition-all duration-200
-                        ${
-                          isSelected
-                            ? "bg-gradientSecondary text-gradientPrimary"
-                            : isMax
-                            ? "max-button-gradient text-bgDark hover:scale-105 shadow-lg"
-                            : "bg-bgDark text-textWhite"
-                        }
+                        ${isSelected
+              ? "bg-gradientSecondary text-gradientPrimary"
+              : isMax
+                ? "max-button-gradient text-bgDark hover:scale-105 shadow-lg"
+                : "bg-bgDark text-textWhite"
+            }
                     `}
         >
           {text}
@@ -249,19 +248,19 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     () =>
       transactionType === FarmTransactionType.Deposit
         ? farmData?.depositableAmounts.map(
-            (_) =>
-              (showInUsd ? ": $" : ": ") +
-              Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
-                maximumFractionDigits: 4,
-              })
-          )
+          (_) =>
+            (showInUsd ? ": $" : ": ") +
+            Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
+              maximumFractionDigits: 4,
+            })
+        )
         : farmData?.withdrawableAmounts.map(
-            (_) =>
-              (showInUsd ? ": $" : ": ") +
-              Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
-                maximumFractionDigits: 4,
-              })
-          ) || [],
+          (_) =>
+            (showInUsd ? ": $" : ": ") +
+            Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
+              maximumFractionDigits: 4,
+            })
+        ) || [],
     [transactionType, farmData, showInUsd]
   );
 
@@ -287,33 +286,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
       let amountInWei = toWei(
         amount,
         decimals[farm.chainId][
-          transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress
+        transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress
         ]
       );
-      // const toBal = await getBalance(
-      //     currencySymbol.toLowerCase() === "honey" ? addressesByChainId[farm.chainId].honeyAddress! : zeroAddress,
-      //     currentWallet!,
-      //     { public: getPublicClient(farm.chainId) }
-      // );
-      // const toBalDiff = toWei(amount, 18) - toBal;
+
       let steps: TransactionStep[] = [];
-      // if (toBalDiff >= 0) {
-      //     steps.push({
-      //         status: TransactionStepStatus.PENDING,
-      //         type: TransactionTypes.APPROVE_BRIDGE,
-      //     } as ApproveBridgeStep);
-      //     steps.push({
-      //         status: TransactionStepStatus.PENDING,
-      //         type: TransactionTypes.INITIATE_BRIDGE,
-      //     } as InitiateBridgeStep);
-      //     steps.push({
-      //         status: TransactionStepStatus.PENDING,
-      //         type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-      //     } as WaitForBridgeResultsStep);
-      // }
 
       // approve zap for non-native tokens
-      const client = await getClients(farm.chainId);
       const vaultBalance =
         BigInt(balances[farm.chainId][farm.vault_addr].valueWei) -
         BigInt(balances[farm.chainId][farm.vault_addr].valueRewardVaultWei || 0);
@@ -412,15 +391,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
               onKeyUp={handleSelect}
               onClick={handleSelect}
               ref={inputRef}
-              className={`max-w-full text-[48px] font-bold ${
-                noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
-              } break-words text-center bg-transparent border-none focus:outline-none`}
+              className={`max-w-full text-[48px] font-bold ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
+                } break-words text-center bg-transparent border-none focus:outline-none`}
             />
           ) : (
             <p
-              className={`max-w-full  text-[48px] font-bold ${
-                noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
-              } my-2 break-words	`}
+              className={`max-w-full  text-[48px] font-bold ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
+                } my-2 break-words	`}
             >
               {showInUsd ? "$" : ""}
               {amount ? noExponents(amount) : "0"}
@@ -428,9 +405,8 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
           )}
           <img src={exchange} alt="reverse" className="cursor-pointer" onClick={handleToggleShowInUsdc} />
           <p
-            className={`text-[18px] leading-[20px] break-words	 ${
-              noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
-            }`}
+            className={`text-[18px] leading-[20px] break-words	 ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
+              }`}
           >
             {!showInUsd ? "$" : ""}
             {toggleAmount ? noExponents(toggleAmount) : "0"}
@@ -471,17 +447,17 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             currencySymbol.toLowerCase() === "honey" ||
             (currencySymbol.toLowerCase() === "ibgt" &&
               farm.lp_address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b")) && (
-            <div className="flex justify-start items-center ">
-              <p className={"text-[13px]"}>Slippage: &nbsp;</p>
-              <div className={"text-[13px]"}>
-                {fetchingSlippage ? (
-                  <Skeleton w={50} h={20} style={{}} />
-                ) : (
-                  `~${slippage?.toString() && !isNaN(slippage) ? slippage?.toFixed(2) : "- "}%`
-                )}
+              <div className="flex justify-start items-center ">
+                <p className={"text-[13px]"}>Slippage: &nbsp;</p>
+                <div className={"text-[13px]"}>
+                  {fetchingSlippage ? (
+                    <Skeleton w={50} h={20} style={{}} />
+                  ) : (
+                    `~${slippage?.toString() && !isNaN(slippage) ? slippage?.toFixed(2) : "- "}%`
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {slippage && slippage > 0 && (
             <div className="flex justify-start items-center ">
               <p>No Deposit & Withdraw fees!</p>
@@ -489,26 +465,25 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
           )}
           <button
             disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
-            className={`lg:max-w-64 mt-4 uppercase ${
-              noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
+            className={`lg:max-w-64 mt-4 uppercase ${noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
                 ? "bg-buttonDisabled cursor-not-allowed"
                 : "bg-buttonPrimaryLight"
-            } text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
+              } text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
             onClick={handleToggleModal}
           >
             {!currentWallet
               ? "Please Login"
               : parseFloat(amount) > 0
-              ? parseFloat(amount) > parseFloat(maxBalance)
-                ? "Insufficent Balance"
-                : fetchingSlippage
-                ? "Simulating..."
-                : isLoadingTransaction
-                ? "Loading..."
-                : transactionType === FarmTransactionType.Deposit
-                ? "Deposit"
-                : "Withdraw"
-              : "Enter Amount"}
+                ? parseFloat(amount) > parseFloat(maxBalance)
+                  ? "Insufficent Balance"
+                  : fetchingSlippage
+                    ? "Simulating..."
+                    : isLoadingTransaction
+                      ? "Loading..."
+                      : transactionType === FarmTransactionType.Deposit
+                        ? "Deposit"
+                        : "Withdraw"
+                : "Enter Amount"}
           </button>
         </div>
       </div>

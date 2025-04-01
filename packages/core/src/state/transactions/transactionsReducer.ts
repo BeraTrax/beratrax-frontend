@@ -1,23 +1,18 @@
-import { getStatus } from "@lifi/sdk";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Address, createPublicClient, Hex, http, TransactionReceipt } from "viem";
 import store, { RootState } from "..";
 import { backendApi } from "core/src/api";
 import pools_json from "core/src/config/constants/pools_json";
-import { SupportedChains } from "core/src/config/walletConfig";
+import { supportedChains } from "core/src/config/baseWalletConfig";
 import { IClients } from "core/src/types";
 import {
-  ApproveBridgeStep,
   ApproveZapStep,
-  BridgeService,
   EditTransaction,
-  InitiateBridgeStep,
   StateInterface,
   Transaction,
   TransactionStep,
   TransactionStepStatus,
   TransactionTypes,
-  WaitForBridgeResultsStep,
   ZapInStep,
   ZapOutStep,
 } from "./types";
@@ -78,7 +73,6 @@ export const editTransactionStepDb = createAsyncThunk(
       stepType: string;
       status: TransactionStepStatus;
       amount?: string;
-      bridgeInfo?: WaitForBridgeResultsStep["bridgeInfo"];
     },
     _thunkApi,
   ) => {
@@ -95,8 +89,6 @@ export const editTransactionStepDb = createAsyncThunk(
         status: params.status,
         // @ts-ignore
         txHash: params.txHash || tx.steps[ind].txHash,
-        // @ts-ignore
-        bridgeInfo: params.bridgeInfo || tx.steps[ind].bridgeInfo,
       });
       return params;
     } catch (error) {
@@ -180,7 +172,7 @@ export const checkPendingTransactionsStatus = createAsyncThunk(
         ) {
           const chainId = pools_json.find((item) => item.id === curr.farmId)?.chainId;
           if (chainId) {
-            const chain = SupportedChains.find((item) => item.id === chainId);
+            const chain = supportedChains.find((item) => item.id === chainId);
             if (!chain) throw new Error("chain not found");
             const publicClient = createPublicClient({
               chain: chain,
@@ -228,87 +220,6 @@ export const checkPendingTransactionsStatus = createAsyncThunk(
           }
         }
       });
-      // #endregion Check for confirmation tx receipt
-
-      // #region Check if since item.date an hour has passed and make those steps failed
-      // txs = (thunkApi.getState() as RootState).transactions.transactions;
-      // await Promise.all(
-      //     txs
-      //         .filter((item) => item.steps.length > 0)
-      //         .map((item) => {
-      //             return item.steps.map((step) => {
-      //                 if (step.status === TransactionStepStatus.IN_PROGRESS)
-      //                     if (moment().diff(item.date, "hours") > 1) {
-      //                         // Check if since item.date an hour has passed
-      //                         return thunkApi.dispatch(
-      //                             editTransactionStepDb({
-      //                                 transactionId: item._id,
-      //                                 stepType: step.type,
-      //                                 status: TransactionStepStatus.FAILED,
-      //                             })
-      //                         );
-      //                     }
-      //             });
-      //         })
-      //         .filter((item) => !!item)
-      // );
-
-      // #endregion Check if since item.date an hour has passed and make those steps failed
-
-      // #region Check for bridge results if last step was bridging
-      txs = (thunkApi.getState() as RootState).transactions.transactions;
-      await Promise.all(
-        txs
-          .filter(
-            (item) =>
-              item.steps.at(-1)?.type === TransactionTypes.WAIT_FOR_BRIDGE_RESULTS &&
-              item.steps.at(-1)?.status === TransactionStepStatus.IN_PROGRESS,
-          )
-          .map(async (item) => {
-            const bridgeStep = item.steps.at(-1) as WaitForBridgeResultsStep;
-            const { beforeBridgeBalance, bridgeService, fromChain, toChain, txHash } = bridgeStep.bridgeInfo;
-
-            if (bridgeService === BridgeService.LIFI) {
-              const res = await getStatus({
-                txHash: txHash!,
-                fromChain,
-                toChain,
-                bridge: bridgeStep.bridgeInfo.tool!,
-              });
-              if (res.status === "DONE") {
-                await thunkApi.dispatch(
-                  editTransactionStepDb({
-                    transactionId: item._id,
-                    stepType: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-                    amount: BigInt((res.receiving as any).amount).toString(),
-                    status: TransactionStepStatus.COMPLETED,
-                  }),
-                );
-                if (item.type === "deposit") {
-                  await thunkApi.dispatch(
-                    addTransactionStepDb({
-                      transactionId: item._id,
-                      step: {
-                        type: item.type === "deposit" ? TransactionTypes.ZAP_IN : TransactionTypes.ZAP_OUT,
-                        amount: item.amountInWei,
-                        status: TransactionStepStatus.FAILED,
-                      } as ZapInStep | ZapOutStep,
-                    }),
-                  );
-                }
-              } else if (res.status === "FAILED") {
-                await thunkApi.dispatch(
-                  editTransactionStepDb({
-                    transactionId: item._id,
-                    stepType: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-                    status: TransactionStepStatus.FAILED,
-                  }),
-                );
-              }
-            }
-          }),
-      );
-      // #endregion Check for bridge results if last step was bridging
 
       // #region fail all the pending steps
       txs = (thunkApi.getState() as RootState).transactions.transactions;
@@ -433,27 +344,6 @@ export class TransactionsDB {
       }),
     );
   }
-  async addApproveBridge() {
-    await store.dispatch(
-      addTransactionStepDb({
-        transactionId: this.id,
-        step: {
-          type: TransactionTypes.APPROVE_BRIDGE,
-          status: TransactionStepStatus.IN_PROGRESS,
-        } as ApproveBridgeStep,
-      }),
-    );
-  }
-
-  async approveBridge(status: TransactionStepStatus) {
-    await store.dispatch(
-      editTransactionStepDb({
-        transactionId: this.id,
-        stepType: TransactionTypes.APPROVE_BRIDGE,
-        status,
-      }),
-    );
-  }
 
   async zapIn(status: TransactionStepStatus, amount: bigint, txHash?: Hex) {
     await store.dispatch(
@@ -499,52 +389,6 @@ export class TransactionsDB {
         status,
         amount: amountInWei.toString(),
         txHash,
-      }),
-    );
-  }
-  async addInitiateBridge(fromTokenAmount: bigint) {
-    await store.dispatch(
-      addTransactionStepDb({
-        transactionId: this.id,
-        step: {
-          type: TransactionTypes.INITIATE_BRIDGE,
-          amount: fromTokenAmount.toString(),
-          status: TransactionStepStatus.IN_PROGRESS,
-        } as InitiateBridgeStep,
-      }),
-    );
-  }
-
-  async initiateBridge(status: TransactionStepStatus, fromTokenAmount: bigint) {
-    await store.dispatch(
-      editTransactionStepDb({
-        transactionId: this.id,
-        stepType: TransactionTypes.INITIATE_BRIDGE,
-        status,
-        amount: fromTokenAmount.toString(),
-      }),
-    );
-  }
-  async addWaitForBridge(bridgeInfo?: WaitForBridgeResultsStep["bridgeInfo"]) {
-    await store.dispatch(
-      addTransactionStepDb({
-        transactionId: this.id,
-        step: {
-          type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-          status: TransactionStepStatus.IN_PROGRESS,
-          bridgeInfo,
-        } as WaitForBridgeResultsStep,
-      }),
-    );
-  }
-
-  async waitForBridge(status: TransactionStepStatus, bridgeInfo?: WaitForBridgeResultsStep["bridgeInfo"]) {
-    await store.dispatch(
-      editTransactionStepDb({
-        transactionId: this.id,
-        stepType: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-        status,
-        bridgeInfo,
       }),
     );
   }

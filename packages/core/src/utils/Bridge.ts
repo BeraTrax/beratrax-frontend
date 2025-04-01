@@ -15,7 +15,7 @@ import {
 import { approveErc20 } from "core/src/api/token";
 import { addressesByChainId } from "core/src/config/constants/contracts";
 import { getAllowanceSlot } from "core/src/config/constants/storageSlots";
-import { SupportedChains } from "core/src/config/walletConfig";
+import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import { IClients } from "core/src/types";
 import { CHAIN_ID } from "core/src/types/enums";
 
@@ -417,7 +417,7 @@ class Bridge {
   }
 
   private getPublicClient(chainId: number) {
-    const chain = SupportedChains.find((item) => item.id === chainId);
+    const chain = supportedChains.find((item) => item.id === chainId);
     if (!chain) throw new Error("chain not found");
     const publicClient = createPublicClient({
       chain: chain,
@@ -660,3 +660,4 @@ const StargateAbi = [
     type: "function",
   },
 ] as const;
+

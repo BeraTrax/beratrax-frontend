@@ -5,7 +5,6 @@ import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import { usePageTracking } from "@beratrax/core/src/hooks";
 import Leaderboard from "./pages/Dashboard/Leaderboard/Leaderboard";
-import DeprecatedVaults from "./pages/DeprecatedVaults/DeprecatedVaults";
 import FarmAction from "./pages/FarmAction/FarmAction";
 import FarmInfo from "./pages/FarmInfo/FarmInfo";
 import Home from "./pages/Home/Home";
@@ -25,7 +24,6 @@ function Body() {
         <Route path="/earn/:vaultAddress" element={<FarmAction />} />
         <Route path={RoutesPaths.Test} element={<Test />} />
         <Route path={RoutesPaths.Test_pro_max} element={<FarmInfo />} />
-        <Route path={RoutesPaths.DeprecatedVaults} element={<DeprecatedVaults />} />
         <Route path={RoutesPaths.Stats} element={<Stats />} />
         <Route path={RoutesPaths.Stats + "/withdrawals"} element={<Withdrawals />} />
         <Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />

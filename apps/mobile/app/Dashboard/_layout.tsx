@@ -1,32 +1,37 @@
+import ConnectView from "@/components/ConnectView"
 import { LocalNested } from "@/components/LocalNested"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedView } from "@/components/ThemedView"
 import { Button, ButtonTwo, Reusable, TestBox, WalletAndStakingPoint } from "@beratrax/ui"
 import { Ionicons } from '@expo/vector-icons'
 import { Image, ScrollView, StyleSheet, TouchableOpacity, Text } from "react-native"
+import useWallet from "@beratrax/core/src/hooks/useWallet"
 
 const Dashboard = () => {
+  const { currentWallet } = useWallet()
+  console.log(currentWallet)
   return (
     <ThemedView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Wallet Address Section */}
 
         {/* <Reusable title="Hello From Beratrax UI" /> */}
-        <Button />
+        <ConnectView />
+        {/* <Button />
         <WalletAndStakingPoint />
         <ButtonTwo />
 
         <LocalNested className="p-4">
           <Text>Local nested</Text>
-        </LocalNested>
+        </LocalNested> */}
+        <ThemedText style={styles.addressText}>{currentWallet}</ThemedText>
 
-          <ThemedView style={styles.addressPill}>
-            <Ionicons name="leaf" size={18} color="#72B21F" style={styles.addressIcon} />
-            <ThemedText style={styles.addressText}>0x27...55982F56</ThemedText>
-            <TouchableOpacity style={styles.copyButton}>
-              <Ionicons name="copy-outline" size={16} color="#fff" />
-            </TouchableOpacity>
-          </ThemedView>
+        <ThemedView style={styles.addressPill}>
+          <Ionicons name="leaf" size={18} color="#72B21F" style={styles.addressIcon} />
+          <TouchableOpacity style={styles.copyButton}>
+            <Ionicons name="copy-outline" size={16} color="#fff" />
+          </TouchableOpacity>
+        </ThemedView>
         {/* <TestBox /> */}
       </ScrollView>
     </ThemedView>
@@ -63,7 +68,7 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontSize: 14,
-    color: '#fff',
+    color: '#FABE00',
   },
   copyButton: {
     marginLeft: 8,

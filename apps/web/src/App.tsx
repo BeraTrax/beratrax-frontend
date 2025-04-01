@@ -1,5 +1,4 @@
 import { queryClient } from "@beratrax/core/src/config/reactQuery";
-import { rainbowConfig } from "@beratrax/core/src/config/walletConfig";
 import { WalletProvider } from "@beratrax/core/src/context";
 import { tamaguiConfig } from '@beratrax/ui';
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -17,7 +16,7 @@ import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
-
+import { webWalletConfig, web3AuthInstance } from "./config/webWalletConfig";
 setHook("notifications", useNotifications);
 
 function App() {
@@ -27,14 +26,6 @@ function App() {
 
     // Track daily visit
     trackDailyDAppVisit();
-
-    // Track user location using browser's geolocation
-    // if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition((position) => {
-    //         const location = `${position.coords.latitude},${position.coords.longitude}`;
-    //         trackUserLocation(location);
-    //     });
-    // }
 
     // Track user's language
     trackLanguage();
@@ -50,7 +41,9 @@ function App() {
         showRecentTransactions={false}
         appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
       >
-        <WalletProvider>
+        <WalletProvider walletConfig={webWalletConfig} getWeb3AuthPk={() => {
+          return web3AuthInstance.provider?.request({ method: "eth_private_key" }) as Promise<string>;
+        }} isWeb3AuthConnected={() => web3AuthInstance.connected} logoutWeb3Auth={() => web3AuthInstance.logout()}>
           <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
             <Theme name="dark">
               <Router>

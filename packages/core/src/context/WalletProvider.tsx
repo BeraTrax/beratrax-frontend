@@ -3,10 +3,10 @@ import { Address, createPublicClient, createWalletClient, Hex, http } from "viem
 import { privateKeyToAccount } from "viem/accounts";
 import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
 import { requestEthForGas } from "core/src/api";
-import { rainbowConfig, SupportedChains, web3AuthInstance } from "./../config/walletConfig";
 import { EstimateTxGasArgs, IClients } from "core/src/types";
 import { trackTransaction } from "core/src/utils/analytics";
-
+import { supportedChains } from "core/src/config/baseWalletConfig";
+import { Config } from "@wagmi/core";
 
 export interface IWalletContext {
   currentWallet?: Address;
@@ -25,14 +25,29 @@ export const WalletContext = React.createContext<IWalletContext>({} as IWalletCo
 
 interface IProps {
   children: React.ReactNode;
+  walletConfig: Config;
+  getWeb3AuthPk?: () => Promise<string | undefined>;
+  isWeb3AuthConnected?: () => boolean;
+  logoutWeb3Auth?: () => Promise<void>;
 }
 
-const WalletProvider: React.FC<IProps> = ({ children }) => {
-  // Add these hooks
-  const { data: getWalletClientHook } = useWalletClient({config: rainbowConfig});
-  const { switchChainAsync: switchChainAsyncHook } = useSwitchChain({config: rainbowConfig});
+const WalletProvider: React.FC<IProps> = ({
+  children,
+  walletConfig,
+  getWeb3AuthPk,
+  isWeb3AuthConnected,
+  logoutWeb3Auth,
+}) => {
+  const { data: getWalletClientHook } = useWalletClient({ config: walletConfig });
+  const { switchChainAsync: switchChainAsyncHook } = useSwitchChain({ config: walletConfig });
 
-  const { address, status, isConnecting: wagmiIsConnecting, isReconnecting: wagmiIsReconnecting, connector } = useAccount();
+  const {
+    address,
+    status,
+    isConnecting: wagmiIsConnecting,
+    isReconnecting: wagmiIsReconnecting,
+    connector,
+  } = useAccount();
   const publicClients = useRef<Record<number, IClients["public"]>>({});
   const walletClients = useRef<Record<number, IClients["wallet"]>>({});
   const { disconnectAsync } = useDisconnect();
@@ -59,11 +74,11 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       // Set a timeout to stop the reconnecting state after 10 seconds
       reconnectTimeoutRef.current = setTimeout(() => {
         setIsReconnectingTimeout(true);
-        if (isSocial && web3AuthInstance.connected) {
+        if (isSocial && isWeb3AuthConnected?.()) {
           // Force logout if Web3Auth is still connected but wagmi is stuck reconnecting
-          web3AuthInstance.logout().catch(console.error);
+          logoutWeb3Auth?.().catch(console.error);
         }
-      }, 10000); // 10 seconds timeout
+      }, 5000); // 5 seconds timeout
     } else {
       setIsReconnectingTimeout(false);
       if (reconnectTimeoutRef.current) {
@@ -82,7 +97,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
   const getPublicClient = (chainId: number): IClients["public"] => {
     if (publicClients.current[chainId]) return publicClients.current[chainId];
     else {
-      const chain = SupportedChains.find((item) => item.id === chainId);
+      const chain = supportedChains.find((item) => item.id === chainId);
       if (!chain) throw new Error("chain not found");
       const client = createPublicClient({
         chain: chain,
@@ -110,7 +125,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
 
       if (!address) throw new Error("provider not found");
 
-      const chain = SupportedChains.find((item) => item.id === chainId);
+      const chain = supportedChains.find((item) => item.id === chainId);
       if (!chain) throw new Error("chain not found");
 
       let client: IClients["wallet"];
@@ -173,7 +188,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       walletClients.current[chainId] = client;
       return client;
     },
-    [address, isSocial, getWalletClientHook, switchChainAsyncHook]
+    [address, isSocial, getWalletClientHook, switchChainAsyncHook],
   );
 
   const estimateTxGas = async (args: EstimateTxGasArgs) => {
@@ -201,14 +216,14 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
-    if (web3AuthInstance.connected) await web3AuthInstance.logout();
+    if (isWeb3AuthConnected?.()) await logoutWeb3Auth?.();
     walletClients.current = {};
     setIsReconnectingTimeout(false);
   }
 
   const getPkey = async (): Promise<Hex | undefined> => {
     try {
-      const pkey = await web3AuthInstance.provider?.request({ method: "eth_private_key" });
+      const pkey = await getWeb3AuthPk?.();
       return ("0x" + pkey) as Hex;
     } catch (error) {
       return;
@@ -240,3 +255,4 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
 };
 
 export default WalletProvider;
+

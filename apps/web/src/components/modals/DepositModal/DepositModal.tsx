@@ -7,13 +7,10 @@ import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
-  ApproveBridgeStep,
   ApproveZapStep,
-  InitiateBridgeStep,
   TransactionStep,
   TransactionStepStatus,
   TransactionTypes,
-  WaitForBridgeResultsStep,
   ZapInStep,
 } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
@@ -86,27 +83,7 @@ const DepositModal: FC<IProps> = ({ handleClose, handleSubmit, farmId, inputAmou
   useEffect(() => {
     (async function () {
       if (!currentWallet || !!txId) return;
-      const toBal = await getBalance(
-        symbol === "usdc" ? addressesByChainId[farm.chainId].nativeUsdAddress! : zeroAddress,
-        currentWallet,
-        { public: getPublicClient(farm.chainId) }
-      );
-      const toBalDiff = toWei(inputAmount, symbol === "usdc" ? 6 : 18) - toBal;
       let steps: TransactionStep[] = [];
-      if (toBalDiff >= 0) {
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.APPROVE_BRIDGE,
-        } as ApproveBridgeStep);
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.INITIATE_BRIDGE,
-        } as InitiateBridgeStep);
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-        } as WaitForBridgeResultsStep);
-      }
       let amountInWei = toWei(inputAmount, decimals[farm.chainId][token]);
 
       steps.push({ status: TransactionStepStatus.PENDING, type: TransactionTypes.APPROVE_ZAP } as ApproveZapStep);

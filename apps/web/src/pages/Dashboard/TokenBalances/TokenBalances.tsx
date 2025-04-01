@@ -1,5 +1,5 @@
 import { useApp } from "@beratrax/core/src/hooks";
-import { SupportedChains } from "@beratrax/core/src/config/walletConfig";
+import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { toggleTokenDetailBalances } from "@beratrax/core/src/state/settings/settingsReducer";
@@ -15,7 +15,7 @@ import { TransferToken } from "web/src/components/modals/TransferToken/TransferT
 import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { zeroAddress } from "viem";
 
-interface IProps {}
+interface IProps { }
 
 const tokenCardStyle =
   "relative group grid grid-cols-[max-content_1fr_max-content] items-center gap-4  py-6 px-4 rounded-3xl cursor-pointer bg-bgDark transition-all duration-300 hover:pr-14 font-league-spartan";
@@ -163,7 +163,7 @@ export const TokenBalances: FC<IProps> = () => {
                   {token.name}
                   {showTokenDetailedBalances && (
                     <span className="ml-1 text-sm font-normal text-textPrimary">
-                      ({SupportedChains.find((item) => item.id === token.networkId)?.name})
+                      ({supportedChains.find((item) => item.id === token.networkId)?.name})
                     </span>
                   )}
                 </p>

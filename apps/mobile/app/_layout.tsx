@@ -6,7 +6,7 @@ import './../global.css'
 import { AppKit, createAppKit } from '@reown/appkit-wagmi-react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { berachain, reownProjectId, wagmiConfig } from '@/config/chainConfig'
+import { mobileWalletConfig } from '@/config/mobileWalletConfig'
 import { Ionicons } from '@expo/vector-icons'
 import { useFonts } from 'expo-font'
 import { Tabs } from 'expo-router'
@@ -14,7 +14,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
 
-import WalletProvider from '@/config/walletProvider'
+import WalletProvider from '@beratrax/core/src/context/WalletProvider'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import * as Haptics from 'expo-haptics'
 import { StyleSheet } from 'react-native'
@@ -25,18 +25,6 @@ SplashScreen.preventAutoHideAsync();
 
 // Setup queryClient
 const queryClient = new QueryClient();
-
-// Create modal
-createAppKit({
-  projectId: reownProjectId,
-  wagmiConfig,
-  defaultChain: berachain,
-  enableAnalytics: true,
-  features: {
-    socials: ['x', 'discord', 'apple'],
-  }
-})
-
 
 const RootLayout = () => {
   const colorScheme = useColorScheme();
@@ -57,23 +45,15 @@ const RootLayout = () => {
   const handleTabPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
-  
-  // useEffect(() => {
-  //   NativeModules.KCKeepAwake.activate();
-  //   return () => {
-  //     NativeModules.KCKeepAwake.deactivate();
-  //   };
-  // }, []);
 
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <WagmiProvider config={mobileWalletConfig}>
       <QueryClientProvider client={queryClient}>
         {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
-        <WalletProvider>
+        <WalletProvider walletConfig={mobileWalletConfig}>
           <SafeAreaProvider>
-            <SafeAreaView style={{flex:1}}>
-              {/* <ConnectView />
-                <Test /> */}
+            <SafeAreaView style={{ flex: 1 }}>
+              <AppKit />
               <Tabs
                 screenOptions={{
                   tabBarActiveTintColor: '#3772FF',
@@ -96,7 +76,6 @@ const RootLayout = () => {
                   />
                 ))}
               </Tabs>
-              <AppKit />
             </SafeAreaView>
           </SafeAreaProvider>
         </WalletProvider>

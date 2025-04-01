@@ -9,14 +9,11 @@ import useFarms from "@beratrax/core/src/state/farms/hooks/useFarms";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
-  ApproveBridgeStep,
   ApproveZapStep,
-  InitiateBridgeStep,
   Transaction,
   TransactionStep,
   TransactionStepStatus,
   TransactionTypes,
-  WaitForBridgeResultsStep,
   ZapOutStep,
 } from "@beratrax/core/src/state/transactions/types";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
@@ -97,20 +94,6 @@ const WithdrawModal: FC<IProps> = ({ handleClose, handleSubmit, farmId, inputAmo
       vaultPrice: prices[farm.chainId][farm.vault_addr],
     };
 
-    if (chainToWithdrawOn !== farm.chainId) {
-      steps.push({
-        status: TransactionStepStatus.PENDING,
-        type: TransactionTypes.APPROVE_BRIDGE,
-      } as ApproveBridgeStep);
-      steps.push({
-        status: TransactionStepStatus.PENDING,
-        type: TransactionTypes.INITIATE_BRIDGE,
-      } as InitiateBridgeStep);
-      steps.push({
-        status: TransactionStepStatus.PENDING,
-        type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-      } as WaitForBridgeResultsStep);
-    }
     setTx(tx);
   };
 

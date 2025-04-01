@@ -1,5 +1,5 @@
-import { wagmiConfig } from '@/config/chainConfig'
-import useWallet from '@/hooks/useWallet'
+import { mobileWalletConfig } from '@/config/mobileWalletConfig'
+import useWallet from '@beratrax/core/src/hooks/useWallet'
 import { ConnectButton } from '@reown/appkit-wagmi-react-native'
 import * as Haptics from 'expo-haptics'
 import { useCallback, useEffect } from 'react'
@@ -7,13 +7,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useAccount, useBalance, useDisconnect } from 'wagmi'
 
 export default function ConnectView() {
-  const {isSocial, currentWallet, isConnecting, connector} = useWallet()
+  const { isSocial, currentWallet, isConnecting, connector } = useWallet()
   // Get wallet connection info using wagmi hooks
   const { address, isConnected, status } = useAccount()
   const { data: balanceData } = useBalance({
     address: address,
     // Only fetch when we have an address
-    config: wagmiConfig,
+    config: mobileWalletConfig,
   })
   // Add disconnect hook
   const { disconnect } = useDisconnect()
@@ -28,7 +28,7 @@ export default function ConnectView() {
   }, [status])
 
   useEffect(() => {
-    console.log("testing context", currentWallet, isSocial, isConnecting,address)
+    console.log("testing context", currentWallet, isSocial, isConnecting, address)
   }, [isSocial, currentWallet, isConnected, isSocial, isConnecting, connector])
 
   // Format address for display (0x1234...5678)
@@ -47,21 +47,21 @@ export default function ConnectView() {
     <View style={[styles.container]}>
       {/* Connection status indicator */}
       <View style={styles.statusContainer}>
-        <View 
+        <View
           style={[
-            styles.statusDot, 
-            { 
-              backgroundColor: 
-                status === 'connected' ? '#4ade80' : 
-                status === 'connecting' ? '#facc15' : '#ef4444'
+            styles.statusDot,
+            {
+              backgroundColor:
+                status === 'connected' ? '#4ade80' :
+                  status === 'connecting' ? '#facc15' : '#ef4444'
             }
-          ]} 
+          ]}
         />
         <Text style={styles.statusText}>
           Status: {status}
         </Text>
       </View>
-      
+
       {/* Display wallet info when connected */}
       {isConnected && (
         <View style={styles.walletInfo}>
@@ -76,12 +76,12 @@ export default function ConnectView() {
 
       {/* Connection button */}
       {!isConnected ? (
-        <ConnectButton 
-          label="Connect Wallet" 
-          loadingLabel="Connecting..." 
+        <ConnectButton
+          label="Connect Wallet"
+          loadingLabel="Connecting..."
         />
       ) : (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.disconnectButton}
           onPress={handleDisconnect}
           activeOpacity={0.7}
@@ -89,7 +89,7 @@ export default function ConnectView() {
           <Text style={styles.disconnectButtonText}>Disconnect Wallet</Text>
         </TouchableOpacity>
       )}
-      
+
       {/* Display debug info if there's an issue */}
       {status === 'disconnected' && (
         <View style={styles.debugContainer}>

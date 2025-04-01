@@ -4,7 +4,6 @@ import { commify } from "ethers/lib/utils.js";
 import { useRef, useState } from "react";
 import { useNotify } from "@beratrax/core/src/hooks";
 import { usePlatformTVL } from "@beratrax/core/src/hooks";
-import { useVaultMigrate } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
@@ -27,7 +26,6 @@ const Test = () => {
   const { platformTVL } = usePlatformTVL();
   const clickMeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { migrate } = useVaultMigrate();
 
   const fn = async () => {
     // setModelOpen(true);
@@ -86,7 +84,6 @@ const Test = () => {
       <button onClick={fn} ref={clickMeButtonRef}>
         Click Me
       </button>
-      <button onClick={() => migrate()}>Migrate</button>
       <button
         onClick={() => {
           notifySuccess("Approving Zapping!", "Please wait...a sadasfas fsa fsafsafsaf saf");
@@ -131,7 +128,7 @@ const Test = () => {
             buttons: [
               {
                 name: "View",
-                onClick: () => {},
+                onClick: () => { },
               },
             ],
           });
@@ -175,7 +172,7 @@ const Test = () => {
         {[].map((el) => (
           <div
             className="min-w-64 max-w-96 py-6 px-4 rounded-3xl gap-2.5 bg-bgSecondary justify-between items-center flex  "
-            // onClick={() => setSelectedToken(tokens.find((item) => item.name === "USDC"))}
+          // onClick={() => setSelectedToken(tokens.find((item) => item.name === "USDC"))}
           >
             <div className="flex  gap-2.5 items-center">
               <img

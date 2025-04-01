@@ -9,13 +9,10 @@ import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
-  ApproveBridgeStep,
   ApproveZapStep,
-  InitiateBridgeStep,
   TransactionStep,
   TransactionStepStatus,
   TransactionTypes,
-  WaitForBridgeResultsStep,
   ZapInStep,
 } from "@beratrax/core/src/state/transactions/types";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
@@ -83,19 +80,19 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
     () =>
       transactionType === FarmTransactionType.Deposit
         ? farmData?.depositableAmounts.map(
-            (_) =>
-              (showInUsd ? ": $" : ": ") +
-              Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
-                maximumFractionDigits: 4,
-              })
-          )
+          (_) =>
+            (showInUsd ? ": $" : ": ") +
+            Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
+              maximumFractionDigits: 4,
+            })
+        )
         : farmData?.withdrawableAmounts.map(
-            (_) =>
-              (showInUsd ? ": $" : ": ") +
-              Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
-                maximumFractionDigits: 4,
-              })
-          ) || [],
+          (_) =>
+            (showInUsd ? ": $" : ": ") +
+            Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
+              maximumFractionDigits: 4,
+            })
+        ) || [],
     [transactionType, farmData, showInUsd]
   );
 
@@ -109,7 +106,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
       let amountInWei = toWei(
         getTokenAmount(),
         decimals[farm.chainId][
-          transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress
+        transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress
         ]
       );
       const toBal = await getBalance(
@@ -119,20 +116,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
       );
       const toBalDiff = toWei(getTokenAmount(), 18) - toBal;
       let steps: TransactionStep[] = [];
-      if (toBalDiff >= 0) {
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.APPROVE_BRIDGE,
-        } as ApproveBridgeStep);
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.INITIATE_BRIDGE,
-        } as InitiateBridgeStep);
-        steps.push({
-          status: TransactionStepStatus.PENDING,
-          type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
-        } as WaitForBridgeResultsStep);
-      }
+
 
       steps.push({ status: TransactionStepStatus.PENDING, type: TransactionTypes.APPROVE_ZAP } as ApproveZapStep);
       steps.push({
@@ -191,7 +175,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
                 value={currencySymbol}
                 setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
                 size="small"
-                // extraText={selectExtraOptions}
+              // extraText={selectExtraOptions}
               />
             </div>
             <p>Redeem Records</p>
@@ -293,14 +277,14 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
             {!currentWallet
               ? "Please Login"
               : parseFloat(amount) > 0
-              ? parseFloat(amount) > parseFloat(maxBalance)
-                ? "Insufficent Balance"
-                : fetchingSlippage
-                ? "Simulating..."
-                : transactionType === FarmTransactionType.Deposit
-                ? "Deposit"
-                : "Withdraw"
-              : "Enter Amount"}
+                ? parseFloat(amount) > parseFloat(maxBalance)
+                  ? "Insufficent Balance"
+                  : fetchingSlippage
+                    ? "Simulating..."
+                    : transactionType === FarmTransactionType.Deposit
+                      ? "Deposit"
+                      : "Withdraw"
+                : "Enter Amount"}
           </button>
         </>
       )}

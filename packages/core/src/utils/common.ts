@@ -18,7 +18,7 @@ import { IClients } from "core/src/types";
 import { waitForTransactionReceipt } from "viem/actions";
 import { addressesByChainId } from "core/src/config/constants/contracts";
 import { PoolDef } from "core/src/config/constants/pools_json";
-import { SupportedChains } from "core/src/config/walletConfig";
+import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import { Balances } from "core/src/state/tokens/types";
 import { CHAIN_ID } from "core/src/types/enums";
 
@@ -320,7 +320,7 @@ export const getNativeCoinInfo = (chainId: number) => {
 export const getCombinedBalance = (balances: Balances, primaryChainId: number, type: "native" | "usdc" | "honey") => {
   let balance = 0n;
   let chainBalances: { [chainId: string]: bigint } = {};
-  const primaryChain = SupportedChains.find((item) => item.id === Number(primaryChainId));
+  const primaryChain = supportedChains.find((item) => item.id === Number(primaryChainId));
   if (!primaryChain) throw new Error("Invalid Chain");
   const decimals = {
     usdc: 6,
@@ -333,7 +333,7 @@ export const getCombinedBalance = (balances: Balances, primaryChainId: number, t
     honey: "HONEY",
   };
   if (type === "native") {
-    const chainGroups = Object.groupBy(SupportedChains, ({ nativeCurrency }) => nativeCurrency.symbol);
+    const chainGroups = Object.groupBy(supportedChains, ({ nativeCurrency }) => nativeCurrency.symbol);
     const relatedNativeCoinChains = chainGroups[primaryChain.nativeCurrency.symbol];
     Object.entries(balances || {}).forEach(([chainId, values]) => {
       if (relatedNativeCoinChains?.some((item) => item.id === Number(chainId))) {
@@ -456,3 +456,4 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
   const formattedAmount = new Intl.NumberFormat(navigator.language, options).format(num);
   return formattedAmount;
 };
+

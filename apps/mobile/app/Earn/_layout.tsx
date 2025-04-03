@@ -1,26 +1,24 @@
-import { ThemedText } from "@/components/ThemedText"
-import { ThemedView } from "@/components/ThemedView"
-import { Link } from "expo-router"
-import { StyleSheet } from "react-native"
+import { Link } from "expo-router";
+import { StyleSheet, View, Text } from "react-native";
 
 const Earn = () => {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Earn</ThemedText>
+    <View style={styles.container}>
+      <Text>Earn</Text>
       <Link href=".." style={styles.link}>
-        <ThemedText type="link">Go to home screen!</ThemedText>
+        <Text>Go to home screen!</Text>
       </Link>
-    </ThemedView>
-  )
-}
+    </View>
+  );
+};
 
-export default Earn
+export default Earn;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   link: {

@@ -1,5 +1,5 @@
-import { PoolDef } from "core/src/config/constants/pools_json";
-import { IClients } from "core/src/types";
+import { PoolDef } from "../../config/constants/pools_json";
+import { IClients } from "../../types";
 import { Address, PublicClient } from "viem";
 
 export interface StateInterface {

@@ -1,76 +1,39 @@
-import ConnectView from "@/components/ConnectView"
-import { LocalNested } from "@/components/LocalNested"
-import { ThemedText } from "@/components/ThemedText"
-import { ThemedView } from "@/components/ThemedView"
-import { Button, ButtonTwo, Reusable, TestBox, WalletAndStakingPoint } from "@beratrax/ui"
-import { Ionicons } from '@expo/vector-icons'
-import { Image, ScrollView, StyleSheet, TouchableOpacity, Text } from "react-native"
-import useWallet from "@beratrax/core/src/hooks/useWallet"
+import { ScrollView, View } from "react-native";
+import {
+  PointsEarnings,
+  WalletAndEarnings,
+  EmptyComponent,
+  ReferralLink,
+} from "@beratrax/ui";
+import { useDataRefresh } from "@beratrax/core/src/hooks";
+import useWallet from "@beratrax/core/src/hooks/useWallet";
 
 const Dashboard = () => {
-  const { currentWallet } = useWallet()
-  console.log(currentWallet)
+  const { currentWallet } = useWallet();
+  useDataRefresh();
+
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Wallet Address Section */}
+    <ScrollView>
+      <View className="overflow-auto font-arame-mono bg-bgDark" id="dashboard">
+        <WalletAndEarnings connectWallet={() => {}} />
+        <View className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
+          {currentWallet ? (
+            <>
+              <PointsEarnings />
+              <ReferralLink />
+              {/* <Vaults />
+            <TokenBalances />
+            <Transactions /> */}
+            </>
+          ) : (
+            <EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>
+              Sign in/up to view your dashboard.
+            </EmptyComponent>
+          )}
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
 
-        {/* <Reusable title="Hello From Beratrax UI" /> */}
-        <ConnectView />
-        {/* <Button />
-        <WalletAndStakingPoint />
-        <ButtonTwo />
-
-        <LocalNested className="p-4">
-          <Text>Local nested</Text>
-        </LocalNested> */}
-        <ThemedText style={styles.addressText}>{currentWallet}</ThemedText>
-
-        <ThemedView style={styles.addressPill}>
-          <Ionicons name="leaf" size={18} color="#72B21F" style={styles.addressIcon} />
-          <TouchableOpacity style={styles.copyButton}>
-            <Ionicons name="copy-outline" size={16} color="#fff" />
-          </TouchableOpacity>
-        </ThemedView>
-        {/* <TestBox /> */}
-      </ScrollView>
-    </ThemedView>
-  )
-}
-
-
-export default Dashboard
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor: '#020907', // Using bgDark from theme
-  },
-  scrollView: {
-    flex: 1,
-    paddingTop: 12,
-  },
-  addressSection: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    justifyContent: 'center',
-  },
-  addressPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  addressIcon: {
-    marginRight: 6,
-  },
-  addressText: {
-    fontSize: 14,
-    color: '#FABE00',
-  },
-  copyButton: {
-    marginLeft: 8,
-  }
-});
+export default Dashboard;

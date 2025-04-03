@@ -1,6 +1,5 @@
 import { queryClient } from "@beratrax/core/src/config/reactQuery";
 import { WalletProvider } from "@beratrax/core/src/context";
-import { tamaguiConfig } from '@beratrax/ui';
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,12 +9,15 @@ import { ReactHooksWrapper, setHook } from "react-hooks-outside";
 import { BrowserRouter as Router } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
 import { useNotifications } from "reapop";
-import { TamaguiProvider, Theme } from 'tamagui';
 import "./App.css";
 import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import "./styles/global.css";
-import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
+import {
+  initGA,
+  trackDailyDAppVisit,
+  trackLanguage,
+} from "@beratrax/core/src/utils/analytics";
 import { webWalletConfig, web3AuthInstance } from "./config/webWalletConfig";
 setHook("notifications", useNotifications);
 
@@ -41,16 +43,19 @@ function App() {
         showRecentTransactions={false}
         appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
       >
-        <WalletProvider walletConfig={webWalletConfig} getWeb3AuthPk={() => {
-          return web3AuthInstance.provider?.request({ method: "eth_private_key" }) as Promise<string>;
-        }} isWeb3AuthConnected={() => web3AuthInstance.connected} logoutWeb3Auth={() => web3AuthInstance.logout()}>
-          <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-            <Theme name="dark">
-              <Router>
-                <Body />
-              </Router>
-            </Theme>
-          </TamaguiProvider>
+        <WalletProvider
+          walletConfig={webWalletConfig}
+          getWeb3AuthPk={() => {
+            return web3AuthInstance.provider?.request({
+              method: "eth_private_key",
+            }) as Promise<string>;
+          }}
+          isWeb3AuthConnected={() => web3AuthInstance.connected}
+          logoutWeb3Auth={() => web3AuthInstance.logout()}
+        >
+          <Router>
+            <Body />
+          </Router>
           <ReactHooksWrapper />
         </WalletProvider>
         <ReactQueryDevtools />

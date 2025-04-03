@@ -10,17 +10,17 @@ import {
   TransactionReceipt,
   zeroAddress,
 } from "viem";
-import { notifyError } from "core/src/api/notify";
-import { defaultChainId } from "core/src/config/constants";
-import { errorMessages } from "core/src/config/constants/notifyMessages";
-import store from "core/src/state";
-import { IClients } from "core/src/types";
+import { notifyError } from "./../api/notify";
+import { defaultChainId } from "./../config/constants";
+import { errorMessages } from "./../config/constants/notifyMessages";
+import store from "./../state";
+import { IClients } from "./../types";
 import { waitForTransactionReceipt } from "viem/actions";
-import { addressesByChainId } from "core/src/config/constants/contracts";
-import { PoolDef } from "core/src/config/constants/pools_json";
-import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
-import { Balances } from "core/src/state/tokens/types";
-import { CHAIN_ID } from "core/src/types/enums";
+import { addressesByChainId } from "./../config/constants/contracts";
+import { PoolDef } from "./../config/constants/pools_json";
+import { supportedChains } from "./../config/baseWalletConfig";
+import { Balances } from "./../state/tokens/types";
+import { CHAIN_ID } from "./../types/enums";
 
 const web3Name = createWeb3Name();
 
@@ -456,4 +456,3 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
   const formattedAmount = new Intl.NumberFormat(navigator.language, options).format(num);
   return formattedAmount;
 };
-

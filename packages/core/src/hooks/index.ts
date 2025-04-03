@@ -18,7 +18,7 @@ import { useTransferToken } from "./useTransferToken";
 import useTrax from "./useTrax";
 import useTVL from "./useUserTVL";
 import { useVaults } from "./useVaults";
-import useTokens from "core/src/state/tokens/useTokens";
+import useTokens from "../state/tokens/useTokens";
 import useWallet from "./useWallet";
 import useWindowSize from "./useWindowSize";
 

@@ -1,7 +1,7 @@
 import { Address, encodeFunctionData, erc20Abi, getContract, maxUint256, PublicClient, zeroAddress } from "viem";
 import { backendApi } from ".";
-import { IClients } from "core/src/types";
-import { awaitTransaction } from "core/src/utils/common";
+import { IClients } from "./../types";
+import { awaitTransaction } from "./../utils/common";
 
 export const getSpecificTokenPrice = async (tokenAddress: Address, chainId: number) => {
   const res = await getTokenPricesBackend();
@@ -134,4 +134,3 @@ export const checkApproval = async (
   // if already approved just return status as true
   return true;
 };
-

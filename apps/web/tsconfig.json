@@ -1,41 +1,4 @@
 {
-  "extends": "./../../tsconfig.base.json",
-  "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "Bundler",
-    "target": "ES2020",
-    "strict": false,
-    "esModuleInterop": false,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ESNext"
-    ],
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "composite": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "useDefineForClassFields": true,
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules"
-      }
-    ],
-    "types": [
-      "./src/decs2.d.ts",
-      "vite-plugin-svgr/client"
-    ]
-  },
-  "include": [
-    "src",
-    "vite.config.ts",
-    "../../packages/core/src"
-  ]
+  "extends": "@beratrax/typescript-config/vite.json",
+  "include": ["src", "vite.config.ts"]
 }

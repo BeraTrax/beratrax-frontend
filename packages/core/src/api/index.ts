@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Address, Hex } from "viem";
-import { BACKEND_BASE_URL } from "core/src/config/constants";
+import {
+  BACKEND_BASE_URL,
+} from "./../config/constants";
 
 export const backendApi = axios.create({
   // baseURL: "http://localhost:8000/api/v1/",
@@ -44,4 +46,3 @@ export const requestEthForGas = async (params: {
 export const traxApi = axios.create({
   baseURL: `${BACKEND_BASE_URL}account/terms/trax/`,
 });
-

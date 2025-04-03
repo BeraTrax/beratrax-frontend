@@ -1,7 +1,7 @@
 import { Address } from "viem";
-import bgtLogo from "core/src/assets/images/bgt.png";
-import btxLogo from "core/src/assets/images/btxTokenLogo.png";
-import { CHAIN_ID } from "core/src/types/enums";
+import bgtLogo from "./../../assets/images/bgt.png";
+import btxLogo from "./../../assets/images/btxTokenLogo.png";
+import { CHAIN_ID } from "./../../types/enums";
 
 const tokens: { address: Address; name: string; logo: string; decimals: number; chainId: number }[] = [
   {
@@ -21,4 +21,3 @@ const tokens: { address: Address; name: string; logo: string; decimals: number; 
 ];
 
 export default tokens;
-

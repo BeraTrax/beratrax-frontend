@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import useWallet from "core/src/hooks/useWallet";
-import { useAppDispatch, useAppSelector } from "core/src/state";
-import { checkPendingTransactionsStatus, getTransactionsDb, reset } from "core/src/state/transactions/transactionsReducer";
+import useWallet from "../../hooks/useWallet";
+import { useAppDispatch, useAppSelector } from "./../../state";
+import { checkPendingTransactionsStatus, getTransactionsDb, reset } from "./transactionsReducer";
 
 const useTransactions = () => {
   const dispatch = useAppDispatch();

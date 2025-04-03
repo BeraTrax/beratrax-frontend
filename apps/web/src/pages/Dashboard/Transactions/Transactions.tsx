@@ -21,7 +21,10 @@ import TransactionDetails from "./components/TransactionDetails";
 
 const Transactions = () => {
   const [open, setOpen] = useState(false);
-  const transactions = useAppSelector((state) => state.transactions.transactions.slice(0, 3));
+  const allTransactions = useAppSelector((state) => state.transactions.transactions);
+  const transactions = useMemo(() => {
+    return allTransactions.slice(0, 3);
+  }, [allTransactions]);
 
   return (
     <div>
@@ -126,9 +129,8 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
         <div className="flex items-center gap-4 cursor-pointer" onClick={() => setOpen(!open)}>
           {/* Chevron Icon to open and close the transaction details */}
           <div
-            className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex justify-center items-center ${
-              open ? "bg-gradientSecondary" : "bg-bgSecondary"
-            }`}
+            className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex justify-center items-center ${open ? "bg-gradientSecondary" : "bg-bgSecondary"
+              }`}
           >
             {open ? (
               <IoChevronUpOutline className="text-buttonPrimaryLight w-5 h-5" />
@@ -170,9 +172,9 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                             $ {""}
                             {formatCurrency(
                               Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
-                                (type === "deposit"
-                                  ? tokenPrice || prices[farm.chainId][token]
-                                  : vaultPrice || prices[farm.chainId][farm.vault_addr])
+                              (type === "deposit"
+                                ? tokenPrice || prices[farm.chainId][token]
+                                : vaultPrice || prices[farm.chainId][farm.vault_addr])
                             )}
                           </span>
                           <span className="text-xs text-textSecondary">
@@ -190,7 +192,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                               $
                               {formatCurrency(
                                 Number(toEth(BigInt(fee), decimals[farm.chainId][token])) *
-                                  (tokenPrice || prices[farm.chainId][token])
+                                (tokenPrice || prices[farm.chainId][token])
                               )}
                             </span>
                             <span className="text-xs text-textSecondary">
@@ -225,7 +227,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                   $
                                   {formatCurrency(
                                     Number(toEth(BigInt(asset.amount), 18)) *
-                                      (tokenPrice || prices[farm.chainId][asset.token as Address])
+                                    (tokenPrice || prices[farm.chainId][asset.token as Address])
                                   )}
                                 </span>
                                 <span className="text-xs text-textSecondary">
@@ -248,24 +250,24 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                               ${" "}
                               {type === "deposit"
                                 ? formatCurrency(
-                                    Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])) *
-                                      (vaultPrice || prices[farm.chainId][farm.vault_addr]),
-                                    4
-                                  )
+                                  Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])) *
+                                  (vaultPrice || prices[farm.chainId][farm.vault_addr]),
+                                  4
+                                )
                                 : formatCurrency(
-                                    Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])) *
-                                      (tokenPrice || prices[farm.chainId][token]),
-                                    4
-                                  )}
+                                  Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])) *
+                                  (tokenPrice || prices[farm.chainId][token]),
+                                  4
+                                )}
                             </span>
                             <span className="text-xs text-textSecondary">
                               {type === "deposit"
                                 ? formatCurrency(
-                                    Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr]))
-                                  )
+                                  Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr]))
+                                )
                                 : formatCurrency(
-                                    Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token]))
-                                  )}{" "}
+                                  Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token]))
+                                )}{" "}
                               {type === "deposit" ? "BTX-" + farm.name : tokenNamesAndImages[token].name}
                             </span>
                           </div>

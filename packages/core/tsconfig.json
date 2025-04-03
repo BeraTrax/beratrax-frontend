@@ -1,5 +1,5 @@
 {
-  "extends": "./../../tsconfig.base.json",
+  "extends": "@beratrax/typescript-config/vite.json",
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "Bundler",
@@ -23,11 +23,17 @@
     "isolatedModules": true,
     "noEmit": true,
     "useDefineForClassFields": true,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "typescript-plugin-css-modules"
       }
     ],
+    "paths": {
+      "src/*": ["./src/*"],
+      "@core/*": ["./src/*"],
+      "react-outside-click-handler": ["./node_modules/@types/react-outside-click-handler"]
+    },
     "types": [
       "./src/decs2.d.ts",
       "./src/types/custom.d.ts",

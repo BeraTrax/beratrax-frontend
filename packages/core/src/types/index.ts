@@ -9,11 +9,11 @@ import {
     LocalAccount,
     PublicClient
 } from "viem";
-import { FarmDataProcessed } from "core/src/api/pools/types";
-import { PoolDef } from "core/src/config/constants/pools_json";
-import { Apys } from "core/src/state/apys/types";
-import { Balances } from "core/src/state/tokens/types";
-import { FarmType } from "core/src/types/enums";
+import { FarmDataProcessed } from "./../api/pools/types";
+import { PoolDef } from "./../config/constants/pools_json";
+import { Apys } from "./../state/apys/types";
+import { Balances } from "./../state/tokens/types";
+import { FarmType } from "./enums";
 
 export interface FarmDetails extends PoolDef {
     userVaultBalance: number;

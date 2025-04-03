@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { UAParser } from "ua-parser-js";
-import { trackDAppDeviceInfo } from "core/src/utils/analytics";
+import { trackDAppDeviceInfo } from "../utils/analytics";
 import useWallet from "./useWallet";
 
 export function useDeviceInfo() {

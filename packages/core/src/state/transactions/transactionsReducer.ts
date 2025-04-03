@@ -1,10 +1,11 @@
+
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Address, createPublicClient, Hex, http, TransactionReceipt } from "viem";
 import store, { RootState } from "..";
-import { backendApi } from "core/src/api";
-import pools_json from "core/src/config/constants/pools_json";
-import { supportedChains } from "core/src/config/baseWalletConfig";
-import { IClients } from "core/src/types";
+import { backendApi } from "./../../api";
+import pools_json from "./../../config/constants/pools_json";
+import { supportedChains } from "./../../config/baseWalletConfig";
+import { IClients } from "./../../types";
 import {
   ApproveZapStep,
   EditTransaction,
@@ -413,4 +414,3 @@ export class TransactionsDB {
     );
   }
 }
-

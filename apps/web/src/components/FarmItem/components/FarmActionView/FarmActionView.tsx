@@ -24,14 +24,14 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
   const dispatch = useAppDispatch();
   const { currentWallet, isConnecting } = useWallet();
   const { openConnectModal } = useConnectModal();
-  const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
+  const { apy: farmApys } = useFarmApy(farm);
   const {
     isBalancesLoading: isLoading,
     prices: {
       [farm.chainId]: { [farm.vault_addr]: vaultPrice },
     },
     totalSupplies,
-    isLoading: isTotalSuppliesLoading,
+    isTotalSuppliesLoading,
   } = useTokens();
   const [marketCap, setMarketCap] = useState<string | null>(null);
   const [vaultTvl, setVaultTvl] = useState<string | null>(null);
@@ -89,8 +89,8 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                     farm.isCurrentWeeksRewardsVault
                       ? "??? "
                       : farmApys && farmApys.apy < 0.01
-                      ? farmApys.apy.toPrecision(2).slice(0, -1)
-                      : toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()
+                        ? farmApys.apy.toPrecision(2).slice(0, -1)
+                        : toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()
                   }
                   underlyingApy={
                     farm.isCurrentWeeksRewardsVault
@@ -103,9 +103,8 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                 />
               </div>
               <div
-                className={`flex gap-2 fixed bottom-4 justify-center ${
-                  Number(withdrawable?.amount || "0") ? "pr-4" : ""
-                }`}
+                className={`flex gap-2 fixed bottom-4 justify-center ${Number(withdrawable?.amount || "0") ? "pr-4" : ""
+                  }`}
                 style={{ width: "-webkit-fill-available" }}
               >
                 {isConnecting || isLoading ? (
@@ -116,9 +115,8 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                 ) : (
                   <>
                     <button
-                      className={`${
-                        !currentWallet ? "lg:max-w-80" : "lg:max-w-64"
-                      } bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
+                      className={`${!currentWallet ? "lg:max-w-80" : "lg:max-w-64"
+                        } bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
                       onClick={() => {
                         !currentWallet
                           ? openConnectModal && openConnectModal()

@@ -1,7 +1,6 @@
 {
   "name": "@beratrax/ui",
-  "private": true,
-  "version": "0.0.1",
+  "version": "0.0.0",
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
@@ -12,27 +11,24 @@
   },
   "license": "MIT",
   "scripts": {
-    "build:ui": "tsc -b"
+    "lint": "eslint \"**/*.ts\""
   },
   "dependencies": {
     "@beratrax/core": "*",
-    "@tamagui/config": "1.121.7",
-    "@tamagui/core": "1.121.7",
-    "@tamagui/font-inter": "1.121.7",
-    "@tamagui/shorthands": "1.121.7",
-    "@tamagui/static": "1.121.7",
-    "@tamagui/theme-base": "1.121.7",
-    "@tamagui/toast": "1.121.7",
-    "@tamagui/web": "1.121.7",
-    "class-variance-authority": "0.7.1",
     "nativewind": "4.1.23",
     "react": "^18.2.0",
-    "react-native": "^0.78.0",
+    "react-dom": "^19.1.0",
+    "react-native": "0.76.6",
     "react-native-svg": "^15.11.2",
-    "tamagui": "1.121.7"
+    "react-native-web": "^0.19.13",
+    "tailwindcss": "^3.4.1",
+    "wagmi": "^2.14.15"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
+    "@beratrax/eslint-config": "*",
+    "@beratrax/typescript-config": "*",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
   }
 }

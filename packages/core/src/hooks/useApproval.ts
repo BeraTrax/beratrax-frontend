@@ -1,5 +1,5 @@
 import { Address } from "viem";
-import { approveErc20 } from "core/src/api/token";
+import { approveErc20 } from "./../api/token";
 import useWallet from "./useWallet";
 
 export const useApprovalErc20 = () => {

@@ -1,9 +1,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { fetchSpecificLpPrice } from "core/src/api/stats";
-import { VAULT_LP_PRICE_GRAPH } from "core/src/config/constants/query";
-import { isNumber } from "core/src/utils";
+import { fetchSpecificLpPrice } from "./../api/stats";
+import { VAULT_LP_PRICE_GRAPH } from "./../config/constants/query";
+import { isNumber } from "./../utils";
 
 export const useLp = (id: number) => {
   const { data, isLoading } = useQuery({

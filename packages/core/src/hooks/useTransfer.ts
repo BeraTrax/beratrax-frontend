@@ -1,8 +1,8 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { Address, erc20Abi, getContract, zeroAddress } from "viem";
-import { TRANSFER_TOKEN } from "core/src/config/constants/query";
-import { awaitTransaction } from "core/src/utils/common";
-import useWallet from "core/src/hooks/useWallet";
+import { TRANSFER_TOKEN } from "./../config/constants/query";
+import { awaitTransaction } from "./../utils/common";
+import useWallet from "./useWallet";
 
 const useTransfer = () => {
   const { currentWallet, estimateTxGas, getClients } = useWallet();
@@ -80,4 +80,3 @@ const useTransfer = () => {
 };
 
 export default useTransfer;
-

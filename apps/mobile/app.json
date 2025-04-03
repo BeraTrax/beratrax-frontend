@@ -8,7 +8,9 @@
     "scheme": "com.beratrax.mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "ios": {
+      "jsEngine": "jsc",
       "supportsTablet": true,
       "bundleIdentifier": "com.beratrax.mobile"
     },
@@ -49,9 +51,7 @@
       }
     },
     "owner": "beratrax",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/2bdcbec7-c2a3-45f9-a2ca-547d9da345cc"
     }

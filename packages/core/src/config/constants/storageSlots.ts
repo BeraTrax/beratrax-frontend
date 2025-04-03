@@ -1,4 +1,4 @@
-import { CHAIN_ID } from "core/src/types/enums";
+import { CHAIN_ID } from "./../../types/enums";
 import { Address, encodePacked, keccak256 } from "viem";
 
 interface ISlots {

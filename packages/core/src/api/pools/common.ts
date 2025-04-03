@@ -1,8 +1,8 @@
-import { approveErc20, getBalance } from "core/src/api/token";
-import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "core/src/utils/common";
-import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "core/src/api/notify";
-import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "core/src/utils/slot";
-import { errorMessages, loadingMessages, successMessages } from "core/src/config/constants/notifyMessages";
+import { approveErc20, getBalance } from "../../api/token";
+import { awaitTransaction, subtractGas, toEth, toWei } from "../../utils/common";
+import { dismissNotify, } from "../../api/notify";
+import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "../../utils/slot";
+import { errorMessages, successMessages } from "../../config/constants/notifyMessages";
 import {
   SlippageInBaseFn,
   SlippageOutBaseFn,
@@ -15,8 +15,8 @@ import {
   GetFarmDataProcessedFn,
   FarmFunctions,
 } from "./types";
-import { addressesByChainId } from "core/src/config/constants/contracts";
-import { isGasSponsored } from "core/src/api";
+import { addressesByChainId } from "../../config/constants/contracts";
+import { isGasSponsored } from "..";
 import {
   Address,
   encodeAbiParameters,
@@ -29,17 +29,22 @@ import {
   zeroAddress,
   parseEventLogs,
 } from "viem";
-import zapperAbi from "core/src/assets/abis/zapperAbi";
-import rewardVaultAbi from "core/src/assets/abis/rewardVaultAbi";
-import vaultAbi from "core/src/assets/abis/vault.json";
-import { IClients } from "core/src/types";
-import store from "core/src/state";
-import { TransactionStepStatus, TransactionTypes, ZapInStep, ZapOutStep } from "core/src/state/transactions/types";
-import { editTransactionDb, markAsFailedDb, TransactionsDB } from "core/src/state/transactions/transactionsReducer";
-import { addNotificationWithTimeout } from "core/src/state/notification/notifiactionReducer";
-import { setSimulatedSlippage } from "core/src/state/farms/farmsReducer";
-import { Balances } from "core/src/state/tokens/types";
-import pools_json, { PoolDef, tokenNamesAndImages } from "core/src/config/constants/pools_json";
+import zapperAbi from "../../assets/abis/zapperAbi";
+import rewardVaultAbi from "../../assets/abis/rewardVaultAbi";
+import { IClients } from "../../types";
+import store from "../../state";
+import {
+  TransactionStepStatus,
+} from "../../state/transactions/types";
+import {
+  editTransactionDb,
+  markAsFailedDb,
+  TransactionsDB,
+} from "../../state/transactions/transactionsReducer";
+import { addNotificationWithTimeout } from "../../state/notification/notifiactionReducer";
+import { setSimulatedSlippage } from "../../state/farms/farmsReducer";
+import { Balances } from "../../state/tokens/types";
+import pools_json, { PoolDef, tokenNamesAndImages } from "../../config/constants/pools_json";
 
 export const zapInBase: ZapInBaseFn = async ({
   withBond,
@@ -127,6 +132,7 @@ export const zapInBase: ZapInBaseFn = async ({
         },
       );
       await TransactionsStep.zapIn(TransactionStepStatus.COMPLETED, amountInWei);
+
     }
     // token zap
     else {
@@ -170,6 +176,7 @@ export const zapInBase: ZapInBaseFn = async ({
           await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei, hash);
         },
       );
+
     }
 
     if (!zapperTxn.status) {
@@ -427,9 +434,9 @@ export const zapOutBase: ZapOutBaseFn = async ({
     const slippage = Math.max(
       0,
       Number(toEth(amountInWei, decimals[farm.chainId][farm.vault_addr])) * prices[farm.chainId][farm.vault_addr] -
-        returnedAssetsValue -
-        Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
-        Number(toEth(assetsOut, decimals[farm.chainId][token])) * prices[farm.chainId][token],
+      returnedAssetsValue -
+      Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
+      Number(toEth(assetsOut, decimals[farm.chainId][token])) * prices[farm.chainId][token],
     );
 
     const returnedAssetsValueInToken = toWei(returnedAssetsValue / prices[farm.chainId][token]);

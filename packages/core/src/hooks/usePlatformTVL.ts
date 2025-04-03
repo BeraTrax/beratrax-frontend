@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchPlatformTVL, fetchPlatformTVLHistory, fetchTransactionCount } from "core/src/api/platformTVL";
+import { fetchPlatformTVL, fetchPlatformTVLHistory, fetchTransactionCount } from "./../api/platformTVL";
 
 
 export const usePlatformTVL = () => {

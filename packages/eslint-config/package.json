@@ -1,18 +1,14 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@beratrax/eslint-config",
   "version": "0.0.0",
-  "type": "module",
-  "private": true,
-  "exports": {
-    "./base": "./base.js",
-    "./next-js": "./next.js",
-    "./react-internal": "./react-internal.js"
-  },
-  "devDependencies": {
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
     "@eslint/js": "^9.20.0",
-    "@next/eslint-plugin-next": "^15.1.6",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^9.20.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -20,5 +16,8 @@
     "globals": "^15.15.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

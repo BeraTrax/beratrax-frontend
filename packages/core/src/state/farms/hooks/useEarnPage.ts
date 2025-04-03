@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { FarmData, FarmDataExtended } from "core/src/types";
-import { FarmSortOptions } from "core/src/types/enums";
+import { FarmData, FarmDataExtended } from "./../../../types";
+import { FarmSortOptions } from "./../../../types/enums";
 import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";

@@ -1,4 +1,4 @@
-import { CHAIN_ID } from "core/src/types/enums";
+import { CHAIN_ID } from "./../../types/enums";
 
 export const RoutesPaths = {
   Home: "/",

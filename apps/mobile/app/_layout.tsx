@@ -1,25 +1,26 @@
-import '@walletconnect/react-native-compat'
-import './../global.css'
+import "@walletconnect/react-native-compat";
+import "./../global.css";
 /**
  * to keep the first import on top
  */
-import { AppKit, createAppKit } from '@reown/appkit-wagmi-react-native'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AppKit } from "@reown/appkit-wagmi-react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
 
-import { mobileWalletConfig } from '@/config/mobileWalletConfig'
-import { Ionicons } from '@expo/vector-icons'
-import { useFonts } from 'expo-font'
-import { Tabs } from 'expo-router'
-import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react'
-import 'react-native-reanimated'
+import { mobileWalletConfig } from "@/config/mobileWalletConfig";
+import { Ionicons } from "@expo/vector-icons";
+import { useFonts } from "expo-font";
+import { Tabs } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import "react-native-reanimated";
 
-import WalletProvider from '@beratrax/core/src/context/WalletProvider'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import * as Haptics from 'expo-haptics'
-import { StyleSheet } from 'react-native'
-import { WagmiProvider } from 'wagmi'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import WalletProvider from "@beratrax/core/src/context/WalletProvider";
+import * as Haptics from "expo-haptics";
+import { StyleSheet } from "react-native";
+import { WagmiProvider } from "wagmi";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import store from "@beratrax/core/src/state";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -27,9 +28,8 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 const RootLayout = () => {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    LeagueSpartan: require('@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf'),
+    LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
   });
 
   useEffect(() => {
@@ -49,94 +49,93 @@ const RootLayout = () => {
   return (
     <WagmiProvider config={mobileWalletConfig}>
       <QueryClientProvider client={queryClient}>
-        {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
         <WalletProvider walletConfig={mobileWalletConfig}>
-          <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
-              <AppKit />
-              <Tabs
-                screenOptions={{
-                  tabBarActiveTintColor: '#3772FF',
-                  tabBarInactiveTintColor: colorScheme === 'dark' ? '#888' : '#666',
-                  tabBarStyle: styles.tabBar,
-                  tabBarShowLabel: true,
-                  headerShown: false,
-                }}
-              >
-                {Object.entries(tabOptions).map(([key, value]) => (
-                  <Tabs.Screen
-                    key={key}
-                    name={key}
-                    options={{
-                      ...value,
-                    }}
-                    listeners={{
-                      tabPress: () => handleTabPress(),
-                    }}
-                  />
-                ))}
-              </Tabs>
-            </SafeAreaView>
-          </SafeAreaProvider>
+          <Provider store={store}>
+            <SafeAreaProvider>
+              <SafeAreaView style={{ flex: 1 }}>
+                <AppKit />
+                <Tabs
+                  screenOptions={{
+                    tabBarActiveTintColor: "#3772FF",
+                    tabBarInactiveTintColor: "#888",
+                    tabBarStyle: styles.tabBar,
+                    tabBarShowLabel: true,
+                    headerShown: false,
+                  }}
+                >
+                  {Object.entries(tabOptions).map(([key, value]) => (
+                    <Tabs.Screen
+                      key={key}
+                      name={key}
+                      options={{
+                        ...value,
+                      }}
+                      listeners={{
+                        tabPress: () => handleTabPress(),
+                      }}
+                    />
+                  ))}
+                </Tabs>
+              </SafeAreaView>
+            </SafeAreaProvider>
+          </Provider>
         </WalletProvider>
-        {/* </ThemeProvider> */}
       </QueryClientProvider>
-    </WagmiProvider >
+    </WagmiProvider>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tabBar: {
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    borderTopColor: "rgba(0, 0, 0, 0.1)",
     height: 60,
     paddingBottom: 5,
     paddingTop: 5,
   },
   tabBarLabel: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
 
-
 const tabOptions = {
   Dashboard: {
-    name: 'Dashboard',
-    icon: 'home-outline',
-    title: 'Dashboard',
-    tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+    name: "Dashboard",
+    icon: "home-outline",
+    title: "Dashboard",
+    tabBarIcon: ({ color, size }: { color: string; size: number }) => (
       <Ionicons name="home-outline" size={size} color={color} />
     ),
-    tabBarLabel: 'Dashboard',
+    tabBarLabel: "Dashboard",
   },
   Earn: {
-    name: 'Earn',
-    icon: 'wallet-outline',
-    title: 'Earn',
-    tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+    name: "Earn",
+    icon: "wallet-outline",
+    title: "Earn",
+    tabBarIcon: ({ color, size }: { color: string; size: number }) => (
       <Ionicons name="wallet-outline" size={size} color={color} />
     ),
-    tabBarLabel: 'Earn',
+    tabBarLabel: "Earn",
   },
-  'User Guide': {
-    name: 'User Guide',
-    icon: 'book-outline',
-    title: 'User Guide',
-    tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+  "User Guide": {
+    name: "User Guide",
+    icon: "book-outline",
+    title: "User Guide",
+    tabBarIcon: ({ color, size }: { color: string; size: number }) => (
       <Ionicons name="book-outline" size={size} color={color} />
     ),
-    tabBarLabel: 'User Guide',
+    tabBarLabel: "User Guide",
   },
   Stats: {
-    name: 'Stats',
-    icon: 'bookmark-outline',
-    title: 'Stats',
-    tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+    name: "Stats",
+    icon: "bookmark-outline",
+    title: "Stats",
+    tabBarIcon: ({ color, size }: { color: string; size: number }) => (
       <Ionicons name="bookmark-outline" size={size} color={color} />
     ),
-    tabBarLabel: 'Stats',
+    tabBarLabel: "Stats",
   },
-}
+};
 
 export default RootLayout;

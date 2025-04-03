@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+// import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+// import storage from "redux-persist/lib/storage";
 import apysReducer from "./apys/apysReducer";
 import farmsReducer from "./farms/farmsReducer";
 import settingsReducer from "./settings/settingsReducer";
@@ -26,77 +26,46 @@ const rootReducer = combineReducers({
   tokens: tokensReducer,
 });
 
-const persistConfig = getPersistConfig({
-  key: "root",
-  storage,
-  version: 6,
-  whitelist: [
-    "settings.theme",
-    "settings.showTokenDetailedBalances",
-    "settings.supportChat",
-    "account.earnTraxTermsAgreed",
-    "account.referrerCode",
-    "ramp.bridgeStates.USDC_POLYGON_TO_ARBITRUM_USDC.socketSourceTxHash",
-    "ramp.bridgeStates.ETH_POLYGON_TO_ARBITRUM_ETH.socketSourceTxHash",
-    "farms.farmDetailInputOptions.showInUsd",
-    "tokens.decimals",
-    "tokens.prices",
-  ],
-  rootReducer, // your root reducer must be also passed here
-});
+// const persistConfig = getPersistConfig({
+//   key: "root",
+//   storage,
+//   version: 6,
+//   whitelist: [
+//     "settings.theme",
+//     "settings.showTokenDetailedBalances",
+//     "settings.supportChat",
+//     "account.earnTraxTermsAgreed",
+//     "account.referrerCode",
+//     "ramp.bridgeStates.USDC_POLYGON_TO_ARBITRUM_USDC.socketSourceTxHash",
+//     "ramp.bridgeStates.ETH_POLYGON_TO_ARBITRUM_ETH.socketSourceTxHash",
+//     "farms.farmDetailInputOptions.showInUsd",
+//     "tokens.decimals",
+//     "tokens.prices",
+//   ],
+//   rootReducer, // your root reducer must be also passed here
+// });
 
-export const persistedReducer = persistReducer(persistConfig, rootReducer);
+// export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
+  reducer: rootReducer,
   // devTools: process.env.NODE_ENV !== "production",
-  devTools: true,
-  reducer: persistedReducer,
-  middleware(getDefaultMiddleware) {
-    return getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    });
-  },
+  // devTools: true,
+  // reducer: persistedReducer,
+  // middleware(getDefaultMiddleware) {
+  //   return getDefaultMiddleware({
+  //     serializableCheck: {
+  //       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+  //     },
+  //   });
+  // },
 });
 
 export default store;
 
 export type RootState = ReturnType<typeof store.getState>;
 
-export const persistor = persistStore(store);
+// export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>(); // Export a hook that can be reused to resolve types
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
-// export * from "./account/accountReducer";
-// export * from "./account/types";
-// export * from "./account/useAccountData";
-
-// export * from "./apys/apysReducer";
-// export * from "./apys/types";
-// export * from "./apys/hooks/useApy";
-
-// export * from "./farms/farmsReducer";
-// export * from "./farms/types";
-
-// export * from "./fees/feesReducer";
-// export * from "./fees/types";
-
-// export * from "./internet/internetReducer";
-// export * from "./internet/types";
-
-// export * from "./notification/notifiactionReducer";
-// export * from "./notification/types";
-
-// export * from "./ramp/rampReducer";
-// export * from "./ramp/types";
-
-// export * from "./settings/settingsReducer";
-// export * from "./settings/types";
-
-// export * from "./tokens/tokensReducer";
-// export * from "./tokens/types";
-
-// export * from "./transactions/transactionsReducer";
-// export * from "./transactions/types";

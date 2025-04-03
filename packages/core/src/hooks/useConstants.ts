@@ -1,6 +1,6 @@
-import { addressesByChainId } from "core/src/config/constants/contracts";
-import { blockExplorersByChainId } from "core/src/config/constants/urls";
-import { getNetworkName } from "core/src/utils/common";
+import { addressesByChainId } from "./../config/constants/contracts";
+import { blockExplorersByChainId } from "./../config/constants/urls";
+import { getNetworkName } from "./../utils/common";
 
 /**
  * Will return constants values according to connected chain network

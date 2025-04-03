@@ -1,12 +1,12 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { parseUnits } from "viem";
-import useWallet from "core/src/hooks/useWallet";
-import farmFunctions from "core/src/api/pools";
-import { PoolDef } from "core/src/config/constants/pools_json";
-import { FARM_WITHDRAW } from "core/src/config/constants/query";
-import useTokens from "core/src/state/tokens/useTokens";
-import { toEth } from "core/src/utils/common";
+import useWallet from "../../../hooks/useWallet";
+import farmFunctions from "./../../../api/pools";
+import { PoolDef } from "./../../../config/constants/pools_json";
+import { FARM_WITHDRAW } from "./../../../config/constants/query";
+import useTokens from "./../../../state/tokens/useTokens";
+import { toEth } from "./../../../utils/common";
 
 const useWithdraw = (farm: PoolDef) => {
   const { currentWallet, getClients, getPublicClient, getWalletClient } = useWallet();

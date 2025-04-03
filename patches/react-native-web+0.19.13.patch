@@ -1,0 +1,85 @@
+diff --git a/node_modules/@react-native/assets-registry/registry.js b/node_modules/@react-native/assets-registry/registry.js
+index 64b2735..f218632 100644
+--- a/node_modules/@react-native/assets-registry/registry.js
++++ b/node_modules/@react-native/assets-registry/registry.js
+@@ -10,6 +10,7 @@
+ 
+ 'use strict';
+ 
++/*::
+ export type AssetDestPathResolver = 'android' | 'generic';
+ 
+ export type PackagerAsset = {
+@@ -25,16 +26,16 @@ export type PackagerAsset = {
+   +resolver?: AssetDestPathResolver,
+   ...
+ };
++*/
++const assets/*::: Array<PackagerAsset>*/ = [];
+ 
+-const assets: Array<PackagerAsset> = [];
+-
+-function registerAsset(asset: PackagerAsset): number {
++function registerAsset(asset/*::: PackagerAsset*/)/*::: number*/ {
+   // `push` returns new array length, so the first asset will
+   // get id 1 (not 0) to make the value truthy
+   return assets.push(asset);
+ }
+ 
+-function getAssetByID(assetId: number): PackagerAsset {
++function getAssetByID(assetId/*::: number*/)/*::: PackagerAsset*/ {
+   return assets[assetId - 1];
+ }
+ 
+diff --git a/node_modules/react-native-web/dist/cjs/modules/useResponderEvents/ResponderTouchHistoryStore.js b/node_modules/react-native-web/dist/cjs/modules/useResponderEvents/ResponderTouchHistoryStore.js
+index b596e16..0473891 100644
+--- a/node_modules/react-native-web/dist/cjs/modules/useResponderEvents/ResponderTouchHistoryStore.js
++++ b/node_modules/react-native-web/dist/cjs/modules/useResponderEvents/ResponderTouchHistoryStore.js
+@@ -18,7 +18,7 @@ var _ResponderEventTypes = require("./ResponderEventTypes");
+  * when touches end and start again.
+  */
+ 
+-var __DEV__ = process.env.NODE_ENV !== 'production';
++
+ var MAX_TOUCH_BANK = 20;
+ function timestampForTouch(touch) {
+   // The legacy internal implementation provides "timeStamp", which has been
+diff --git a/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/AnimatedEvent.js b/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/AnimatedEvent.js
+index 4d46710..04269da 100644
+--- a/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/AnimatedEvent.js
++++ b/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/AnimatedEvent.js
+@@ -18,7 +18,7 @@ exports.attachNativeEvent = attachNativeEvent;
+ var _AnimatedValue = _interopRequireDefault(require("./nodes/AnimatedValue"));
+ var _NativeAnimatedHelper = _interopRequireWildcard(require("./NativeAnimatedHelper"));
+ var _invariant = _interopRequireDefault(require("fbjs/lib/invariant"));
+-var __DEV__ = process.env.NODE_ENV !== 'production';
++
+ function attachNativeEvent(viewRef, eventName, argMapping) {
+   // Find animated values in `argMapping` and create an array representing their
+   // key path inside the `nativeEvent` object. Ex.: ['contentOffset', 'x'].
+diff --git a/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/nodes/AnimatedInterpolation.js b/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/nodes/AnimatedInterpolation.js
+index 133db4b..5092e36 100644
+--- a/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/nodes/AnimatedInterpolation.js
++++ b/node_modules/react-native-web/dist/cjs/vendor/react-native/Animated/nodes/AnimatedInterpolation.js
+@@ -20,7 +20,7 @@ var _AnimatedWithChildren = _interopRequireDefault(require("./AnimatedWithChildr
+ var _NativeAnimatedHelper = _interopRequireDefault(require("../NativeAnimatedHelper"));
+ var _invariant = _interopRequireDefault(require("fbjs/lib/invariant"));
+ var _normalizeColors = _interopRequireDefault(require("@react-native/normalize-colors"));
+-var __DEV__ = process.env.NODE_ENV !== 'production';
++
+ var linear = t => t;
+ 
+ /**
+diff --git a/node_modules/react-native-web/dist/cjs/vendor/react-native/LayoutAnimation/index.js b/node_modules/react-native-web/dist/cjs/vendor/react-native/LayoutAnimation/index.js
+index 14ec3d7..cbcf03f 100644
+--- a/node_modules/react-native-web/dist/cjs/vendor/react-native/LayoutAnimation/index.js
++++ b/node_modules/react-native-web/dist/cjs/vendor/react-native/LayoutAnimation/index.js
+@@ -15,7 +15,7 @@ exports.__esModule = true;
+ exports.default = void 0;
+ var _Platform = _interopRequireDefault(require("../../../exports/Platform"));
+ var _UIManager = _interopRequireDefault(require("../../../exports/UIManager"));
+-var __DEV__ = process.env.NODE_ENV !== 'production';
++
+ function configureNext(config, onAnimationDidEnd) {
+   if (!_Platform.default.isTesting) {
+     _UIManager.default.configureNextLayoutAnimation(config, onAnimationDidEnd !== null && onAnimationDidEnd !== void 0 ? onAnimationDidEnd : function () {}, function () {} /* unused onError */);

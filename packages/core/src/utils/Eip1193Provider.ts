@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { EstimateTxGasArgs, IClients } from "core/src/types";
+import { EstimateTxGasArgs, IClients } from "./../types";
 
 export const getEip1193Provider = (
     client: IClients,

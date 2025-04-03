@@ -9,9 +9,6 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { toPreciseNumber } from "@beratrax/core/src/utils/common";
 import { useConnectors } from "wagmi";
-// import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-// import { LocalAccountSigner, arbitrum } from "@alchemy/aa-core";
-// import { createWeb3AuthSigner } from "src/config/walletConfig";
 
 const Test = () => {
   const { openConnectModal } = useConnectModal();

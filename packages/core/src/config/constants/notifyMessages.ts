@@ -1,4 +1,4 @@
-import { ErrorMessages, LoadingMessages, SuccessMessages } from "core/src/types";
+import { ErrorMessages, LoadingMessages, SuccessMessages } from "./../../types";
 
 export const errorMessages: ErrorMessages = {
   generalError: (message: string) => ({

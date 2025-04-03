@@ -1,6 +1,6 @@
 import { backendApi } from ".";
-import { Order, AccountDetails } from "core/src/types";
-import { UsersTableColumns } from "core/src/types/enums";
+import { Order, AccountDetails } from "../types";
+import { UsersTableColumns } from "../types/enums";
 
 interface UserStatsResponse {
   data: AccountDetails[];
@@ -150,4 +150,3 @@ export const fetchAccountConnectorsStats = async () => {
   const res = await backendApi.get<AccountConnectorsStatsResponse>(`stats/account-connectors`);
   return res.data.data;
 };
-

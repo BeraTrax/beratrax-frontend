@@ -1,5 +1,5 @@
 import ReactGA from "react-ga4";
-import { REACT_APP_GA_MEASUREMENT_ID } from "core/src/config/constants";
+import { REACT_APP_GA_MEASUREMENT_ID } from "./../config/constants";
 
 export enum EVENT {
   LOGIN = "login",

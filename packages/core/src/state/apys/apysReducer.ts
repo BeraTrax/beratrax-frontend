@@ -1,8 +1,8 @@
 
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchApysApi } from "core/src/api/apy";
-import pools_json from "core/src/config/constants/pools_json";
-import { AddApyAction, AddApysAction, Apys, StateInterface } from "core/src/state/apys/types";
+import { fetchApysApi } from "./../../api/apy";
+import pools_json from "./../../config/constants/pools_json";
+import { AddApyAction, AddApysAction, Apys, StateInterface } from "./types";
 
 const apyObj: { [farmId: number]: Apys } = {};
 pools_json.forEach((pool) => {

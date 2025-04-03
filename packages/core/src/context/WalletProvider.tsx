@@ -1,12 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Address, createPublicClient, createWalletClient, Hex, http } from "viem";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Address,
+  createPublicClient,
+  createWalletClient,
+  Hex,
+  http,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
-import { requestEthForGas } from "core/src/api";
-import { EstimateTxGasArgs, IClients } from "core/src/types";
-import { trackTransaction } from "core/src/utils/analytics";
-import { supportedChains } from "core/src/config/baseWalletConfig";
-import { Config } from "@wagmi/core";
+import {
+  Connector,
+  useAccount,
+  useDisconnect,
+  useSwitchChain,
+  useWalletClient,
+} from "wagmi";
+import { requestEthForGas } from "./../api";
+import { EstimateTxGasArgs, IClients } from "./../types";
+import { trackTransaction } from "./../utils/analytics";
+import type { Config } from "@wagmi/core";
+import { supportedChains } from "../config/baseWalletConfig";
 
 export interface IWalletContext {
   currentWallet?: Address;
@@ -21,7 +39,9 @@ export interface IWalletContext {
   connector?: Connector;
 }
 
-export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
+export const WalletContext = React.createContext<IWalletContext>(
+  {} as IWalletContext
+);
 
 interface IProps {
   children: React.ReactNode;
@@ -38,8 +58,12 @@ const WalletProvider: React.FC<IProps> = ({
   isWeb3AuthConnected,
   logoutWeb3Auth,
 }) => {
-  const { data: getWalletClientHook } = useWalletClient({ config: walletConfig });
-  const { switchChainAsync: switchChainAsyncHook } = useSwitchChain({ config: walletConfig });
+  const { data: getWalletClientHook } = useWalletClient({
+    config: walletConfig,
+  });
+  const { switchChainAsync: switchChainAsyncHook } = useSwitchChain({
+    config: walletConfig,
+  });
 
   const {
     address,
@@ -120,7 +144,10 @@ const WalletProvider: React.FC<IProps> = ({
   // If External, check for chain and switch chain then give wallet client
   // If social return wallet client
   const getWalletClient = useCallback(
-    async (chainId: number, _isSocial: boolean | null = isSocial): Promise<IClients["wallet"]> => {
+    async (
+      chainId: number,
+      _isSocial: boolean | null = isSocial
+    ): Promise<IClients["wallet"]> => {
       if (walletClients.current[chainId]) return walletClients.current[chainId];
 
       if (!address) throw new Error("provider not found");
@@ -188,7 +215,7 @@ const WalletProvider: React.FC<IProps> = ({
       walletClients.current[chainId] = client;
       return client;
     },
-    [address, isSocial, getWalletClientHook, switchChainAsyncHook],
+    [address, isSocial, getWalletClientHook, switchChainAsyncHook]
   );
 
   const estimateTxGas = async (args: EstimateTxGasArgs) => {
@@ -237,7 +264,7 @@ const WalletProvider: React.FC<IProps> = ({
   return (
     <WalletContext.Provider
       value={{
-        currentWallet: address,
+        currentWallet: "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
         isSocial,
         isConnecting, // Use our custom isConnecting state
         connector,
@@ -255,4 +282,3 @@ const WalletProvider: React.FC<IProps> = ({
 };
 
 export default WalletProvider;
-

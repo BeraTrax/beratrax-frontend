@@ -1,4 +1,4 @@
-import { PoolFees } from "core/src/api/fees";
+import { PoolFees } from "./../../api/fees";
 
 export interface StateInterface {
   poolFees: PoolFees[];

@@ -1,33 +1,47 @@
-
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import useTokens from "core/src/state/tokens/useTokens";
-import { RoutesPaths } from "core/src/config/constants";
-import useWallet from "core/src/hooks/useWallet";
-import { useAppDispatch, useAppSelector } from "core/src/state";
-import { addAccount, updateAccountField, updatePoints } from "core/src/state/account/accountReducer";
+import useTokens from "../tokens/useTokens";
+import { RoutesPaths } from "./../../config/constants";
+import useWallet from "./../../hooks/useWallet";
+import { useAppDispatch, useAppSelector } from "./../../state";
+import {
+  addAccount,
+  updateAccountField,
+  updatePoints,
+} from "./../../state/account/accountReducer";
 
 const useAccountData = () => {
-  const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);
+  const { referralCode, referrerCode, refCodeLoaded } = useAppSelector(
+    (state) => state.account
+  );
   const { currentWallet } = useWallet();
   const { reloadBalances } = useTokens();
   const dispatch = useAppDispatch();
-  const [urlSearchParams] = useSearchParams();
-  const referralCodeFromUrl = urlSearchParams.get("refCode");
+  // const [urlSearchParams] = useSearchParams();
+  const referralCodeFromUrl = "test"; // urlSearchParams.get("refCode");
 
   const referralLink = useMemo(
     () =>
       referralCode
         ? `${
-            window.location.origin.includes("staging") ? "https://beta.beratrax.com" : window.location.origin
+            window?.location?.origin?.includes("staging")
+              ? "https://beta.beratrax.com"
+              : window?.location?.origin
           }/${encodeURIComponent(referralCode)}`
         : undefined,
-    [referralCode],
+    [referralCode]
   );
   const fetchAccountData = useCallback(async () => {
-    if (!refCodeLoaded) return;
+    console.log("refCodeLoaded", refCodeLoaded);
+    // if (!refCodeLoaded) return;
 
-    await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
+    await dispatch(
+      addAccount({
+        address: currentWallet,
+        referrerCode,
+        referralCodeFromUrl: referralCodeFromUrl!,
+      })
+    );
     await reloadBalances();
     if (!currentWallet) return;
     await dispatch(updatePoints(currentWallet));
@@ -47,7 +61,14 @@ export const useRefCodeLoaded = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (refCode && !Object.values([RoutesPaths.Home, RoutesPaths.Farms, RoutesPaths.Leaderboard]).includes(refCode)) {
+    if (
+      refCode &&
+      !Object.values([
+        RoutesPaths.Home,
+        RoutesPaths.Farms,
+        RoutesPaths.Leaderboard,
+      ]).includes(refCode)
+    ) {
       dispatch(updateAccountField({ field: "referrerCode", value: refCode }));
       navigate(`/`);
     }

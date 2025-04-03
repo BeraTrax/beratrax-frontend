@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@beratrax/website",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -62,6 +62,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "find-deadcode": "ts-prune",

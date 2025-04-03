@@ -36,7 +36,7 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "turbo": "^2.4.4"
+    "turbo": "^1.10.4"
   },
   "workspaces": [
     "./apps/*",
@@ -45,6 +45,7 @@
   "bugs": {
     "url": "https://github.com/BeraTrax/beratrax-frontend/issues"
   },
-  "homepage": "https://github.com/BeraTrax/beratrax-frontend#readme"
+  "homepage": "https://github.com/BeraTrax/beratrax-frontend#readme",
+  "packageManager": "yarn@1.22.22"
 }
 

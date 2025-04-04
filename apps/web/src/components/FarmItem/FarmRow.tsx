@@ -159,13 +159,23 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                         {farm.isCurrentWeeksRewardsVault
                                             ? "??? "
                                             : farmApys && farmApys.apy < 0.01
-                                            ? (farmApys.apy + (farmApys.merklApr || 0)).toPrecision(2).slice(0, -1)
+                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
                                             : toFixedFloor(
                                                   (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
                                                   2
                                               ).toString()}
                                         %
                                     </p>
+                                    {farmApys && farmApys.merklApr
+                                        ? Number(toFixedFloor(farmApys.merklApr, 2)) > 0 && (
+                                              <p className="text-gradientPrimary text-right text-sm flex items-center">
+                                                  <span className="mr-1">+</span>
+                                                  {toFixedFloor(farmApys.merklApr, 2)}%
+                                                  <span className="ml-1 text-xs">Jumper APY</span>
+                                              </p>
+                                          )
+                                        : null}
+
                                     <a id={key} data-tooltip-html={/* tooltip text here */ ""}>
                                         {/* Possibly an info icon here */}
                                     </a>
@@ -373,3 +383,4 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
         </div>
     );
 };
+

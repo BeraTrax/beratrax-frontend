@@ -288,7 +288,7 @@ const PoolInfo = ({
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
                 )}
-                {merkleApy !== "0" && (
+                {Number(merkleApy) > 0 && (
                     <StatInfo
                         title="Additional Merkl APR"
                         value={merkleApy + "%"}
@@ -302,3 +302,4 @@ const PoolInfo = ({
 };
 
 export default PoolInfo;
+

@@ -75,7 +75,9 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                 filterTimestamp = now - 24 * 60 * 60;
                 break;
             case "week":
-                filterTimestamp = now - 7 * 24 * 60 * 60;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // midnight today
+                filterTimestamp = today.getTime() / 1000 - 6 * 24 * 60 * 60;
                 break;
             case "month":
                 filterTimestamp = now - 30 * 24 * 60 * 60;
@@ -127,29 +129,33 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
     const { vaultApy, isLoading: isLoadingVaultApy, isFetched: isFetchedVaultApy } = useSpecificVaultApy(farm.id);
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     // Update the first entry in vaultApy with the current APY from farmApys if available
+
+    const newData = useMemo(() => downsampleData(vaultApy || [], graphFilter), [vaultApy, graphFilter]);
+
     const updatedVaultApy = useMemo(() => {
-        if (!vaultApy || vaultApy.length === 0 || !farmApys || !farmApys.apy) {
-            return vaultApy;
+        if (!newData || newData.length === 0 || !farmApys || !farmApys.apy) {
+            return newData;
         }
 
-        const result = [...vaultApy];
-        if (result[0]) {
-            result[0] = {
-                ...result[0],
-                apy: farm.isAutoCompounded ? farmApys.apy : farmApys.feeApr + farmApys.rewardsApr,
+        const result = [...newData];
+        if (result[result.length - 1]) {
+            result[result.length - 1] = {
+                ...result[result.length - 1],
+                apy: farm.isAutoCompounded
+                    ? farmApys.apy.toFixed(2).toString()
+                    : String((farmApys.feeApr + farmApys.rewardsApr).toFixed(2)),
             };
         }
 
         return result;
-    }, [vaultApy, farmApys]);
-    const newData = useMemo(() => downsampleData(updatedVaultApy || [], graphFilter), [updatedVaultApy, graphFilter]);
+    }, [newData, farmApys]);
 
     const [minApy, maxApy] = useMemo(() => {
-        if (!newData || newData.length === 0) return [0, 100];
+        if (!updatedVaultApy || updatedVaultApy.length === 0) return [0, 100];
 
-        const values = newData.map((d) => parseFloat(d.apy));
+        const values = updatedVaultApy.map((d) => parseFloat(d.apy));
         return [Math.min(...values), Math.max(...values)];
-    }, [newData]);
+    }, [updatedVaultApy]);
 
     return (
         <div className="z-10 relative">
@@ -159,7 +165,11 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                 ) : (
                     <>
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart width={1200} data={newData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+                            <AreaChart
+                                width={1200}
+                                data={updatedVaultApy}
+                                margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
+                            >
                                 <defs>
                                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#90BB62" stopOpacity={0.2} />
@@ -199,10 +209,11 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                 ))}
             </div>
             <div className="text-center my-4">
-                <p className="text-sm text-textSecondary">Historical Underlying APY of the vault</p>
+                <p className="text-sm text-textSecondary">
+                    Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+                </p>
             </div>
         </div>
     );
 };
 export default FarmApyGraph;
-

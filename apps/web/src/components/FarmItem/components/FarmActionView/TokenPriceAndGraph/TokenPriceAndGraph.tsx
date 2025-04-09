@@ -30,7 +30,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const tabs = [
         { id: "price" as TabType, label: "Price" },
         { id: "tvl" as TabType, label: "TVL" },
-        { id: "apy" as TabType, label: "Underlying APY" },
+        { id: "apy" as TabType, label: "BeraTrax APR" },
     ];
 
     return (

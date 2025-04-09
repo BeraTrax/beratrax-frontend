@@ -42,7 +42,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 };
 
 const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
-    const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
+    const [graphFilter, setGraphFilter] = useState<GraphFilterType>("week");
 
     const graphFiltersList: { text: string; type: GraphFilterType }[] = [
         { text: "1H", type: "hour" },

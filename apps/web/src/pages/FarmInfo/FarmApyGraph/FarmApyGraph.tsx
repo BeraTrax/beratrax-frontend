@@ -4,6 +4,7 @@ import { Skeleton } from "src/components/Skeleton/Skeleton";
 import { VaultsApy } from "src/api/stats";
 import { useSpecificVaultApy } from "src/hooks/useVaults";
 import { PoolDef } from "src/config/constants/pools_json";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 
@@ -41,7 +42,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 };
 
 const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
-    const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
+    const [graphFilter, setGraphFilter] = useState<GraphFilterType>("week");
 
     const graphFiltersList: { text: string; type: GraphFilterType }[] = [
         { text: "1H", type: "hour" },
@@ -124,14 +125,32 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
     };
 
     const { vaultApy, isLoading: isLoadingVaultApy, isFetched: isFetchedVaultApy } = useSpecificVaultApy(farm.id);
-    const newData = useMemo(() => downsampleData(vaultApy || [], graphFilter), [vaultApy, graphFilter]);
+    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
+    // Update the first entry in vaultApy with the current APY from farmApys if available
+    const updatedVaultApy = useMemo(() => {
+        if (!vaultApy || vaultApy.length === 0 || !farmApys || !farmApys.apy) {
+            return vaultApy;
+        }
+
+        const result = [...vaultApy];
+        if (result[0]) {
+            result[0] = {
+                ...result[0],
+                apy: farm.isAutoCompounded ? farmApys.apy : farmApys.feeApr + farmApys.rewardsApr,
+            };
+        }
+
+        return result;
+    }, [vaultApy, farmApys]);
+    const newData = useMemo(() => downsampleData(updatedVaultApy || [], graphFilter), [updatedVaultApy, graphFilter]);
+
     const [minApy, maxApy] = useMemo(() => {
         if (!newData || newData.length === 0) return [0, 100];
-    
-        const values = newData.map(d => parseFloat(d.apy));
+
+        const values = newData.map((d) => parseFloat(d.apy));
         return [Math.min(...values), Math.max(...values)];
     }, [newData]);
-    
+
     return (
         <div className="z-10 relative">
             <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
@@ -186,3 +205,4 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
     );
 };
 export default FarmApyGraph;
+

@@ -279,7 +279,7 @@ const PoolInfo = ({
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} isStatLoading={marketCapLoading} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} isStatLoading={vaultTvlLoading} />
                 <StatInfo
-                    title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APY"}
+                    title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APR"}
                     value={underlyingApy + "%"}
                     iconUrl={<FaArrowTrendUp color="white" size={25} />}
                 />

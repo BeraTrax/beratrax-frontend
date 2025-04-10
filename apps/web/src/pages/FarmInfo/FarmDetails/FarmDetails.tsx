@@ -13,7 +13,7 @@ import useTokens from "src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { getLpAddressForFarmsPrice } from "src/utils/common";
 import { zeroAddress } from "viem";
-import FarmApyGraph from "../FarmApyGraphOld/FarmApyGraph";
+// import FarmApyGraph from "../FarmApyGraphOld/FarmApyGraph";
 import FarmLpGraph from "../FarmLpGraph/FarmLpGraph";
 import styles from "./styles.module.css";
 
@@ -169,7 +169,7 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
                             </div>
                         </div>
                         <SlippageIndividual farm={farm} />
-                        <FarmApyGraph farm={farm} />
+                        {/* <FarmApyGraph farm={farm} /> */}
                         <FarmLpGraph farm={farm} />
                         <div style={{ marginTop: "3rem" }}>
                             <div className={"specificApy"}>

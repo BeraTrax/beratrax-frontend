@@ -57,20 +57,34 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
         const initialInvestment = investmentAmount;
         const projectedData = [];
 
-        for (let i = 0; i <= months; i++) {
-            const date = new Date();
-            date.setMonth(date.getMonth() + i);
+        // Determine if we should use daily or monthly intervals
+        const useDailyIntervals = months <= 12;
+        const totalDays = months * 30; // Approximate days in the period
+        const intervalCount = useDailyIntervals ? totalDays : months;
 
-            const simpleAprEarnings = initialInvestment * (1 + (underlyingApr / 100) * (i / 12));
+        for (let i = 0; i <= intervalCount; i++) {
+            const date = new Date();
+            if (useDailyIntervals) {
+                date.setDate(date.getDate() + i);
+            } else {
+                date.setMonth(date.getMonth() + i);
+            }
+
+            // Calculate time in years for the projection
+            const timeInYears = useDailyIntervals ? i / 365 : i / 12;
+
+            const simpleAprEarnings = initialInvestment * (1 + (underlyingApr / 100) * timeInYears);
 
             const dataPoint: any = {
-                date: `${date.getMonth() + 1}/${date.getFullYear()}`,
+                date: useDailyIntervals
+                    ? `${date.getDate()}/${date.getMonth() + 1}`
+                    : `${date.getMonth() + 1}/${date.getFullYear()}`,
                 simpleApr: simpleAprEarnings,
                 timestamp: Math.floor(date.getTime() / 1000),
             };
 
             if (isAutoCompounded && autoCompoundedApy) {
-                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, i / 12);
+                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, timeInYears);
             }
 
             projectedData.push(dataPoint);
@@ -164,7 +178,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
                                         `$${formatCurrency(value)}`,
                                         name === "autoCompounded" ? "Auto-Compounded Earnings" : "Simple APR Earnings",
                                     ]}
-                                    labelFormatter={(label) => `Month ${label}`}
+                                    labelFormatter={(label) => (months <= 12 ? `Day ${label}` : `Month ${label}`)}
                                 />
                                 {isAutoCompounded && (
                                     <Area

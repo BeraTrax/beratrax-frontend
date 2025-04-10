@@ -5,7 +5,7 @@ import useTokens from "src/state/tokens/useTokens";
 import { getLpAddressForFarmsPrice, toPreciseNumber } from "src/utils/common";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import "./Details.css";
-import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraphOld/FarmApyGraph";
+// import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraphOld/FarmApyGraph";
 import FarmLpGraph from "src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import { PoolDef } from "src/config/constants/pools_json";
 
@@ -233,7 +233,7 @@ const Details: React.FC<Props> = ({ farm, ...props }) => {
                     ) : null}
                 </div>
                 <div className="farm_apy_lp_graph_container_details">
-                    <FarmApyGraph farm={farm} />
+                    {/* <FarmApyGraph farm={farm} /> */}
                     <FarmLpGraph farm={farm} />
                 </div>
             </div>

@@ -130,14 +130,20 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     // Update the first entry in vaultApy with the current APY from farmApys if available
 
-    const newData = useMemo(() => downsampleData(vaultApy || [], graphFilter), [vaultApy, graphFilter]);
-
-    const updatedVaultApy = useMemo(() => {
-        if (!newData || newData.length === 0 || !farmApys || !farmApys.apy) {
-            return newData;
+    const beratraxApy = useMemo(
+        () => downsampleData(vaultApy?.beratraxApy || [], graphFilter),
+        [vaultApy, graphFilter]
+    );
+    const underlyingApr = useMemo(
+        () => downsampleData(vaultApy?.underlyingApr || [], graphFilter),
+        [vaultApy, graphFilter]
+    );
+    const updatedBeratraxApy = useMemo(() => {
+        if (!beratraxApy || beratraxApy.length === 0 || !farmApys || !farmApys.apy) {
+            return beratraxApy;
         }
 
-        const result = [...newData];
+        const result = [...beratraxApy];
         if (result[result.length - 1]) {
             result[result.length - 1] = {
                 ...result[result.length - 1],
@@ -148,14 +154,37 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
         }
 
         return result;
-    }, [newData, farmApys]);
+    }, [beratraxApy, farmApys]);
+
+    const updatedUnderlyingApr = useMemo(() => {
+        if (!underlyingApr || underlyingApr.length === 0 || !farmApys || !farmApys.apy) {
+            return underlyingApr;
+        }
+
+        const result = [...underlyingApr];
+        if (result[result.length - 1]) {
+            result[result.length - 1] = {
+                ...result[result.length - 1],
+                apy: String((farmApys.feeApr + farmApys.rewardsApr).toFixed(2)),
+            };
+        }
+
+        return result;
+    }, [underlyingApr, farmApys]);
 
     const [minApy, maxApy] = useMemo(() => {
-        if (!updatedVaultApy || updatedVaultApy.length === 0) return [0, 100];
+        if (!updatedBeratraxApy || updatedBeratraxApy.length === 0) {
+            if (!updatedUnderlyingApr || updatedUnderlyingApr.length === 0) return [0, 100];
+            const values = updatedUnderlyingApr.map((d) => parseFloat(d.apy));
+            return [Math.min(...values), Math.max(...values)];
+        }
 
-        const values = updatedVaultApy.map((d) => parseFloat(d.apy));
-        return [Math.min(...values), Math.max(...values)];
-    }, [updatedVaultApy]);
+        const beratraxValues = updatedBeratraxApy.map((d) => parseFloat(d.apy));
+        const underlyingValues = updatedUnderlyingApr?.map((d) => parseFloat(d.apy)) || [];
+        const allValues = [...beratraxValues, ...underlyingValues];
+
+        return [Math.min(...allValues), Math.max(...allValues)];
+    }, [updatedBeratraxApy, updatedUnderlyingApr]);
 
     return (
         <div className="z-10 relative">
@@ -167,13 +196,33 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart
                                 width={1200}
-                                data={updatedVaultApy}
+                                data={updatedBeratraxApy}
                                 margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
                             >
                                 <defs>
                                     <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#90BB62" stopOpacity={0.2} />
-                                        <stop offset="95%" stopColor="#90BB62" stopOpacity={0} />
+                                        <stop
+                                            offset="5%"
+                                            stopColor={farm.isAutoCompounded ? "#90BB62" : "#8884d8"}
+                                            stopOpacity={0.2}
+                                        />
+                                        <stop
+                                            offset="95%"
+                                            stopColor={farm.isAutoCompounded ? "#90BB62" : "#8884d8"}
+                                            stopOpacity={0}
+                                        />
+                                    </linearGradient>
+                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                        <stop
+                                            offset="5%"
+                                            stopColor={farm.isAutoCompounded ? "#8884d8" : "#90BB62"}
+                                            stopOpacity={0.2}
+                                        />
+                                        <stop
+                                            offset="95%"
+                                            stopColor={farm.isAutoCompounded ? "#8884d8" : "#90BB62"}
+                                            stopOpacity={0}
+                                        />
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
@@ -181,15 +230,32 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
                                 <Tooltip
                                     contentStyle={{ background: "#1a1a1a", border: "none" }}
                                     labelStyle={{ color: "#fff" }}
-                                    formatter={(value: any) => [`${value}%`, "APY"]}
+                                    formatter={(value: any, name: string) => [
+                                        `${value}%`,
+                                        name === "apy" ? "BeraTrax APY" : "Underlying APR",
+                                    ]}
                                     labelFormatter={(label) => label}
                                 />
+                                {farm.isAutoCompounded && (
+                                    <Area
+                                        type="monotone"
+                                        dataKey="apy"
+                                        name="apy"
+                                        stroke="#90BB62"
+                                        strokeWidth={2}
+                                        fill="url(#colorUv)"
+                                        fillOpacity={1}
+                                        connectNulls
+                                    />
+                                )}
                                 <Area
                                     type="monotone"
                                     dataKey="apy"
-                                    stroke="#90BB62"
+                                    name="underlyingApr"
+                                    data={updatedUnderlyingApr}
+                                    stroke={farm.isAutoCompounded ? "#8884d8" : "#90BB62"}
                                     strokeWidth={2}
-                                    fill="url(#colorUv)"
+                                    fill="url(#colorPv)"
                                     fillOpacity={1}
                                     connectNulls
                                 />
@@ -217,3 +283,4 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
     );
 };
 export default FarmApyGraph;
+

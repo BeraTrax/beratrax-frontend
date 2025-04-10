@@ -1,0 +1,205 @@
+import { useMemo, useState, useEffect } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { PoolDef } from "src/config/constants/pools_json";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
+import useWallet from "src/hooks/useWallet";
+import useTokens from "src/state/tokens/useTokens";
+import { formatCurrency } from "src/utils/common";
+
+const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
+    const { currentWallet } = useWallet();
+    const { balances } = useTokens();
+    const [investmentAmount, setInvestmentAmount] = useState<number>(100);
+    const [months, setMonths] = useState<number>(12);
+
+    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
+
+    const isAutoCompounded = farm.isAutoCompounded;
+    const underlyingApr = farmApys?.rewardsApr + farmApys?.feeApr;
+    const autoCompoundedApy = farmApys?.apy;
+    const userStake = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
+
+    useEffect(() => {
+        if (currentWallet && userStake > 0) {
+            setInvestmentAmount(Number(userStake.toFixed(2)));
+        }
+    }, [currentWallet, userStake]);
+
+    const handleInvestmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === "") {
+            setInvestmentAmount(0);
+        } else {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue) && numValue >= 0) {
+                setInvestmentAmount(numValue);
+            }
+        }
+    };
+
+    const handleMonthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value === "") {
+            setMonths(0);
+        } else {
+            const numValue = parseInt(value);
+            if (!isNaN(numValue) && numValue >= 1 && numValue <= 60) {
+                setMonths(numValue);
+            }
+        }
+    };
+
+    const calculateProjectedEarnings = useMemo(() => {
+        if (!underlyingApr || !investmentAmount) return [];
+        if (isAutoCompounded && !autoCompoundedApy) return [];
+
+        const initialInvestment = investmentAmount;
+        const projectedData = [];
+
+        for (let i = 0; i <= months; i++) {
+            const date = new Date();
+            date.setMonth(date.getMonth() + i);
+
+            const simpleAprEarnings = initialInvestment * (1 + (underlyingApr / 100) * (i / 12));
+
+            const dataPoint: any = {
+                date: `${date.getMonth() + 1}/${date.getFullYear()}`,
+                simpleApr: simpleAprEarnings,
+                timestamp: Math.floor(date.getTime() / 1000),
+            };
+
+            if (isAutoCompounded && autoCompoundedApy) {
+                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, i / 12);
+            }
+
+            projectedData.push(dataPoint);
+        }
+
+        return projectedData;
+    }, [underlyingApr, autoCompoundedApy, investmentAmount, isAutoCompounded, months]);
+
+    const [minEarnings, maxEarnings] = useMemo(() => {
+        if (!calculateProjectedEarnings || calculateProjectedEarnings.length === 0)
+            return [investmentAmount, investmentAmount * 2];
+
+        const values = calculateProjectedEarnings.map((d) =>
+            isAutoCompounded ? Math.max(d.autoCompounded, d.simpleApr) : d.simpleApr
+        );
+
+        return [investmentAmount, Math.max(...values) * 1.1];
+    }, [calculateProjectedEarnings, investmentAmount, isAutoCompounded]);
+
+    return (
+        <div className="z-10 relative">
+            <div className="flex flex-col items-center mb-4">
+                <div className="flex gap-4 mb-2">
+                    <div className="relative">
+                        <input
+                            type="number"
+                            value={investmentAmount || ""}
+                            onChange={handleInvestmentChange}
+                            className="bg-bgDark text-textWhite text-center text-lg py-2 px-4 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
+                            placeholder="Enter amount"
+                            min="0"
+                            step="0.01"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary">$</div>
+                    </div>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            value={months || ""}
+                            onChange={handleMonthsChange}
+                            className="bg-bgDark text-textWhite text-center text-lg py-2 px-4 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
+                            placeholder="Months"
+                            min="1"
+                            max="60"
+                            step="1"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary whitespace-nowrap">
+                            {months ? "months" : "Months"}
+                        </div>
+                    </div>
+                </div>
+                <p className="text-sm text-textSecondary">Enter investment amount and period to see projection</p>
+            </div>
+            <div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
+                {isApyLoading ? (
+                    <Skeleton h={300} w={"100%"} />
+                ) : (
+                    <>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart
+                                width={1200}
+                                data={calculateProjectedEarnings}
+                                margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+                            >
+                                <defs>
+                                    {isAutoCompounded && (
+                                        <linearGradient id="colorAutoCompounded" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#90BB62" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#90BB62" stopOpacity={0} />
+                                        </linearGradient>
+                                    )}
+                                    <linearGradient id="colorSimpleApr" x1="0" y1="0" x2="0" y2="1">
+                                        <stop
+                                            offset="5%"
+                                            stopColor={isAutoCompounded ? "#8884d8" : "#90BB62"}
+                                            stopOpacity={0.2}
+                                        />
+                                        <stop
+                                            offset="95%"
+                                            stopColor={isAutoCompounded ? "#8884d8" : "#90BB62"}
+                                            stopOpacity={0}
+                                        />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis dataKey="date" tick={false} axisLine={false} height={0} />
+                                <YAxis tick={false} axisLine={false} width={0} domain={[minEarnings, maxEarnings]} />
+                                <Tooltip
+                                    contentStyle={{ background: "#1a1a1a", border: "none" }}
+                                    labelStyle={{ color: "#fff" }}
+                                    formatter={(value: any, name: string) => [
+                                        `$${formatCurrency(value)}`,
+                                        name === "autoCompounded" ? "Auto-Compounded Earnings" : "Simple APR Earnings",
+                                    ]}
+                                    labelFormatter={(label) => `Month ${label}`}
+                                />
+                                {isAutoCompounded && (
+                                    <Area
+                                        type="monotone"
+                                        dataKey="autoCompounded"
+                                        name="autoCompounded"
+                                        stroke="#90BB62"
+                                        strokeWidth={2}
+                                        fill="url(#colorAutoCompounded)"
+                                        fillOpacity={1}
+                                        connectNulls
+                                    />
+                                )}
+                                <Area
+                                    type="monotone"
+                                    dataKey="simpleApr"
+                                    name="simpleApr"
+                                    stroke={isAutoCompounded ? "#8884d8" : "#90BB62"}
+                                    strokeWidth={2}
+                                    fill="url(#colorSimpleApr)"
+                                    fillOpacity={1}
+                                    connectNulls
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </>
+                )}
+            </div>
+            <div className="text-center mb-2">
+                <p className="text-sm text-textSecondary">
+                    {months}-Month Projection of {formatCurrency(investmentAmount)} Investment
+                </p>
+            </div>
+        </div>
+    );
+};
+export default FarmEarningsGraph;
+

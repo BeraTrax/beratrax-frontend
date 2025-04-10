@@ -44,7 +44,10 @@ interface VaultStats {
 }
 
 interface VaultsApyResponse {
-    data: VaultsApy[];
+    data: {
+        beratraxApy: VaultsApy[];
+        underlyingApr: VaultsApy[];
+    };
 }
 
 export interface VaultsApy {
@@ -164,3 +167,4 @@ export const fetchAccountConnectorsStats = async () => {
     const res = await backendApi.get<AccountConnectorsStatsResponse>(`stats/account-connectors`);
     return res.data.data;
 };
+

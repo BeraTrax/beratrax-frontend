@@ -7,6 +7,7 @@ import FarmRowChip from "../../FarmRowChip/FarmRowChip";
 import FarmTvlGraph from "src/pages/FarmInfo/FarmTvlGraph/FarmTvlGraph";
 import FarmApyGraph from "src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
 import { useState } from "react";
+import FarmEarningsGraph from "src/pages/FarmInfo/FarmEarningsGraph/FarmEarningsGraph";
 
 interface TokenPriceProps {
     farm: PoolDef;
@@ -21,7 +22,7 @@ const PriceLoadingSkeleton = () => {
     );
 };
 
-type TabType = "price" | "tvl" | "apy";
+type TabType = "price" | "tvl" | "apy" | "earnings";
 
 export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const { lp, isLpPriceLoading } = useLp(farm.id);
@@ -31,6 +32,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
         { id: "price" as TabType, label: "Price" },
         { id: "tvl" as TabType, label: "TVL" },
         { id: "apy" as TabType, label: farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR" },
+        { id: "earnings" as TabType, label: "Earnings" },
     ];
 
     return (
@@ -125,6 +127,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                     {activeTab === "price" && <FarmLpGraph farm={farm} />}
                     {activeTab === "tvl" && <FarmTvlGraph farm={farm} />}
                     {activeTab === "apy" && <FarmApyGraph farm={farm} />}
+                    {activeTab === "earnings" && <FarmEarningsGraph farm={farm} />}
                 </div>
             </div>
         </div>

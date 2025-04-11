@@ -86,6 +86,12 @@ const PoolInfo = ({
     const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
     const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
+    const lbgtLogo = "https://www.berapaw.com/static/images/tokens/lbgt.svg";
+
+    // temp fix for burrbear vaults
+    if (farm.id === 24 || farm.id === 25) {
+        isAutoCompounded = true;
+    }
 
     return (
         <div className=" mt-4 relative">
@@ -181,8 +187,17 @@ const PoolInfo = ({
                                                 </>
                                             ) : originPlatform === FarmOriginPlatform.Burrbear ? (
                                                 <>
-                                                    <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
-                                                    WBERA
+                                                    {farm.id === 24 || farm.id === 25 ? (
+                                                        <>
+                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
+                                                            LBGT
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
+                                                            WBERA
+                                                        </>
+                                                    )}
                                                 </>
                                             ) : (
                                                 <>
@@ -302,4 +317,3 @@ const PoolInfo = ({
 };
 
 export default PoolInfo;
-

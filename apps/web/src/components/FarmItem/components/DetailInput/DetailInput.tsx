@@ -205,6 +205,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
                                 value={currencySymbol}
                                 setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
                                 size="small"
+                                className="bg-bgSecondary"
                                 // extraText={selectExtraOptions}
                             />
                         </div>
@@ -278,6 +279,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
                             value={currencySymbol}
                             setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
                             extraText={selectExtraOptions}
+                            className="bg-bgSecondary"
                         />
                     ) : (
                         <div></div>
@@ -382,3 +384,4 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 };
 
 export default DetailInput;
+

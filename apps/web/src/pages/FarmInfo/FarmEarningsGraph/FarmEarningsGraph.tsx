@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "src/components/Skeleton/Skeleton";
+import { Select } from "src/components/Select/Select";
 import { PoolDef } from "src/config/constants/pools_json";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import useWallet from "src/hooks/useWallet";
@@ -10,7 +11,7 @@ import { formatCurrency } from "src/utils/common";
 const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
     const { currentWallet } = useWallet();
     const { balances } = useTokens();
-    const [investmentAmount, setInvestmentAmount] = useState<number>(100);
+    const [investmentAmount, setInvestmentAmount] = useState<number>(1000);
     const [months, setMonths] = useState<number>(12);
 
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
@@ -57,20 +58,34 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
         const initialInvestment = investmentAmount;
         const projectedData = [];
 
-        for (let i = 0; i <= months; i++) {
-            const date = new Date();
-            date.setMonth(date.getMonth() + i);
+        // Determine if we should use daily or monthly intervals
+        const useDailyIntervals = months <= 12;
+        const totalDays = months * 30; // Approximate days in the period
+        const intervalCount = useDailyIntervals ? totalDays : months;
 
-            const simpleAprEarnings = initialInvestment * (1 + (underlyingApr / 100) * (i / 12));
+        for (let i = 0; i <= intervalCount; i++) {
+            const date = new Date();
+            if (useDailyIntervals) {
+                date.setDate(date.getDate() + i);
+            } else {
+                date.setMonth(date.getMonth() + i);
+            }
+
+            // Calculate time in years for the projection
+            const timeInYears = useDailyIntervals ? i / 365 : i / 12;
+
+            const simpleAprEarnings = initialInvestment * (1 + (underlyingApr / 100) * timeInYears);
 
             const dataPoint: any = {
-                date: `${date.getMonth() + 1}/${date.getFullYear()}`,
+                date: useDailyIntervals
+                    ? date.toLocaleDateString(undefined, { day: "numeric", month: "short" })
+                    : date.toLocaleDateString(undefined, { month: "short", year: "numeric" }),
                 simpleApr: simpleAprEarnings,
                 timestamp: Math.floor(date.getTime() / 1000),
             };
 
             if (isAutoCompounded && autoCompoundedApy) {
-                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, i / 12);
+                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, timeInYears);
             }
 
             projectedData.push(dataPoint);
@@ -93,32 +108,28 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
     return (
         <div className="z-10 relative">
             <div className="flex flex-col items-center mb-4">
-                <div className="flex gap-4 mb-2">
-                    <div className="relative">
+                <div className="flex gap-4 mb-2 items-center">
+                    <div className="relative h-12">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary">$</div>
                         <input
                             type="number"
                             value={investmentAmount || ""}
                             onChange={handleInvestmentChange}
-                            className="bg-bgDark text-textWhite text-center text-lg py-2 px-4 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
+                            className="bg-bgDark text-textWhite text-center text-lg h-full pl-8 pr-4 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
                             placeholder="Enter amount"
                             min="0"
                             step="0.01"
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary">$</div>
                     </div>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            value={months || ""}
-                            onChange={handleMonthsChange}
-                            className="bg-bgDark text-textWhite text-center text-lg py-2 px-4 rounded-lg w-40 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
-                            placeholder="Months"
-                            min="1"
-                            max="60"
-                            step="1"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary whitespace-nowrap">
-                            {months ? "months" : "Months"}
+                    <div className="relative z-10 h-12">
+                        <div className="h-full">
+                            <Select
+                                value={months.toString()}
+                                setValue={(value) => setMonths(Number(value))}
+                                options={["3", "6", "12", "24"]}
+                                extraText={["months", "months", "months", "months"]}
+                                className="h-full bg-bgDark text-textWhite rounded-lg"
+                            />
                         </div>
                     </div>
                 </div>
@@ -162,9 +173,9 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
                                     labelStyle={{ color: "#fff" }}
                                     formatter={(value: any, name: string) => [
                                         `$${formatCurrency(value)}`,
-                                        name === "autoCompounded" ? "Auto-Compounded Earnings" : "Simple APR Earnings",
+                                        name === "autoCompounded" ? "BeraTrax APY" : "Underlying APR",
                                     ]}
-                                    labelFormatter={(label) => `Month ${label}`}
+                                    labelFormatter={(label) => label}
                                 />
                                 {isAutoCompounded && (
                                     <Area
@@ -193,9 +204,9 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
                     </>
                 )}
             </div>
-            <div className="text-center mb-2">
+            <div className="text-center my-2">
                 <p className="text-sm text-textSecondary">
-                    {months}-Month Projection of {formatCurrency(investmentAmount)} Investment
+                    {months}-Month Projection of ${formatCurrency(investmentAmount)} Investment
                 </p>
             </div>
         </div>

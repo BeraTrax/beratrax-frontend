@@ -26,13 +26,13 @@ type TabType = "price" | "tvl" | "apy" | "earnings";
 
 export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const { lp, isLpPriceLoading } = useLp(farm.id);
-    const [activeTab, setActiveTab] = useState<TabType>("price");
+    const [activeTab, setActiveTab] = useState<TabType>("earnings");
 
     const tabs = [
+        { id: "earnings" as TabType, label: "Earnings" },
         { id: "price" as TabType, label: "Price" },
         { id: "tvl" as TabType, label: "TVL" },
         { id: "apy" as TabType, label: farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR" },
-        { id: "earnings" as TabType, label: "Earnings" },
     ];
 
     return (
@@ -124,10 +124,10 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                 </div>
 
                 <div>
+                    {activeTab === "earnings" && <FarmEarningsGraph farm={farm} />}
                     {activeTab === "price" && <FarmLpGraph farm={farm} />}
                     {activeTab === "tvl" && <FarmTvlGraph farm={farm} />}
                     {activeTab === "apy" && <FarmApyGraph farm={farm} />}
-                    {activeTab === "earnings" && <FarmEarningsGraph farm={farm} />}
                 </div>
             </div>
         </div>

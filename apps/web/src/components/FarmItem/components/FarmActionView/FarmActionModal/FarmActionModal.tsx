@@ -403,7 +403,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                                 value={currencySymbol}
                                 setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
                                 extraText={selectExtraOptions}
-                                className=" text-textWhite font-light text-[16px]"
+                                className="bg-bgSecondary text-textWhite font-light text-[16px]"
                             />
                         ) : (
                             <div></div>

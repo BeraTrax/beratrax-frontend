@@ -83,15 +83,6 @@ export const noExponents = (n: number | string) => {
     return str + z;
 };
 
-export const calcCompoundingApy = (rewardsApr: number) => {
-    const period = 365 / 7; // Number of times compounded per year
-    const fee = 0.1; // 10% fee
-    const rate = (rewardsApr / 100) * (1 - fee);
-    const apy = ((1 + rate / period) ** period - 1) * 100;
-    return (apy - rewardsApr) * -1; // multiply by -1 to get positive number
-    // return apy;
-};
-
 export function getNetworkName(id: number) {
     switch (id) {
         case 42161:
@@ -222,11 +213,11 @@ export const customCommify = (
     // Valid range for fraction digits is 0-20
     let minFractionDigits = minimumFractionDigits !== undefined ? minimumFractionDigits : 2;
     let maxFractionDigits = maximumFractionDigits !== undefined ? maximumFractionDigits : 2;
-    
+
     // Clamp values to valid ranges
     minFractionDigits = Math.max(0, Math.min(20, minFractionDigits));
     maxFractionDigits = Math.max(0, Math.min(20, maxFractionDigits));
-    
+
     // Ensure min doesn't exceed max
     if (minFractionDigits > maxFractionDigits) {
         minFractionDigits = maxFractionDigits;
@@ -457,3 +448,4 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
     const formattedAmount = new Intl.NumberFormat(navigator.language, options).format(num);
     return formattedAmount;
 };
+

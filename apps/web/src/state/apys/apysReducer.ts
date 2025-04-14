@@ -10,6 +10,8 @@ pools_json.forEach((pool) => {
         compounding: 0,
         feeApr: 0,
         rewardsApr: 0,
+        extraRewardsApr: 0,
+        pointsApr: 0,
         merklApr: 0,
     };
 });
@@ -62,3 +64,4 @@ const apysSlice = createSlice({
 export const { addApy, addApys } = apysSlice.actions;
 
 export default apysSlice.reducer;
+

@@ -85,7 +85,10 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
             };
 
             if (isAutoCompounded && autoCompoundedApy) {
-                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, timeInYears);
+                const frequency = 525600; // per minute
+                const underlyingRate = underlyingApr / 100;
+                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + underlyingRate / frequency, frequency * timeInYears);
+                
             }
 
             projectedData.push(dataPoint);

@@ -8,6 +8,10 @@ import volume from "src/assets/images/volume.svg";
 import btxLogo from "src/assets/images/btxTokenLogo.png";
 import { FarmOriginPlatform, FarmType } from "src/types/enums";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
+import { Apys } from "src/state/apys/types";
+import { useMemo } from "react";
+import { toFixedFloor } from "src/utils/common";
+import useFarmApy from "src/state/farms/hooks/useFarmApy";
 
 const StatInfo = ({
     iconUrl,
@@ -42,43 +46,58 @@ const StatInfo = ({
     );
 };
 interface IProps {
+    farm: PoolDef;
     marketCap: string;
     vaultTvl: string;
-    description?: string;
-    source?: string;
-    showFlywheelChart?: boolean;
-    beraApy: string;
-    merkleApy: string;
-    isAutoCompounded: boolean;
-    underlyingApy: string;
     marketCapLoading?: boolean;
     vaultTvlLoading?: boolean;
-    farm: PoolDef;
-    createdAt?: number;
 }
-const PoolInfo = ({
-    marketCap,
-    vaultTvl,
-    description,
-    source,
-    showFlywheelChart,
-    beraApy,
-    merkleApy,
-    isAutoCompounded,
-    underlyingApy,
-    marketCapLoading,
-    vaultTvlLoading,
-    farm,
-    createdAt,
-}: IProps) => {
-    const createdDate = new Date((createdAt ?? 0) * 1000);
+const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading }: IProps) => {
+    const {
+        originPlatform,
+        token_type: tokenType,
+        token1,
+        token2,
+        token3,
+        isAutoCompounded,
+        description,
+        source,
+    } = farm;
+    const { apy: farmApys } = useFarmApy(farm);
+
+    const _underlyingApy = useMemo(() => {
+        return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
+    }, [farmApys]);
+    const underlyingApy = useMemo(() => {
+        return farm.isCurrentWeeksRewardsVault ? "??? " : _underlyingApy.toString();
+    }, [farm.isCurrentWeeksRewardsVault, _underlyingApy]);
+    const underlyingApyWithPoints = useMemo(() => {
+        return farmApys.pointsApr > 0 ? toFixedFloor(_underlyingApy + farmApys?.pointsApr, 2) + "%" : 0;
+    }, [farmApys, _underlyingApy]);
+
+    const _beratraxApy = useMemo(() => {
+        return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2);
+    }, [farmApys, farm.isCurrentWeeksRewardsVault, farm.isUpcoming, farm.total_apy]);
+
+    const beraTraxApy = useMemo(() => {
+        return farm.isCurrentWeeksRewardsVault
+            ? "??? "
+            : _beratraxApy < 0.01
+            ? _beratraxApy.toPrecision(2).slice(0, -1)
+            : _beratraxApy.toString();
+    }, [farm.isCurrentWeeksRewardsVault, _beratraxApy]);
+    const beraTraxApyWithPoints = useMemo(() => {
+        return farmApys.pointsApr > 0 ? toFixedFloor(_beratraxApy + farmApys?.pointsApr, 2) + "%" : 0;
+    }, [farmApys, _beratraxApy]);
+
+    const createdDate = new Date((farm.createdAt ?? 0) * 1000);
     const createdDateString = createdDate.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
     });
 
-    const { originPlatform, token_type: tokenType, token1, token2, token3 } = farm;
+    const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7;
 
     const token1Image = tokenNamesAndImages[token1]?.logos[0];
     const token2Image = token2 ? tokenNamesAndImages[token2]?.logos[0] : null;
@@ -86,6 +105,7 @@ const PoolInfo = ({
     const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
     const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
+    const lbgtLogo = "https://www.berapaw.com/static/images/tokens/lbgt.svg";
 
     return (
         <div className=" mt-4 relative">
@@ -94,7 +114,7 @@ const PoolInfo = ({
                     <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">
                         ABOUT
                     </h3>
-                    {farm.id === 8 && (
+                    {/* {farm.id === 8 && (
                         <p className="text-textWhite mt-4 text-[16px] font-light">
                             JUMPER CAMPAIGN NOTICE: The Boosted APY is only applicable for those who deposited through
                             the{" "}
@@ -106,7 +126,7 @@ const PoolInfo = ({
                                 Jumper Campaign.
                             </a>
                         </p>
-                    )}
+                    )} */}
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
                     <p className="text-textWhite mt-4 text-[16px] font-light">
                         You can see the underlying vault on the platform{" "}
@@ -181,8 +201,17 @@ const PoolInfo = ({
                                                 </>
                                             ) : originPlatform === FarmOriginPlatform.Burrbear ? (
                                                 <>
-                                                    <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
-                                                    WBERA
+                                                    {farm.id === 24 || farm.id === 25 ? (
+                                                        <>
+                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
+                                                            LBGT
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
+                                                            WBERA
+                                                        </>
+                                                    )}
                                                 </>
                                             ) : (
                                                 <>
@@ -249,19 +278,6 @@ const PoolInfo = ({
                                     ) : null}
                                 </>
                             )}
-                            {farm.id === 8 && (
-                                <tr>
-                                    <td className="p-4 text-textWhite font-medium">
-                                        <div className="flex items-center gap-2">
-                                            <img src={wberaLogo} alt="BTX" className="w-5 h-5" />
-                                            BERA (Jumper Only)
-                                        </div>
-                                    </td>
-                                    <td className="p-4 text-gradientPrimary font-bold text-right">
-                                        Claim from Jumper Campaign
-                                    </td>
-                                </tr>
-                            )}
                             <tr>
                                 <td className="p-4 text-textWhite font-medium">
                                     <div className="flex items-center gap-2">
@@ -278,26 +294,43 @@ const PoolInfo = ({
             <div className="mt-4 flex flex-col gap-2">
                 <StatInfo title="Market cap" value={marketCap} iconUrl={marketcap} isStatLoading={marketCapLoading} />
                 <StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={volume} isStatLoading={vaultTvlLoading} />
+
                 <StatInfo
                     title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APR"}
                     value={underlyingApy + "%"}
                     iconUrl={<FaArrowTrendUp color="white" size={25} />}
                 />
-                {isAutoCompounded && (
+                {underlyingApyWithPoints ? (
+                    <StatInfo
+                        title={!isAutoCompounded ? "BeraTrax APY with Points" : "Underlying APR with Points"}
+                        value={underlyingApyWithPoints}
+                        iconUrl={<FaArrowTrendUp color="white" size={25} />}
+                    />
+                ) : null}
+
+                {isAutoCompounded ? (
                     <StatInfo
                         title="BeraTrax auto-compounded APY"
-                        value={beraApy + "%"}
+                        value={beraTraxApy + "%"}
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
-                )}
-                {Number(merkleApy) > 0 && (
+                ) : null}
+
+                {isAutoCompounded && beraTraxApyWithPoints ? (
+                    <StatInfo
+                        title="BeraTrax APY with Points"
+                        value={beraTraxApyWithPoints}
+                        iconUrl={<GoRocket color="white" size={25} />}
+                    />
+                ) : null}
+                {farmApys.merklApr > 0 && (
                     <StatInfo
                         title="Additional Merkl APR"
-                        value={merkleApy + "%"}
+                        value={farmApys.merklApr?.toFixed(2) || "0" + "%"}
                         iconUrl={<GoRocket color="white" size={25} />}
                     />
                 )}
-                {createdAt && <StatInfo title="Created On" value={createdDateString} iconUrl={created} />}
+                {farm.createdAt && <StatInfo title="Created On" value={createdDateString} iconUrl={created} />}
             </div>
         </div>
     );

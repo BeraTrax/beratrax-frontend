@@ -27,7 +27,6 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const dispatch = useAppDispatch();
     const { currentWallet, isConnecting } = useWallet();
     const { openConnectModal } = useConnectModal();
-    const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const {
         isBalancesLoading: isLoading,
         prices: {
@@ -83,39 +82,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 <TokenPriceAndGraph farm={farm} />
                                 <YourBalance farm={farm} />
                                 <PoolInfo
-                                    createdAt={farm.createdAt}
+                                    farm={farm}
                                     marketCap={`$${marketCap}`}
                                     vaultTvl={`$${vaultTvl}`}
-                                    description={farm.description}
-                                    source={farm.source}
-                                    showFlywheelChart={
-                                        farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7
-                                    }
-                                    beraApy={
-                                        farm.isCurrentWeeksRewardsVault
-                                            ? "??? "
-                                            : farmApys && farmApys.apy < 0.01
-                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
-                                            : toFixedFloor(
-                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
-                                                  2
-                                              ).toString()
-                                    }
-                                    merkleApy={farmApys.merklApr?.toFixed(2) || "0"}
-                                    underlyingApy={
-                                        farm.isCurrentWeeksRewardsVault
-                                            ? "??? "
-                                            : toFixedFloor(
-                                                  (farm.isUpcoming
-                                                      ? farm.total_apy
-                                                      : farmApys?.feeApr + farmApys?.rewardsApr) || 0,
-                                                  2
-                                              ).toString()
-                                    }
-                                    isAutoCompounded={farm.isAutoCompounded || false}
                                     marketCapLoading={isMarketCapAndVaultLoading}
                                     vaultTvlLoading={isMarketCapAndVaultLoading}
-                                    farm={farm}
                                 />
                                 <Transactions farmId={farm.id} />
                                 <VaultContracts farm={farm} />
@@ -154,7 +125,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                                 <br />
                                             </button>
                                         )}
-                                        {Number(withdrawable?.amount || "0") && (
+                                        {Number(withdrawable?.amount || "0") ? (
                                             <button
                                                 disabled={!currentWallet}
                                                 className={`lg:max-w-80 bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase`}
@@ -167,7 +138,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                             >
                                                 {FarmTransactionType.Withdraw}
                                             </button>
-                                        )}
+                                        ) : null}
                                     </>
                                 )}
                             </div>
@@ -179,3 +150,4 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
         </>
     );
 };
+

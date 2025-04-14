@@ -16,6 +16,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 
+    console.log("farmApys", farmApys);
     const isAutoCompounded = farm.isAutoCompounded;
     const underlyingApr = farmApys?.rewardsApr + farmApys?.feeApr;
     const autoCompoundedApy = farmApys?.apy;
@@ -51,7 +52,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
         }
     };
 
-    const calculateProjectedEarnings = useMemo(() => {
+    const projectedAutoCompoundedEarnings = useMemo(() => {
         if (!underlyingApr || !investmentAmount) return [];
         if (isAutoCompounded && !autoCompoundedApy) return [];
 
@@ -85,7 +86,15 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
             };
 
             if (isAutoCompounded && autoCompoundedApy) {
-                dataPoint.autoCompounded = initialInvestment * Math.pow(1 + autoCompoundedApy / 100, timeInYears);
+                const frequency = 525600; // per minute
+                const rewardsRate = (farmApys?.rewardsApr + farmApys.extraRewardsApr) / 100;
+                const feeRate = farmApys?.feeApr / 100;
+
+                const compoundedRewards =
+                    initialInvestment * Math.pow(1 + rewardsRate / frequency, frequency * timeInYears);
+                const linearFeeEarnings = initialInvestment * (feeRate * timeInYears);
+
+                dataPoint.autoCompounded = compoundedRewards + linearFeeEarnings;
             }
 
             projectedData.push(dataPoint);
@@ -95,15 +104,15 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
     }, [underlyingApr, autoCompoundedApy, investmentAmount, isAutoCompounded, months]);
 
     const [minEarnings, maxEarnings] = useMemo(() => {
-        if (!calculateProjectedEarnings || calculateProjectedEarnings.length === 0)
+        if (!projectedAutoCompoundedEarnings || projectedAutoCompoundedEarnings.length === 0)
             return [investmentAmount, investmentAmount * 2];
 
-        const values = calculateProjectedEarnings.map((d) =>
+        const values = projectedAutoCompoundedEarnings.map((d) =>
             isAutoCompounded ? Math.max(d.autoCompounded, d.simpleApr) : d.simpleApr
         );
 
         return [investmentAmount, Math.max(...values) * 1.1];
-    }, [calculateProjectedEarnings, investmentAmount, isAutoCompounded]);
+    }, [projectedAutoCompoundedEarnings, investmentAmount, isAutoCompounded]);
 
     return (
         <div className="z-10 relative">
@@ -143,7 +152,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart
                                 width={1200}
-                                data={calculateProjectedEarnings}
+                                data={projectedAutoCompoundedEarnings}
                                 margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                             >
                                 <defs>

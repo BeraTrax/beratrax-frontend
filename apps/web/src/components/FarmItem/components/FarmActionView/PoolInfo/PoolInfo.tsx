@@ -298,6 +298,14 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                     value={underlyingApy + "%"}
                     iconUrl={<FaArrowTrendUp color="white" size={25} />}
                 />
+                {underlyingApyWithPoints ? (
+                    <StatInfo
+                        title={!isAutoCompounded ? "BeraTrax APY with Points" : "Underlying APR with Points"}
+                        value={underlyingApyWithPoints}
+                        iconUrl={<FaArrowTrendUp color="white" size={25} />}
+                    />
+                ) : null}
+
                 {isAutoCompounded ? (
                     <StatInfo
                         title="BeraTrax auto-compounded APY"
@@ -306,16 +314,9 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                     />
                 ) : null}
 
-                {underlyingApyWithPoints ? (
-                    <StatInfo
-                        title={!isAutoCompounded ? "BeraTrax APY with Points" : "Underlying APR with Points"}
-                        value={underlyingApyWithPoints}
-                        iconUrl={<FaArrowTrendUp color="white" size={25} />}
-                    />
-                ) : null}
                 {isAutoCompounded && beraTraxApyWithPoints ? (
                     <StatInfo
-                        title="BeraTrax auto-compounded APY with Points"
+                        title="BeraTrax APY with Points"
                         value={beraTraxApyWithPoints}
                         iconUrl={<GoRocket color="white" size={25} />}
                     />

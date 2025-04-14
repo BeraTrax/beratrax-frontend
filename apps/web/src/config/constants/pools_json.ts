@@ -154,7 +154,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Burrbear logo",
         isDeprecated: false,
         isUpgradable: false,
-        isAutoCompounded: false,
+        isAutoCompounded: true,
         isStablePool: true,
         lp_address: "0x567f32E86BE3e3963CdBc1887b5043B701f113d9",
         decimals: 18,
@@ -205,7 +205,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Burrbear logo",
         isDeprecated: false,
         isUpgradable: false,
-        isAutoCompounded: false,
+        isAutoCompounded: true,
         isStablePool: true,
         lp_address: "0xE416C064946112c1626D6700D1081a750B1B1Dd7",
         decimals: 18,
@@ -261,7 +261,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "Burrbear logo",
         isDeprecated: false,
         isUpgradable: false,
-        isAutoCompounded: false,
+        isAutoCompounded: true,
         isStablePool: true,
         lp_address: "0xD10E65A5F8cA6f835F2B1832e37cF150fb955f23",
         decimals: 18,
@@ -1351,3 +1351,4 @@ export const tokenNamesAndImages = pools_json.reduce(
         },
     } as Record<string, { name: string; logos: string[] }>
 );
+

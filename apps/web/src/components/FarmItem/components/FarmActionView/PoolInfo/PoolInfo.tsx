@@ -88,11 +88,6 @@ const PoolInfo = ({
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
     const lbgtLogo = "https://www.berapaw.com/static/images/tokens/lbgt.svg";
 
-    // temp fix for burrbear vaults
-    if (farm.id === 24 || farm.id === 25) {
-        isAutoCompounded = true;
-    }
-
     return (
         <div className=" mt-4 relative">
             {description && (

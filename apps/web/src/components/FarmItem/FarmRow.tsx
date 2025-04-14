@@ -16,7 +16,6 @@ import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";
 
-const BTXTokenomics = "https://contraxfi.medium.com/contrax-initial-tokenomics-837d062596a4";
 interface Props {
     farm: PoolDef;
     openedFarm: number | undefined;
@@ -141,7 +140,10 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                     <div className="sm:block hidden">
                         <div>
                             {farmApys &&
-                            toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+                            toFixedFloor(
+                                (farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0,
+                                2
+                            ) === 0 ? (
                                 <p className="text-textWhite">--</p>
                             ) : (
                                 <div className="flex flex-col justify-end items-end">
@@ -158,10 +160,12 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                     <p className="text-textWhite text-right">
                                         {farm.isCurrentWeeksRewardsVault
                                             ? "??? "
-                                            : farmApys && farmApys.apy < 0.01
-                                            ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                            : farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
+                                            ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
                                             : toFixedFloor(
-                                                  (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
+                                                  (farm.isUpcoming
+                                                      ? farm.total_apy
+                                                      : farmApys?.apy + farmApys?.pointsApr) || 0,
                                                   2
                                               ).toString()}
                                         %
@@ -200,15 +204,20 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                     <CgInfo className="text-textSecondary hoverable w-4 h-4" />
                                 </div>
                                 {farmApys &&
-                                toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+                                toFixedFloor(
+                                    (farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0,
+                                    2
+                                ) === 0 ? (
                                     <p className="text-textWhite text-right">--</p>
                                 ) : (
                                     <>
                                         <p className="text-textWhite text-right">
-                                            {farmApys && farmApys.apy < 0.01
-                                                ? farmApys.apy.toPrecision(2).slice(0, -1)
+                                            {farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
+                                                ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
                                                 : toFixedFloor(
-                                                      (farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0,
+                                                      (farm.isUpcoming
+                                                          ? farm.total_apy
+                                                          : farmApys?.apy + farmApys?.pointsApr) || 0,
                                                       2
                                                   ).toString()}
                                             %
@@ -293,9 +302,9 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                     <div className={`gap-1 justify-center items-center sm:flex hidden`}>
                         <div className={`flex items-center flex-col gap-[6px]`}>
                             <p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>
-                                {farmApys && farmApys.apy < 0.01
-                                    ? farmApys.apy.toPrecision(2).slice(0, -1)
-                                    : toFixedFloor(farmApys?.apy || 0, 2).toString()}
+                                {farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
+                                    ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
+                                    : toFixedFloor(farmApys?.apy + farmApys?.pointsApr || 0, 2).toString()}
                                 %
                             </p>
                             <a
@@ -355,9 +364,9 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                         >
                             <p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>APY</p>
                             <p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>
-                                {farmApys && farmApys.apy < 0.01
-                                    ? farmApys.apy.toPrecision(2).slice(0, -1)
-                                    : toFixedFloor(farmApys?.apy || 0, 2).toString()}
+                                {farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
+                                    ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
+                                    : toFixedFloor(farmApys?.apy + farmApys?.pointsApr || 0, 2).toString()}
                                 %
                             </p>
                         </div>

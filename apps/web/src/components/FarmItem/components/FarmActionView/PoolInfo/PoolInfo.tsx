@@ -95,7 +95,7 @@ const PoolInfo = ({
                     <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">
                         ABOUT
                     </h3>
-                    {farm.id === 8 && (
+                    {/* {farm.id === 8 && (
                         <p className="text-textWhite mt-4 text-[16px] font-light">
                             JUMPER CAMPAIGN NOTICE: The Boosted APY is only applicable for those who deposited through
                             the{" "}
@@ -107,7 +107,7 @@ const PoolInfo = ({
                                 Jumper Campaign.
                             </a>
                         </p>
-                    )}
+                    )} */}
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
                     <p className="text-textWhite mt-4 text-[16px] font-light">
                         You can see the underlying vault on the platform{" "}
@@ -257,7 +257,7 @@ const PoolInfo = ({
                                     </tr>
                                 </>
                             )}
-                            {farm.id === 8 && (
+                            {/* {farm.id === 8 && (
                                 <tr>
                                     <td className="p-4 text-textWhite font-medium">
                                         <div className="flex items-center gap-2">
@@ -269,7 +269,7 @@ const PoolInfo = ({
                                         Claim from Jumper Campaign
                                     </td>
                                 </tr>
-                            )}
+                            )} */}
                             <tr>
                                 <td className="p-4 text-textWhite font-medium">
                                     <div className="flex items-center gap-2">

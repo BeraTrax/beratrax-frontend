@@ -101,7 +101,6 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
-        isBoosted: true,
         lp_address: "0x2c4a603A2aA5596287A06886862dc29d56DbC354",
         decimals: 18,
         vault_addr: "0x9bC238c1e0f31a5e016Ea484a698Ee7B4c3B219c",

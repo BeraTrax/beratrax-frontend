@@ -84,7 +84,7 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                             x2 Multiplier - BETA TESTER 🚀
                         </p>
                     )}
-                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_BRONZE) && (
+                    {/* {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_BRONZE) && (
                         <p
                             className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
                         bg-clip-text text-transparent font-extrabold text-lg
@@ -123,7 +123,7 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                         >
                             x3 Multiplier - BRIDGE JUMPER 🚀
                         </p>
-                    )}
+                    )} */}
                 </div>
             </div>
 
@@ -148,3 +148,4 @@ export const TraxReferralEarning: React.FC<Props> = () => {
         </div>
     );
 };
+

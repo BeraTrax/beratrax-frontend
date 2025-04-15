@@ -46,11 +46,20 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
         if (!currentVaultEarnings) return 0;
 
         return (
-            Number(toEth(BigInt(currentVaultEarnings?.earnings0 || 0n), decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)])) *
+            Number(
+                toEth(
+                    BigInt(currentVaultEarnings?.earnings0 || 0n),
+                    decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+                )
+            ) *
                 prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
             (currentVaultEarnings?.token1
-                ? Number(toEth(BigInt(currentVaultEarnings?.earnings1 || 0n), decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)])) *
-                  prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                ? Number(
+                      toEth(
+                          BigInt(currentVaultEarnings?.earnings1 || 0n),
+                          decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                      )
+                  ) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
                 : 0)
         );
     }, [isVaultEarningsFirstLoad]);
@@ -58,7 +67,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
     const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
-    const apy = apys?.apy;
+    const apy = apys?.apy + apys?.pointsApr;
 
     useEffect(() => {
         const getVaultBalance = async () => {
@@ -418,3 +427,4 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 };
 
 export default VaultItem;
+

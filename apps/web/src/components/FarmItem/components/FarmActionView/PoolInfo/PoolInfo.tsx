@@ -199,17 +199,18 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                                     <img src={ibgtLogo} alt="iBGT" className="w-5 h-5" />
                                                     iBGT
                                                 </>
-                                            ) : originPlatform === FarmOriginPlatform.Burrbear ? (
+                                            ) : originPlatform === FarmOriginPlatform.Burrbear ||
+                                              originPlatform === FarmOriginPlatform.BeraPaw ? (
                                                 <>
-                                                    {farm.id === 24 || farm.id === 25 ? (
-                                                        <>
-                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
-                                                            LBGT
-                                                        </>
-                                                    ) : (
+                                                    {farm.id === 22 ? (
                                                         <>
                                                             <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
                                                             WBERA
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
+                                                            LBGT
                                                         </>
                                                     )}
                                                 </>

@@ -43,7 +43,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { balances, prices, decimals, reloadBalances } = useTokens();
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
-        if (!currentVaultEarnings) return 0;
+        if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
 
         return (
             Number(

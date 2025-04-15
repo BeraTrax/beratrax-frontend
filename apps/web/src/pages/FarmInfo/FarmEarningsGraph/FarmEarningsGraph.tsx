@@ -16,7 +16,6 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 
-    console.log("farmApys", farmApys);
     const isAutoCompounded = farm.isAutoCompounded;
     const underlyingApr = farmApys?.rewardsApr + farmApys?.feeApr;
     const autoCompoundedApy = farmApys?.apy;

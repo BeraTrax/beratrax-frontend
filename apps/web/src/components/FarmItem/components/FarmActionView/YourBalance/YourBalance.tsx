@@ -57,7 +57,6 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
         [balances, prices]
     );
-
     const farmEarnings = useMemo(() => {
         if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
         return (
@@ -142,7 +141,8 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
             {(farm.originPlatform === FarmOriginPlatform.Infrared ||
                 farm.originPlatform === FarmOriginPlatform.Steer ||
                 farm.originPlatform === FarmOriginPlatform.Kodiak ||
-                farm.originPlatform === FarmOriginPlatform.Burrbear) &&
+                farm.originPlatform === FarmOriginPlatform.Burrbear ||
+                farm.originPlatform === FarmOriginPlatform.BeraPaw) &&
             !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}
@@ -156,3 +156,4 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 };
 
 export default YourBalance;
+

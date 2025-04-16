@@ -129,8 +129,8 @@ const pools_json: PoolDef[] = [
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x0fd67ac75f9df51f5d81f582417b318f44b45f5c?farm=0x193ff57dc9efa1dec154946c10332ba31c8e72b2&chain=berachain_mainnet",
-        name1: "BM",
-        name2: "wBERA",
+        name1: "wBERA",
+        name2: "BM",
         description:
             "This vault is built on Kodiak's wBERA-BM vault. Your deposit is automatically converted into the wBERA-BM LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-BM not your starting token before zapping.) ",
         stableCoin: false,

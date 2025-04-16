@@ -3,11 +3,6 @@ export enum FarmTransactionType {
     Withdraw = "Withdraw",
 }
 export enum FarmOriginPlatform {
-    Shushiswap = "Sushiswap",
-    Peapods = "Peapods",
-    GMX = "GMX",
-    Dodo = "Dodo",
-    Frax = "Frax",
     Hop = "Hop",
     SwapFish = "SwapFish",
     Clipper = "Clipper",

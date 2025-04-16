@@ -44,14 +44,7 @@ export const resolveDomainFromAddress = async (addr: string) => {
 };
 
 export const getLpAddressForFarmsPrice = (farms: PoolDef[]) => {
-    // temp fix for dodo and stargate wrapped token prices
-    // the underlyging tokens are named lp, but they are actaully just wrapped versions of platform tokens, so we
-    // cannot calculate their price like normal LP, so instead we just use the base token for price
-    return farms.map((farm) =>
-        farm.originPlatform === FarmOriginPlatform.Dodo || farm.originPlatform === FarmOriginPlatform.Clipper
-            ? farm.token1
-            : farm.lp_address
-    );
+    return farms.map((farm) => farm.lp_address);
 };
 
 export function validateNumberDecimals(value: number, decimals: number = 18) {

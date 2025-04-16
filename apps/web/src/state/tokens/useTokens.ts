@@ -87,7 +87,7 @@ const useTokens = () => {
 
         const arr: { address: Address; decimals: number }[] = [];
         for (const farm of farms) {
-            if (farm.name !== "GMX") set.add(farm.lp_address);
+            set.add(farm.lp_address);
         }
 
         set.forEach((address) => {
@@ -226,3 +226,4 @@ const useTokens = () => {
 };
 
 export default useTokens;
+

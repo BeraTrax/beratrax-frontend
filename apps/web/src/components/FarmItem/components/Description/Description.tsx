@@ -7,8 +7,7 @@ export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
     const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
 
     const isAutoCompounding = useMemo(() => {
-        if (transactionType === FarmTransactionType.Deposit && farm.originPlatform !== FarmOriginPlatform.Peapods)
-            return true;
+        if (transactionType === FarmTransactionType.Deposit) return true;
         return false;
     }, [farm, transactionType]);
 
@@ -23,3 +22,4 @@ export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
         </div>
     );
 };
+

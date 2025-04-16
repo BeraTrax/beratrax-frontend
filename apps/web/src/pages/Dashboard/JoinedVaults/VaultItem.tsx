@@ -256,7 +256,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 <div className="flex-col gap-1">
                     <div className="flex items-center gap-1 mb-2 justify-end">
                         <FarmRowChip
-                            text={[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")}
+                            text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")}
                             color="invert"
                         />
                         <div className="flex">

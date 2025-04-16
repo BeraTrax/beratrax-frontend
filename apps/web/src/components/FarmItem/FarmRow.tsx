@@ -112,7 +112,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                             <div className="flex items-center gap-1">
                                 <FarmRowChip
                                     text={
-                                        farm?.platform +
+                                        farm?.originPlatform +
                                         (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")
                                     }
                                     color="invert"
@@ -277,7 +277,7 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                         <div>
                             <p className={`whitespace-nowrap text-[17px] font-bold text-textWhite`}>{farm.name}</p>
                             {/* <div className="flex items-center">
-                                <p className={`text-textWhite text-sm mr-1`}>{farm.platform}</p>
+                                <p className={`text-textWhite text-sm mr-1`}>{farm.originPlatform}</p>
                                 <img
                                     alt={farm.platform_alt}
                                     className="w-4 rounded-full border-black bg-black"

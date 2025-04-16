@@ -10,7 +10,7 @@ import { FarmOriginPlatform, FarmType } from "src/types/enums";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import { Apys } from "src/state/apys/types";
 import { useMemo } from "react";
-import { toFixedFloor } from "src/utils/common";
+import { customCommify, toFixedFloor } from "src/utils/common";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import lbgtLogo from "src/assets/images/lbgt.svg";
 
@@ -70,10 +70,12 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
         return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
     }, [farmApys]);
     const underlyingApy = useMemo(() => {
-        return farm.isCurrentWeeksRewardsVault ? "??? " : _underlyingApy.toString();
+        return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_underlyingApy, { minimumFractionDigits: 0 });
     }, [farm.isCurrentWeeksRewardsVault, _underlyingApy]);
     const underlyingApyWithPoints = useMemo(() => {
-        return farmApys.pointsApr > 0 ? toFixedFloor(_underlyingApy + farmApys?.pointsApr, 2) + "%" : 0;
+        return farmApys.pointsApr > 0
+            ? customCommify(_underlyingApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%"
+            : 0;
     }, [farmApys, _underlyingApy]);
 
     const _beratraxApy = useMemo(() => {
@@ -81,14 +83,12 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
     }, [farmApys, farm.isCurrentWeeksRewardsVault, farm.isUpcoming, farm.total_apy]);
 
     const beraTraxApy = useMemo(() => {
-        return farm.isCurrentWeeksRewardsVault
-            ? "??? "
-            : _beratraxApy < 0.01
-            ? _beratraxApy.toPrecision(2).slice(0, -1)
-            : _beratraxApy.toString();
+        return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_beratraxApy, { minimumFractionDigits: 0 });
     }, [farm.isCurrentWeeksRewardsVault, _beratraxApy]);
     const beraTraxApyWithPoints = useMemo(() => {
-        return farmApys.pointsApr > 0 ? toFixedFloor(_beratraxApy + farmApys?.pointsApr, 2) + "%" : 0;
+        return farmApys.pointsApr > 0
+            ? customCommify(_beratraxApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%"
+            : 0;
     }, [farmApys, _beratraxApy]);
 
     const createdDate = new Date((farm.createdAt ?? 0) * 1000);

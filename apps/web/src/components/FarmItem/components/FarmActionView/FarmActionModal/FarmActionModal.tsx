@@ -194,8 +194,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     }, [farmData, transactionType, tokenNamesAndImages]);
 
     const isAutoCompounding = useMemo(() => {
-        if (transactionType === FarmTransactionType.Deposit && farm.originPlatform !== FarmOriginPlatform.Peapods)
-            return true;
+        if (transactionType === FarmTransactionType.Deposit) return true;
         return false;
     }, [farm, transactionType]);
 
@@ -392,7 +391,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                                 {farm.url_name}
                             </a>{" "}
                             {isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
-                            {currencySymbol === "BERA" ? ` BeraTrax contracts are continuously audited by CyberScope.` : ""}
+                            {currencySymbol === "BERA"
+                                ? ` BeraTrax contracts are continuously audited by CyberScope.`
+                                : ""}
                         </p>
                     </div>
                     <div className="my-2 flex justify-center ">
@@ -599,3 +600,4 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 };
 
 export default memo(FarmActionModal);
+

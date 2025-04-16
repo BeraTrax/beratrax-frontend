@@ -408,7 +408,11 @@ const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEar
     try {
         const kodiakPools = pools_json
             .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
-            .filter((pool) => pool.originPlatform === FarmOriginPlatform.Kodiak)
+            .filter(
+                (pool) =>
+                    pool.originPlatform === FarmOriginPlatform.Kodiak ||
+                    pool.originPlatform === FarmOriginPlatform.BeraPaw
+            )
             .map((pool) => {
                 const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1] || "";
 

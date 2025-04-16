@@ -97,7 +97,6 @@ const useEarnPage = () => {
             return 0;
         });
 
-        console.log(data);
         return data;
     };
 

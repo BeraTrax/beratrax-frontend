@@ -12,6 +12,7 @@ import { Apys } from "src/state/apys/types";
 import { useMemo } from "react";
 import { toFixedFloor } from "src/utils/common";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
+import lbgtLogo from "src/assets/images/lbgt.svg";
 
 const StatInfo = ({
     iconUrl,
@@ -105,7 +106,6 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
     const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
     const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
-    const lbgtLogo = "https://www.berapaw.com/static/images/tokens/lbgt.svg";
 
     return (
         <div className=" mt-4 relative">

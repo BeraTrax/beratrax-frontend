@@ -22,6 +22,7 @@ export enum FarmOriginPlatform {
     Yeet = "Yeet",
     Bex = "Bex",
     Wasabee = "Wasabee",
+    BeraPaw = "BeraPaw",
 }
 export enum FarmTableColumns {
     Token = "Vaults",

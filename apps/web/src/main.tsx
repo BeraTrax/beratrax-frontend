@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 import store, { persistor } from "./state";
 import { PersistGate } from "redux-persist/integration/react";
 import AppProvider from "./context/AppProvider";
-// import OnChainKitProvider from "./context/OnchainKitProvider";
+import OnChainKitProvider from "./context/OnchainKitProvider";
 import "src/api/interceptor";
 import { supportChatConfig } from "./config/supportChat";
 import { createConfig, ChainId } from "@lifi/sdk";
@@ -39,11 +39,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
                 <NotificationsProvider>
-                    {/* <OnChainKitProvider> */}
+                    <OnChainKitProvider>
                     <AppProvider>
                         <App />
                     </AppProvider>
-                    {/* </OnChainKitProvider> */}
+                    </OnChainKitProvider>
                     <Notifications />
                 </NotificationsProvider>
             </PersistGate>

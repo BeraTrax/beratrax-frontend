@@ -86,7 +86,9 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
                             <div className="pool_title">
                                 <p className={`pool_name ${lightMode && "pool_name--light"}`}>{farm.name}</p>
                                 <div className="rewards_div">
-                                    <p className={`farm_type ${lightMode && "farm_type--light"}`}>{farm.platform}</p>
+                                    <p className={`farm_type ${lightMode && "farm_type--light"}`}>
+                                        {farm.originPlatform}
+                                    </p>
                                     <img alt={""} className="rewards_image" src={farm.platform_logo} />
                                 </div>
                             </div>
@@ -94,23 +96,25 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
                     </div>
                     <div className={`tvls ${styles.tvl_underlying} ${lightMode && styles["tvl_underlying--light"]}`}>
                         {totalSupplies[farm.chainId][farm.vault_addr].supply &&
-                            (
-                                Number(totalSupplies[farm.chainId][farm.vault_addr].supply) * lpPrice
-                            ).toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                maximumFractionDigits: 0,
-                            })}
+                            (Number(totalSupplies[farm.chainId][farm.vault_addr].supply) * lpPrice).toLocaleString(
+                                "en-US",
+                                {
+                                    style: "currency",
+                                    currency: "USD",
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                     </div>
                     <div className={`tvls ${styles.tvl_underlying} ${lightMode && styles["tvl_underlying--light"]}`}>
                         {totalSupplies[farm.chainId][farm.lp_address].supply &&
-                            (
-                                Number(totalSupplies[farm.chainId][farm.lp_address].supply) * lpPrice
-                            ).toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                maximumFractionDigits: 0,
-                            })}
+                            (Number(totalSupplies[farm.chainId][farm.lp_address].supply) * lpPrice).toLocaleString(
+                                "en-US",
+                                {
+                                    style: "currency",
+                                    currency: "USD",
+                                    maximumFractionDigits: 0,
+                                }
+                            )}
                     </div>
                     <div className={`dropdown ${lightMode && "dropdown--light"}`}>
                         {!dropDown ? <RiArrowDownSLine /> : <RiArrowUpSLine />}
@@ -134,8 +138,7 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
                                 >
                                     {totalSupplies[farm.chainId][farm.vault_addr].supply &&
                                         (
-                                            Number(totalSupplies[farm.chainId][farm.vault_addr].supply) *
-                                            lpPrice
+                                            Number(totalSupplies[farm.chainId][farm.vault_addr].supply) * lpPrice
                                         ).toLocaleString("en-US", {
                                             style: "currency",
                                             currency: "USD",
@@ -158,8 +161,7 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
                                 >
                                     {totalSupplies[farm.chainId][farm.lp_address].supply &&
                                         (
-                                            Number(totalSupplies[farm.chainId][farm.lp_address].supply) *
-                                            lpPrice
+                                            Number(totalSupplies[farm.chainId][farm.lp_address].supply) * lpPrice
                                         ).toLocaleString("en-US", {
                                             style: "currency",
                                             currency: "USD",
@@ -259,3 +261,4 @@ const SlippageIndividual: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 };
 
 export default FarmDetails;
+

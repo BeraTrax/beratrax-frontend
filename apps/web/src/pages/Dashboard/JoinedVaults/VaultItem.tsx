@@ -14,7 +14,7 @@ import { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { Vault } from "src/types";
-import { awaitTransaction, formatCurrency, toEth, toFixedFloor } from "src/utils/common";
+import { awaitTransaction, customCommify, formatCurrency, toEth, toFixedFloor } from "src/utils/common";
 import { encodeFunctionData, formatEther, getAddress } from "viem";
 import styles from "./VaultItem.module.css";
 
@@ -43,7 +43,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { balances, prices, decimals, reloadBalances } = useTokens();
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
-        if (!currentVaultEarnings) return 0;
+        if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
 
         return (
             Number(
@@ -256,7 +256,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 <div className="flex-col gap-1">
                     <div className="flex items-center gap-1 mb-2 justify-end">
                         <FarmRowChip
-                            text={[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")}
+                            text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")}
                             color="invert"
                         />
                         <div className="flex">
@@ -360,9 +360,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                                 ? "??? %"
                                 : toFixedFloor(apy || 0, 2) == 0
                                 ? "--"
-                                : apy < 0.01
-                                ? `${apy.toPrecision(2).slice(0, -1)}%`
-                                : `${toFixedFloor(apy, 2).toString()}%`}
+                                : `${customCommify(apy || 0, { minimumFractionDigits: 0 })}%`}
                         </p>
                     </div>
                 </div>

@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CgInfo } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import uuid from "react-uuid";
 import { PoolDef } from "src/config/constants/pools_json";
 import useApp from "src/hooks/useApp";
-import useTrax from "src/hooks/useTrax";
-import useWallet from "src/hooks/useWallet";
-import { useAppDispatch, useAppSelector } from "src/state";
+import { useAppSelector } from "src/state";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { toFixedFloor } from "src/utils/common";
+import { customCommify, toFixedFloor } from "src/utils/common";
 import { Skeleton } from "../Skeleton/Skeleton";
 import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
@@ -24,7 +22,6 @@ interface Props {
 
 const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
     const { lightMode } = useApp();
-    const { externalChainId } = useWallet();
     const [dropDown, setDropDown] = useState(false);
     const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
     const { farmDetails, isLoading: isFarmLoading } = useFarmDetails();
@@ -32,12 +29,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
     const isLoading = isFarmLoading || isApyLoading;
     const key = uuid();
     const key2 = uuid();
-    const key3 = uuid();
-    const key4 = uuid();
-    const dispatch = useAppDispatch();
-    const { getTraxApy } = useTrax();
     const showVaultsWithFunds = useAppSelector((state) => state.settings.showVaultsWithFunds);
-    const estimateTrax = useMemo(() => getTraxApy(farm.vault_addr), [getTraxApy, farm]);
     const navigate = useNavigate();
     const handleNavigation = (route: string, target?: string) => {
         if (target) window.open(route, target);
@@ -63,6 +55,13 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
             Number(farmData?.withdrawableAmounts[0].amountDollar) > 0);
 
     const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted;
+
+    if (farm.id === 16) {
+        console.log(
+            (farmApys || farm.total_apy) &&
+                toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, 2) === 0
+        );
+    }
 
     return (
         <div
@@ -113,7 +112,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                             <div className="flex items-center gap-1">
                                 <FarmRowChip
                                     text={
-                                        farm?.platform +
+                                        farm?.originPlatform +
                                         (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")
                                     }
                                     color="invert"
@@ -160,14 +159,12 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                     <p className="text-textWhite text-right">
                                         {farm.isCurrentWeeksRewardsVault
                                             ? "??? "
-                                            : farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
-                                            ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
-                                            : toFixedFloor(
+                                            : customCommify(
                                                   (farm.isUpcoming
                                                       ? farm.total_apy
                                                       : farmApys?.apy + farmApys?.pointsApr) || 0,
-                                                  2
-                                              ).toString()}
+                                                  { minimumFractionDigits: 0 }
+                                              )}
                                         %
                                     </p>
                                     {farmApys && farmApys.merklApr
@@ -212,14 +209,12 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                 ) : (
                                     <>
                                         <p className="text-textWhite text-right">
-                                            {farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
-                                                ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
-                                                : toFixedFloor(
-                                                      (farm.isUpcoming
-                                                          ? farm.total_apy
-                                                          : farmApys?.apy + farmApys?.pointsApr) || 0,
-                                                      2
-                                                  ).toString()}
+                                            {customCommify(
+                                                (farm.isUpcoming
+                                                    ? farm.total_apy
+                                                    : farmApys?.apy + farmApys?.pointsApr) || 0,
+                                                { minimumFractionDigits: 0 }
+                                            )}
                                             %
                                             <a id={key2} data-tooltip-html={/* tooltip text here */ ""}>
                                                 {/* Possibly an info icon here */}
@@ -282,7 +277,7 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                         <div>
                             <p className={`whitespace-nowrap text-[17px] font-bold text-textWhite`}>{farm.name}</p>
                             {/* <div className="flex items-center">
-                                <p className={`text-textWhite text-sm mr-1`}>{farm.platform}</p>
+                                <p className={`text-textWhite text-sm mr-1`}>{farm.originPlatform}</p>
                                 <img
                                     alt={farm.platform_alt}
                                     className="w-4 rounded-full border-black bg-black"
@@ -364,9 +359,10 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
                         >
                             <p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>APY</p>
                             <p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>
-                                {farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
-                                    ? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
-                                    : toFixedFloor(farmApys?.apy + farmApys?.pointsApr || 0, 2).toString()}
+                                {farmApys &&
+                                    customCommify(farmApys?.apy + farmApys?.pointsApr || 0, {
+                                        minimumFractionDigits: 0,
+                                    })}
                                 %
                             </p>
                         </div>

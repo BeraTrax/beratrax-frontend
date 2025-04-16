@@ -10,8 +10,9 @@ import { FarmOriginPlatform, FarmType } from "src/types/enums";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import { Apys } from "src/state/apys/types";
 import { useMemo } from "react";
-import { toFixedFloor } from "src/utils/common";
+import { customCommify, toFixedFloor } from "src/utils/common";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
+import lbgtLogo from "src/assets/images/lbgt.svg";
 
 const StatInfo = ({
     iconUrl,
@@ -69,10 +70,12 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
         return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
     }, [farmApys]);
     const underlyingApy = useMemo(() => {
-        return farm.isCurrentWeeksRewardsVault ? "??? " : _underlyingApy.toString();
+        return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_underlyingApy, { minimumFractionDigits: 0 });
     }, [farm.isCurrentWeeksRewardsVault, _underlyingApy]);
     const underlyingApyWithPoints = useMemo(() => {
-        return farmApys.pointsApr > 0 ? toFixedFloor(_underlyingApy + farmApys?.pointsApr, 2) + "%" : 0;
+        return farmApys.pointsApr > 0
+            ? customCommify(_underlyingApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%"
+            : 0;
     }, [farmApys, _underlyingApy]);
 
     const _beratraxApy = useMemo(() => {
@@ -80,14 +83,12 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
     }, [farmApys, farm.isCurrentWeeksRewardsVault, farm.isUpcoming, farm.total_apy]);
 
     const beraTraxApy = useMemo(() => {
-        return farm.isCurrentWeeksRewardsVault
-            ? "??? "
-            : _beratraxApy < 0.01
-            ? _beratraxApy.toPrecision(2).slice(0, -1)
-            : _beratraxApy.toString();
+        return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_beratraxApy, { minimumFractionDigits: 0 });
     }, [farm.isCurrentWeeksRewardsVault, _beratraxApy]);
     const beraTraxApyWithPoints = useMemo(() => {
-        return farmApys.pointsApr > 0 ? toFixedFloor(_beratraxApy + farmApys?.pointsApr, 2) + "%" : 0;
+        return farmApys.pointsApr > 0
+            ? customCommify(_beratraxApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%"
+            : 0;
     }, [farmApys, _beratraxApy]);
 
     const createdDate = new Date((farm.createdAt ?? 0) * 1000);
@@ -105,7 +106,6 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
     const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
     const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
     const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
-    const lbgtLogo = "https://www.berapaw.com/static/images/tokens/lbgt.svg";
 
     return (
         <div className=" mt-4 relative">
@@ -199,17 +199,18 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                                     <img src={ibgtLogo} alt="iBGT" className="w-5 h-5" />
                                                     iBGT
                                                 </>
-                                            ) : originPlatform === FarmOriginPlatform.Burrbear ? (
+                                            ) : originPlatform === FarmOriginPlatform.Burrbear ||
+                                              originPlatform === FarmOriginPlatform.BeraPaw ? (
                                                 <>
-                                                    {farm.id === 24 || farm.id === 25 ? (
-                                                        <>
-                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
-                                                            LBGT
-                                                        </>
-                                                    ) : (
+                                                    {farm.id === 22 ? (
                                                         <>
                                                             <img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
                                                             WBERA
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
+                                                            LBGT
                                                         </>
                                                     )}
                                                 </>

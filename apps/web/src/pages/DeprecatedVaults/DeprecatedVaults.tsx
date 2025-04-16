@@ -142,7 +142,7 @@ const DeprecatedVaults: React.FC = () => {
                                         style={{ color: "white" }}
                                     >
                                         {`${pools_json.find((item) => item.vault_addr === address)?.name} (${
-                                            pools_json.find((item) => item.vault_addr === address)?.platform
+                                            pools_json.find((item) => item.vault_addr === address)?.originPlatform
                                         })`}
                                     </option>
                                 ))}
@@ -208,3 +208,4 @@ const DeprecatedVaults: React.FC = () => {
 };
 
 export default DeprecatedVaults;
+

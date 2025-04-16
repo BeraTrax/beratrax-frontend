@@ -20,7 +20,7 @@ import { addressesByChainId } from "src/config/constants/contracts";
 import { PoolDef } from "src/config/constants/pools_json";
 import { SupportedChains } from "src/config/walletConfig";
 import { Balances } from "src/state/tokens/types";
-import { CHAIN_ID } from "src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { waitForTransactionReceipt } from "viem/actions";
 
 const web3Name = createWeb3Name();
@@ -48,7 +48,9 @@ export const getLpAddressForFarmsPrice = (farms: PoolDef[]) => {
     // the underlyging tokens are named lp, but they are actaully just wrapped versions of platform tokens, so we
     // cannot calculate their price like normal LP, so instead we just use the base token for price
     return farms.map((farm) =>
-        farm.platform === "Dodo" || farm.platform === "Stargate" ? farm.token1 : farm.lp_address
+        farm.originPlatform === FarmOriginPlatform.Dodo || farm.originPlatform === FarmOriginPlatform.Clipper
+            ? farm.token1
+            : farm.lp_address
     );
 };
 

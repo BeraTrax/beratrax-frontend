@@ -15,6 +15,7 @@ export interface StateInterface {
     isFetched: boolean;
     account: string;
     farmDetailInputOptions: FarmDetailInputOptions;
+    lastEarningsWithdrawal: LastEarningsWithdrawal;
     error?: string | null;
 }
 export interface FarmDetailInputOptions {
@@ -64,4 +65,11 @@ export interface VaultEarningsProp {
     currentWallet: string;
     prices: Prices;
     decimals: Decimals;
+}
+
+export interface LastEarningsWithdrawal {
+    [farmId: string]: {
+        timestamp: number;
+        blockNumber: number;
+    };
 }

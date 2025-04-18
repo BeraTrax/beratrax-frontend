@@ -67,6 +67,9 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 
         const state = store.getState();
         const balances = state.tokens.balances;
+        
+        // Get the lastEarningsWithdrawal data from the state
+        const lastEarningsWithdrawal = state.farms.lastEarningsWithdrawal;
 
         const depositsQuery = `
         query GetUserDeposits {
@@ -119,10 +122,32 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         // Concatenate the arrays
         const combinedTransactions = [...depositsWithType, ...withdrawsWithType];
 
-        const burrbearEarnings = await getEarningsForBurrbear(combinedTransactions);
-        const infraredEarnings = await getEarningsForInfrared(deposits, withdraws, client, balances);
-        const steerEarnings = await getEarningsForSteer(combinedTransactions);
-        const kodiakEarnings = await getEarningsForKodiak(combinedTransactions);
+        // Filter transactions based on lastEarningsWithdrawal
+        const filteredCombinedTransactions = combinedTransactions.filter((tx: any) => {
+            const lastWithdrawal = lastEarningsWithdrawal[tx.tokenId];
+            if (!lastWithdrawal) return true; // If no record of withdrawal, include all
+            
+            // Only include transactions after the last earnings withdrawal
+            return Number(tx.blockNumber) > lastWithdrawal.blockNumber;
+        });
+
+        // Filter deposits and withdraws separately
+        const filteredDeposits = deposits.filter((deposit: any) => {
+            const lastWithdrawal = lastEarningsWithdrawal[deposit.tokenId];
+            if (!lastWithdrawal) return true;
+            return Number(deposit.blockNumber) > lastWithdrawal.blockNumber;
+        });
+
+        const filteredWithdraws = withdraws.filter((withdraw: any) => {
+            const lastWithdrawal = lastEarningsWithdrawal[withdraw.tokenId];
+            if (!lastWithdrawal) return true;
+            return Number(withdraw.blockNumber) > lastWithdrawal.blockNumber;
+        });
+
+        const burrbearEarnings = await getEarningsForBurrbear(filteredCombinedTransactions);
+        const infraredEarnings = await getEarningsForInfrared(filteredDeposits, filteredWithdraws, client, balances);
+        const steerEarnings = await getEarningsForSteer(filteredCombinedTransactions);
+        const kodiakEarnings = await getEarningsForKodiak(filteredCombinedTransactions);
         return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings];
     } catch (err: any) {
         console.error(err);

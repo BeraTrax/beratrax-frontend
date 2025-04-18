@@ -30,6 +30,7 @@ const initialState: StateInterface = {
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
     isVaultEarningsFirstLoad: true,
+    lastEarningsWithdrawal: {},
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -195,6 +196,13 @@ export const getVaultEarnings = createAsyncThunk(
     }
 );
 
+export const recordEarningsWithdrawal = createAsyncThunk(
+    "farms/recordEarningsWithdrawal",
+    async ({ farmId, blockNumber, timestamp }: { farmId: string; blockNumber: number; timestamp: number }) => {
+        return { farmId, blockNumber, timestamp };
+    }
+);
+
 const farmsSlice = createSlice({
     name: "farms",
     initialState: initialState,
@@ -266,6 +274,78 @@ const farmsSlice = createSlice({
             state.earnings = {};
             state.isLoadingEarnings = false;
             state.error = action.payload as string;
+        });
+        builder.addCase(recordEarningsWithdrawal.fulfilled, (state, action) => {
+            const { farmId, blockNumber, timestamp } = action.payload;
+            console.log('Redux: recordEarningsWithdrawal.fulfilled executing with payload:', action.payload);
+            
+            // Record this withdrawal with current timestamp
+            state.lastEarningsWithdrawal[farmId] = { blockNumber, timestamp };
+            console.log('Redux: Updated lastEarningsWithdrawal state:', state.lastEarningsWithdrawal);
+            
+            // Get the farm earnings before we reset it
+            const farmEarnings = state.earnings[parseInt(farmId)] || 0;
+            console.log('Redux: Farm earnings value to subtract:', farmEarnings);
+            
+            // Update earningsUsd by subtracting this farm's earnings
+            if (state.earningsUsd !== null && state.earningsUsd > 0) {
+                state.earningsUsd = Math.max(0, state.earningsUsd - farmEarnings);
+                console.log('Redux: Updated earningsUsd to', state.earningsUsd);
+            }
+            
+            // Reset earnings for this farm - handle both number index and string index for robustness
+            if (state.earnings[parseInt(farmId)]) {
+                console.log('Redux: Resetting earnings for farm', farmId, 'from', state.earnings[parseInt(farmId)], 'to 0');
+                state.earnings[parseInt(farmId)] = 0;
+            }
+            
+            // Also try with string index just to be sure
+            if (state.earnings[farmId as any]) {
+                console.log('Redux: Resetting earnings for farm (string index)', farmId, 'from', state.earnings[farmId as any], 'to 0');
+                state.earnings[farmId as any] = 0;
+            }
+            
+            // Detailed logging about current state
+            console.log('Redux: Current earnings state:', JSON.stringify(state.earnings));
+            
+            // Check vault earnings before update
+            const vaultEarningsBefore = state.vaultEarnings.find(e => e.tokenId === farmId);
+            console.log('Redux: Vault earnings before update for farm', farmId, ':', vaultEarningsBefore);
+            
+            // Update vaultEarnings - ensure both earnings0 and earnings1 are reset
+            state.vaultEarnings = state.vaultEarnings.map(earning => {
+                if (earning.tokenId === farmId) {
+                    console.log('Redux: Resetting vault earnings for farm', farmId);
+                    return {
+                        ...earning,
+                        earnings0: "0",
+                        earnings1: earning.earnings1 ? "0" : undefined
+                    };
+                }
+                return earning;
+            });
+            
+            // Double-check vault earnings were actually updated
+            const vaultEarningsAfter = state.vaultEarnings.find(e => e.tokenId === farmId);
+            console.log('Redux: Vault earnings after update for farm', farmId, ':', vaultEarningsAfter);
+            
+            // If we couldn't find this farm's earnings in the vaultEarnings array, add it
+            if (!vaultEarningsBefore && !vaultEarningsAfter && state.vaultEarnings.length > 0) {
+                console.log('Redux: Adding zero earnings entry for farm', farmId, 'that was not found in vaultEarnings');
+                
+                // Try to find a template to copy structure from
+                const template = state.vaultEarnings[0];
+                if (template) {
+                    const newEntry = {
+                        ...template,
+                        tokenId: farmId,
+                        earnings0: "0",
+                        earnings1: template.earnings1 ? "0" : undefined
+                    };
+                    state.vaultEarnings.push(newEntry);
+                    console.log('Redux: Added new zero earnings entry:', newEntry);
+                }
+            }
         });
     },
 });

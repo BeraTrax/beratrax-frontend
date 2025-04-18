@@ -11,6 +11,7 @@ import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "sr
 import { PoolDef } from "src/config/constants/pools_json";
 import { limitDecimals } from "src/utils";
 import useTokens from "src/state/tokens/useTokens";
+import store from "src/state";
 
 export const useDetailInput = (farm: PoolDef) => {
     const [amount, setAmount] = useState("");
@@ -59,6 +60,35 @@ export const useDetailInput = (farm: PoolDef) => {
     const getTokenAmount = () => {
         let amt = Number(amount);
         if (!depositable) return amt;
+        
+        const appState = store.getState();
+        const earnings = appState.farms.earnings?.[farm.id] || 0;
+        
+        // Improved earnings detection with relative threshold and detailed logging
+        const displayedEarningsValue = showInUsd ? earnings : earnings / prices[farm.chainId][farm.vault_addr];
+        const absoluteDifference = Math.abs(amt - displayedEarningsValue);
+        // Use a percentage-based threshold for small earnings values
+        const relativeThreshold = Math.max(displayedEarningsValue * 0.10, 0.0001); // 10% or 0.0001 minimum
+        
+        const isEarningsWithdrawal = 
+            type === FarmTransactionType.Withdraw && 
+            (absoluteDifference < relativeThreshold || 
+             // Special case for tiny values
+             (displayedEarningsValue < 0.001 && amt < 0.002 && amt > 0));
+            
+        // If this is an earnings withdrawal, use the exact earnings value
+        if (isEarningsWithdrawal) {
+            console.log('getTokenAmount: Detected earnings withdrawal');
+            console.log('Amount:', amt);
+            console.log('Earnings:', displayedEarningsValue);
+            console.log('Absolute difference:', absoluteDifference);
+            console.log('Threshold:', relativeThreshold);
+            
+            return showInUsd 
+                ? earnings / prices[farm.chainId][farm.vault_addr]
+                : amt;
+        }
+        
         if (type === FarmTransactionType.Deposit) {
             if (showInUsd) {
                 return amt / depositable.price;

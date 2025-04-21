@@ -1,7 +1,10 @@
-import { awaitTransaction } from "src/utils/common";
+import { awaitTransaction, queryParams, headers } from "src/utils/common";
 import { backendApi } from ".";
 import { PublicClient, Address, erc20Abi, getContract, maxUint256, zeroAddress, encodeFunctionData } from "viem";
 import { IClients } from "src/types";
+import axios from "axios";
+import { ZERION_API_URL } from "src/config/constants";
+import { ZerionPositionWithChainIdString } from "src/state/tokens/types";
 
 export const getSpecificTokenPrice = async (tokenAddress: Address, chainId: number) => {
     const res = await getTokenPricesBackend();
@@ -27,6 +30,22 @@ export const getTokenPricesBackend = async (
         return undefined;
     }
 };
+
+export const getTokenBalancesZerion = async (currentWallet: Address) => {
+    try {
+        const response = await axios.get<{ data: ZerionPositionWithChainIdString[] }>(
+            `${ZERION_API_URL}/wallets/${currentWallet}/positions/`,
+            {
+            headers,
+            params: queryParams,
+        }
+        );
+        return response.data.data;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
 
 export const getPricesByTime = async (data: { address: Address; timestamp: number; chainId: number }[]) => {
     try {
@@ -133,4 +152,29 @@ export const checkApproval = async (
     }
     // if already approved just return status as true
     return true;
+};
+
+/**
+ * Gets the actual allowance amount
+ * @param contractAddress Token contract address
+ * @param spender Spender address (usually zapper contract)
+ * @param currentWallet User's wallet address
+ * @param publicClient Public client for the chain
+ * @returns The allowance amount as bigint
+ */
+export const getAllowanceAmount = async (
+    contractAddress: Address,
+    spender: Address,
+    currentWallet: Address,
+    publicClient: PublicClient
+): Promise<bigint> => {
+    const contract = getContract({
+        abi: erc20Abi,
+        address: contractAddress,
+        client: { public: publicClient },
+    });
+    
+    // Get the current allowance
+    const allowance = await contract.read.allowance([currentWallet, spender]);
+    return allowance;
 };

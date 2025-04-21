@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import closemodalicon from "src/assets/images/closemodalicon.svg";
 import exchange from "src/assets/images/exchange.svg";
 import DialPad from "src/components/Dialpad/Dialpad";
@@ -36,6 +36,8 @@ import { noExponents, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
 import { ZappingDisclaimerModal } from "src/components/modals/ZappingDisclaimerModal/ZappingDisclaimerModal";
+import { useApprovalErc20 } from "src/hooks/useApproval";
+import { maxUint256 } from "viem";
 
 interface FarmActionModalProps {
     open: boolean;
@@ -153,6 +155,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
         max,
         slippage,
         isLoadingTransaction,
+        handleApprove,
+        isApproved,
+        isApproving,
     } = useDetailInput(farm);
     const navigate = useNavigate();
 
@@ -164,42 +169,35 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
     const selectOptions = useMemo(
         () =>
-            transactionType === FarmTransactionType.Deposit
-                ? farmData?.depositableAmounts.map((_) => _.tokenSymbol)
-                : farmData?.withdrawableAmounts.map((_) => _.tokenSymbol) || [],
-        [transactionType, farmData]
+            farmData?.depositableAmounts.map((_) => _.tokenSymbol) || [],
+        [farmData]
     );
+
 
     const selectImages = useMemo(() => {
         if (!farmData) return {};
-        const result: Record<string, string[]> = {};
+        let result: Record<string, string[]> = {};
 
-        if (transactionType === FarmTransactionType.Deposit) {
-            farmData.depositableAmounts.forEach((amount) => {
-                if (amount.tokenAddress && tokenNamesAndImages[amount.tokenAddress]) {
-                    result[tokenNamesAndImages[amount.tokenAddress].name] =
-                        tokenNamesAndImages[amount.tokenAddress].logos;
-                }
-            });
-        } else {
-            farmData.withdrawableAmounts.forEach((amount) => {
-                if (amount.tokenAddress && tokenNamesAndImages[amount.tokenAddress]) {
-                    result[tokenNamesAndImages[amount.tokenAddress].name] =
-                        tokenNamesAndImages[amount.tokenAddress].logos;
-                }
-            });
-        }
-
+        // depositing and withdrawing in all tokens in the farm plus the lp token plus extratokens
+        farmData.depositableAmounts.forEach((amount) => {
+            if (amount.images) {
+                result[amount.tokenSymbol] =
+                amount.images[amount.tokenSymbol]
+            }   
+        });
         return result;
-    }, [farmData, transactionType, tokenNamesAndImages]);
+    }, [farmData]);
+
 
     const isAutoCompounding = useMemo(() => {
         if (transactionType === FarmTransactionType.Deposit) return true;
         return false;
     }, [farm, transactionType]);
 
-    const handleToggleModal = () => {
-        if (slippage && slippage > 2) {
+    const handleToggleModal = async () => {
+        if (!isApproved && transactionType === FarmTransactionType.Deposit) {
+            await handleApprove();
+        } else if (slippage && slippage > 2) {
             setShowSlippageModal(true);
         } else if (slippage === undefined) {
             setShowNotSlippageModal(true);
@@ -481,9 +479,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                             setTimeout(() => restoreCursor(pos), 0);
                         }}
                     />{" "}
-                    {(currencySymbol.toLowerCase() === "bera" ||
-                        currencySymbol.toLowerCase() === "honey" ||
-                        (currencySymbol.toLowerCase() === "ibgt" &&
+                    {((currencySymbol &&
                             farm.lp_address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b")) && (
                         <div className="flex justify-start items-center ">
                             <p className={"text-[13px]"}>Slippage: &nbsp;</p>
@@ -502,9 +498,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         </div>
                     )}
                     <button
-                        disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
+                        disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage || isApproving}
                         className={`lg:max-w-64 mt-4 uppercase ${
-                            noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
+                            noOrMaxInputValue || isLoadingTransaction || fetchingSlippage || isApproving
                                 ? "bg-buttonDisabled cursor-not-allowed"
                                 : "bg-buttonPrimaryLight"
                         } text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
@@ -519,6 +515,10 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                                 ? "Simulating..."
                                 : isLoadingTransaction
                                 ? "Loading..."
+                                : isApproving
+                                ? "Approving..."
+                                : !isApproved && transactionType === FarmTransactionType.Deposit
+                                ? "Approve Token"   
                                 : transactionType === FarmTransactionType.Deposit
                                 ? "Deposit"
                                 : "Withdraw"

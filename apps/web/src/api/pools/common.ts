@@ -1,7 +1,7 @@
 import { approveErc20, getBalance } from "src/api/token";
 import { awaitTransaction, getCombinedBalance, subtractGas, toEth, toWei } from "src/utils/common";
 import { dismissNotify, notifyLoading, notifyError, notifySuccess } from "src/api/notify";
-import { getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
+import { getERC20AllowanceSlot, getERC20BalanceSlot, getHoneyAllowanceSlot, getHoneyBalanceSlot } from "src/utils/slot";
 import { errorMessages, loadingMessages, successMessages } from "src/config/constants/notifyMessages";
 import {
     SlippageInBaseFn,
@@ -33,6 +33,8 @@ import {
     zeroAddress,
     getContract,
     parseEventLogs,
+    getAddress,
+    Hash,
 } from "viem";
 import zapperAbi from "src/assets/abis/zapperAbi";
 import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
@@ -643,6 +645,8 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
     let isBridged = false;
     let receviedAmt = 0n;
     let returnedAssets: { tokens: `0x${string}`; amounts: bigint }[] = [];
+    let isError = false;
+    let error: null | Error = null;
 
     try {
         //#region Select Max
@@ -672,6 +676,15 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
                         slot: getIbgtBalanceSlot(currentWallet),
                         value: numberToHex(amountInWei, { size: 32 }),
                     },
+                    {
+                        // For generic ERC20 tokens (USDC.e, BTC, etc.)
+                        slot: getERC20AllowanceSlot(currentWallet, farm.zapper_addr),
+                        value: numberToHex(amountInWei, { size: 32 }),
+                    },
+                    {
+                        slot: getERC20BalanceSlot(currentWallet),
+                        value: numberToHex(amountInWei, { size: 32 }),
+                    },
                 ],
             });
         } else {
@@ -680,9 +693,10 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
                 balance: amountInWei,
             });
         }
+
         // #region Zapping In
 
-        // eth zap
+        // #region eth zap
         if (token === zeroAddress) {
             // use weth address as tokenId, but in case of some farms (e.g: hop)
             // we need the token of liquidity pair, so use tokenIn if provided
@@ -715,7 +729,9 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
             receviedAmt = vaultBalance[0];
             returnedAssets = vaultBalance[1] as { tokens: `0x${string}`; amounts: bigint }[];
         }
-        // token zap
+        // #endregion eth zap
+
+        // #region token zap
         else {
             let { afterBridgeBal, amountToBeBridged } = await bridgeIfNeededLayerZero({
                 getPublicClient,
@@ -731,11 +747,16 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
             isBridged = amountToBeBridged > 0n;
 
             if (isBridged) amountInWei = afterBridgeBal;
-
+            // console.log("farm.vault_addr", farm.vault_addr);
+            // console.log("token", token);
+            // console.log("amountInWei", amountInWei);
+            // console.log("address", farm.zapper_addr);
+            // console.log("currentWallet", currentWallet);
+            // console.log("stateOverrides", stateOverrides);
             const { result: vaultBalance } = await publicClient.simulateContract({
                 abi: zapperAbi,
                 functionName: "zapIn",
-                args: [farm.vault_addr, token, amountInWei, 0n],
+                args: [farm.vault_addr as Hash, token as Hash, amountInWei, 0n],
                 address: farm.zapper_addr,
                 account: currentWallet,
                 stateOverride: stateOverrides,
@@ -745,10 +766,14 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
             returnedAssets = vaultBalance[1] as { tokens: `0x${string}`; amounts: bigint }[];
         }
 
-        // #endregionbn
-    } catch (error: any) {
-        console.log(error);
+        // #endregion
+    } catch (catchError: any) {
+        console.log('Something very wrong has occured, Error in slippageIn');
+        console.log(catchError);
+        isError = true;
+        error = catchError;
     }
+    console.log('Executing the rest of the code');
     // Calculate total value of returned assets
     const totalReturnedValue =
         returnedAssets?.reduce((acc, { tokens, amounts }) => {
@@ -763,7 +788,7 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
     let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
     if (slippage < 0) slippage = 0;
 
-    return { receviedAmt, isBridged, slippage, beforeTxAmount, afterTxAmount };
+    return { receviedAmt, isBridged, slippage, beforeTxAmount, afterTxAmount, isError, error };
 };
 
 export const slippageOut: SlippageOutBaseFn = async ({
@@ -783,11 +808,14 @@ export const slippageOut: SlippageOutBaseFn = async ({
     //#region Zapping Out
     let receivedAmtDollar = 0;
     let receviedAmt = 0n;
+    let isError = false;
+    let error: null | Error = null;
     const vaultBalance = BigInt(balances[farm.chainId][farm.vault_addr].valueWei);
     let stateOverrides: StateOverride = [];
-    if (token === zeroAddress) {
-        stateOverrides.push({
-            address: currentWallet,
+    try {
+        if (token === zeroAddress) {
+            stateOverrides.push({
+                address: currentWallet,
             balance: maxUint256 / 2n,
         });
         stateOverrides.push({
@@ -843,7 +871,13 @@ export const slippageOut: SlippageOutBaseFn = async ({
             stateOverride: stateOverrides,
         });
         receviedAmt = result[0];
-        receivedAmtDollar = Number(toEth(result[0], decimals[farm.chainId][token])) * prices[farm.chainId][token];
+            receivedAmtDollar = Number(toEth(result[0], decimals[farm.chainId][token])) * prices[farm.chainId][token];
+        }
+    } catch (catchError: any) {
+        console.log('Something very wrong has occured, Error in slippageOut');
+        console.log(catchError);
+        isError = true;
+        error = catchError;
     }
 
     const withdrawAmt = Number(toEth(amountInWei, farm.decimals));
@@ -853,7 +887,7 @@ export const slippageOut: SlippageOutBaseFn = async ({
     let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
     if (slippage < 0) slippage = 0;
 
-    return { receviedAmt, slippage, afterTxAmount, beforeTxAmount };
+    return { receviedAmt, slippage, afterTxAmount, beforeTxAmount, isError, error };
     //#endregion
 };
 
@@ -1283,44 +1317,91 @@ export async function bridgeIfNeededLayerZero<T extends Omit<CrossChainTransacti
     }
 }
 
-export const calculateDepositableAmounts = ({ balances, prices, farm }: PriceCalculationProps): TokenAmounts[] => {
-    const tokenAmounts: TokenAmounts[] =
-        farm.zap_currencies?.map((item) => ({
-            tokenAddress: item.address,
-            tokenSymbol: tokenNamesAndImages[item.address].name,
-            amount: balances[farm.chainId][item.address].value.toString(),
-            amountDollar: balances[farm.chainId][item.address].valueUsd.toString(),
-            price: prices[farm.chainId][item.address],
-        })) || [];
+export const calculateDepositableAmounts = ({ balances, prices, farm, externalBalances }: PriceCalculationProps): TokenAmounts[] => {
+    // const tokenAmounts: TokenAmounts[] =
+    //     farm.zap_currencies?.map((item) => ({
+    //         tokenAddress: item.address,
+    //         tokenSymbol: tokenNamesAndImages[item.address].name,
+    //         amount: balances[farm.chainId][item.address].value.toString(),
+    //         amountDollar: balances[farm.chainId][item.address].valueUsd.toString(),
+    //         price: prices[farm.chainId][item.address],
+    //     })) || [];
 
+
+    const tokenAmounts2: TokenAmounts[] = []
+    for(const [tokAddr, tokenDetails] of Object.entries(balances[farm.chainId])) {
+        const tokenAddress = getAddress(tokAddr)
+        const tokenSymbol = tokenNamesAndImages[tokenAddress]?.name || externalBalances.find((token) => token.address === tokenAddress)?.name || ""
+        const logos = tokenNamesAndImages[tokenAddress]?.logos || [externalBalances.find((token) => token.address === tokenAddress)?.logo] || []
+        if(tokenDetails.value > 0 && tokenSymbol) {
+            tokenAmounts2.push({
+                tokenAddress,
+                tokenSymbol,
+                amount: tokenDetails.value.toString(),
+                amountDollar: tokenDetails.valueUsd.toString(),
+                price: prices[farm.chainId][tokenAddress],
+                images: {
+                    [tokenSymbol]: logos,
+                } 
+            })
+        }
+    }
+    
     // Add lp token if not already present
-    if (!tokenAmounts.some((token) => token.tokenAddress === farm.lp_address)) {
-        tokenAmounts.push({
+    if (!tokenAmounts2.some((token) => token.tokenAddress === farm.lp_address)) {
+        const tokenSymbol = tokenNamesAndImages[farm.lp_address].name;
+        const images = tokenNamesAndImages[farm.lp_address].logos;
+        const lpToken = {
             tokenAddress: farm.lp_address,
-            tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
+            tokenSymbol,
             amount: balances[farm.chainId][farm.lp_address].value.toString(),
             amountDollar: balances[farm.chainId][farm.lp_address].valueUsd.toString(),
             price: prices[farm.chainId][farm.lp_address],
-        });
+            images: {
+                [tokenSymbol]: tokenNamesAndImages[farm.lp_address].logos
+            }
+        }
+        tokenAmounts2.push(lpToken);
     }
-
-    return tokenAmounts;
+    
+    return tokenAmounts2;
 };
 
-export const calculateWithdrawableAmounts = ({ balances, prices, farm }: PriceCalculationProps): TokenAmounts[] => {
-    const tokenAmounts: TokenAmounts[] =
-        farm.zap_currencies?.map((item) => ({
-            tokenAddress: item.address,
-            tokenSymbol: tokenNamesAndImages[item.address].name,
-            amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][item.address]).toString(),
-            amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
-            price: prices[farm.chainId][item.address],
-            isPrimaryVault: true,
-        })) || [];
+export const calculateWithdrawableAmounts = ({ balances, prices, farm, externalBalances }: PriceCalculationProps): TokenAmounts[] => {
+    
+    const tokenAmounts2: TokenAmounts[] = []
+    for(const [tokAddr, tokenDetails] of Object.entries(balances[farm.chainId])) {
+        const tokenAddress = getAddress(tokAddr)
+        const tokenSymbol = tokenNamesAndImages[tokenAddress]?.name || externalBalances.find((token) => token.address === tokenAddress)?.name || ""
+        const logos = tokenNamesAndImages[tokenAddress]?.logos || [externalBalances.find((token) => token.address === tokenAddress)?.logo] || []
+        if(tokenDetails.value > 0 && tokenSymbol) {
+            tokenAmounts2.push({
+                tokenAddress,
+                tokenSymbol,
+                amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][tokenAddress]).toString(),
+                amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
+                price: prices[farm.chainId][tokenAddress],
+                isPrimaryVault: true,
+                images: {
+                    [tokenSymbol]: logos,
+                }
+            })
+        }
+    }
+    // const tokenAmounts2: TokenAmounts[] =
+    //     farm.zap_currencies?.map((item) => ({
+    //         tokenAddress: item.address,
+    //         tokenSymbol: tokenNamesAndImages[item.address].name,
+    //         amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][item.address]).toString(),
+    //         amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
+    //         price: prices[farm.chainId][item.address],
+    //         isPrimaryVault: true,
+    //     })) || [];
+
 
     // Add lp token if not already present
-    if (!tokenAmounts.some((token) => token.tokenAddress === farm.lp_address)) {
-        tokenAmounts.push({
+    if (!tokenAmounts2.some((token) => token.tokenAddress === farm.lp_address)) {
+        tokenAmounts2.push({
             tokenAddress: farm.lp_address,
             tokenSymbol: tokenNamesAndImages[farm.lp_address].name,
             amount: (
@@ -1330,7 +1411,8 @@ export const calculateWithdrawableAmounts = ({ balances, prices, farm }: PriceCa
             price: prices[farm.chainId][farm.lp_address],
         });
     }
-    return tokenAmounts;
+    // console.log('tokenAmounts2',tokenAmounts2);
+    return tokenAmounts2;
 };
 
 export const isCrossChainFn = (balances: Balances, farm: PoolDef) => {
@@ -1344,13 +1426,13 @@ export const isCrossChainFn = (balances: Balances, farm: PoolDef) => {
 export const createFarmInterface = (farmId: number): Omit<FarmFunctions, "deposit" | "withdraw"> => {
     const farm = pools_json.find((farm) => farm.id === farmId)!;
 
-    const getProcessedFarmData: GetFarmDataProcessedFn = (balances, prices, decimals, vaultTotalSupply) => {
+    const getProcessedFarmData: GetFarmDataProcessedFn = (balances, prices, decimals, vaultTotalSupply, externalBalances) => {
         const vaultTokenPrice = prices[farm.chainId][farm.vault_addr];
         const isCrossChain = isCrossChainFn(balances, farm);
 
         const result = {
-            depositableAmounts: calculateDepositableAmounts({ balances, prices, farm }),
-            withdrawableAmounts: calculateWithdrawableAmounts({ balances, prices, farm }),
+            depositableAmounts: calculateDepositableAmounts({ balances, prices, farm, externalBalances }),
+            withdrawableAmounts: calculateWithdrawableAmounts({ balances, prices, farm, externalBalances }),
             isCrossChain,
             vaultBalanceFormated: (Number(toEth(BigInt(vaultTotalSupply ?? 0))) * vaultTokenPrice).toString(),
             id: farm.id,

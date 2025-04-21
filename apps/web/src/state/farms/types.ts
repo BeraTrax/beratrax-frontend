@@ -15,8 +15,10 @@ export interface StateInterface {
     isFetched: boolean;
     account: string;
     farmDetailInputOptions: FarmDetailInputOptions;
+    allowances: Allowances;
     error?: string | null;
 }
+
 export interface FarmDetailInputOptions {
     transactionType: FarmTransactionType;
     showInUsd: boolean;
@@ -42,6 +44,7 @@ export interface FetchFarmDetailsAction {
 export interface Earnings {
     [farmId: number]: number;
 }
+
 export interface VaultEarnings {
     tokenId: string;
     earnings0: string;
@@ -64,4 +67,14 @@ export interface VaultEarningsProp {
     currentWallet: string;
     prices: Prices;
     decimals: Decimals;
+}
+
+export interface Allowances {
+    [userAddress: string]: {
+        [chainId: number]: {
+            [tokenAddress: string]: {
+                [zapperAddress: string]: string // allowance amount in Wei
+            }
+        }
+    }
 }

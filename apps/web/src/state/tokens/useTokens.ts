@@ -37,13 +37,18 @@ const useTokens = () => {
         balances,
         isBalancesLoading,
         isBalancesFetched,
+        userAllBalances,
     } = useAppSelector((state) => state.tokens);
+    const showTokenDetailedBalances = useAppSelector((state) => state.settings.showTokenDetailedBalances);
+    
     const dispatch = useAppDispatch();
     const { currentWallet, getPublicClient } = useWallet();
 
     const reloadPrices = useCallback(() => {
-        dispatch(updatePrices());
-    }, [farms, dispatch]);
+        if (currentWallet) {
+            dispatch(updatePrices({account: currentWallet}));
+        }
+    }, [farms, dispatch, currentWallet]);
 
     const reloadBalances = useCallback(async () => {
         if (currentWallet) {
@@ -62,8 +67,10 @@ const useTokens = () => {
     }, [farms, dispatch]);
 
     const reloadSupplies = useCallback(() => {
-        dispatch(fetchTotalSupplies({ farms, getPublicClient }));
-    }, [farms, dispatch]);
+        if (currentWallet) {
+            dispatch(fetchTotalSupplies({ farms, getPublicClient, account: currentWallet }));
+        }
+    }, [farms, dispatch, currentWallet]);
 
     const tokenAddresses = useMemo(() => {
         const set = new Set<Address>();
@@ -81,6 +88,24 @@ const useTokens = () => {
         });
         return arr;
     }, [farms]);
+
+    const filteredTokens = useMemo(() => {
+        return tokens
+            .filter((item) => {
+                if (Number(item.usdBalance) < 0.00000000000000001) return false;
+                // if (!showTokenDetailedBalances)
+                //     switch (item.name) {
+                //         case "ETH":
+                //             return false;
+                //         default:
+                //             return true;
+                //     }
+                // else
+                if (item.name === "BERA") return false;
+                return true;
+            })
+            .map((e) => ({ ...e, isTransferable: e.name !== "BGT" }));
+    }, [tokens, showTokenDetailedBalances]);
 
     const lpAddresses = useMemo(() => {
         const set = new Set<string>();
@@ -100,6 +125,7 @@ const useTokens = () => {
     }, [farms]);
 
     useEffect(() => {
+        // Create tokens from farm token addresses
         const tokens: Token[] = tokenAddresses.map(({ address, decimals }) => {
             const farm = farms.find((farm) => farm.token1 === address || farm.token2 === address)!;
             const isToken1 = farm?.token1 === address;
@@ -117,6 +143,7 @@ const useTokens = () => {
             return obj;
         });
 
+        // Add custom tokens
         customTokens.forEach((token) => {
             tokens.push({
                 address: token.address,
@@ -131,6 +158,7 @@ const useTokens = () => {
             });
         });
 
+        // Create LP tokens
         const lpTokens: Token[] = lpAddresses.map(({ address, decimals }) => {
             const farm = farms.find((farm) => getAddress(farm.lp_address) === address)!;
             let obj: Token = {
@@ -148,10 +176,9 @@ const useTokens = () => {
             return obj;
         });
 
-        // Native coins for each chain
+        // Add native coins for each chain
         Object.entries(balances).map(([chainId, value]) => {
             const networkId = Number(chainId);
-            // const bal = value[zeroAddress].valueFormatted;
             const token: Token = {
                 address: zeroAddress,
                 logo: getNativeCoinInfo(networkId).logo,
@@ -166,9 +193,23 @@ const useTokens = () => {
             tokens.unshift(token);
         });
 
+        // Add tokens from Zerion balances
+        if (userAllBalances) {
+            userAllBalances.forEach((token) => {
+                // Skip if token already exists
+                if (tokens.some(t => t.address === token.address && t.networkId === token.networkId)) return;
+                const balanceEntry = balances[token.networkId][token.address];
+                tokens.push({
+                    ...token,
+                    balance: balanceEntry?.valueFormatted ?? "0",
+                    usdBalance: balanceEntry?.valueUsdFormatted ?? "0",
+                });
+            });
+        }
+
         setTokens(tokens);
         setLpTokens(lpTokens);
-    }, [farms, prices, tokenAddresses, lpAddresses, balances]);
+    }, [farms, prices, tokenAddresses, lpAddresses, balances, decimals, userAllBalances]);
 
     const UIState = useMemo(() => {
         let STATE: UIStateEnum = UIStateEnum.CONNECT_WALLET;
@@ -222,6 +263,8 @@ const useTokens = () => {
         lpTokens,
         isTokensLoading: isBalancesLoading || isPricesLoading,
         UIState,
+        filteredTokens,
+        userAllBalances
     };
 };
 

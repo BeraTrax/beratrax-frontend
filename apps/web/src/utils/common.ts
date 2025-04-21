@@ -1,6 +1,6 @@
 import { createWeb3Name } from "@web3-name-sdk/core";
 import { notifyError } from "src/api/notify";
-import { defaultChainId } from "src/config/constants";
+import { defaultChainId, ZERION_API_KEY } from "src/config/constants";
 import { errorMessages } from "src/config/constants/notifyMessages";
 import store from "src/state";
 import { IClients } from "src/types";
@@ -444,3 +444,17 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
     return formattedAmount;
 };
 
+
+/**Zerion token balances fetch api headers and query params */
+export const headers = {
+    accept: "application/json",
+    Authorization: `Basic ${Buffer.from(`${ZERION_API_KEY}:`).toString("base64")}`,
+};
+export const queryParams = {
+    "filter[positions]": "only_simple",
+    currency: "usd",
+    "filter[position_types]": "wallet",
+    "filter[chain_ids]": "berachain",
+    "filter[trash]": "only_non_trash",
+    sort: "value",
+};

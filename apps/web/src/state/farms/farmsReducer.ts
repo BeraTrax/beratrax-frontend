@@ -30,6 +30,7 @@ const initialState: StateInterface = {
     isLoadingEarnings: false,
     isLoadingVaultEarnings: false,
     isVaultEarningsFirstLoad: true,
+    allowances: {},
     farmDetailInputOptions: {
         transactionType: FarmTransactionType.Deposit,
         showInUsd: true,
@@ -48,6 +49,8 @@ export const updateFarmDetails = createAsyncThunk(
     ) => {
         if (!currentWallet) return;
         try {
+            const {tokens} = thunkApi.getState() as RootState;
+            const externalBalances = tokens.userAllBalances;
             const data: FarmDetails = {};
             farms
                 .filter((farm) => farm.originPlatform !== FarmOriginPlatform.Core)
@@ -56,7 +59,8 @@ export const updateFarmDetails = createAsyncThunk(
                         balances,
                         prices,
                         decimals,
-                        totalSupplies[farm.chainId][farm.vault_addr].supplyWei
+                        totalSupplies[farm.chainId][farm.vault_addr].supplyWei,
+                        externalBalances,
                     );
                 });
 
@@ -221,6 +225,37 @@ const farmsSlice = createSlice({
         setSimulatedSlippage(state, action: { payload: number }) {
             state.farmDetailInputOptions.simulatedSlippage = action.payload;
         },
+        setTokenAllowance(
+            state,
+            action: {
+                payload: {
+                    userAddress: string;
+                    chainId: number;
+                    tokenAddress: string;
+                    zapperAddress: string;
+                    allowance: string;
+                };
+            }
+        ) {
+            const { userAddress, chainId, tokenAddress, zapperAddress, allowance } = action.payload;
+            
+            // Initialize nested objects if they don't exist
+            if (!state.allowances[userAddress]) {
+                state.allowances[userAddress] = {};
+            }
+            if (!state.allowances[userAddress][chainId]) {
+                state.allowances[userAddress][chainId] = {};
+            }
+            if (!state.allowances[userAddress][chainId][tokenAddress]) {
+                state.allowances[userAddress][chainId][tokenAddress] = {};
+            }
+            
+            // Set the allowance
+            state.allowances[userAddress][chainId][tokenAddress][zapperAddress] = allowance;
+        },
+        clearAllowances(state) {
+            state.allowances = {};
+        }
     },
     extraReducers(builder) {
         builder.addCase(updateFarmDetails.pending, (state) => {
@@ -277,6 +312,8 @@ export const {
     setCurrencySymbol,
     setBestFunctionNameForArberaHoney,
     setSimulatedSlippage,
+    setTokenAllowance,
+    clearAllowances
 } = farmsSlice.actions;
 
 export default farmsSlice.reducer;

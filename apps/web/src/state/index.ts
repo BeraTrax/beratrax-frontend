@@ -42,6 +42,7 @@ const persistConfig = getPersistConfig({
         "ramp.bridgeStates.USDC_POLYGON_TO_ARBITRUM_USDC.socketSourceTxHash",
         "ramp.bridgeStates.ETH_POLYGON_TO_ARBITRUM_ETH.socketSourceTxHash",
         "farms.farmDetailInputOptions.showInUsd",
+        "farms.allowances",
         "tokens.decimals",
         "tokens.prices",
     ],

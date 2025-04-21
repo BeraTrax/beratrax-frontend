@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getPricesByTime, getTokenPricesBackend } from "src/api/token";
+import { getPricesByTime, getTokenPricesBackend, getTokenBalancesZerion } from "src/api/token";
 import rewardVaultAbi from "src/assets/abis/rewardVaultAbi";
 import { Common_Chains_State, pools_chain_ids } from "src/config/constants/pools_json";
 import tokens from "src/config/constants/tokens";
 import { RootState } from "src/state";
 import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
-import { formatCurrency } from "src/utils/common";
-import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress } from "viem";
+import { formatCurrency, queryParams } from "src/utils/common";
+import { Address, erc20Abi, formatUnits, getAddress, getContract, isAddress, parseAbi, zeroAddress } from "viem";
 import {
     Balances,
     Decimals,
@@ -15,9 +15,11 @@ import {
     TotalSupplies,
     UpdateBalancesActionPayload,
     UpdateDecimalsActionPayload,
+    UpdatePriceActionPayload,
     UpdateTotalSuppliesActionPayload,
 } from "./types";
-
+import { transformZerionToExternalBalances } from "src/utils";
+import { Token } from "src/types";
 const initialState: StateInterface = {
     // Chain-specific data
     prices: Common_Chains_State,
@@ -25,6 +27,7 @@ const initialState: StateInterface = {
     totalSupplies: Common_Chains_State,
     decimals: Common_Chains_State,
     oldPrices: {},
+    userAllBalances: [],
 
     // Prices states
     isPricesLoading: false,
@@ -50,9 +53,20 @@ const initialState: StateInterface = {
     decimalsError: null,
 };
 
-export const updatePrices = createAsyncThunk("prices/updatePrices", async (_, thunkApi) => {
+export const updatePrices = createAsyncThunk("prices/updatePrices", async ({account}:UpdatePriceActionPayload, thunkApi) => {
     try {
         const data = await getTokenPricesBackend();
+        const zerionBalances = await getTokenBalancesZerion(account)
+        const externalZerionBalances = transformZerionToExternalBalances(zerionBalances!);
+
+        if(zerionBalances && data && data?.[CHAIN_ID.BERACHAIN]){
+            externalZerionBalances.forEach((position) => {
+                const tokenAddress = position.address;
+                const price = position.price;
+                data[CHAIN_ID.BERACHAIN][getAddress(tokenAddress)] = price;
+            })
+            thunkApi.dispatch(setUserAllBalances(externalZerionBalances));
+        }
         // ----------------- Fix BeraChain price of zero address -----------------
         // TODO: fix this on backend
         if (
@@ -116,8 +130,9 @@ export const fetchBalances = createAsyncThunk(
             let prices = selectPrices(thunkApi.getState() as RootState);
 
             // If prices aren't available or stale, fetch them
+            //this took some time to fetch and then update the token contract addresses list to new length 
             if (!prices || Object.keys(prices).length === 0) {
-                const pricesResult = await thunkApi.dispatch(updatePrices()).unwrap();
+                const pricesResult = await thunkApi.dispatch(updatePrices({account})).unwrap();
                 if (!pricesResult) throw new Error("Failed to fetch prices");
                 prices = pricesResult;
             }
@@ -135,6 +150,15 @@ export const fetchBalances = createAsyncThunk(
             tokens.forEach((token) => {
                 addresses[token.chainId]?.add(getAddress(token.address));
             });
+            const tokenAddressArray = Object.keys(prices[CHAIN_ID.BERACHAIN]);
+            //check if first index is address 
+            //because the default inserted value is BTX token value.
+            // if we have a valid address on any index, means prices has been updated.
+            if(isAddress(tokenAddressArray[0])){
+                Object.keys(prices[CHAIN_ID.BERACHAIN]).forEach((tokenAddress) => {
+                    if(tokenAddress !== zeroAddress) addresses[CHAIN_ID.BERACHAIN]?.add(getAddress(tokenAddress));
+                })
+            }
 
             let balances: Balances = {};
             for await (const [chainId, set] of Object.entries(addresses)) {
@@ -248,14 +272,14 @@ export const fetchBalances = createAsyncThunk(
 
 export const fetchTotalSupplies = createAsyncThunk(
     "supply/fetchTotalSupplies",
-    async ({ farms, getPublicClient }: UpdateTotalSuppliesActionPayload, thunkApi) => {
+    async ({ farms, getPublicClient, account }: UpdateTotalSuppliesActionPayload, thunkApi) => {
         try {
             // Get prices from state first
             let prices = selectPrices(thunkApi.getState() as RootState);
 
             // If prices aren't available or stale, fetch them
             if (!prices || !Array.isArray(Object.keys(prices))) {
-                const pricesResult = await thunkApi.dispatch(updatePrices()).unwrap();
+                const pricesResult = await thunkApi.dispatch(updatePrices({account})).unwrap();
                 if (!pricesResult) throw new Error("Failed to fetch prices");
                 prices = pricesResult;
             }
@@ -344,6 +368,7 @@ export const fetchDecimals = createAsyncThunk(
     "decimals/fetchDecimals",
     async ({ farms, getPublicClient }: UpdateDecimalsActionPayload, thunkApi) => {
         try {
+            const { tokens: { userAllBalances } } = thunkApi.getState() as RootState;
             const chainIds = farms.reduce((accum, farm) => {
                 if (!accum?.includes(farm.chainId)) accum.push(farm.chainId);
                 return accum;
@@ -361,6 +386,18 @@ export const fetchDecimals = createAsyncThunk(
             tokens.forEach((token) => {
                 addresses[token.chainId]?.add(getAddress(token.address));
             });
+            
+            // Add addresses from userAllBalances
+            if (userAllBalances && userAllBalances.length > 0) {
+                userAllBalances.forEach((token) => {
+                    if (token.address && token.networkId) {
+                        if (!addresses[token.networkId]) {
+                            addresses[token.networkId] = new Set();
+                        }
+                        addresses[token.networkId].add(getAddress(token.address));
+                    }
+                });
+            }
 
             let decimals: Decimals = {};
             await Promise.all(
@@ -383,6 +420,16 @@ export const fetchDecimals = createAsyncThunk(
                     res.forEach((item, i) => {
                         decimals[Number(chainId)][arr[i]] = Number(item);
                     });
+                    
+                    // Inject decimals from userAllBalances
+                    if (userAllBalances && userAllBalances.length > 0) {
+                        userAllBalances.forEach((token) => {
+                            if (token.address && token.networkId && token.decimals && 
+                                Number(chainId) === token.networkId) {
+                                decimals[Number(chainId)][getAddress(token.address)] = token.decimals;
+                            }
+                        });
+                    }
                 })
             );
 
@@ -395,7 +442,7 @@ export const fetchDecimals = createAsyncThunk(
 );
 
 const tokensSlice = createSlice({
-    name: "prices",
+    name: "tokens",
     initialState: initialState,
     reducers: {
         setAccount(state, action: { payload: Address }) {
@@ -412,6 +459,9 @@ const tokensSlice = createSlice({
             state.isBalancesLoading = false;
             state.isBalancesFetched = false;
             state.account = undefined;
+        },
+        setUserAllBalances(state, action: { payload: Token[] }) {
+            state.userAllBalances = action.payload;
         },
     },
     extraReducers(builder) {
@@ -503,5 +553,5 @@ const tokensSlice = createSlice({
         });
     },
 });
-export const { setAccount, setIsFetched, reset } = tokensSlice.actions;
+export const { setAccount, setIsFetched, reset, setUserAllBalances } = tokensSlice.actions;
 export default tokensSlice.reducer;

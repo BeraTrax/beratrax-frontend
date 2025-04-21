@@ -1,6 +1,6 @@
 import { PoolDef } from "src/config/constants/pools_json";
 import { Balances, Decimals, Prices } from "src/state/tokens/types";
-import { EstimateTxGasArgs, IClients } from "src/types";
+import { EstimateTxGasArgs, IClients, Token } from "src/types";
 import { awaitTransaction } from "src/utils/common";
 import { Address } from "viem";
 
@@ -65,6 +65,7 @@ export interface TokenAmounts {
      * @type {boolean}
      */
     isPrimaryVault?: boolean;
+    images?: Record<string, string[]>;
 }
 
 export interface FarmDataProcessed {
@@ -83,6 +84,8 @@ export interface SlippageOutArgs {
     afterTxAmount: number;
     beforeTxAmount: number;
     bestFunctionName?: string;
+    isError?: boolean;
+    error?: null | Error;
 }
 
 export type DepositFn = (args: DepositArgs) => Promise<void>;
@@ -99,7 +102,8 @@ export type GetFarmDataProcessedFn = (
     balances: Balances,
     prices: Prices,
     decimals: Decimals,
-    vaultTotalSupply: string | undefined
+    vaultTotalSupply: string | undefined,
+    externalBalances: Token[]
 ) => FarmDataProcessed;
 export interface FarmFunctions {
     getProcessedFarmData: GetFarmDataProcessedFn;
@@ -150,4 +154,5 @@ export interface PriceCalculationProps {
     balances: Balances;
     prices: Prices;
     farm: PoolDef;
+    externalBalances: Token[];
 }

@@ -74,19 +74,20 @@ const WithdrawModal: FC<IProps> = ({ handleClose, handleSubmit, farmId, inputAmo
     const generateTx = async (chainToWithdrawOn: number) => {
         if (!currentWallet || !!txId || isTransacting) return;
         let steps: TransactionStep[] = [];
+        let amountInWei = toWei(inputAmount, decimals[farm.chainId][token]);
 
         steps.push({ status: TransactionStepStatus.PENDING, type: TransactionTypes.APPROVE_ZAP } as ApproveZapStep);
         steps.push({
             status: TransactionStepStatus.PENDING,
             type: TransactionTypes.ZAP_OUT,
-            amount: toWei(inputAmount).toString(),
+            amount: amountInWei.toString(),
         } as ZapOutStep);
 
         let tx: Transaction = {
             // @ts-expect-error
             _id: undefined,
             farmId: farm.id,
-            amountInWei: toWei(inputAmount).toString(),
+            amountInWei: amountInWei.toString(),
             date: new Date().toString(),
             from: currentWallet!,
             max: !!max,

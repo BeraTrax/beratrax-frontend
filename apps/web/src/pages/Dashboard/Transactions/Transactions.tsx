@@ -16,7 +16,7 @@ import { TransactionStatus, TransactionStepStatus } from "src/state/transactions
 import useTransaction from "src/state/transactions/useTransaction";
 import useTransactions from "src/state/transactions/useTransactions";
 import { formatCurrency, toEth } from "src/utils/common";
-import { Address, formatUnits } from "viem";
+import { Address, formatUnits, getAddress } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";
 
@@ -63,7 +63,7 @@ export default Transactions;
 
 const Row: FC<{ _id: string }> = ({ _id }) => {
     const { tx, farm } = useTransaction(_id);
-    const { prices, decimals } = useTokens();
+    const { prices, decimals, isBalancesLoading, isPricesLoading, userAllBalances } = useTokens();
     const [open, setOpen] = useState(false);
     const dispatch = useAppDispatch();
     if (!farm || !tx) return null;
@@ -85,6 +85,9 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
         vaultShares,
         farmId,
     } = tx;
+    // console.log('decimals[farm.chainId][token]',decimals[farm.chainId][token]);
+    // console.log('token',token);
+    // console.log('netAmount || amountInWei',netAmount , amountInWei);
 
     const filteredReturnedAssets = useMemo(() => {
         if (!returnedAssets) return [];
@@ -101,11 +104,11 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
         tokenAmount = Number(formatUnits(BigInt(amountInWei), decimals[farm.chainId][token]));
     } else {
         tokenAmount =
-            (Number(formatUnits(BigInt(amountInWei), decimals[farm.chainId][farm.vault_addr])) *
-                (vaultPrice || prices[farm.chainId][farm.vault_addr])) /
-            (tokenPrice || prices[farm.chainId][token]);
+        (Number(formatUnits(BigInt(amountInWei), decimals[farm.chainId][farm.vault_addr])) *
+        (vaultPrice || prices[farm.chainId][farm.vault_addr])) /
+        (tokenPrice || prices[farm.chainId][token]);
     }
-
+    
     const status = useMemo(() => {
         if (steps.every((step) => step.status === TransactionStepStatus.COMPLETED)) return TransactionStatus.SUCCESS;
         if (steps.some((step) => step.status === TransactionStepStatus.FAILED)) return TransactionStatus.FAILED;
@@ -131,6 +134,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
             });
         }
     };
+    if (isBalancesLoading || isPricesLoading) return null;
     return (
         <>
             <div className="rounded-2xl transition-all duration-100 ease-in-out bg-bgDark px-4 py-6 my-1">
@@ -182,7 +186,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                     <span className="text-base">
                                                         $ {""}
                                                         {formatCurrency(
-                                                            Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
+                                                            Number(formatUnits(BigInt(amountInWei || "0"), decimals[farm.chainId][token])) *
                                                                 (type === "deposit"
                                                                     ? tokenPrice || prices[farm.chainId][token]
                                                                     : vaultPrice ||
@@ -190,9 +194,9 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                         )}
                                                     </span>
                                                     <span className="text-xs text-textSecondary">
-                                                        {formatCurrency(formatUnits(BigInt(amountInWei || "0"), 18))}{" "}
+                                                        {formatCurrency(formatUnits(BigInt(amountInWei || "0"), decimals[farm.chainId][token]))}{" "}
                                                         {type === "deposit"
-                                                            ? tokenNamesAndImages[token].name
+                                                            ? tokenNamesAndImages[token]?.name || userAllBalances.find((t) => t.address === token)?.name || ""
                                                             : "BTX-" + farm.name}
                                                     </span>
                                                 </div>
@@ -214,7 +218,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                             {formatCurrency(
                                                                 toEth(BigInt(fee), decimals[farm.chainId][token])
                                                             )}{" "}
-                                                            {tokenNamesAndImages[token].name}
+                                                            {tokenNamesAndImages[token]?.name || userAllBalances.find((t) => t.address === token)?.name || ""}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -232,7 +236,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                                 actualSlippage /
                                                                     (tokenPrice || prices[farm.chainId][token])
                                                             )}{" "}
-                                                            {tokenNamesAndImages[tx.token].name}
+                                                            {tokenNamesAndImages[tx.token]?.name || userAllBalances.find((t) => t.address === tx.token)?.name || ""}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -248,25 +252,25 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                         >
                                                             <span>
                                                                 {tokenNamesAndImages[asset.token as Address]?.name ||
-                                                                    "Unknown"}
+                                                                    userAllBalances.find((t) => t.address === asset.token)?.name || "Unknown"}
                                                             </span>
                                                             <div className="flex flex-col items-end">
                                                                 <span className="text-base">
                                                                     $
                                                                     {formatCurrency(
-                                                                        Number(toEth(BigInt(asset.amount), 18)) *
+                                                                        Number(toEth(BigInt(asset.amount), decimals[farm.chainId][getAddress(asset.token)])) *
                                                                             (tokenPrice ||
                                                                                 prices[farm.chainId][
-                                                                                    asset.token as Address
+                                                                                    getAddress(asset.token)
                                                                                 ])
                                                                     )}
                                                                 </span>
                                                                 <span className="text-xs text-textSecondary">
                                                                     {Number(
-                                                                        formatUnits(BigInt(asset.amount), 18)
+                                                                        formatUnits(BigInt(asset.amount), decimals[farm.chainId][getAddress(asset.token)])
                                                                     ).toLocaleString()}{" "}
-                                                                    {tokenNamesAndImages[asset.token as Address]
-                                                                        ?.name || "Unknown"}
+                                                                    {tokenNamesAndImages[asset.token as Address]?.name || 
+                                                                        userAllBalances.find((t) => t.address === asset.token)?.name || "Unknown"}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -324,7 +328,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                                   )}{" "}
                                                             {type === "deposit"
                                                                 ? "BTX-" + farm.name
-                                                                : tokenNamesAndImages[token].name}
+                                                                : tokenNamesAndImages[token]?.name || userAllBalances.find((t) => t.address === token)?.name || ""}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -366,7 +370,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                 Number(
                                     formatUnits(
                                         BigInt(
-                                            type === "withdraw" ? netAmount || amountInWei : netAmount || amountInWei
+                                            (type === "withdraw" ? netAmount : type === 'deposit' ? amountInWei : netAmount) || "0"
                                         ),
                                         decimals[farm.chainId][token]
                                     )
@@ -379,10 +383,10 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                             ).toLocaleString()}
                         </p>
                         <p className="font-league-spartan font-light text-base text-textSecondary leading-5">
-                            {netAmount
-                                ? Number(formatUnits(BigInt(netAmount), decimals[farm.chainId][token])).toLocaleString()
+                            {(netAmount || amountInWei )
+                                ? Number(formatUnits(BigInt((type === "withdraw" ? netAmount : type === 'deposit' ? amountInWei : netAmount) || "0"), decimals[farm.chainId][token])).toLocaleString()
                                 : tokenAmount.toLocaleString()}{" "}
-                            {tokenNamesAndImages[token].name}
+                            {tokenNamesAndImages[token]?.name || userAllBalances.find((t) => t.address === token)?.name || ""}
                         </p>
                     </div>
                 </div>

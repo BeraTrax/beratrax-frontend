@@ -12,7 +12,7 @@ export const useDataRefresh = () => {
     const { reloadFarmData, reloadVaultEarnings } = useFarmDetails();
     const { fetchAccountData } = useAccountData();
     const { fetchTransactions } = useTransactions();
-    const { prices, reloadPrices, reloadDecimals, reloadSupplies, reloadBalances } = useTokens();
+    const { prices, reloadPrices, reloadDecimals, reloadSupplies, reloadBalances, isPricesFetched } = useTokens();
     const dispatch = useAppDispatch();
 
     // Network status effect
@@ -76,8 +76,12 @@ export const useDataRefresh = () => {
 
     // One-time loads
     useEffect(() => {
-        reloadDecimals();
-    }, [reloadDecimals]);
+        //only fetch decimals if prices are fetched, this will reduce the no. of RPC calls.
+        //because we need userAllBalances to be fetched first, this includes the decimals of external tokens.
+        if (isPricesFetched) { 
+            reloadDecimals();
+        }
+    }, [reloadDecimals, isPricesFetched]);
 
     useEffect(() => {
         reloadFarmData();

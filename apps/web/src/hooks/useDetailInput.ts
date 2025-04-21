@@ -7,11 +7,12 @@ import { FarmTransactionType } from "src/types/enums";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
-import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "src/state/farms/farmsReducer";
+import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions, setTokenAllowance } from "src/state/farms/farmsReducer";
 import { PoolDef } from "src/config/constants/pools_json";
 import { limitDecimals } from "src/utils";
 import useTokens from "src/state/tokens/useTokens";
-
+import { maxUint256, parseUnits, zeroAddress } from "viem";
+import { useApprovalErc20 } from "src/hooks/useApproval";
 export const useDetailInput = (farm: PoolDef) => {
     const [amount, setAmount] = useState("");
     const [toggleAmount, setToggleAmount] = useState("");
@@ -29,16 +30,25 @@ export const useDetailInput = (farm: PoolDef) => {
         dispatch(setFarmDetailInputOptions({ showInUsd: val }));
     };
 
-    const { prices } = useTokens();
+    const { prices, decimals } = useTokens();
     const { isLoading: isZapping, zapInAsync, slippageZapIn } = useZapIn(farm);
     const { isLoading: isDepositing, depositAsync, slippageDeposit } = useDeposit(farm);
     const { isLoading: isZappingOut, zapOutAsync, slippageZapOut } = useZapOut(farm);
     const { isLoading: isWithdrawing, withdrawAsync, slippageWithdraw } = useWithdraw(farm);
+    const { approve, getAllowance } = useApprovalErc20();
     const { farmDetails, isLoading } = useFarmDetails();
     const farmData = farmDetails[farm.id];
     const { currentWallet } = useWallet();
     const [depositable, setDepositable] = React.useState(farmData?.depositableAmounts[0]);
     const [withdrawable, setWithdrawable] = React.useState(farmData?.withdrawableAmounts[0]);
+    const [isApproved, setIsApproved] = React.useState(false);
+    const [isApproving, setIsApproving] = React.useState(false);
+    
+    // Get the stored allowance from Redux at the top level instead of inside checkAllowance
+    const storedAllowance = useAppSelector((state) => {
+        if (!currentWallet || !depositable?.tokenAddress) return "0";
+        return state.farms.allowances?.[currentWallet]?.[farm.chainId]?.[depositable.tokenAddress]?.[farm.zapper_addr] || "0";
+    });
 
     const maxBalance = React.useMemo(() => {
         if (type === FarmTransactionType.Deposit) {
@@ -73,6 +83,47 @@ export const useDetailInput = (farm: PoolDef) => {
             }
         }
     };
+
+    const checkAllowance = useCallback(async () => {
+        if(depositable?.tokenAddress && depositable?.tokenAddress !== zeroAddress) {
+            // Use the stored allowance from the top-level instead of calling useAppSelector here
+            const allowanceAmount = storedAllowance;
+
+            // console.log('allowanceAmount',allowanceAmount);
+            const amountInWei = parseUnits(amount, decimals[farm.chainId][depositable?.tokenAddress]);
+            
+            // If stored allowance is sufficient, don't make the contract call
+            if (BigInt(allowanceAmount) >= amountInWei) {
+                // console.log('%c allowance is sufficient', 'color: green;');
+                setIsApproved(true);
+                return;
+            }
+            // console.log('%c making rpc call to get allowance', 'color: red;');
+            // Otherwise, check allowance from the contract
+            const allowanceCleared = await getAllowance(
+                depositable?.tokenAddress!, 
+                farm.zapper_addr, 
+                amountInWei, 
+                farm.chainId
+            );
+            // console.log('allowanceCleared',allowanceCleared);
+            // console.log('isApproved',isApproved);
+            
+            if (allowanceCleared) {
+                // If allowance is approved, store it in Redux for future checks
+                if (currentWallet) {
+                    dispatch(setTokenAllowance({
+                        userAddress: currentWallet,
+                        chainId: farm.chainId,
+                        tokenAddress: depositable.tokenAddress,
+                        zapperAddress: farm.zapper_addr,
+                        allowance: (amountInWei).toString()
+                    }));
+                }
+                setIsApproved(true);
+            }
+        }
+    }, [depositable?.tokenAddress, farm.zapper_addr, amount, farm.chainId, currentWallet, storedAllowance, decimals]);
 
     useEffect(() => {
         let amt = Number(amount);
@@ -142,6 +193,7 @@ export const useDetailInput = (farm: PoolDef) => {
             const amnt = getTokenAmount();
             let _slippage = NaN;
             if (type === FarmTransactionType.Deposit) {
+                await checkAllowance();
                 if (depositable?.tokenAddress === farm.lp_address) {
                     // const res = await slippageDeposit({ depositAmount: amnt, max });
                     // console.log(res);
@@ -180,6 +232,19 @@ export const useDetailInput = (farm: PoolDef) => {
         }
     };
 
+    const handleApprove = async () => {
+        try {
+            setIsApproving(true);
+            await approve(depositable?.tokenAddress!, farm.zapper_addr, maxUint256, farm.chainId);
+            setIsApproving(false);
+            setIsApproved(true);
+            await checkAllowance();
+        } catch (err) {
+            console.log(`%cError Approve: ${err}`, "color: red;");
+            setIsApproving(false);
+        }
+    };
+
     useEffect(() => {
         if (max) setAmount(limitDecimals(maxBalance.toString(), 5));
     }, [max, maxBalance, showInUsd]);
@@ -204,6 +269,7 @@ export const useDetailInput = (farm: PoolDef) => {
     }, [currencySymbol, farmData]);
 
     useEffect(() => {
+        setIsApproved(false);
         if (getTokenAmount() === 0) {
             setSlippage(undefined);
             return;
@@ -240,5 +306,9 @@ export const useDetailInput = (farm: PoolDef) => {
         handleSubmit,
         isLoadingTransaction: isZapping || isZappingOut || isDepositing || isWithdrawing,
         isLoadingFarm: isLoading,
+        // isNotApproved: isError ? (error as Error).message.toString().toLowerCase().includes('notapprove') : false,
+        handleApprove,
+        isApproved, //only changes after approve is called or already approved
+        isApproving,
     };
 };

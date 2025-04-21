@@ -60,6 +60,8 @@ const useZapIn = (farm: PoolDef) => {
             afterTxAmount,
             beforeTxAmount,
             bestFunctionName,
+            isError,
+            error,
             // @ts-expect-error
         } = await farmFunctions[farm.id].zapInSlippage({
             currentWallet,
@@ -90,7 +92,7 @@ const useZapIn = (farm: PoolDef) => {
             beforeDepositAmount: beforeTxAmount,
             slippage,
         });
-        return { afterDepositAmount: afterTxAmount, beforeDepositAmount: beforeTxAmount, slippage, bestFunctionName };
+        return { afterDepositAmount: afterTxAmount, beforeDepositAmount: beforeTxAmount, slippage, bestFunctionName, isError, error };
     };
 
     const {

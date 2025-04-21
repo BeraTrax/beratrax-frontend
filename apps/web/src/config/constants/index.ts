@@ -65,12 +65,13 @@ export const FRONT_URL = import.meta.env.REACT_APP_FRONT_URL as string;
 export const FRONT_API_KEY = import.meta.env.REACT_APP_FRONT_API_KEY as string;
 export const FRONT_CLIENT_ID = import.meta.env.REACT_APP_FRONT_CLIENT_ID as string;
 export const REACT_APP_GA_MEASUREMENT_ID = "G-60G0YWYR4G";
-
+export const ZERION_API_KEY = import.meta.env.REACT_APP_ZERION_API_KEY as string;
 export const tenderlyRpcs: { [key: string]: string } = {
     [CHAIN_ID.ARBITRUM]: `https://arbitrum.gateway.tenderly.co/6YtRegY86MErUrbfeB4e8L`,
     [CHAIN_ID.BASE]: `https://base.gateway.tenderly.co/6lueMXUaDSXb1VtTVFELQ1`,
 };
 
+export const ZERION_API_URL = "https://api.zerion.io/v1";
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =
     "https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-bera/prod/gn";
 export const KODIAK_EARNINGS_GRAPH_URL =

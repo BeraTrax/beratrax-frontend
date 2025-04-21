@@ -10,9 +10,10 @@ interface IProps {
     size?: "small";
     className?: string;
     images?: Record<string, string[]>;
+    maxHeight?: number;
 }
 
-export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, className = "", images }) => {
+export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, className = "", images, maxHeight = 300 }) => {
     const [openSelect, setOpenSelect] = useState(false);
     const [maxWidth, setMaxWidth] = useState<number>(0);
 
@@ -105,8 +106,11 @@ export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, 
                 </div>
                 {openSelect && (
                     <div
-                        className="absolute right-0 z-10 w-auto max-w-[400px] bg-bgSecondary rounded top-[120%] p-2 flex flex-col flex-wrap justify-around"
-                        style={{ minWidth: `${Math.max(120, maxWidth)}px` }}
+                        className="absolute right-0 z-10 w-auto max-w-[400px] bg-bgSecondary rounded top-[120%] p-2 flex flex-wrap justify-around overflow-y-auto"
+                        style={{ 
+                            minWidth: `${Math.max(120, maxWidth)}px`,
+                            maxHeight: `${maxHeight}px` 
+                        }}
                     >
                         {options?.map((option, index) => (
                             <div

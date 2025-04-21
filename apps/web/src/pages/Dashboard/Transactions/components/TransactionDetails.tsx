@@ -9,6 +9,7 @@ import useTransaction from "src/state/transactions/useTransaction";
 import { formatCurrency } from "src/utils/common";
 import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
+import useTokens from "src/state/tokens/useTokens";
 
 type IProps =
     | {
@@ -30,6 +31,7 @@ const TransactionDetails: React.FC<IProps> = (args) => {
     let farm: PoolDef | undefined = args.farm;
     let tx: Transaction | undefined = args.tx;
     const obj = useTransaction(args.transactionId);
+    const { decimals, userAllBalances } = useTokens();
     farm = obj?.farm;
     tx = obj?.tx;
 
@@ -50,16 +52,25 @@ const TransactionDetails: React.FC<IProps> = (args) => {
             )}
             <div style={{ marginTop: 20 }}>
                 {tx.steps.map((step, i) => {
-                    const decimals = tx.type === "deposit" ? (tx.token === zeroAddress ? 18 : 18) : 18;
-                    const amount = Number(formatUnits(BigInt(step.amount ?? 0), decimals));
+                    const tokenDecimals = decimals[farm.chainId][tx.token] ?? 18;
+                    const amount = Number(formatUnits(BigInt(step.amount ?? 0), tokenDecimals));
                     const amountInUsd = (amount * tx.vaultPrice!) / tx.tokenPrice!;
+                    // console.log('decimals[farm.chainId][tx.token]',decimals[farm.chainId][tx.token]);
+                    // console.log('step.amount',step.amount);
+                    // console.log('tokenDecimals',tokenDecimals);
+                    // console.log('tx.vaultPrice',tx.vaultPrice);
+                    // console.log('tx.tokenPrice',tx.tokenPrice);
+                    // console.log('amount',amount);
+                    // console.log('amountInUsd',amountInUsd);
+                    // console.log('token address',tx.token);
+                    // console.log(formatCurrency( tx.type === "deposit" ? amount : amountInUsd))
                     return (
                         <React.Fragment key={i}>
                             {getStep(
                                 step.type,
                                 step.status,
                                 tx.type === "deposit" ? amount : amountInUsd,
-                                tokenNamesAndImages[tx.token].name,
+                                tokenNamesAndImages[tx.token]?.name || userAllBalances.find((token) => token.address === tx.token)?.name || "",
                                 i === tx.steps.length - 1
                             )}
                         </React.Fragment>

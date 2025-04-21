@@ -1,6 +1,6 @@
 import useApp from "src/hooks/useApp";
 // import useBalances from "src/state/balances/useBalances";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { BiSliderAlt } from "react-icons/bi";
 import { TbListDetails } from "react-icons/tb";
 import OutsideClickHandler from "react-outside-click-handler";
@@ -38,6 +38,7 @@ export const TokenBalances: FC<IProps> = () => {
         tokens,
         lpTokens,
         UIState,
+        filteredTokens,
     } = useTokens();
 
     const filteredLpTokens = useMemo(() => {
@@ -53,23 +54,10 @@ export const TokenBalances: FC<IProps> = () => {
     const ethBalance = balances[CHAIN_ID.BERACHAIN]?.[zeroAddress];
     // const ethBalance = useMemo(() => getCombinedBalance(balances, CHAIN_ID.BERACHAIN, "native"), [balances]);
 
-    const filteredTokens = useMemo(() => {
-        return tokens
-            .filter((item) => {
-                if (Number(item.usdBalance) < 0.01) return false;
-                // if (!showTokenDetailedBalances)
-                //     switch (item.name) {
-                //         case "ETH":
-                //             return false;
-                //         default:
-                //             return true;
-                //     }
-                // else
-                if (item.name === "BERA") return false;
-                return true;
-            })
-            .map((e) => ({ ...e, isTransferable: e.name !== "BGT" }));
-    }, [tokens, showTokenDetailedBalances]);
+    // useEffect(() => {
+    //     console.log("tokens dashbaord", tokens);
+    // }, [tokens]);
+
 
     const beraToken = tokens.find((token) => token.address == zeroAddress);
 

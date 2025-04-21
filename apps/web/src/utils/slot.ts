@@ -1,4 +1,4 @@
-import { hexToBytes, keccak256 } from "viem";
+import { Address, encodeAbiParameters, hexToBytes, keccak256 } from "viem";
 
 // 4-byte allowance seed. In the EVM, it is zero-padded to 32 bytes on mstore.
 const ALLOWANCE_SLOT_SEED = "0x7f5e9f20";
@@ -64,3 +64,37 @@ export const getHoneyBalanceSlot = (owner: `0x${string}`) => {
 
     return hashBytes;
 };
+
+export function getERC20BalanceSlot(owner: Address) {
+    // Most OpenZeppelin ERC20 tokens store balances in slot 0
+    const mappingSlot = 0n;
+    
+    // Encode the owner address and the mapping slot
+    const encoded = encodeAbiParameters(
+        [{ type: "address" }, { type: "uint256" }], 
+        [owner, mappingSlot]
+    );
+    
+    // Hash to get the actual storage slot
+    return keccak256(encoded);
+}
+
+export function getERC20AllowanceSlot(owner: Address, spender: Address) {
+    // Most OpenZeppelin ERC20 tokens store allowances in slot 1
+    const mappingSlot = 1n;
+    
+    // First level of mapping (owner)
+    const innerEncoded = encodeAbiParameters(
+        [{ type: "address" }, { type: "uint256" }], 
+        [owner, mappingSlot]
+    );
+    const innerHash = keccak256(innerEncoded);
+    
+    // Second level of mapping (spender)
+    const finalEncoded = encodeAbiParameters(
+        [{ type: "address" }, { type: "bytes32" }], 
+        [spender, innerHash]
+    );
+    
+    return keccak256(finalEncoded);
+}

@@ -70,5 +70,6 @@ export enum Boosts {
     BRIDGE_JUMPER_GOLD = "BRIDGE_JUMPER_GOLD", // 2.5x multiplier
     BRIDGE_JUMPER_PLATINUM = "BRIDGE_JUMPER_PLATINUM", // 3.0x multiplier
     LBGT_VAULT_MULTIPIER = "3X LBGT Vault Multiplier",
+    INTRACT_CAMPAIGN = "INTRACT_CAMPAIGN",
 }
 

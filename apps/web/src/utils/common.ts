@@ -1,6 +1,6 @@
 import { createWeb3Name } from "@web3-name-sdk/core";
 import { notifyError } from "src/api/notify";
-import { defaultChainId } from "src/config/constants";
+import { defaultChainId, VAULT_NEW_DURATION } from "src/config/constants";
 import { errorMessages } from "src/config/constants/notifyMessages";
 import store from "src/state";
 import { IClients } from "src/types";
@@ -442,5 +442,10 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
 
     const formattedAmount = new Intl.NumberFormat(navigator.language, options).format(num);
     return formattedAmount;
+};
+
+export const isVaultNew = (createdAt: number) => {
+    const now = Math.floor(Date.now() / 1000);
+    return now - createdAt < VAULT_NEW_DURATION;
 };
 

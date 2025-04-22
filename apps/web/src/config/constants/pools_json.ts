@@ -155,7 +155,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x34852C863D266100f573D4D1fD1D0CFE20602Da0", // RusdHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0x96c0712b7B23eB33a7bdD2d737D6Eb87Ae007751",
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -207,7 +207,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x45325Df4A6A6ebD268f4693474AaAa1f3f0ce8Ca", // WberaHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0xB3fd1c9Df6C9FB81ca0419EEf0549c337D650509",
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -259,7 +259,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x2dacFB135bB494BbF7B5273232628A535E147451",
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -311,7 +311,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0xFB657cd154E661dDF3E229529D92545640b19292", // WberaWethLp.rewardVault
         decimals: 18,
         vault_addr: "0x0bd961356E316f0266Fb530844Fb5AEC99B4670f",
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -363,7 +363,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x3Be1bE98eFAcA8c1Eb786Cbf38234c84B5052EeB", // iBGTWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0xadFEBD4b9B2c0E04b0C506Fd99BE3380d277D58D",
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -415,7 +415,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0xfCAcd22Ce85DAd636d79234c533A49E442f38A60", // vault address
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -467,7 +467,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x3fc5cB0290C82680Afe9EF8CddE5468d74C85705", // SolvBtcXSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x11663095b13c46E71f1a00A97101aFc1c0039e38", // vault address
-        createdAt: 1745217830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -519,7 +519,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
-        createdAt: 1745218830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -571,7 +571,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x9Bb2Ffc17837Fecef317a65a4f5369157D5ee5B4", // Vault address
-        createdAt: 1745218830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -623,7 +623,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0x491da46162A4A5F52cc30f6E63B352885bd7B419", // Vault address
-        createdAt: 1745218830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {
@@ -675,7 +675,7 @@ const pools_json: PoolDef[] = [
         // rewardVault: "0xc196D595DECE185Ea39f8e1C3cE07a274aC31985", // sUsdaUsdaLp.rewardVault
         decimals: 18,
         vault_addr: "0x4723BebA547c95A671709175fDc98795d2B2cf84", // Vault address
-        createdAt: 1745218830,
+        createdAt: 1745348610,
         zap_symbol: "HONEY",
         zap_currencies: [
             {

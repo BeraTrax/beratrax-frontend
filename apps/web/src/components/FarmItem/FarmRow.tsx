@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { CgInfo } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
@@ -8,7 +8,7 @@ import useApp from "src/hooks/useApp";
 import { useAppSelector } from "src/state";
 import useFarmApy from "src/state/farms/hooks/useFarmApy";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
-import { customCommify, toFixedFloor } from "src/utils/common";
+import { customCommify, isVaultNew, toFixedFloor } from "src/utils/common";
 import { Skeleton } from "../Skeleton/Skeleton";
 import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
@@ -31,6 +31,12 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
     const key2 = uuid();
     const showVaultsWithFunds = useAppSelector((state) => state.settings.showVaultsWithFunds);
     const navigate = useNavigate();
+
+    const isNewVault = useMemo(() => {
+        if (!farm.createdAt) return false;
+        return isVaultNew(farm.createdAt);
+    }, [farm.createdAt]);
+
     const handleNavigation = (route: string, target?: string) => {
         if (target) window.open(route, target);
         else navigate(route);
@@ -131,6 +137,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                         />
                                     )}
                                 </div>
+                                {isNewVault && <FarmRowChip text="New" color="default" gradient />}
                             </div>
                         </div>
                     </div>

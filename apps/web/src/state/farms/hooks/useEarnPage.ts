@@ -23,7 +23,11 @@ const useEarnPage = () => {
                 apy: apys[ele.id]?.apy,
             };
         });
-        if (selectedPlatform) data = data.filter((item) => item.originPlatform === selectedPlatform);
+        if (selectedPlatform) {
+            data = data.filter(
+                (item) => item.originPlatform === selectedPlatform || item.secondary_platform === selectedPlatform
+            );
+        }
         data = data.filter((item) => !item.isUpcoming);
         if (!isFetched) return data;
 

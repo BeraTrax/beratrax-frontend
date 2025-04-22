@@ -76,7 +76,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x337ef1eb6c8bbed571170fc2b468608ab9e2aac8?farm=0x9d65da133391b2c055509d049c835a821d84e922&chain=berachain_mainnet",
         name1: "LBGT",
         name2: "wBERA",
         description:
@@ -128,7 +128,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?farm=0x34852c863d266100f573d4d1fd1d0cfe20602da0&chain=berachain_mainnet",
         name1: "rUSD",
         name2: "HONEY",
         description:
@@ -180,7 +180,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x45325df4a6a6ebd268f4693474aaaa1f3f0ce8ca&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "HONEY",
         description:
@@ -232,7 +232,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0xf06ea29fcf4765200742d29e685973a1870eac98?farm=0xeec2ad7bb37374229860265e644f4e2693b23fdd&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "wBTC",
         description:
@@ -284,7 +284,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x9659dc8c1565e0bd82627267e3b4eed1a377ebe6?farm=0xfb657cd154e661ddf3e229529d92545640b19292&chain=berachain_mainnet",
         name1: "wETH",
         name2: "wBERA",
         description:
@@ -336,7 +336,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x564f011d557aad1ca09bfc956eb8a17c35d490e0?farm=0x3be1be98efaca8c1eb786cbf38234c84b5052eeb&chain=berachain_mainnet",
         name1: "iBGT",
         name2: "wBERA",
         description:
@@ -388,7 +388,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x56449b16ff2b1e5ee61f532ceffda8f408f718a1?farm=0xed0fb3170390ef82e13102f36fa7fd5047722890&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "BR",
         description:
@@ -440,9 +440,9 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x43e487126c4f37d1915cf02a90b5c5295afb1790?farm=0x3fc5cb0290c82680afe9ef8cdde5468d74c85705&chain=berachain_mainnet",
         name1: "SolvBtc",
-        name2: "XSolvBtc",
+        name2: "SolvBTC.BBN",
         description:
             "This vault is built on Kodiak's SolvBtcXSolvBtc vault. Your deposit is automatically converted into the SolvBtcXSolvBtc LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in SolvBtcXSolvBtc LP, not your starting token before zapping.)",
         stableCoin: false,
@@ -492,7 +492,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x3879451f4f69f0c2d37cad45319cff2e7d29c596?farm=0x11fadf69a02340a676b4bd2a27ffd952094fae99&chain=berachain_mainnet",
         name1: "wBTC",
         name2: "SolvBTC",
         description:
@@ -544,7 +544,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0xe3eeb9e48934634d8b5b39a0d15dd89ee0f969c4?farm=0xa2c5adb20a446fa71a1762002e3c9b4dd37dbaf4&chain=berachain_mainnet",
         name1: "iBERA",
         name2: "wBERA",
         description:
@@ -596,7 +596,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0xad445256ff81171043a5e7cd8831e4371b000176?farm=0x15f1156f56a06af851cbdc0aceb0780bbcb913c4&chain=berachain_mainnet",
         name1: "iBERA",
         name2: "osBGT",
         description:
@@ -648,7 +648,7 @@ const pools_json: PoolDef[] = [
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",
         secondary_platform_logo: "kodiak.jpg",
-        source: "https://app.kodiak.finance",
+        source: "https://app.kodiak.finance/#/liquidity/pools/0x7cebcc76a2faecc0ae378b340815fcbb71ec1fe0?farm=0xc196d595dece185ea39f8e1c3ce07a274ac31985&chain=berachain_mainnet",
         name1: "sUSDa",
         name2: "USDa",
         description:

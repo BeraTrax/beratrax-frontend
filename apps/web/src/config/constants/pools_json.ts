@@ -66,7 +66,6 @@ export interface PoolDef {
 }
 
 const pools_json: PoolDef[] = [
-    
     {
         id: 29,
         chainId: CHAIN_ID.BERACHAIN,
@@ -101,7 +100,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x337eF1eB6c8BBeD571170Fc2b468608ab9e2Aac8", // Asset LP address
-        rewardVault: "0x9d65dA133391b2c055509d049C835A821d84e922", // LbgtWberaLp.rewardVault
+        // rewardVault: "0x9d65dA133391b2c055509d049C835A821d84e922", // LbgtWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x74bCE2096803B3eEFDCE767b00383481CD408B4E",
         createdAt: 1745217830,
@@ -153,7 +152,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x7fd165B73775884a38AA8f2B384A53A3Ca7400E6", // Asset LP address
-        rewardVault: "0x34852C863D266100f573D4D1fD1D0CFE20602Da0", // RusdHoneyLp.rewardVault
+        // rewardVault: "0x34852C863D266100f573D4D1fD1D0CFE20602Da0", // RusdHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0x96c0712b7B23eB33a7bdD2d737D6Eb87Ae007751",
         createdAt: 1745217830,
@@ -205,7 +204,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x4a254B11810B8EBb63C5468E438FC561Cb1bB1da", // Asset LP address
-        rewardVault: "0x45325Df4A6A6ebD268f4693474AaAa1f3f0ce8Ca", // WberaHoneyLp.rewardVault
+        // rewardVault: "0x45325Df4A6A6ebD268f4693474AaAa1f3f0ce8Ca", // WberaHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0xB3fd1c9Df6C9FB81ca0419EEf0549c337D650509",
         createdAt: 1745217830,
@@ -257,7 +256,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xF06EA29FCF4765200742d29E685973a1870EaC98", // Asset LP address
-        rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
+        // rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x2dacFB135bB494BbF7B5273232628A535E147451",
         createdAt: 1745217830,
@@ -301,15 +300,15 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "wETH logo",
         alt2: "wBERA logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590/logo.png",
-        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x6969696969696969696969696969696969696969/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xE28AfD8c634946833e89ee3F122C06d7C537E8A8/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x9659dc8c1565E0bd82627267e3b4eEd1a377ebE6", // Asset LP address
-        rewardVault: "0xFB657cd154E661dDF3E229529D92545640b19292", // WberaWethLp.rewardVault
+        // rewardVault: "0xFB657cd154E661dDF3E229529D92545640b19292", // WberaWethLp.rewardVault
         decimals: 18,
         vault_addr: "0x0bd961356E316f0266Fb530844Fb5AEC99B4670f",
         createdAt: 1745217830,
@@ -353,15 +352,15 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "wBERA logo",
         alt2: "iBGT logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x6969696969696969696969696969696969696969/logo.png",
-        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x46eFC86F0D7455F135CC9df501673739d513E982/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x564f011D557aAd1cA09BFC956Eb8a17C35d490e0", // Asset LP address
-        rewardVault: "0x3Be1bE98eFAcA8c1Eb786Cbf38234c84B5052EeB", // iBGTWberaLp.rewardVault
+        // rewardVault: "0x3Be1bE98eFAcA8c1Eb786Cbf38234c84B5052EeB", // iBGTWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0xadFEBD4b9B2c0E04b0C506Fd99BE3380d277D58D",
         createdAt: 1745217830,
@@ -405,15 +404,15 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "wBERA logo",
         alt2: "BR logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x6969696969696969696969696969696969696969/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
         logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xd352dc6e5F0c45E2F2b38eb5565EB286A1ea4087/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
-        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1", // LP address 
-        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1", // LP address
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0xfCAcd22Ce85DAd636d79234c533A49E442f38A60", // vault address
         createdAt: 1745217830,
@@ -465,7 +464,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x43E487126c4F37D1915cF02a90B5C5295AFb1790", // LP address
-        rewardVault: "0x3fc5cB0290C82680Afe9EF8CddE5468d74C85705", // SolvBtcXSolvBtcLp.rewardVault
+        // rewardVault: "0x3fc5cB0290C82680Afe9EF8CddE5468d74C85705", // SolvBtcXSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x11663095b13c46E71f1a00A97101aFc1c0039e38", // vault address
         createdAt: 1745217830,
@@ -509,7 +508,7 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "wBTC logo",
         alt2: "SolvBTC logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0555E30da8f98308EdB960aa94C0Db47230d2B9c/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x2577D24a26f8FA19c1058a8b0106E2c7303454a4/logo.png",
         logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x541FD749419CA806a8bc7da8ac23D346f2dF8B77/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
@@ -517,7 +516,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x3879451f4f69F0c2d37CaD45319cFf2E7d29C596", // Asset LP address
-        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
         createdAt: 1745218830,
@@ -561,15 +560,15 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "iBERA logo",
         alt2: "wBERA logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b/logo.png",
-        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x6969696969696969696969696969696969696969/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x46eFC86F0D7455F135CC9df501673739d513E982/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xE3EeB9e48934634d8B5B39A0d15DD89eE0F969C4", // Asset LP address
-        rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
+        // rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x9Bb2Ffc17837Fecef317a65a4f5369157D5ee5B4", // Vault address
         createdAt: 1745218830,
@@ -613,7 +612,7 @@ const pools_json: PoolDef[] = [
         zapper_addr: "0xb0e7b48c3783593476eeeB1DBCBed1e51cC6E98F", // KodiakZapper address
         alt1: "iBERA logo",
         alt2: "osBGT logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397Bb5a6624a856cC84A3A14Dcd3fe5/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x46eFC86F0D7455F135CC9df501673739d513E982/logo.png",
         logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xD2C41BF4033A83C0FC3A7F58a392Bf37d6dCDb58/logo.png",
         rewards1: "kodiak.jpg",
         rewards1_alt: "Kodiak logo",
@@ -621,7 +620,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xaD445256Ff81171043A5e7Cd8831e4371B000176", // Asset LP address
-        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
         decimals: 18,
         vault_addr: "0x491da46162A4A5F52cc30f6E63B352885bd7B419", // Vault address
         createdAt: 1745218830,
@@ -673,7 +672,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x7CeBCc76A2faecC0aE378b340815fcbb71eC1Fe0", // Asset LP address
-        rewardVault: "0xc196D595DECE185Ea39f8e1C3cE07a274aC31985", // sUsdaUsdaLp.rewardVault
+        // rewardVault: "0xc196D595DECE185Ea39f8e1C3cE07a274aC31985", // sUsdaUsdaLp.rewardVault
         decimals: 18,
         vault_addr: "0x4723BebA547c95A671709175fDc98795d2B2cf84", // Vault address
         createdAt: 1745218830,
@@ -725,7 +724,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x93A913351CaE2D8C82C4b85f699726947eB76d32",
-        rewardVault: "0x6B23E121C6A13c959d69493Ea5cA015A5847596A",
+        // rewardVault: "0x6B23E121C6A13c959d69493Ea5cA015A5847596A",
         decimals: 18,
         vault_addr: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
         createdAt: 1744717830,
@@ -777,7 +776,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x0FD67ac75F9DF51f5d81F582417B318F44b45f5c",
-        rewardVault: "0x193fF57dc9EFA1DeC154946c10332bA31C8e72b2",
+        // rewardVault: "0x193fF57dc9EFA1DeC154946c10332bA31C8e72b2",
         decimals: 18,
         vault_addr: "0xfA224a2184976956471e41d36A1eE465f197dB7B",
         createdAt: 1744717830,
@@ -829,7 +828,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xEf8C3239E0D8Be9d58f145E18F5909Ddad681365",
-        rewardVault: "0x66EB42C499372E897929eFBF6026821B0a148119",
+        // rewardVault: "0x66EB42C499372E897929eFBF6026821B0a148119",
         decimals: 18,
         vault_addr: "0x738d85C6A53f9b924314f35ad5B73ac01f72dc65",
         createdAt: 1744717830,
@@ -881,7 +880,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x8b161685135e9FbC5475169e1adDc0F2C4b7c343",
-        rewardVault: "0xCf77d23cFC561E34e3b6137C736EA5CB395BcDA0",
+        // rewardVault: "0xCf77d23cFC561E34e3b6137C736EA5CB395BcDA0",
         decimals: 18,
         vault_addr: "0x6D943AD0791F68F715f7A4317999Ce547baCc909",
         createdAt: 1744717830,
@@ -1639,151 +1638,6 @@ const pools_json: PoolDef[] = [
         lp_address: "0xF06EA29FCF4765200742d29E685973a1870EaC98",
         decimals: 18,
         vault_addr: "0x388FF9498b8d967DE373b4a440a7A54A34Ec2743",
-        zap_currencies: [
-            {
-                symbol: "HONEY",
-                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
-                decimals: 18,
-            },
-            {
-                symbol: "BERA",
-                address: zeroAddress,
-                decimals: 18,
-            },
-        ],
-    },
-    {
-        id: 16,
-        isUpcoming: true,
-        chainId: CHAIN_ID.BERACHAIN,
-        token_type: "LP Token",
-        name: "iBERA",
-        url_name: "iBERA",
-        originPlatform: FarmOriginPlatform.Infrared,
-        isAutoCompounded: true,
-        source: "https://infrared.finance/ibera",
-        name1: "iBERA",
-        description:
-            "This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA, not your starting token before zapping.) ",
-        stableCoin: false,
-        platform_alt: "Infrared logo",
-        total_apy: 7.24,
-        rewards_apy: 0,
-        platform_logo: "infrared.ico",
-        pair1: "iBERA",
-        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
-        alt1: "iBGT logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397bb5a6624a856cc84a3a14dcd3fe5/logo.png",
-        rewards1: "infrared.ico",
-        rewards1_alt: "Infrared logo",
-        isDeprecated: false,
-        isUpgradable: false,
-        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        decimals: 18,
-        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
-        zap_symbol: "iBGT",
-        zap_currencies: [
-            {
-                symbol: "HONEY",
-                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
-                decimals: 18,
-            },
-            {
-                symbol: "BERA",
-                address: zeroAddress,
-                decimals: 18,
-            },
-            {
-                symbol: "iBGT",
-                address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-                decimals: 18,
-            },
-        ],
-    },
-    {
-        id: 18,
-        isUpcoming: true,
-        chainId: CHAIN_ID.BERACHAIN,
-        token_type: "LP Token",
-        name: "Yeet-wBERA",
-        url_name: "Yeet-wBERA",
-        originPlatform: FarmOriginPlatform.Yeet,
-        source: "https://vault.yeetit.xyz/",
-        name1: "Yeet",
-        name2: "wBERA",
-        description:
-            "This vault is built on Yeet's Yeet-wBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can directly zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Yeet-wBERA, not your starting token before zapping.) ",
-        stableCoin: false,
-        platform_alt: "Yeet logo",
-        total_apy: 10.16,
-        rewards_apy: 0,
-        platform_logo: "yeet.ico",
-        pair1: "Yeet",
-        pair2: "wBERA",
-        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
-        alt1: "Yeet logo",
-        alt2: "wBERA logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x1740F679325ef3686B2f574e392007A92e4BeD41/logo.png",
-        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-        rewards1: "yeet.ico",
-        rewards1_alt: "Yeet logo",
-        isDeprecated: false,
-        isUpgradable: false,
-        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        decimals: 18,
-        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
-        zap_symbol: "iBGT",
-        zap_currencies: [
-            {
-                symbol: "HONEY",
-                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
-                decimals: 18,
-            },
-            {
-                symbol: "BERA",
-                address: zeroAddress,
-                decimals: 18,
-            },
-        ],
-    },
-    {
-        id: 19,
-        isUpcoming: true,
-        chainId: CHAIN_ID.BERACHAIN,
-        token_type: "LP Token",
-        name: "wBERA-HONEY",
-        url_name: "wBERA-HONEY",
-        originPlatform: FarmOriginPlatform.Kodiak,
-        source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x40c4d0a87157c3c1df26267ac02505d930baeeeb&chain=berachain_mainnet",
-        name1: "wBERA",
-        name2: "HONEY",
-        description:
-            "This vault is built on Kodiak's wBERA-HONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can directly zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-HONEY, not your starting token before zapping.) ",
-        stableCoin: false,
-        platform_alt: "Kodiak logo",
-        total_apy: 26.29,
-        rewards_apy: 0,
-        platform_logo: "kodiak.jpg",
-        pair1: "wBERA",
-        pair2: "HONEY",
-        token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        token2: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        zapper_addr: "0x1891c027B42C108D97EaBa80c910E86CD6c6A520",
-        alt1: "wBERA logo",
-        alt2: "HONEY logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
-        rewards1: "kodiak.jpg",
-        rewards1_alt: "Kodiak logo",
-        isDeprecated: true,
-        isUpgradable: false,
-        lp_address: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
-        decimals: 18,
-        vault_addr: "0x813C9ecE1Da3B529656DfCc5D42815f9cCf60B2c",
-        zap_symbol: "iBGT",
         zap_currencies: [
             {
                 symbol: "HONEY",

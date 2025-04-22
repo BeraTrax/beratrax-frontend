@@ -67,7 +67,7 @@ export interface PoolDef {
 
 const pools_json: PoolDef[] = [
     {
-        id: 29,
+        id: 30,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "LBGT-wBERA",
@@ -119,7 +119,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 30,
+        id: 31,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "rUSD-HONEY",
@@ -171,7 +171,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 31,
+        id: 32,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "wBERA-HONEY",
@@ -223,7 +223,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 32,
+        id: 33,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "wBERA-wBTC",
@@ -275,7 +275,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 33,
+        id: 34,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "wBERA-wETH",
@@ -327,7 +327,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 34,
+        id: 35,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "iBGT-wBERA",
@@ -379,7 +379,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 35,
+        id: 36,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "BR-wBERA",
@@ -431,7 +431,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 36,
+        id: 37,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "SolvBTC-XSolvBTC",
@@ -483,7 +483,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 37,
+        id: 38,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "wBTC-SolvBTC",
@@ -535,7 +535,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 38,
+        id: 39,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "iBERA-wBERA",
@@ -587,7 +587,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 39,
+        id: 40,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "osBGT-iBERA",
@@ -639,7 +639,7 @@ const pools_json: PoolDef[] = [
         ],
     },
     {
-        id: 40,
+        id: 41,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "sUSDa-USDa",

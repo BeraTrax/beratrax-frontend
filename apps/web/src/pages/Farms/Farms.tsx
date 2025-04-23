@@ -66,99 +66,7 @@ function Farms() {
                 <div className="flex justify-between items-center mt-4">
                     <h5 className="text-3xl font-bold uppercase">Earn</h5>
 
-                    {/* Filters */}
-                    <div className="flex items-center gap-4">
-                        {/* New Vaults Filter */}
-                        <button
-                            onClick={() => setShowNewVaults(!showNewVaults)}
-                            className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
-                                showNewVaults
-                                    ? "bg-buttonPrimary border-buttonPrimary text-textWhite font-medium shadow-lg shadow-buttonPrimary/20"
-                                    : "bg-transparent border-borderDark text-textSecondary hover:bg-bgPrimary/10"
-                            }`}
-                        >
-                            <svg
-                                className={`w-4 h-4 ${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            <span className={`${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}>New</span>
-                        </button>
 
-                        {/* Platform Filter */}
-                        <div className="relative" ref={dropdownRef}>
-                            <div
-                                className="flex items-center gap-2 bg-background border border-gray-700 rounded-lg text-white px-3 py-2 cursor-pointer"
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            >
-                                {selectedPlatform ? (
-                                    <>
-                                        <img
-                                            src={platforms.find(([p]) => p === selectedPlatform)?.[1]}
-                                            alt={selectedPlatform}
-                                            className="w-5 h-5"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = "none";
-                                            }}
-                                        />
-                                        <span>{selectedPlatform}</span>
-                                    </>
-                                ) : (
-                                    <span>All Platforms</span>
-                                )}
-                                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M19 9l-7 7-7-7"
-                                    />
-                                </svg>
-                            </div>
-
-                            {isDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-background/80 backdrop-blur-md border border-gray-700 rounded-lg shadow-lg z-10">
-                                    <div
-                                        className="px-3 py-2 cursor-pointer hover:bg-gray-800/50"
-                                        onClick={() => {
-                                            setSelectedPlatform(null);
-                                            setIsDropdownOpen(false);
-                                        }}
-                                    >
-                                        All Platforms
-                                    </div>
-                                    {platforms.map(([platform, logo]) => (
-                                        <div
-                                            key={platform}
-                                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-800/50"
-                                            onClick={() => {
-                                                setSelectedPlatform(platform);
-                                                setIsDropdownOpen(false);
-                                            }}
-                                        >
-                                            <img
-                                                src={logo}
-                                                alt={platform}
-                                                className="w-5 h-5"
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).style.display = "none";
-                                                }}
-                                            />
-                                            <span>{platform}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
 
                 {farms.length === 0 ? (
@@ -166,42 +74,136 @@ function Farms() {
                         <h6 className="mb-9 text-lg font-light">Vaults coming soon</h6>
                     </div>
                 ) : (
-                    <h6 className="mb-9 text-lg font-light">Available Protocols</h6>
+                    <div className="flex justify-between items-center mt-4">
+                        <h6 className="mb-9 text-lg font-light">Available Protocols</h6>
+                        {/* Filters */}
+                        <div className="flex items-center gap-4">
+                            {/* New Vaults Filter */}
+                            <button
+                                onClick={() => setShowNewVaults(!showNewVaults)}
+                                className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${showNewVaults
+                                        ? "bg-buttonPrimary border-buttonPrimary text-textWhite font-medium shadow-lg shadow-buttonPrimary/20"
+                                        : "bg-transparent border-borderDark text-textSecondary hover:bg-bgPrimary/10"
+                                    }`}
+                            >
+                                <svg
+                                    className={`w-4 h-4 ${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                                <span className={`${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}>New</span>
+                            </button>
+
+                            {/* Platform Filter */}
+                            <div className="relative" ref={dropdownRef}>
+                                <div
+                                    className="flex items-center gap-2 bg-background border border-gray-700 rounded-lg text-white px-3 py-2 cursor-pointer"
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                >
+                                    {selectedPlatform ? (
+                                        <>
+                                            <img
+                                                src={platforms.find(([p]) => p === selectedPlatform)?.[1]}
+                                                alt={selectedPlatform}
+                                                className="w-5 h-5"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display = "none";
+                                                }}
+                                            />
+                                            <span>{selectedPlatform}</span>
+                                        </>
+                                    ) : (
+                                        <span>All Platforms</span>
+                                    )}
+                                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </div>
+
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-background/80 backdrop-blur-md border border-gray-700 rounded-lg shadow-lg z-10">
+                                        <div
+                                            className="px-3 py-2 cursor-pointer hover:bg-gray-800/50"
+                                            onClick={() => {
+                                                setSelectedPlatform(null);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                        >
+                                            All Platforms
+                                        </div>
+                                        {platforms.map(([platform, logo]) => (
+                                            <div
+                                                key={platform}
+                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-800/50"
+                                                onClick={() => {
+                                                    setSelectedPlatform(platform);
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                            >
+                                                <img
+                                                    src={logo}
+                                                    alt={platform}
+                                                    className="w-5 h-5"
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).style.display = "none";
+                                                    }}
+                                                />
+                                                <span>{platform}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 )}
 
                 {/* Vaults */}
                 <div className="flex flex-col gap-2">
                     {sortedFarms
                         ? sortedFarms
-                              .filter(
-                                  (farm) =>
-                                      !farm.isUpcoming &&
-                                      !farm.isDeprecated &&
-                                      (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
-                              )
-                              .map((farm, index) => (
-                                  <FarmRow
-                                      key={index + "nowallet"}
-                                      farm={farm}
-                                      openedFarm={openedFarm}
-                                      setOpenedFarm={setOpenedFarm}
-                                  />
-                              ))
+                            .filter(
+                                (farm) =>
+                                    !farm.isUpcoming &&
+                                    !farm.isDeprecated &&
+                                    (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
+                            )
+                            .map((farm, index) => (
+                                <FarmRow
+                                    key={index + "nowallet"}
+                                    farm={farm}
+                                    openedFarm={openedFarm}
+                                    setOpenedFarm={setOpenedFarm}
+                                />
+                            ))
                         : farms
-                              .filter(
-                                  (farm) =>
-                                      !farm.isUpcoming &&
-                                      !farm.isDeprecated &&
-                                      (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
-                              )
-                              .map((farm, index) => (
-                                  <FarmRow
-                                      key={index + "nowallet"}
-                                      farm={farm}
-                                      openedFarm={openedFarm}
-                                      setOpenedFarm={setOpenedFarm}
-                                  />
-                              ))}
+                            .filter(
+                                (farm) =>
+                                    !farm.isUpcoming &&
+                                    !farm.isDeprecated &&
+                                    (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
+                            )
+                            .map((farm, index) => (
+                                <FarmRow
+                                    key={index + "nowallet"}
+                                    farm={farm}
+                                    openedFarm={openedFarm}
+                                    setOpenedFarm={setOpenedFarm}
+                                />
+                            ))}
                 </div>
                 {/* Bottom padding */}
                 {(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) &&

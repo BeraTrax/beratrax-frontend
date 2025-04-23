@@ -414,7 +414,10 @@ const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEar
                     pool.originPlatform === FarmOriginPlatform.BeraPaw
             )
             .map((pool) => {
-                const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1] || "";
+                const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1];
+                if (!underlyingVault) {
+                    throw new Error(`No underlying vault found for pool ${pool.id}`);
+                }
 
                 return {
                     vault_addr: pool.vault_addr,
@@ -487,6 +490,7 @@ const getEarningsForKodiak = async (combinedTransactions: any): Promise<VaultEar
                     const transaction = sortedTransactions[i];
                     const vaultData = feeData[`tx${i}`];
 
+                    // TODO: throw error if token0 or token1 is not found
                     lastToken0 =
                         Object.keys(tokenNamesAndImages).find(
                             (address) =>

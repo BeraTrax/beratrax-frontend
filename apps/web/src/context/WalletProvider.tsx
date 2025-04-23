@@ -305,7 +305,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
             setIsConnecting(true);
             const _walletClient = await getWalletClient(wagmiChainId, false);
             // @ts-ignore
-            setCurrentWallet(getAddress("0xb38A90f14b24ae81Ec0B8f1373694f5B59811D8A" ));
+            setCurrentWallet(getAddress(_walletClient.account.address));
         } catch (error) {
             console.error(error);
         } finally {

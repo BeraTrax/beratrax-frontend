@@ -14,13 +14,13 @@ import pools_json from "src/config/constants/pools_json";
 let kodiak = function (farmId: number): Omit<FarmFunctions, "deposit" | "withdraw"> {
     const farm = pools_json.find((farm) => farm.id === farmId)!;
 
-    const getProcessedFarmData: GetFarmDataProcessedFn = (balances, prices, decimals, vaultTotalSupply) => {
+    const getProcessedFarmData: GetFarmDataProcessedFn = (balances, prices, decimals, vaultTotalSupply, externalBalances) => {
         const vaultTokenPrice = prices[farm.chainId][farm.vault_addr];
         const isCrossChain = isCrossChainFn(balances, farm);
 
         const result = {
-            depositableAmounts: calculateDepositableAmounts({ balances, prices, farm }),
-            withdrawableAmounts: calculateWithdrawableAmounts({ balances, prices, farm }),
+            depositableAmounts: calculateDepositableAmounts({ balances, prices, farm, externalBalances }),
+            withdrawableAmounts: calculateWithdrawableAmounts({ balances, prices, farm, externalBalances }),
             isCrossChain,
             vaultBalanceFormated: (Number(toEth(BigInt(vaultTotalSupply ?? 0))) * vaultTokenPrice).toString(),
             id: farm.id,

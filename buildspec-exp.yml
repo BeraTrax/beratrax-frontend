@@ -22,6 +22,7 @@ env:
     REACT_APP_ONCHAINKIT_API_KEY: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:REACT_APP_ONCHAINKIT_API_KEY
     REACT_APP_ONCHAINKIT_PROJECT_ID: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:REACT_APP_ONCHAINKIT_PROJECT_ID
     REACT_APP_CDP_PROJECT_ID: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:REACT_APP_CDP_PROJECT_ID
+    REACT_APP_ZERION_API_KEY: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:REACT_APP_ZERION_API_KEY
 
 phases:
   install:

@@ -13,11 +13,15 @@ const TokenEarning = ({
     token,
     chainId,
     prices,
+    farm,
+    changeInAssets,
 }: {
     currentVaultEarnings: any;
     token: string | undefined;
     chainId: number;
     prices: Record<number, Record<string, number>>;
+    farm: PoolDef;
+    changeInAssets: string | number | undefined;
 }) => {
     if (!currentVaultEarnings || !token) return null;
     const { decimals } = useTokens();
@@ -41,6 +45,13 @@ const TokenEarning = ({
         );
     }, [currentVaultEarnings]);
 
+    const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets?.toString();
+    const changeInAssetsValue = Number(
+        toEth(BigInt(changeInAssetsStr || 0), decimals[farm.chainId][farm.lp_address as Address])
+    );
+    const changeInAssetsValueUsd = changeInAssetsValue * (prices[farm.chainId][farm.lp_address] || 0);
+    const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
+
     // Convert any zero earnings to "0" string to ensure proper display
     const earningsStr = currentVaultEarningsUsd.toString();
 
@@ -53,7 +64,7 @@ const TokenEarning = ({
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
                         $
-                        {customCommify(currentVaultEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                        {customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                     </h1>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -153,14 +164,16 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                                     token={farmEarnings.token0}
                                     chainId={farm.chainId}
                                     prices={prices}
+                                    farm={farm}
+                                    changeInAssets={farmEarnings.changeInAssets}
                                 />
-                                {farm.isAutoCompounded && (
+                                {/* {farm.isAutoCompounded && (
                                     <LpAssetChange
                                         changeInAssets={farmEarnings.changeInAssets}
                                         farm={farm}
                                         isLoading={isVaultEarningsFirstLoad}
                                     />
-                                )}
+                                )} */}
                             </div>
                         </>
                     )}

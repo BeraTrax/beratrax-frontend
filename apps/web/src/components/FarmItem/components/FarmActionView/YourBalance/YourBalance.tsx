@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import useTokens from "src/state/tokens/useTokens";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
@@ -6,7 +6,6 @@ import useWallet from "src/hooks/useWallet";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { Address, getAddress } from "viem";
-import { useAppSelector } from "src/state";
 
 // Reusable component for token earnings
 const TokenEarning = ({
@@ -23,8 +22,8 @@ const TokenEarning = ({
     if (!earnings || !token) return null;
 
     // Convert any zero earnings to "0" string to ensure proper display
-    const earningsStr = (earnings === 0 || earnings === "0") ? "0" : earnings.toString();
-    
+    const earningsStr = earnings === 0 || earnings === "0" ? "0" : earnings.toString();
+
     const { decimals } = useTokens();
     const tokenAddress = token ? getAddress(token) : "";
     const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
@@ -55,16 +54,13 @@ const TokenEarning = ({
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
     const { currentWallet, isConnecting } = useWallet();
     const { balances, isBalancesLoading: isLoading, prices } = useTokens();
-    const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad, reloadVaultEarnings } = useFarmDetails();
+    const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
     const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
     const stakedTokenValueFormatted = useMemo(
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
         [balances, prices]
     );
-    
-    // Get the lastEarningsWithdrawal data for this farm from the Redux store
-    const lastEarningsWithdrawal = useAppSelector(state => state.farms.lastEarningsWithdrawal[farm.id?.toString()]);
-    
+
     const farmEarnings = useMemo(() => {
         if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
         return (
@@ -76,14 +72,6 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
             }
         );
     }, [vaultEarnings, farm.id]);
-    
-    // Effect to refresh earnings data when wallet changes or after transactions
-    useEffect(() => {
-        if (currentWallet) {
-            // This will reload earnings data when the component mounts or wallet changes
-            reloadVaultEarnings();
-        }
-    }, [currentWallet, lastEarningsWithdrawal]);
 
     const renderEarningsSection = () => {
         return (

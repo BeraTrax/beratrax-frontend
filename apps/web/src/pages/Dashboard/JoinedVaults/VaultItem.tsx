@@ -62,7 +62,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                   ) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
                 : 0)
         );
-    }, [isVaultEarningsFirstLoad]);
+    }, [isVaultEarningsFirstLoad, vaultEarnings]);
     const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);

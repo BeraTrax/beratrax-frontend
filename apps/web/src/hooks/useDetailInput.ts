@@ -35,7 +35,7 @@ export const useDetailInput = (farm: PoolDef) => {
     const { isLoading: isDepositing, depositAsync, slippageDeposit } = useDeposit(farm);
     const { isLoading: isZappingOut, zapOutAsync, slippageZapOut } = useZapOut(farm);
     const { isLoading: isWithdrawing, withdrawAsync, slippageWithdraw } = useWithdraw(farm);
-    const { farmDetails, isLoading } = useFarmDetails();
+    const { farmDetails, isLoading, reloadVaultEarnings } = useFarmDetails();
     const farmData = farmDetails[farm.id];
     const { currentWallet } = useWallet();
     const [depositable, setDepositable] = React.useState(farmData?.depositableAmounts[0]);

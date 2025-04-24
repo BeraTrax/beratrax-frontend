@@ -17,7 +17,6 @@ import { useVaults } from "src/hooks/useVaults";
 import useWallet from "src/hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "src/state";
 import { sendBtxToXFollower, setAccountConnector } from "src/state/account/accountReducer";
-import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { copyToClipboard } from "src/utils";
@@ -34,14 +33,13 @@ export const WalletAndStakingPoint: React.FC = () => {
         earnTraxTermsAgreed,
         termsOfUseAgreed,
     } = useAppSelector((state) => state.account);
-    const { earningsUsd, isVaultEarningsFirstLoad, lastEarningsWithdrawal } = useAppSelector((state) => state.farms);
+    const { earningsUsd, isVaultEarningsFirstLoad } = useAppSelector((state) => state.farms);
     const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
     const { openConnectModal } = useConnectModal();
     const { disconnect } = useDisconnect();
     const { switchChain } = useSwitchChain();
     const { isConnected, connector } = useAccount();
     const { reloadBalances } = useTokens();
-    const { reloadVaultEarnings } = useFarmDetails();
     const chainId = useChainId();
     const [showCopyFeedback, setShowCopyFeedback] = useState(false);
     const [ensName, setEnsName] = useState<string | null>();
@@ -171,14 +169,6 @@ export const WalletAndStakingPoint: React.FC = () => {
             setIsClaimingBtx(false);
         }
     };
-
-    // Effect to refresh earnings data when a withdrawal occurs
-    useEffect(() => {
-        if (currentWallet) {
-            // This will reload earnings data when there's an earnings withdrawal
-            reloadVaultEarnings();
-        }
-    }, [currentWallet, lastEarningsWithdrawal, reloadVaultEarnings]);
 
     return (
         <div className="bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
@@ -480,3 +470,4 @@ export const WalletAndStakingPoint: React.FC = () => {
         </div>
     );
 };
+

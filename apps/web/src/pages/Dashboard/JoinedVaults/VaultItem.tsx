@@ -15,7 +15,7 @@ import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { Vault } from "src/types";
 import { awaitTransaction, customCommify, formatCurrency, toEth, toFixedFloor } from "src/utils/common";
-import { encodeFunctionData, formatEther, getAddress } from "viem";
+import { Address, encodeFunctionData, formatEther, getAddress } from "viem";
 import styles from "./VaultItem.module.css";
 
 interface Props {
@@ -41,8 +41,8 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
     const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
     const { balances, prices, decimals, reloadBalances } = useTokens();
+    const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
     const currentVaultEarningsUsd = useMemo(() => {
-        const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
         if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
 
         return (
@@ -63,6 +63,13 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                 : 0)
         );
     }, [isVaultEarningsFirstLoad, vaultEarnings]);
+    const changeInAssets = currentVaultEarnings?.changeInAssets;
+    const changeInAssetsStr = changeInAssets === "0" ? "0" : changeInAssets?.toString();
+    const changeInAssetsValue = Number(
+        toEth(BigInt(changeInAssetsStr || 0), decimals[vault.chainId][vault.lp_address as Address])
+    );
+    const changeInAssetsValueUsd = changeInAssetsValue * (prices[vault.chainId][vault.lp_address] || 0);
+    const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
     const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
@@ -300,7 +307,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     </div>
                     {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
                         <div className="text-textWhite text-lg font-league-spartan leading-5">
-                            <p className="text-green-500">+${formatCurrency(currentVaultEarningsUsd)}</p>
+                            <p className="text-green-500">+${formatCurrency(totalEarningsUsd, 5)}</p>
                             {/* <div style={{ minWidth: 60 }}>
                             {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
                             {!isLoadingOldData &&
@@ -425,4 +432,3 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 };
 
 export default VaultItem;
-

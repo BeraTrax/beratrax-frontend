@@ -48,6 +48,7 @@ export interface VaultEarnings {
     token0: string;
     earnings1?: string;
     token1?: string;
+    changeInAssets?: string;
 }
 
 export interface FetchEarningsAction {

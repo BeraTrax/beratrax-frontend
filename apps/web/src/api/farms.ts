@@ -81,6 +81,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
             userBalance
             blockTimestamp
             blockNumber
+            userAssetBalance
           }
         }`;
         const depositResponse = await axios.post(EARNINGS_GRAPH_URL, { query: depositsQuery });
@@ -99,6 +100,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
             userBalance
             blockTimestamp
             blockNumber
+            userAssetBalance
           }
         }`;
 
@@ -445,6 +447,7 @@ const getEarningsForKodiak = async (
 
                 // Get only the last transaction
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+                const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
 
                 // Get the fee data at the time of the last transaction
                 const lastFeeQuery = `
@@ -479,6 +482,7 @@ const getEarningsForKodiak = async (
                 const assets = (await assetsPromise) as bigint;
                 const currentShares = balances[pool.chainId][pool.vault_addr]?.valueWei || BigInt(0);
                 const currentBalance = toWei(Number(toEth(assets)) * Number(toEth(currentShares)), 18);
+                const changeInAssets = currentBalance - lastTransactionAssets;
 
                 // If user has no balance after the last transaction, return zero earnings
                 if (currentBalance <= 0) {
@@ -528,6 +532,7 @@ const getEarningsForKodiak = async (
                               ).toString()
                             : "0",
                     token0: pool.lp_addr,
+                    changeInAssets: changeInAssets.toString(),
                 };
             })
         );
@@ -582,7 +587,7 @@ const getEarningsForBurrbear = async (
 
                 // Get only the last transaction
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
-
+                const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
                 // Get the fee data at the time of the last transaction
                 const lastFeeQuery = `
                     query GetLastTransactionFee {
@@ -620,7 +625,7 @@ const getEarningsForBurrbear = async (
                 const assets = (await assetsPromise) as bigint;
                 const currentShares = balances[pool.chainId][pool.vault_addr]?.valueWei || BigInt(0);
                 const currentBalance = toWei(Number(toEth(assets)) * Number(toEth(currentShares)), 18);
-
+                const changeInAssets = currentBalance - lastTransactionAssets;
                 // If user has no balance after the last transaction, return zero earnings
                 if (currentBalance <= 0) {
                     return {
@@ -674,6 +679,7 @@ const getEarningsForBurrbear = async (
                     tokenId: pool.farmId.toString(),
                     earnings0: lpPrice > 0 ? toWei(userShareOfFees / lpPrice).toString() : "0",
                     token0: pool.lp_addr,
+                    changeInAssets: changeInAssets.toString(),
                 };
             })
         );

@@ -747,7 +747,7 @@ const pools_json: PoolDef[] = [
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "wBERA-BM",
-        url_name: "Nect-USDC-Honey",
+        url_name: "wBERA-BM",
         originPlatform: FarmOriginPlatform.BeraPaw,
         secondary_platform: FarmOriginPlatform.Kodiak,
         platform_logo: "berapaw.png",

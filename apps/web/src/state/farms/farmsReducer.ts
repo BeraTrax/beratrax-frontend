@@ -183,6 +183,11 @@ export const getVaultEarnings = createAsyncThunk(
                         );
                         totalEarnings += earnings1 * price1;
                     }
+                    if (curr.changeInAssets) {
+                        const changeAssetValue = Number(toEth(BigInt(curr.changeInAssets)));
+                        const assetPrice = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
+                        totalEarnings += changeAssetValue * assetPrice;
+                    }
 
                     return acc + totalEarnings;
                 }, 0);
@@ -280,4 +285,3 @@ export const {
 } = farmsSlice.actions;
 
 export default farmsSlice.reducer;
-

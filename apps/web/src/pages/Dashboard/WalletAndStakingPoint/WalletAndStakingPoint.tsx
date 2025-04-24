@@ -470,3 +470,4 @@ export const WalletAndStakingPoint: React.FC = () => {
         </div>
     );
 };
+

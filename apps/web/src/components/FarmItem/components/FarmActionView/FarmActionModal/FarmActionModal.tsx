@@ -1,10 +1,10 @@
-import React, { memo, useCallback, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useRef, useState, useEffect } from "react";
 import closemodalicon from "src/assets/images/closemodalicon.svg";
 import exchange from "src/assets/images/exchange.svg";
 import DialPad from "src/components/Dialpad/Dialpad";
 import MobileModalContainer from "src/components/MobileModalContainer/MobileModalContainer";
 import { Select } from "src/components/Select/Select";
-import { FarmOriginPlatform, FarmTransactionType } from "src/types/enums";
+import { FarmTransactionType } from "src/types/enums";
 
 import CurrencyInput from "react-currency-input-field";
 import { useNavigate } from "react-router-dom";
@@ -32,17 +32,18 @@ import {
     WithdrawFromRewardVaultStep,
     ZapInStep,
 } from "src/state/transactions/types";
-import { noExponents, toWei } from "src/utils/common";
+import { noExponents, toEth, toWei } from "src/utils/common";
 import ConfirmFarmActionModal from "../ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
 import { ZappingDisclaimerModal } from "src/components/modals/ZappingDisclaimerModal/ZappingDisclaimerModal";
+import { getAddress } from "viem";
 
 interface FarmActionModalProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     farm: PoolDef;
 }
-type QuickDepositType = "25" | "50" | "75" | "MAX" | "";
+type QuickDepositType = "25" | "50" | "75" | "MAX" | "EARNINGS";
 
 const styles = `
 @keyframes vibrate {
@@ -92,6 +93,9 @@ const QuickDepositButtons = memo(
         extraText?: string;
     }) => {
         const isMax = text === "MAX";
+        const isEarnings = text === "EARNINGS";
+        
+        const displayText = isEarnings ? "Current Earnings" : text;
 
         return (
             <>
@@ -100,17 +104,20 @@ const QuickDepositButtons = memo(
                     type="button"
                     onClick={onClick}
                     className={`px-5 py-2 font-light rounded-2xl text-[16px] transition-all duration-200
+                        ${isEarnings ? "min-w-[160px]" : ""}
                         ${
                             isSelected
                                 ? "bg-gradientSecondary text-gradientPrimary"
                                 : isMax
                                 ? "max-button-gradient text-bgDark hover:scale-105 shadow-lg"
+                                : isEarnings
+                                ? "bg-gradientSecondary bg-opacity-20 border border-gradientSecondary"
                                 : "bg-bgDark text-textWhite"
                         }
                     `}
                 >
-                    {text}
-                    {isMax ? "" : extraText}
+                    {displayText}
+                    {!isMax && !isEarnings ? extraText : ""}
                 </button>
             </>
         );
@@ -120,7 +127,7 @@ const QuickDepositButtons = memo(
 const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     const { disableZapWarning } = useAppSelector((state) => state.account);
     const [confirmDeposit, setConfirmDeposit] = useState<boolean>();
-    const { farmDetails } = useFarmDetails();
+    const { farmDetails, vaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
     const [txId, setTxId] = useState("");
     const [showSlippageModal, setShowSlippageModal] = useState(false);
     const [showOneTimeZappingModal, setShowOneTimeZappingModal] = useState(false);
@@ -130,11 +137,34 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     const [withdrawModalShown, setWithdrawModalShown] = useState<boolean>(false);
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const { decimals, balances } = useTokens();
+    const { decimals, balances, prices } = useTokens();
     const { width } = useWindowSize();
     const farmData = farmDetails[farm.id];
     const { getClients } = useWallet();
     const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
+
+    const currentVaultEarningsUsd = useMemo(() => {
+        const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(farm.id));
+        if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+
+        return (
+            Number(
+                toEth(
+                    BigInt(currentVaultEarnings?.earnings0 || 0n),
+                    decimals[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+                )
+            ) *
+                prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
+            (currentVaultEarnings?.token1
+                ? Number(
+                      toEth(
+                          BigInt(currentVaultEarnings?.earnings1 || 0n),
+                          decimals[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                      )
+                  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                : 0)
+        );
+    }, [isVaultEarningsFirstLoad]);
     const {
         amount,
         toggleAmount,
@@ -155,6 +185,24 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
         isLoadingTransaction,
     } = useDetailInput(farm);
     const navigate = useNavigate();
+    
+    // Convert earnings to the appropriate format after showInUsd is available
+    const currentEarnings = useMemo(() => {
+        if (showInUsd) {
+            return currentVaultEarningsUsd.toString();
+        } else {
+            // Convert from USD to token amount
+            const tokenPrice = prices?.[farm.chainId]?.[farm.vault_addr] || 1;
+            return tokenPrice > 0 ? (currentVaultEarningsUsd / tokenPrice).toString() : "0";
+        }
+    }, [currentVaultEarningsUsd, showInUsd, prices, farm.chainId, farm.vault_addr]);
+
+    // Replace the quickDepositList definition with conditional options
+    const quickDepositList: QuickDepositType[] = useMemo(() => 
+        transactionType === FarmTransactionType.Deposit
+            ? ["25", "50", "75", "MAX"]
+            : ["EARNINGS", "50", "MAX"]
+    , [transactionType]);
 
     const noOrMaxInputValue = useMemo(() => {
         if (parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || parseFloat(amount) > parseFloat(maxBalance))
@@ -210,7 +258,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
         }
     };
 
-    const quickDepositList: QuickDepositType[] = ["25", "50", "75", "MAX"];
     const dispatch = useAppDispatch();
 
     const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
@@ -294,12 +341,25 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         : withdrawable!.tokenAddress
                 ]
             );
-            // const toBal = await getBalance(
-            //     currencySymbol.toLowerCase() === "honey" ? addressesByChainId[farm.chainId].honeyAddress! : zeroAddress,
-            //     currentWallet!,
-            //     { public: getPublicClient(farm.chainId) }
-            // );
-            // const toBalDiff = toWei(amount, 18) - toBal;
+            
+            const absoluteDifference = Math.abs(amount - Number(currentEarnings));
+            const relativeThreshold = Math.max(0.0001, Number(currentEarnings) * 0.1);
+
+            // Determine if this is an earnings withdrawal
+            const isEarningsWithdrawal = absoluteDifference <= relativeThreshold;
+
+            // If this is an earnings withdrawal, use the exact earnings amount for the transaction
+            if (isEarningsWithdrawal) {
+                // Reset amountInWei to use the exact earnings value
+                // This ensures blockchain transactions use the exact earnings amount
+                // instead of the potentially rounded UI value
+                const earningsInTokens = showInUsd
+                    ? currentVaultEarningsUsd / prices[farm.chainId][farm.vault_addr]
+                    : (currentVaultEarningsUsd / prices[farm.chainId][farm.vault_addr]) * withdrawable!.price;
+
+                amountInWei = toWei(earningsInTokens, decimals[farm.chainId][withdrawable!.tokenAddress]);
+            }
+            
             let steps: TransactionStep[] = [];
             // if (toBalDiff >= 0) {
             //     steps.push({
@@ -366,9 +426,10 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                 })
             );
             const id = dbTx.payload._id;
+
             setTxId(id);
+            
             await handleSubmit({ txId: id });
-            await dispatch(updatePoints(currentWallet!));
         })();
     };
 
@@ -447,30 +508,81 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         {toggleAmount ? noExponents(toggleAmount) : "0"}
                         {!showInUsd ? "" : ` ${currencySymbol}`}
                     </p>
-                    <div className="flex justify-around sm:justify-center gap-4 ">
-                        {quickDepositList.map((filter, index) => (
-                            <QuickDepositButtons
-                                key={index}
-                                text={filter}
-                                extraText={"%"}
-                                isSelected={
-                                    filter === "MAX"
-                                        ? Number(amount) === Number(maxBalance)
-                                        : Math.abs(
-                                              Number(Number(amount)) -
-                                                  Number((Number(maxBalance) * parseInt(filter)) / 100)
-                                          ) < 0.0001
-                                }
-                                onClick={() => {
-                                    if (filter === "MAX") {
-                                        setMax(true);
-                                    } else {
-                                        const percent = parseFloat(maxBalance) * (parseInt(filter) / 100);
-                                        wrapperHandleInput(percent.toString());
-                                    }
-                                }}
-                            />
-                        ))}
+                    <div className="flex flex-wrap justify-around gap-2 py-2">
+                        {transactionType === FarmTransactionType.Deposit
+                            ? // For deposits, show standard percentage buttons
+                              quickDepositList
+                                  .filter((item) => item !== "EARNINGS")
+                                  .map((text) => (
+                                      <QuickDepositButtons
+                                          key={text}
+                                          text={text}
+                                          extraText={text === "MAX" ? "" : "%"}
+                                          onClick={() => {
+                                              if (text === "MAX") {
+                                                  setMax(true);
+                                              } else {
+                                                  const percent = parseFloat(maxBalance) * (parseInt(text) / 100);
+                                                  wrapperHandleInput(percent.toString());
+                                              }
+                                          }}
+                                          isSelected={
+                                              text === "MAX"
+                                                  ? Number(amount) === Number(maxBalance)
+                                                  : Math.abs(
+                                                        Number(amount) -
+                                                            Number((Number(maxBalance) * parseInt(text)) / 100)
+                                                    ) < 0.0001
+                                          }
+                                      />
+                                  ))
+                            : // For withdrawals, show EARNINGS, 50%, MAX
+                              [
+                                  {
+                                      text: "EARNINGS",
+                                      isSelected: (() => {
+                                          const amt = Number(amount);
+                                          const earnings = Number(currentEarnings);
+                                          const diff = Math.abs(amt - earnings);
+                                          // Use same threshold as in handleConfirm
+                                          const threshold = Math.max(earnings * 0.1, 0.0001);
+                                          return diff < threshold || (earnings < 0.001 && amt < 0.002 && amt > 0);
+                                      })(),
+                                  },
+                                  {
+                                      text: "50",
+                                      isSelected: Math.abs(Number(amount) - Number(maxBalance) * 0.5) < 0.0001,
+                                  },
+                                  {
+                                      text: "MAX",
+                                      isSelected: Math.abs(Number(amount) - Number(maxBalance)) < 0.0001,
+                                  },
+                              ].map(({ text, isSelected }) => (
+                                  <QuickDepositButtons
+                                      key={text}
+                                      text={text}
+                                      extraText={text === "EARNINGS" || text === "MAX" ? "" : "%"}
+                                      onClick={() => {
+                                          if (text === "MAX") {
+                                              setMax(true);
+                                          } else if (text === "EARNINGS") {
+                                              // For earnings, use the correct value based on display mode
+                                              // This ensures we're using the exact value from the state
+                                              if (showInUsd) {
+                                                  wrapperHandleInput(currentVaultEarningsUsd.toString());
+                                              } else {
+                                                  const earningsInTokens =
+                                                      currentVaultEarningsUsd / prices[farm.chainId][farm.vault_addr];
+                                                  wrapperHandleInput(earningsInTokens.toString());
+                                              }
+                                          } else {
+                                              const percent = parseFloat(maxBalance) * (parseInt(text) / 100);
+                                              wrapperHandleInput(percent.toString());
+                                          }
+                                      }}
+                                      isSelected={isSelected}
+                                  />
+                              ))}
                     </div>
                     <DialPad
                         inputValue={amount}
@@ -540,7 +652,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         }
                     }}
                     depositInfo={{
-                        amount,
+                        amount:
+                            transactionType === FarmTransactionType.Withdraw &&
+                            Math.abs(Number(amount) - Number(currentEarnings)) < 0.0001
+                                ? showInUsd
+                                    ? currentVaultEarningsUsd.toString()
+                                    : (currentVaultEarningsUsd / prices[farm.chainId][farm.vault_addr]).toString()
+                                : amount,
                         showInUsd,
                         token: currencySymbol,
                         transactionType,

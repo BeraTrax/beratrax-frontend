@@ -94,7 +94,10 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
                     <p className="font-league-spartan font-light text-base leading-5 text-textWhite">{name}</p>
                     {value && (
                         <p className={`${styles.tokenValue} text-textSecondary font-light text-base leading-5`}>
-                            {formatCurrency(value)} {tokenName}
+                            {/* Show more decimal places for small values (like earnings withdrawals) */}
+                            {value < 0.01 
+                                ? formatCurrency(value, 8, false) 
+                                : formatCurrency(value)} {tokenName}
                         </p>
                     )}
                 </div>

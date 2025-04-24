@@ -9,39 +9,115 @@ import { Address, getAddress } from "viem";
 
 // Reusable component for token earnings
 const TokenEarning = ({
-    earnings,
+    currentVaultEarnings,
     token,
     chainId,
     prices,
+    farm,
+    changeInAssets,
 }: {
-    earnings: string | number | undefined;
+    currentVaultEarnings: any;
     token: string | undefined;
     chainId: number;
     prices: Record<number, Record<string, number>>;
+    farm: PoolDef;
+    changeInAssets: string | number | undefined;
 }) => {
-    if (!earnings || !token) return null;
-
+    if (!currentVaultEarnings || !token) return null;
     const { decimals } = useTokens();
+    const currentVaultEarningsUsd = useMemo(() => {
+        return (
+            Number(
+                toEth(
+                    BigInt(currentVaultEarnings?.earnings0 || 0n),
+                    decimals[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+                )
+            ) *
+                prices[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
+            (currentVaultEarnings?.token1
+                ? Number(
+                      toEth(
+                          BigInt(currentVaultEarnings?.earnings1 || 0n),
+                          decimals[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                      )
+                  ) * prices[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                : 0)
+        );
+    }, [currentVaultEarnings]);
+
+    const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets?.toString();
+    const changeInAssetsValue = Number(
+        toEth(BigInt(changeInAssetsStr || 0), decimals[farm.chainId][farm.lp_address as Address])
+    );
+    const changeInAssetsValueUsd = changeInAssetsValue * (prices[farm.chainId][farm.lp_address] || 0);
+    const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
+
+    // Convert any zero earnings to "0" string to ensure proper display
+    const earningsStr = currentVaultEarningsUsd.toString();
+
     const tokenAddress = token ? getAddress(token) : "";
     const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
-    const earningsValue = Number(toEth(BigInt(earnings.toString()), decimals[chainId][tokenAddress as Address]));
-    const earningsValueUsd = earningsValue * (prices[chainId][tokenAddress] || 0);
 
     return (
         <div className="flex-1">
             <div className="flex items-center gap-x-3">
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                        ${customCommify(earningsValueUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                        $
+                        {customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                     </h1>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
                     <span className="text-green-500 text-md">↑</span>
                 </div>
             </div>
-            <div className="flex items-center gap-x-2 mt-2">
+            {/* <div className="flex items-center gap-x-2 mt-2">
                 <p className="text-green-400/80 text-[16px] font-light">
                     {customCommify(earningsValue, { minimumFractionDigits: 2, maximumFractionDigits: 5 })} {tokenName}
+                </p>
+            </div> */}
+        </div>
+    );
+};
+
+const LpAssetChange = ({
+    changeInAssets,
+    farm,
+    isLoading,
+}: {
+    changeInAssets: string | number | undefined;
+    farm: PoolDef;
+    isLoading?: boolean;
+}) => {
+    if (isLoading) {
+        return <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />;
+    }
+
+    if (!changeInAssets) return null;
+
+    const { decimals, prices } = useTokens();
+    const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets.toString();
+    const changeInAssetsValue = Number(
+        toEth(BigInt(changeInAssetsStr), decimals[farm.chainId][farm.lp_address as Address])
+    );
+    const changeInAssetsValueUsd = changeInAssetsValue * (prices[farm.chainId][farm.lp_address] || 0);
+
+    return (
+        <div className="flex-1">
+            <div className="flex items-center gap-x-3">
+                <div className="flex flex-col">
+                    <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+                        ${customCommify(changeInAssetsValueUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                    </h1>
+                </div>
+                <div className="h-6 w-6 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <span className="text-green-500 text-md">↗</span>
+                </div>
+            </div>
+            <div className="flex items-center gap-x-2 mt-2">
+                <p className="text-green-500/80 text-[16px] font-light">
+                    {customCommify(changeInAssetsValue, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}{" "}
+                    {farm.name}
                 </p>
             </div>
         </div>
@@ -57,6 +133,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
         [balances, prices]
     );
+
     const farmEarnings = useMemo(() => {
         if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
         return (
@@ -65,6 +142,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                 token0: "",
                 earnings1: 0,
                 token1: "",
+                changeInAssets: 0,
             }
         );
     }, [vaultEarnings, farm.id]);
@@ -82,19 +160,20 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                         <>
                             <div className="flex flex-row gap-4">
                                 <TokenEarning
-                                    earnings={farmEarnings.earnings0}
+                                    currentVaultEarnings={farmEarnings}
                                     token={farmEarnings.token0}
                                     chainId={farm.chainId}
                                     prices={prices}
+                                    farm={farm}
+                                    changeInAssets={farmEarnings.changeInAssets}
                                 />
-                                {farmEarnings?.earnings1 && (
-                                    <TokenEarning
-                                        earnings={farmEarnings.earnings1}
-                                        token={farmEarnings.token1}
-                                        chainId={farm.chainId}
-                                        prices={prices}
+                                {/* {farm.isAutoCompounded && (
+                                    <LpAssetChange
+                                        changeInAssets={farmEarnings.changeInAssets}
+                                        farm={farm}
+                                        isLoading={isVaultEarningsFirstLoad}
                                     />
-                                )}
+                                )} */}
                             </div>
                         </>
                     )}

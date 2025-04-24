@@ -342,25 +342,12 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                 ]
             );
             
-            // Add detailed logging for debugging earnings reset
-            console.log('=== EARNINGS WITHDRAWAL DEBUG ===');
-            console.log('Current amount:', amount);
-            console.log('Current earnings:', currentEarnings);
-            console.log('Original UI amount value:', amount);
-            console.log('Farm ID:', farm.id);
-            console.log('Transaction type:', transactionType);
-            
             const absoluteDifference = Math.abs(amount - Number(currentEarnings));
             const relativeThreshold = Math.max(0.0001, Number(currentEarnings) * 0.1);
 
             // Determine if this is an earnings withdrawal
             const isEarningsWithdrawal = absoluteDifference <= relativeThreshold;
 
-            console.log('Is earnings withdrawal?', isEarningsWithdrawal);
-            console.log('Absolute difference:', absoluteDifference);
-            console.log('Relative threshold (10%):', relativeThreshold);
-            console.log('=== END DEBUG INFO ===');
-            
             // If this is an earnings withdrawal, use the exact earnings amount for the transaction
             if (isEarningsWithdrawal) {
                 // Reset amountInWei to use the exact earnings value

@@ -21,10 +21,13 @@ const TokenEarning = ({
 }) => {
     if (!earnings || !token) return null;
 
+    // Convert any zero earnings to "0" string to ensure proper display
+    const earningsStr = earnings === 0 || earnings === "0" ? "0" : earnings.toString();
+
     const { decimals } = useTokens();
     const tokenAddress = token ? getAddress(token) : "";
     const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
-    const earningsValue = Number(toEth(BigInt(earnings.toString()), decimals[chainId][tokenAddress as Address]));
+    const earningsValue = Number(toEth(BigInt(earningsStr), decimals[chainId][tokenAddress as Address]));
     const earningsValueUsd = earningsValue * (prices[chainId][tokenAddress] || 0);
 
     return (
@@ -57,6 +60,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
         [balances, prices]
     );
+
     const farmEarnings = useMemo(() => {
         if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
         return (

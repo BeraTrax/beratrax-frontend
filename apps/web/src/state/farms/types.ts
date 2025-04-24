@@ -65,3 +65,4 @@ export interface VaultEarningsProp {
     prices: Prices;
     decimals: Decimals;
 }
+

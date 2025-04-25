@@ -72,7 +72,7 @@ const TokenEarning = ({
                     </h1>
                     {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                         <p className="text-textSecondary text-sm">
-                            Since{" "}
+                            In{" "}
                             {Math.floor(
                                 (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
                             )}{" "}

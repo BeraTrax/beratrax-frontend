@@ -317,7 +317,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                             <p className="text-green-500">+${formatCurrency(totalEarningsUsd, 5)}</p>
                             {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                                 <p className="text-textSecondary text-sm">
-                                    Since{" "}
+                                    In{" "}
                                     {Math.floor(
                                         (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
                                     )}{" "}

@@ -94,7 +94,7 @@ const QuickDepositButtons = memo(
     }) => {
         const isMax = text === "MAX";
         const isEarnings = text === "EARNINGS";
-        
+
         const displayText = isEarnings ? "Current Earnings" : text;
 
         return (
@@ -162,6 +162,14 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                           decimals[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
                       )
                   ) * prices[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+                : 0) +
+            (currentVaultEarnings?.changeInAssets
+                ? Number(
+                      toEth(
+                          BigInt(currentVaultEarnings?.changeInAssets || 0n),
+                          decimals[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+                      )
+                  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
                 : 0)
         );
     }, [isVaultEarningsFirstLoad]);
@@ -185,7 +193,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
         isLoadingTransaction,
     } = useDetailInput(farm);
     const navigate = useNavigate();
-    
+
     // Convert earnings to the appropriate format after showInUsd is available
     const currentEarnings = useMemo(() => {
         if (showInUsd) {
@@ -198,11 +206,10 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     }, [currentVaultEarningsUsd, showInUsd, prices, farm.chainId, farm.vault_addr]);
 
     // Replace the quickDepositList definition with conditional options
-    const quickDepositList: QuickDepositType[] = useMemo(() => 
-        transactionType === FarmTransactionType.Deposit
-            ? ["25", "50", "75", "MAX"]
-            : ["EARNINGS", "50", "MAX"]
-    , [transactionType]);
+    const quickDepositList: QuickDepositType[] = useMemo(
+        () => (transactionType === FarmTransactionType.Deposit ? ["25", "50", "75", "MAX"] : ["EARNINGS", "50", "MAX"]),
+        [transactionType]
+    );
 
     const noOrMaxInputValue = useMemo(() => {
         if (parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || parseFloat(amount) > parseFloat(maxBalance))
@@ -341,7 +348,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
                         : withdrawable!.tokenAddress
                 ]
             );
-            
+
             const absoluteDifference = Math.abs(amount - Number(currentEarnings));
             const relativeThreshold = Math.max(0.0001, Number(currentEarnings) * 0.1);
 
@@ -359,7 +366,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
                 amountInWei = toWei(earningsInTokens, decimals[farm.chainId][withdrawable!.tokenAddress]);
             }
-            
+
             let steps: TransactionStep[] = [];
             // if (toBalDiff >= 0) {
             //     steps.push({
@@ -428,7 +435,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             const id = dbTx.payload._id;
 
             setTxId(id);
-            
+
             await handleSubmit({ txId: id });
         })();
     };

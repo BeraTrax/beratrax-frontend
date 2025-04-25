@@ -10,7 +10,7 @@ import { VaultMigrator } from "src/components/VaultMigrator/VaultMigrator";
 import { RoutesPaths } from "src/config/constants";
 import useTrax from "src/hooks/useTrax";
 import useWallet from "src/hooks/useWallet";
-import { useAppSelector } from "src/state";
+import state, { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { Vault } from "src/types";
@@ -41,6 +41,13 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
     const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
     const { balances, prices, decimals, reloadBalances } = useTokens();
+    const lastTransaction = useAppSelector((state) => {
+        const filteredTransactions = state.transactions.transactions.filter(
+            (transaction) => transaction.farmId === vault.id
+        );
+        return filteredTransactions.length > 0 ? filteredTransactions[0] : null;
+    });
+
     const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
     const currentVaultEarningsUsd = useMemo(() => {
         if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
@@ -302,12 +309,25 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
             <div className={`grid ${estimateTrax && Number(estimateTrax) > 0 ? "grid-cols-3" : "grid-cols-2"}`}>
                 {/* Your Stake */}
                 <div className="text-textSecondary border-r border-bgPrimary">
-                    <div className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
-                        <p>Earnings</p>
+                    <div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+                        <p className="flex items-center gap-2">Earnings</p>
                     </div>
                     {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
                         <div className="text-textWhite text-lg font-league-spartan leading-5">
                             <p className="text-green-500">+${formatCurrency(totalEarningsUsd, 5)}</p>
+                            {lastTransaction?.date && typeof lastTransaction.date === "string" && (
+                                <p className="text-textSecondary text-sm">
+                                    Earnings since{" "}
+                                    {Math.floor(
+                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                                    )}{" "}
+                                    {Math.floor(
+                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                                    ) === 1
+                                        ? "day"
+                                        : "days"}
+                                </p>
+                            )}
                             {/* <div style={{ minWidth: 60 }}>
                             {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
                             {!isLoadingOldData &&
@@ -432,3 +452,4 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 };
 
 export default VaultItem;
+

@@ -165,7 +165,7 @@ export const getVaultEarnings = createAsyncThunk(
 
             const earnings = await getEarningsForPlatforms(currentWallet);
             const earningsUsd = earnings
-                .filter((earning) => Number(earning.earnings0) > 0)
+                .filter((earning) => Number(earning.earnings0) > 0 || Number(earning.changeInAssets) > 0)
                 .reduce((acc, curr) => {
                     const price0 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
                     const earnings0 = Number(
@@ -285,3 +285,4 @@ export const {
 } = farmsSlice.actions;
 
 export default farmsSlice.reducer;
+

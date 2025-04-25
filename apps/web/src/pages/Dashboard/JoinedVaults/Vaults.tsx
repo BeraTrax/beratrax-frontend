@@ -13,6 +13,7 @@ import useWallet from "src/hooks/useWallet";
 import { useAppDispatch } from "src/state";
 import { updatePoints } from "src/state/account/accountReducer";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
+import { getVaultEarnings } from "src/state/farms/farmsReducer";
 import useTokens from "src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { Address, getContract } from "viem";
@@ -20,7 +21,7 @@ import VaultItem from "./VaultItem";
 
 const Vaults: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { reloadFarmData } = useFarmDetails();
+    const { reloadFarmData, reloadVaultEarnings } = useFarmDetails();
     const { vaults: unsortedVaults, isLoading } = useVaults();
     const vaults = useMemo(() => {
         return [...unsortedVaults].sort((a, b) => {
@@ -31,7 +32,7 @@ const Vaults: React.FC = () => {
     }, [unsortedVaults]);
     const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable), [vaults]);
     const upgradableVaults = useMemo(() => vaults.filter((vault) => vault.isUpgradable), [vaults]);
-    const { balances } = useTokens();
+    const { balances, prices, decimals } = useTokens();
     const { isConnecting, currentWallet, getPublicClient } = useWallet();
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [rewardsVaultsData, setRewardsVaultsData] = useState<PoolDef[]>([]);
@@ -39,6 +40,21 @@ const Vaults: React.FC = () => {
     const [userBTXStake, setUserBTXStake] = useState(0n);
 
     const publicClient = getPublicClient(CHAIN_ID.BERACHAIN);
+
+    // Add a useEffect to periodically refresh vault earnings data
+    useEffect(() => {
+        if (!currentWallet) return;
+        
+        // Initial fetch
+        dispatch(getVaultEarnings({ currentWallet, prices, decimals }));
+        
+        // Set up regular refresh interval (every 60 seconds)
+        const intervalId = setInterval(() => {
+            dispatch(getVaultEarnings({ currentWallet, prices, decimals }));
+        }, 60000);
+        
+        return () => clearInterval(intervalId);
+    }, [currentWallet, dispatch, prices, decimals, rewardsUpdateTrigger]);
 
     useEffect(() => {
         // Move the function definition outside of useEffect
@@ -81,6 +97,8 @@ const Vaults: React.FC = () => {
         try {
             await dispatch(updatePoints(currentWallet!));
             await reloadFarmData();
+            await reloadVaultEarnings(); // Add this to refresh vault earnings
+            setRewardsUpdateTrigger(prev => prev + 1); // Trigger rewards data update
         } finally {
             setIsRefreshing(false);
         }

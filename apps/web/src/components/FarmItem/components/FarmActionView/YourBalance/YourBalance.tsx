@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PoolDef, tokenNamesAndImages } from "src/config/constants/pools_json";
 import useTokens from "src/state/tokens/useTokens";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
@@ -6,6 +6,8 @@ import useWallet from "src/hooks/useWallet";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { Address, getAddress } from "viem";
+import { useAppDispatch } from "src/state";
+import { getVaultEarnings } from "src/state/farms/farmsReducer";
 
 // Reusable component for token earnings
 const TokenEarning = ({
@@ -13,11 +15,13 @@ const TokenEarning = ({
     token,
     chainId,
     prices,
+    isFresh,
 }: {
     earnings: string | number | undefined;
     token: string | undefined;
     chainId: number;
     prices: Record<number, Record<string, number>>;
+    isFresh: boolean;
 }) => {
     if (!earnings || !token) return null;
 
@@ -50,8 +54,29 @@ const TokenEarning = ({
 
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
     const { currentWallet, isConnecting } = useWallet();
-    const { balances, isBalancesLoading: isLoading, prices } = useTokens();
+    const { balances, isBalancesLoading: isLoading, prices, decimals } = useTokens();
     const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
+    const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
+    const [earningsUpdating, setEarningsUpdating] = useState(false);
+    const dispatch = useAppDispatch();
+    
+    // Track when earnings have been refreshed
+    useEffect(() => {
+        if (isLoadingVaultEarnings) {
+            setEarningsUpdating(true);
+        } else if (earningsUpdating) {
+            setRefreshTimestamp(Date.now());
+            setEarningsUpdating(false);
+        }
+    }, [isLoadingVaultEarnings]);
+    
+    // Force refresh vault earnings when component mounts
+    useEffect(() => {
+        if (currentWallet) {
+            dispatch(getVaultEarnings({ currentWallet, prices, decimals }));
+        }
+    }, [currentWallet, dispatch]);
+    
     const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
     const stakedTokenValueFormatted = useMemo(
         () => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd / prices[farm.chainId][farm.lp_address]),
@@ -86,6 +111,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                                     token={farmEarnings.token0}
                                     chainId={farm.chainId}
                                     prices={prices}
+                                    isFresh={refreshTimestamp > 0}
                                 />
                                 {farmEarnings?.earnings1 && (
                                     <TokenEarning
@@ -93,6 +119,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                                         token={farmEarnings.token1}
                                         chainId={farm.chainId}
                                         prices={prices}
+                                        isFresh={refreshTimestamp > 0}
                                     />
                                 )}
                             </div>

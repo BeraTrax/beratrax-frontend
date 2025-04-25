@@ -267,6 +267,51 @@ const farmsSlice = createSlice({
             state.isLoadingEarnings = false;
             state.error = action.payload as string;
         });
+
+        // Handle the reset vault earnings action
+        builder.addCase(resetVaultEarnings.pending, (state) => {
+            // No state changes needed here
+        });
+        builder.addCase(resetVaultEarnings.fulfilled, (state, action) => {
+            // Find and update the specific farm earnings
+            if (state.vaultEarnings.length > 0) {
+                state.vaultEarnings = state.vaultEarnings.map(earning => {
+                    if (earning.tokenId === action.payload.farmId) {
+                        // Reset the earnings for this farm
+                        return {
+                            ...earning,
+                            earnings0: "0",
+                            earnings1: earning.earnings1 ? "0" : undefined
+                        };
+                    }
+                    return earning;
+                });
+                
+                // Recalculate total earnings USD
+                if (state.earningsUsd !== null) {
+                    // Simply recalculate based on the updated earnings
+                    // This ensures the earnings for the reset farm are not included
+                    const remainingEarnings = state.vaultEarnings.filter(earning => 
+                        earning.tokenId !== action.payload.farmId && Number(earning.earnings0) > 0
+                    );
+                    
+                    if (remainingEarnings.length === 0) {
+                        state.earningsUsd = 0;
+                    } else {
+                        // We'll update the earnings in the next getVaultEarnings call
+                        // For now, we'll just use a rough calculation to update the display
+                        const updatedEarnings = state.vaultEarnings.find(e => e.tokenId === action.payload.farmId);
+                        if (updatedEarnings) {
+                            // Keep the earnings for display until the next refresh
+                            state.earningsUsd = Math.max(0, state.earningsUsd);
+                        }
+                    }
+                }
+            }
+        });
+        builder.addCase(resetVaultEarnings.rejected, (state, action) => {
+            state.error = action.payload as string;
+        });
     },
 });
 
@@ -278,6 +323,25 @@ export const {
     setBestFunctionNameForArberaHoney,
     setSimulatedSlippage,
 } = farmsSlice.actions;
+
+// Add a new thunk to reset earnings for a specific farm
+export const resetVaultEarnings = createAsyncThunk(
+    "farms/resetVaultEarnings",
+    async (
+        { farmId, currentWallet }: { farmId: number; currentWallet: string },
+        thunkApi
+    ) => {
+        try {
+            // Update the state in the API to clear earnings
+            // This is where you would call an API endpoint to record the withdrawal of earnings
+            // For now, we'll just return the farm ID to identify the earnings to reset
+            return { farmId: farmId.toString(), currentWallet };
+        } catch (error) {
+            console.error(error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to reset vault earnings");
+        }
+    }
+);
 
 export default farmsSlice.reducer;
 

@@ -6,6 +6,7 @@ import useWallet from "src/hooks/useWallet";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { Address, getAddress } from "viem";
+import state from "src/state";
 
 // Reusable component for token earnings
 const TokenEarning = ({
@@ -25,6 +26,10 @@ const TokenEarning = ({
 }) => {
     if (!currentVaultEarnings || !token) return null;
     const { decimals } = useTokens();
+    const lastTransaction = state
+        .getState()
+        .transactions.transactions.find((transaction) => transaction.farmId === farm.id);
+
     const currentVaultEarningsUsd = useMemo(() => {
         return (
             Number(
@@ -63,9 +68,21 @@ const TokenEarning = ({
             <div className="flex items-center gap-x-3">
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                        $
-                        {customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                        ${customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                     </h1>
+                    {lastTransaction?.date && typeof lastTransaction.date === "string" && (
+                        <p className="text-textSecondary text-sm">
+                            Since{" "}
+                            {Math.floor(
+                                (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                            )}{" "}
+                            {Math.floor(
+                                (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                            ) === 1
+                                ? "day"
+                                : "days"}
+                        </p>
+                    )}
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
                     <span className="text-green-500 text-md">↑</span>

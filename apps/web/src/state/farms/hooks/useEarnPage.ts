@@ -6,6 +6,13 @@ import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
 
+// Function to check if a vault is new (created within the last 7 days)
+const isVaultNew = (createdAt: number) => {
+    const now = Date.now() / 1000; // Convert to seconds
+    const sevenDaysInSeconds = 7 * 24 * 60 * 60;
+    return now - createdAt < sevenDaysInSeconds;
+};
+
 const useEarnPage = () => {
     const { externalChainId } = useWallet();
     const { farms } = useFarms();
@@ -23,15 +30,20 @@ const useEarnPage = () => {
                 apy: apys[ele.id]?.apy,
             };
         });
+
+        // Apply platform filter
         if (selectedPlatform) {
             data = data.filter(
                 (item) => item.originPlatform === selectedPlatform || item.secondary_platform === selectedPlatform
             );
         }
-        data = data.filter((item) => !item.isUpcoming);
+
+        // Filter out upcoming and deprecated farms
+        data = data.filter((item) => !item.isUpcoming && !item.isDeprecated);
+
         if (!isFetched) return data;
 
-        // First sort by APY
+        // First sort by the selected criteria
         switch (sortSelected) {
             case FarmSortOptions.APY_High_to_Low:
                 data = data.sort((a, b) => b.apy - a.apy);
@@ -60,6 +72,15 @@ const useEarnPage = () => {
                     if (aWithdrawableAmount !== 0 && bWithdrawableAmount === 0) return -1;
                     return aWithdrawableAmount - bWithdrawableAmount;
                 });
+                break;
+            case FarmSortOptions.New:
+                // First filter to only show new vaults
+                data = data.filter((item) => {
+                    const time = typeof item.createdAt === "string" ? parseInt(item.createdAt) : item.createdAt;
+                    return time && isVaultNew(time);
+                });
+                // Then sort by APY
+                data = data.sort((a, b) => b.apy - a.apy);
                 break;
             default:
                 data = data.sort((a, b) => {
@@ -93,11 +114,21 @@ const useEarnPage = () => {
                 break;
         }
 
-        // Then group by platform while maintaining the APY order
+        // Then group by platform while maintaining the order
         data = data.sort((a, b) => {
             if (a.originPlatform !== b.originPlatform) {
                 return a.originPlatform.localeCompare(b.originPlatform);
             }
+            return 0;
+        });
+
+        // Then apply priority order as a secondary sort
+        data = data.sort((a, b) => {
+            if (a.priorityOrder !== undefined && b.priorityOrder !== undefined) {
+                return b.priorityOrder - a.priorityOrder;
+            }
+            if (a.priorityOrder !== undefined) return -1;
+            if (b.priorityOrder !== undefined) return 1;
             return 0;
         });
 

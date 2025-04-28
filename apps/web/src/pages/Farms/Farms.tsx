@@ -7,19 +7,12 @@ import BackButton from "src/components/BackButton/BackButton";
 import FarmRow from "src/components/FarmItem/FarmRow";
 import { IS_LEGACY } from "src/config/constants";
 import useEarnPage from "src/state/farms/hooks/useEarnPage";
-
-// Function to check if a vault is new (created within the last 7 days)
-const isVaultNew = (createdAt: number) => {
-    const now = Date.now() / 1000; // Convert to seconds
-    const sevenDaysInSeconds = 7 * 24 * 60 * 60;
-    return now - createdAt < sevenDaysInSeconds;
-};
+import { FarmSortOptions } from "src/types/enums";
 
 function Farms() {
     const navigate = useNavigate();
     const [openedFarm, setOpenedFarm] = useState<number | undefined>();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showNewVaults, setShowNewVaults] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } =
         useEarnPage();
@@ -65,8 +58,6 @@ function Farms() {
                 {/* Header with Filter */}
                 <div className="flex justify-between items-center mt-4">
                     <h5 className="text-3xl font-bold uppercase">Earn</h5>
-
-
                 </div>
 
                 {farms.length === 0 ? (
@@ -78,16 +69,25 @@ function Farms() {
                         <h6 className="mb-9 text-lg font-light">Available Protocols</h6>
                         {/* Filters */}
                         <div className="flex items-center gap-4">
-                            {/* New Vaults Filter */}
+                            {/* New Vaults Sort Option */}
                             <button
-                                onClick={() => setShowNewVaults(!showNewVaults)}
-                                className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${showNewVaults
+                                onClick={() =>
+                                    setSortSelected(
+                                        sortSelected === FarmSortOptions.New
+                                            ? FarmSortOptions.APY_High_to_Low
+                                            : FarmSortOptions.New
+                                    )
+                                }
+                                className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
+                                    sortSelected === FarmSortOptions.New
                                         ? "bg-buttonPrimary border-buttonPrimary text-textWhite font-medium shadow-lg shadow-buttonPrimary/20"
                                         : "bg-transparent border-borderDark text-textSecondary hover:bg-bgPrimary/10"
-                                    }`}
+                                }`}
                             >
                                 <svg
-                                    className={`w-4 h-4 ${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}
+                                    className={`w-4 h-4 ${
+                                        sortSelected === FarmSortOptions.New ? "text-textWhite" : "text-textSecondary"
+                                    }`}
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -99,7 +99,13 @@ function Farms() {
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                <span className={`${showNewVaults ? "text-textWhite" : "text-textSecondary"}`}>New</span>
+                                <span
+                                    className={`${
+                                        sortSelected === FarmSortOptions.New ? "text-textWhite" : "text-textSecondary"
+                                    }`}
+                                >
+                                    New
+                                </span>
                             </button>
 
                             {/* Platform Filter */}
@@ -173,37 +179,14 @@ function Farms() {
 
                 {/* Vaults */}
                 <div className="flex flex-col gap-2">
-                    {sortedFarms
-                        ? sortedFarms
-                            .filter(
-                                (farm) =>
-                                    !farm.isUpcoming &&
-                                    !farm.isDeprecated &&
-                                    (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
-                            )
-                            .map((farm, index) => (
-                                <FarmRow
-                                    key={index + "nowallet"}
-                                    farm={farm}
-                                    openedFarm={openedFarm}
-                                    setOpenedFarm={setOpenedFarm}
-                                />
-                            ))
-                        : farms
-                            .filter(
-                                (farm) =>
-                                    !farm.isUpcoming &&
-                                    !farm.isDeprecated &&
-                                    (!showNewVaults || (farm.createdAt && isVaultNew(farm.createdAt)))
-                            )
-                            .map((farm, index) => (
-                                <FarmRow
-                                    key={index + "nowallet"}
-                                    farm={farm}
-                                    openedFarm={openedFarm}
-                                    setOpenedFarm={setOpenedFarm}
-                                />
-                            ))}
+                    {sortedFarms.map((farm, index) => (
+                        <FarmRow
+                            key={index + "nowallet"}
+                            farm={farm}
+                            openedFarm={openedFarm}
+                            setOpenedFarm={setOpenedFarm}
+                        />
+                    ))}
                 </div>
                 {/* Bottom padding */}
                 {(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) &&

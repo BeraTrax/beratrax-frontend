@@ -58,6 +58,7 @@ export interface PoolDef {
     secondary_platform?: string;
     secondary_platform_logo?: string;
     createdAt?: number;
+    priorityOrder?: number; // New field for custom sorting priority
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -692,6 +693,7 @@ const pools_json: PoolDef[] = [
     },
     {
         id: 42,
+        priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "iBERA",

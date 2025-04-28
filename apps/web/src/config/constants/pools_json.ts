@@ -58,6 +58,7 @@ export interface PoolDef {
     secondary_platform?: string;
     secondary_platform_logo?: string;
     createdAt?: number;
+    priorityOrder?: number; // New field for custom sorting priority
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -411,8 +412,8 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
-        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1", // LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1",
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0xfCAcd22Ce85DAd636d79234c533A49E442f38A60", // vault address
         createdAt: 1745348610,
@@ -516,7 +517,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x3879451f4f69F0c2d37CaD45319cFf2E7d29C596", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
         createdAt: 1745348610,
@@ -620,7 +621,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xaD445256Ff81171043A5e7Cd8831e4371B000176", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0x491da46162A4A5F52cc30f6E63B352885bd7B419", // Vault address
         createdAt: 1745348610,
@@ -692,6 +693,7 @@ const pools_json: PoolDef[] = [
     },
     {
         id: 42,
+        priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
         token_type: "LP Token",
         name: "iBERA",

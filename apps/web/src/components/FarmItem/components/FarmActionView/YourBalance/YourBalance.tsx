@@ -165,6 +165,8 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
     }, [vaultEarnings, farm.id]);
 
     const renderEarningsSection = () => {
+        if (farm.id === 42) return null;
+
         return (
             <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">

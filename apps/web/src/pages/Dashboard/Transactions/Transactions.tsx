@@ -156,9 +156,20 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                     {/* Vault Name and Retry Button */}
                     <div className="flex-grow flex flex-col">
                         <div className="flex items-center gap-1.5">
-                            <p className={`font-league-spartan font-medium text-lg leading-6 text-textWhite`}>
+                            <p
+                                className={`font-league-spartan font-medium text-lg leading-6 ${
+                                    type === "deposit" ? "text-green-400" : "text-red-400"
+                                }`}
+                            >
                                 {farm.name}
                             </p>
+                            <span
+                                className={`text-xs px-1.5 py-0.5 rounded ${
+                                    type === "deposit" ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"
+                                }`}
+                            >
+                                {type === "deposit" ? "ZAP IN" : "ZAP OUT"}
+                            </span>
                             {tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
                                 <button
                                     className="border border-red-500 rounded-md 
@@ -177,14 +188,15 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                         className="text-xl text-textSecondary cursor-help"
                                         onClick={(e) => e.stopPropagation()}
                                     />
-                                    <div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                    <div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                         <div className="flex flex-col justify-end gap-2">
-                                            <div className="flex justify-between items-start">
-                                                <span className="text-textSecondary">
-                                                    {type === "deposit" ? "Zap In Amount:" : "Vault Shares:"}
+                                            {/* Main Amount - Zap In/Out */}
+                                            <div className="flex justify-between items-start bg-[#2A2A2A] p-2 rounded-lg">
+                                                <span className="text-textSecondary text-xs">
+                                                    {type === "deposit" ? "Zap In Amount:" : "Zap Out Amount:"}
                                                 </span>
                                                 <div className="flex flex-col items-end">
-                                                    <span className="text-base">
+                                                    <span className="text-sm font-bold text-buttonPrimaryLight">
                                                         $ {""}
                                                         {formatCurrency(
                                                             Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
@@ -195,29 +207,39 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                                         )}
                                                     </span>
                                                     <span className="text-xs text-textSecondary">
-                                                        {formatCurrency(formatUnits(BigInt(amountInWei || "0"), 18))}{" "}
-                                                        {type === "deposit"
-                                                            ? tokenNamesAndImages[token].name
-                                                            : "BTX-" + farm.name}
+                                                        {formatCurrency(tokenAmount)} {tokenNamesAndImages[token].name}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            {fee !== undefined && (
+                                            {/* Zap Out Amount Received */}
+                                            {type === "withdraw" && (
                                                 <div className="flex justify-between items-start">
-                                                    <span className="text-textSecondary">BeraTrax Fee:</span>
+                                                    <span className="text-textSecondary text-xs">Net Received:</span>
                                                     <div className="flex flex-col items-end">
-                                                        <span className="text-base">
-                                                            $
+                                                        <span className="text-sm text-textWhite">
+                                                            ${" "}
                                                             {formatCurrency(
                                                                 Number(
-                                                                    toEth(BigInt(fee), decimals[farm.chainId][token])
-                                                                ) * (tokenPrice || prices[farm.chainId][token])
+                                                                    formatUnits(
+                                                                        BigInt(netAmount || amountInWei),
+                                                                        decimals[farm.chainId][token]
+                                                                    )
+                                                                ) *
+                                                                    (showExtraInfo
+                                                                        ? tokenPrice || prices[farm.chainId][token]
+                                                                        : vaultPrice ||
+                                                                          prices[farm.chainId][farm.vault_addr])
                                                             )}
                                                         </span>
                                                         <span className="text-xs text-textSecondary">
                                                             {formatCurrency(
-                                                                toEth(BigInt(fee), decimals[farm.chainId][token])
+                                                                Number(
+                                                                    formatUnits(
+                                                                        BigInt(netAmount || amountInWei),
+                                                                        decimals[farm.chainId][token]
+                                                                    )
+                                                                )
                                                             )}{" "}
                                                             {tokenNamesAndImages[token].name}
                                                         </span>
@@ -225,65 +247,12 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                                 </div>
                                             )}
 
-                                            {actualSlippage !== undefined && (
-                                                <div className="flex justify-between items-start">
-                                                    <span className="text-textSecondary">Slippage:</span>
-                                                    <div className="flex flex-col items-end">
-                                                        <span className="text-base">
-                                                            $ {formatCurrency(actualSlippage)}
-                                                        </span>
-                                                        <span className="text-xs text-textSecondary">
-                                                            {formatCurrency(
-                                                                actualSlippage /
-                                                                    (tokenPrice || prices[farm.chainId][token])
-                                                            )}{" "}
-                                                            {tokenNamesAndImages[tx.token].name}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {filteredReturnedAssets.length > 0 && (
-                                                <div className="mt-2">
-                                                    <span className="text-textSecondary block mb-1">Returned:</span>
-                                                    {filteredReturnedAssets.map((asset, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="flex justify-between items-start pl-2"
-                                                        >
-                                                            <span>
-                                                                {tokenNamesAndImages[asset.token as Address]?.name ||
-                                                                    "Unknown"}
-                                                            </span>
-                                                            <div className="flex flex-col items-end">
-                                                                <span className="text-base">
-                                                                    $
-                                                                    {formatCurrency(
-                                                                        Number(toEth(BigInt(asset.amount), 18)) *
-                                                                            (tokenPrice ||
-                                                                                prices[farm.chainId][
-                                                                                    asset.token as Address
-                                                                                ])
-                                                                    )}
-                                                                </span>
-                                                                <span className="text-xs text-textSecondary">
-                                                                    {Number(
-                                                                        formatUnits(BigInt(asset.amount), 18)
-                                                                    ).toLocaleString()}{" "}
-                                                                    {tokenNamesAndImages[asset.token as Address]
-                                                                        ?.name || "Unknown"}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-
+                                            {/* LP Received */}
                                             {lpTokens !== undefined && (
                                                 <div className="flex justify-between items-start">
-                                                    <span className="text-textSecondary">Vault Assets:</span>
+                                                    <span className="text-textSecondary text-xs">LP Received:</span>
                                                     <div className="flex flex-col items-end">
-                                                        <span className="text-base">
+                                                        <span className="text-sm text-textWhite">
                                                             ${" "}
                                                             {formatCurrency(
                                                                 Number(
@@ -291,10 +260,7 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                                                         BigInt(lpTokens),
                                                                         decimals[farm.chainId][farm.lp_address]
                                                                     )
-                                                                ) *
-                                                                    (lpTokenPrice ||
-                                                                        prices[farm.chainId][farm.lp_address]),
-                                                                4
+                                                                ) * (lpTokenPrice || 0)
                                                             )}
                                                         </span>
                                                         <span className="text-xs text-textSecondary">
@@ -312,61 +278,105 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                                 </div>
                                             )}
 
-                                            {vaultShares !== undefined && (
-                                                <div className="flex justify-between items-start">
-                                                    <span className="text-textSecondary">
-                                                        {type === "deposit" ? "Vault Shares:" : "Zap Out Amount:"}
+                                            {/* LP Price */}
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-textSecondary text-xs">LP Price:</span>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-sm text-textWhite">
+                                                        $ {formatCurrency(lpTokenPrice)}
                                                     </span>
-                                                    <div className="flex flex-col items-end">
-                                                        <span className="text-base">
-                                                            ${" "}
-                                                            {type === "deposit"
-                                                                ? formatCurrency(
-                                                                      Number(
-                                                                          toEth(
-                                                                              BigInt(vaultShares),
-                                                                              decimals[farm.chainId][farm.vault_addr]
-                                                                          )
-                                                                      ) *
-                                                                          (vaultPrice ||
-                                                                              prices[farm.chainId][farm.vault_addr]),
-                                                                      4
-                                                                  )
-                                                                : formatCurrency(
-                                                                      Number(
-                                                                          toEth(
-                                                                              BigInt(netAmount || "0"),
-                                                                              decimals[farm.chainId][token]
-                                                                          )
-                                                                      ) * (tokenPrice || prices[farm.chainId][token]),
-                                                                      4
-                                                                  )}
-                                                        </span>
-                                                        <span className="text-xs text-textSecondary">
-                                                            {type === "deposit"
-                                                                ? formatCurrency(
-                                                                      Number(
-                                                                          toEth(
-                                                                              BigInt(vaultShares),
-                                                                              decimals[farm.chainId][farm.vault_addr]
-                                                                          )
-                                                                      )
-                                                                  )
-                                                                : formatCurrency(
-                                                                      Number(
-                                                                          toEth(
-                                                                              BigInt(netAmount || "0"),
-                                                                              decimals[farm.chainId][token]
-                                                                          )
-                                                                      )
-                                                                  )}{" "}
-                                                            {type === "deposit"
-                                                                ? "BTX-" + farm.name
-                                                                : tokenNamesAndImages[token].name}
-                                                        </span>
-                                                    </div>
                                                 </div>
-                                            )}
+                                            </div>
+
+                                            {/* Additional Information */}
+                                            <div className="mt-2 pt-2 border-t border-gray-700">
+                                                {fee !== undefined && (
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="text-textSecondary text-xs">
+                                                            BeraTrax Fee:
+                                                        </span>
+                                                        <div className="flex flex-col items-end">
+                                                            <span className="text-xs text-textSecondary">
+                                                                $
+                                                                {formatCurrency(
+                                                                    Number(
+                                                                        toEth(
+                                                                            BigInt(fee),
+                                                                            decimals[farm.chainId][token]
+                                                                        )
+                                                                    ) * (tokenPrice || prices[farm.chainId][token])
+                                                                )}
+                                                            </span>
+                                                            <span className="text-xs text-textSecondary">
+                                                                {formatCurrency(
+                                                                    toEth(BigInt(fee), decimals[farm.chainId][token])
+                                                                )}{" "}
+                                                                {tokenNamesAndImages[token].name}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {/* Slippage */}
+                                                {actualSlippage !== undefined && (
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="text-textSecondary text-xs">
+                                                            Swap Slippage:
+                                                        </span>
+                                                        <div className="flex flex-col items-end">
+                                                            <span className="text-xs text-textSecondary">
+                                                                $ {formatCurrency(actualSlippage)}
+                                                            </span>
+                                                            <span className="text-xs text-textSecondary">
+                                                                {formatCurrency(
+                                                                    actualSlippage /
+                                                                        (tokenPrice || prices[farm.chainId][token])
+                                                                )}{" "}
+                                                                {tokenNamesAndImages[tx.token].name}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Returned Assets */}
+                                                {filteredReturnedAssets.length > 0 && (
+                                                    <div className="mt-2">
+                                                        <span className="text-textSecondary text-xs block mb-1">
+                                                            Returned:
+                                                        </span>
+                                                        {filteredReturnedAssets.map((asset, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="flex justify-between items-start pl-2"
+                                                            >
+                                                                <span className="text-textSecondary text-xs">
+                                                                    -{" "}
+                                                                    {tokenNamesAndImages[asset.token as Address]
+                                                                        ?.name || "Unknown"}
+                                                                </span>
+                                                                <div className="flex flex-col items-end">
+                                                                    <span className="text-xs text-textSecondary">
+                                                                        $
+                                                                        {formatCurrency(
+                                                                            Number(toEth(BigInt(asset.amount), 18)) *
+                                                                                (tokenPrice ||
+                                                                                    prices[farm.chainId][
+                                                                                        asset.token as Address
+                                                                                    ])
+                                                                        )}
+                                                                    </span>
+                                                                    <span className="text-xs text-textSecondary">
+                                                                        {Number(
+                                                                            formatUnits(BigInt(asset.amount), 18)
+                                                                        ).toLocaleString()}{" "}
+                                                                        {tokenNamesAndImages[asset.token as Address]
+                                                                            ?.name || "Unknown"}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

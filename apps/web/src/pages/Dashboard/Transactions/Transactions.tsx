@@ -5,20 +5,21 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoChevronDownOutline, IoChevronUpOutline, IoInformationCircle } from "react-icons/io5";
 import { ModalLayout } from "src/components/modals/ModalLayout/ModalLayout";
-import { tokenNamesAndImages } from "src/config/constants/pools_json";
+import pools_json, { tokenNamesAndImages } from "src/config/constants/pools_json";
 import { blockExplorersByChainId } from "src/config/constants/urls";
 import { useAppDispatch, useAppSelector } from "src/state";
 import useZapIn from "src/state/farms/hooks/useZapIn";
 import useZapOut from "src/state/farms/hooks/useZapOut";
 import useTokens from "src/state/tokens/useTokens";
 import { deleteTransactionDb } from "src/state/transactions/transactionsReducer";
-import { TransactionStatus, TransactionStepStatus } from "src/state/transactions/types";
-import useTransaction from "src/state/transactions/useTransaction";
+import { Transaction, TransactionStatus, TransactionStepStatus } from "src/state/transactions/types";
 import useTransactions from "src/state/transactions/useTransactions";
+import { useFarmTransactions } from "src/state/transactions/useFarmTransactions";
 import { formatCurrency, toEth } from "src/utils/common";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";
+import { PoolDef } from "src/config/constants/pools_json";
 
 interface TransactionProps {
     farmId?: number;
@@ -26,11 +27,11 @@ interface TransactionProps {
 
 const Transactions: FC<TransactionProps> = ({ farmId }) => {
     const [open, setOpen] = useState(false);
-    const transactions = useAppSelector((state) =>
-        farmId
-            ? state.transactions.transactions.filter((transaction) => transaction.farmId === farmId).slice(0, 3)
-            : state.transactions.transactions.slice(0, 3)
-    );
+    const { data: transactions, isLoading } = useFarmTransactions(farmId, 3);
+
+    if (isLoading || !transactions) {
+        return <div className="center text-textWhite">Loading transactions...</div>; // or a spinner
+    }
 
     return (
         <div>
@@ -51,7 +52,7 @@ const Transactions: FC<TransactionProps> = ({ farmId }) => {
             <div className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
                 {transactions.length === 0 && <p className="center text-textSecondary">No transactions yet</p>}
                 {transactions.map((item, i) => (
-                    <Row _id={item._id} key={i} />
+                    <Row tx={item} key={i} />
                 ))}
             </div>
             {open && <TransactionsModal setOpenModal={setOpen} farmId={farmId} />}
@@ -61,15 +62,17 @@ const Transactions: FC<TransactionProps> = ({ farmId }) => {
 
 export default Transactions;
 
-const Row: FC<{ _id: string }> = ({ _id }) => {
-    const { tx, farm } = useTransaction(_id);
+const Row: FC<{ tx: Transaction }> = ({ tx }) => {
+    const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
     const { prices, decimals } = useTokens();
     const [open, setOpen] = useState(false);
     const dispatch = useAppDispatch();
-    if (!farm || !tx) return null;
-    const { zapIn } = useZapIn(farm);
-    const { zapOut } = useZapOut(farm);
     const chainId = useChainId();
+    const { zapIn } = useZapIn(farm as PoolDef);
+    const { zapOut } = useZapOut(farm as PoolDef);
+
+    if (!farm || !tx) return null;
+
     const {
         type,
         amountInWei,
@@ -83,6 +86,8 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
         fee,
         returnedAssets,
         vaultShares,
+        lpTokens,
+        lpTokenPrice,
         farmId,
     } = tx;
 
@@ -114,7 +119,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
     }, [steps]);
     const retryTransaction = (e: any) => {
         e.stopPropagation();
-        dispatch(deleteTransactionDb(_id));
+        dispatch(deleteTransactionDb(tx._id));
         if (tx.type === "deposit") {
             zapIn({
                 zapAmount: Number(toEth(BigInt(tx.amountInWei), decimals[farm.chainId][token])),
@@ -274,6 +279,39 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                                                 </div>
                                             )}
 
+                                            {lpTokens !== undefined && (
+                                                <div className="flex justify-between items-start">
+                                                    <span className="text-textSecondary">Vault Assets:</span>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-base">
+                                                            ${" "}
+                                                            {formatCurrency(
+                                                                Number(
+                                                                    toEth(
+                                                                        BigInt(lpTokens),
+                                                                        decimals[farm.chainId][farm.lp_address]
+                                                                    )
+                                                                ) *
+                                                                    (lpTokenPrice ||
+                                                                        prices[farm.chainId][farm.lp_address]),
+                                                                4
+                                                            )}
+                                                        </span>
+                                                        <span className="text-xs text-textSecondary">
+                                                            {formatCurrency(
+                                                                Number(
+                                                                    toEth(
+                                                                        BigInt(lpTokens),
+                                                                        decimals[farm.chainId][farm.lp_address]
+                                                                    )
+                                                                )
+                                                            )}{" "}
+                                                            {farm.name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             {vaultShares !== undefined && (
                                                 <div className="flex justify-between items-start">
                                                     <span className="text-textSecondary">
@@ -386,7 +424,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
                         </p>
                     </div>
                 </div>
-                <TransactionDetails transactionId={_id} open={open} farm={undefined} tx={undefined} />
+                <TransactionDetails transactionId={undefined} open={open} farm={farm} tx={tx} />
             </div>
         </>
     );
@@ -396,12 +434,8 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: n
     setOpenModal,
     farmId,
 }) => {
-    const transactions = useAppSelector((state) =>
-        farmId
-            ? state.transactions.transactions.filter((transaction) => transaction.farmId === farmId)
-            : state.transactions.transactions
-    );
-    const { fetchTransactions, isLoading, fetchedAll } = useTransactions();
+    const { data: transactions, isLoading } = useFarmTransactions(farmId, 20);
+    const { fetchTransactions, fetchedAll } = useTransactions();
     const timeout = useRef<NodeJS.Timeout>();
 
     return (
@@ -413,7 +447,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: n
             flex flex-col"
             wrapperClassName="lg:w-full"
             onWheel={(e) => {
-                if (fetchedAll) return;
+                if (isLoading) return;
                 let ele: Element = e.currentTarget as Element;
                 let percent = (ele.scrollTop / (ele.scrollHeight - ele.clientHeight)) * 100;
                 if (percent === 100 && !isLoading) {
@@ -427,8 +461,8 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: n
             <p className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem]">Transactions</p>
             <div className="flex-1 overflow-y-auto">
                 <div className="flex flex-col gap-[0.7rem]">
-                    {transactions.map((item, i) => (
-                        <Row _id={item._id} key={i} />
+                    {transactions?.map((item, i) => (
+                        <Row tx={item} key={i} />
                     ))}
                     {isLoading && (
                         <div className="center">
@@ -448,3 +482,4 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: n
         </ModalLayout>
     );
 };
+

@@ -10,6 +10,7 @@ import { VaultMigrator } from "src/components/VaultMigrator/VaultMigrator";
 import { RoutesPaths } from "src/config/constants";
 import useTrax from "src/hooks/useTrax";
 import useWallet from "src/hooks/useWallet";
+import { useFarmTransactions } from "src/state/transactions/useFarmTransactions";
 import state, { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
@@ -39,14 +40,14 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const [isClaiming, setIsClaiming] = useState(false);
     const navigate = useNavigate();
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
+    const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
     const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
+    const { data: txHistory } = useFarmTransactions(vault.id, 1);
+    const lastTransaction = useMemo(() => {
+        if (!txHistory) return null;
+        return txHistory[0];
+    }, [txHistory]);
     const { balances, prices, decimals, reloadBalances } = useTokens();
-    const lastTransaction = useAppSelector((state) => {
-        const filteredTransactions = state.transactions.transactions.filter(
-            (transaction) => transaction.farmId === vault.id
-        );
-        return filteredTransactions.length > 0 ? filteredTransactions[0] : null;
-    });
 
     const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
     const currentVaultEarningsUsd = useMemo(() => {
@@ -77,7 +78,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     );
     const changeInAssetsValueUsd = changeInAssetsValue * (prices[vault.chainId][vault.lp_address] || 0);
     const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
-    const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
+
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
     const { userVaultBalance, priceOfSingleToken, apys } = vault || {};

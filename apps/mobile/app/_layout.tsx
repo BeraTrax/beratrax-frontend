@@ -55,6 +55,7 @@ const RootLayout = () => {
               <SafeAreaView style={{ flex: 1 }}>
                 <AppKit />
                 <Tabs
+                  initialRouteName="Dashboard"
                   screenOptions={{
                     tabBarActiveTintColor: "#3772FF",
                     tabBarInactiveTintColor: "#888",

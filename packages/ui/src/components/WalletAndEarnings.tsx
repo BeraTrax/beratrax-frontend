@@ -232,7 +232,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({
                         <Link
                           target="_blank"
                           href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
-                          className="font-arame-mono font-light text-lg text-white leading-5"
+                          className="font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
                         >
                           {truncatedAddress}
                         </Link>
@@ -247,7 +247,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({
                         )}
                       </View>
                       {/* Beraname */}
-                      <GradientText className="text-xl">
+                      <GradientText className="text-xl uppercase font-arame-mono font-normal">
                         {ensName || referralCode
                           ? `${ensName || referralCode}`
                           : ""}

@@ -21,9 +21,9 @@ export const EmptyComponent: FC<IProps> = ({
       style={style}
     >
       <View>
-        {children}{" "}
+        {children}
         <Link href={link} target="_blank" className={""}>
-          {linkText}
+          " "{linkText}
         </Link>
       </View>
     </View>

@@ -4,3 +4,4 @@ export * from "./GradientText";
 export * from "./Link";
 export * from "./EmptyComponent";
 export * from "./ReferralLink";
+export * from "./VaultsShared";

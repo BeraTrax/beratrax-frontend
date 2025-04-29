@@ -7,7 +7,8 @@ import { TokenBalances } from "./TokenBalances/TokenBalances";
 import Transactions from "./Transactions/Transactions";
 import { TraxReferralEarning } from "./TraxReferralEarning/TraxReferralEarning";
 import { WalletAndStakingPoint } from "./WalletAndStakingPoint/WalletAndStakingPoint";
-import { WalletAndEarnings, PointsEarnings, ReferralLink } from "@beratrax/ui";
+import { WalletAndEarnings, PointsEarnings, ReferralLink, VaultsShared } from "@beratrax/ui";
+
 function Dashboard() {
   const { currentWallet } = useWallet();
   useDeviceInfo();
@@ -25,6 +26,7 @@ function Dashboard() {
             <ReferralLinkOld />
             <ReferralLink />
             <Vaults />
+            <VaultsShared />
             <TokenBalances />
             <Transactions />
           </>

@@ -1,5 +1,5 @@
 {
-  "name": "@beratrax/website",
+  "name": "@beratrax/web",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -30,7 +30,6 @@
     "ethers": "^5.7.2",
     "moment": "^2.29.4",
     "nativewind": "^4.1.23",
-    "patch-package": "^8.0.0",
     "react": "^18.2.0",
     "react-currency-input-field": "^3.9.0",
     "react-dom": "^18.2.0",

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { copyToClipboard } from "@beratrax/core/src/utils";
-import { FaSquareXTwitter } from "react-icons/fa6";
-import { MdOutlineContentCopy } from "react-icons/md";
 import { View, Text } from "react-native";
 import useAccountData from "@beratrax/core/src/state/account/useAccountData";
+import { CopyIcon } from "../icons/Copy"
+import { TwitterIcon } from "../icons/Twitter"
 
-interface IProps {}
+interface IProps { }
 
 export const ReferralLink: React.FC<IProps> = () => {
-  const { referralLink } = useAccountData();
+  const { referralLink, referralCode } = useAccountData();
   const { currentWallet } = useWallet();
   const [copied, setCopied] = useState(false);
 
@@ -48,27 +48,36 @@ export const ReferralLink: React.FC<IProps> = () => {
               points of anyone who clicks it!
             </Text>
             <View
-              className={`flex flex-row justify-between w-full rounded-2xl bg-bgSecondary p-4 relative`}
+              className={`flex flex-row gap-4 w-full rounded-2xl bg-bgSecondary p-4 relative`}
             >
-              <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
-                {referralLink}
-              </Text>
+              <View className="flex flex-col ">
+                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
+                  Web Link:
+                </Text>
+                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
+                  Mobile Link:
+                </Text>
+              </View>
+
+
+              <View className="flex flex-col ">
+                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
+                  {referralLink}
+                </Text>
+                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
+                  {referralCode}
+                </Text>
+              </View>
+
               <View className="flex flex-row items-center">
-                {copied && (
-                  <Text className="text-textWhite text-sm transition-opacity">
-                    Copied!
-                  </Text>
-                )}
-                {/* <FaSquareXTwitter
-                  onClick={shareOnTwitter}
-                  className="text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity text-xl"
+                <TwitterIcon
+                  onPress={shareOnTwitter}
+                  className={`icon-tabler-brand-x text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity ${copied ? "text-textPrimary" : ""}`}
                 />
-                <MdOutlineContentCopy
-                  onClick={copy}
-                  className={`text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity ${
-                    copied ? "text-textPrimary" : ""
-                  }`}
-                /> */}
+                <CopyIcon
+                  onPress={copy}
+                  className={`icon-tabler-copy text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity ${copied ? "text-textPrimary" : ""}`}
+                />
               </View>
             </View>
           </View>

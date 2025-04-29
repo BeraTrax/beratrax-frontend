@@ -36,6 +36,7 @@ import {
 import { Link } from "./Link";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import { GradientText } from "./GradientText";
+import { CopyIcon } from "../icons/Copy";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 interface WalletAndEarningsProps {
@@ -236,7 +237,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({
                           {truncatedAddress}
                         </Link>
                         <Text className="h-6 text-white ml-4 cursor-pointer">
-                          Copy
+                          <CopyIcon onPress={copy} />
                         </Text>
                         {/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
                         {showCopyFeedback && (

@@ -50,6 +50,7 @@ const useAccountData = () => {
   return {
     fetchAccountData,
     referralLink,
+    referralCode,
   };
 };
 

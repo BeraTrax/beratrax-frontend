@@ -19,8 +19,11 @@ const extensions = [
   ".mjs",
 ];
 
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, '../..');
+
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "EXPO_PUBLIC_");
+  const env = loadEnv(mode, workspaceRoot, "EXPO_PUBLIC_");
 
   return {
     plugins: [

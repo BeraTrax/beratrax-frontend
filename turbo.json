@@ -45,6 +45,10 @@
       "cache": false,
       "persistent": true
     },
+    "start:web": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^lint"],
       "outputs": []

@@ -22,8 +22,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:web": "turbo run start --filter=@beratrax/website",
-    "build:web": "turbo run build --filter=@beratrax/website",
+    "start:web": "turbo run start --filter=@beratrax/web",
+    "build:web": "turbo run build --filter=@beratrax/web",
     "start:mobile": "turbo run start:mobile --filter=@beratrax/mobile",
     "build:mobile": "turbo run build:mobile --filter=@beratrax/mobile",
     "build:ui": "turbo run build:ui --filter=@beratrax/ui",
@@ -36,7 +36,8 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.10.4"
+    "turbo": "^1.10.4",
+    "patch-package": "^8.0.0"
   },
   "workspaces": [
     "./apps/*",
@@ -46,6 +47,10 @@
     "url": "https://github.com/BeraTrax/beratrax-frontend/issues"
   },
   "homepage": "https://github.com/BeraTrax/beratrax-frontend#readme",
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": "22.15.0",
+    "npm": "please-use-yarn"
+  }
 }
 

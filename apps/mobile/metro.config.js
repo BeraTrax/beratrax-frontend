@@ -1,3 +1,10 @@
+/**
+ * Metro configuration for React Native with support for SVG files
+ * https://github.com/react-native-svg/react-native-svg#use-with-svg-files
+ *
+ * @format
+ */
+
 // Find the project and workspace directories
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
@@ -11,6 +18,11 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(projectRoot);
+
+const {
+  resolver: { sourceExts, assetExts },
+} = config
+
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [workspaceRoot];
@@ -43,6 +55,12 @@ config.resolver.extraNodeModules = {
   ...nodeLibs,
   ...convertToNodePrefix(nodeLibs),
 };
+
+
+config.transformer.babelTransformerPath = require.resolve("react-native-svg-transformer");
+config.resolver.assetExts = assetExts.filter((extension) => extension !== "svg");
+config.resolver.sourceExts = [...sourceExts, 'svg', 'cjs'];
+
 
 module.exports = withNativeWind(config, { 
   input: "./global.css", 

@@ -17,7 +17,7 @@ export const RoutesPaths = {
     Leaderboard: "/leaderboard",
     DeprecatedVaults: "/deprecated-vaults",
 };
-export const VAULT_NEW_DURATION = 7 * 24 * 60 * 60; // 7 days
+export const VAULT_NEW_DURATION = 5 * 24 * 60 * 60; // 7 days
 export const SNAPSHOT_SPACE_ID = "contrax.eth";
 export const SNAPSHOT_APP_NAME = "Beratrax Finance";
 export const SNAPSHOT_HUB_URL = "https://hub.snapshot.org";

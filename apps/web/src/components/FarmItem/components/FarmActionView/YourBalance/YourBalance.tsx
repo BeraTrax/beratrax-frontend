@@ -6,7 +6,7 @@ import useWallet from "src/hooks/useWallet";
 import { customCommify, formatCurrency, toEth } from "src/utils/common";
 import { FarmOriginPlatform } from "src/types/enums";
 import { Address, getAddress } from "viem";
-import state from "src/state";
+import { useFarmTransactions } from "src/state/transactions/useFarmTransactions";
 
 // Reusable component for token earnings
 const TokenEarning = ({
@@ -16,6 +16,7 @@ const TokenEarning = ({
     prices,
     farm,
     changeInAssets,
+    lifetimeEarnings,
 }: {
     currentVaultEarnings: any;
     token: string | undefined;
@@ -23,12 +24,15 @@ const TokenEarning = ({
     prices: Record<number, Record<string, number>>;
     farm: PoolDef;
     changeInAssets: string | number | undefined;
+    lifetimeEarnings: string | number | undefined;
 }) => {
     if (!currentVaultEarnings || !token) return null;
     const { decimals } = useTokens();
-    const lastTransaction = state
-        .getState()
-        .transactions.transactions.find((transaction) => transaction.farmId === farm.id);
+    const { data: txHistory } = useFarmTransactions(farm.id, 1);
+    const lastTransaction = useMemo(() => {
+        if (!txHistory) return null;
+        return txHistory[0];
+    }, [txHistory]);
 
     const currentVaultEarningsUsd = useMemo(() => {
         return (
@@ -50,6 +54,13 @@ const TokenEarning = ({
         );
     }, [currentVaultEarnings]);
 
+    const lifetimeEarningsUsd = useMemo(() => {
+        return (
+            Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])) *
+            (prices[farm.chainId][farm.lp_address] || 0)
+        );
+    }, [lifetimeEarnings]);
+
     const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets?.toString();
     const changeInAssetsValue = Number(
         toEth(BigInt(changeInAssetsStr || 0), decimals[farm.chainId][farm.lp_address as Address])
@@ -64,7 +75,7 @@ const TokenEarning = ({
     const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
 
     return (
-        <div className="flex-1">
+        <div className="flex flex-row justify-between flex-1 mx-2">
             <div className="flex items-center gap-x-3">
                 <div className="flex flex-col">
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
@@ -80,9 +91,42 @@ const TokenEarning = ({
                                 (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
                             ) === 1
                                 ? "day"
-                                : "days"}
+                                : "days"}{" "}
+                            (
+                            {changeInAssetsValue > 0
+                                ? "+" +
+                                  customCommify(Number(changeInAssetsValue), {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 5,
+                                  })
+                                : customCommify(Number(changeInAssetsValue), {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 5,
+                                  })}{" "}
+                            {farm.name})
                         </p>
                     )}
+                </div>
+                <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <span className="text-green-500 text-md">↑</span>
+                </div>
+            </div>
+            <div className="flex items-center gap-x-3">
+                <div className="flex flex-col">
+                    <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+                        ${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                    </h1>
+                    <p className="text-textSecondary text-sm flex items-center gap-1">
+                        Lifetime Earnings
+                        <div className="group relative">
+                            <div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
+                                <span className="text-textSecondary/60 text-sm">?</span>
+                            </div>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-bgDark text-textSecondary/80 text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                Based on current token prices
+                            </div>
+                        </div>
+                    </p>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
                     <span className="text-green-500 text-md">↑</span>
@@ -152,7 +196,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
     );
 
     const farmEarnings = useMemo(() => {
-        if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
+        if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "", lifetimeEarnings: 0 };
         return (
             vaultEarnings.find((earning) => earning.tokenId === farm.id.toString()) || {
                 earnings0: 0,
@@ -160,6 +204,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                 earnings1: 0,
                 token1: "",
                 changeInAssets: 0,
+                lifetimeEarnings: 0,
             }
         );
     }, [vaultEarnings, farm.id]);
@@ -185,6 +230,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                                     prices={prices}
                                     farm={farm}
                                     changeInAssets={farmEarnings.changeInAssets}
+                                    lifetimeEarnings={farmEarnings.lifetimeEarnings}
                                 />
                                 {/* {farm.isAutoCompounded && (
                                     <LpAssetChange

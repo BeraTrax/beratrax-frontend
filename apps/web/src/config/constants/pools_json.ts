@@ -712,7 +712,7 @@ const pools_json: PoolDef[] = [
         token1: "0x9b6761bf2397Bb5a6624a856cC84A3A14Dcd3fe5",
         zapper_addr: "0x756a3C23De0b37a836369992B3F93358543Ce4C7",
         alt1: "iBERA logo",
-        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x46eFC86F0D7455F135CC9df501673739d513E982/logo.png",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397bb5a6624a856cc84a3a14dcd3fe5/logo.png",
         rewards1: "infrared.ico",
         rewards1_alt: "Infrared logo",
         isDeprecated: false,

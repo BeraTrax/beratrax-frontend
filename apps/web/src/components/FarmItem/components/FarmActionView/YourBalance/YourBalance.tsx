@@ -122,8 +122,8 @@ const TokenEarning = ({
                             <div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
                                 <span className="text-textSecondary/60 text-sm">?</span>
                             </div>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-bgDark text-textSecondary/80 text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                                Based on current token prices
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[200px] text-center">
+                                Based on current token prices, swap fee is not included.
                             </div>
                         </div>
                     </p>

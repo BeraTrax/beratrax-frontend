@@ -47,11 +47,9 @@ const calculateChangeInAssets = async ({
         abi: vaultAbi.abi,
         client,
     });
-    const assetsPromise = contract.read.convertToAssets([toWei(1, 18)]);
-    const assets = (await assetsPromise) as bigint;
     const currentShares = balances[chainId][vault_addr]?.valueWei || BigInt(0);
-    const currentBalance = toWei(Number(toEth(assets)) * Number(toEth(currentShares)), 18);
-    return currentBalance - lastTransactionAssets;
+    const currentAssets = (await contract.read.convertToAssets([currentShares])) as bigint;
+    return currentAssets - lastTransactionAssets;
 };
 
 export const getEarnings = async (userAddress: string) => {
@@ -555,7 +553,6 @@ const getEarningsForKodiak = async (
 
                 // Calculate token prices
                 const priceToken0 = currentFeeData.outputTokenPriceUSD;
-
                 return {
                     tokenId: pool.farmId.toString(),
                     earnings0:
@@ -763,6 +760,12 @@ const calculateLifetimeLpEarnings = async (
             chainId: 80094,
             lastTransactionAssets: lastUserAssetBalance,
         })) + lastUserAssetBalance;
+
+    if (vault_addr === "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302") {
+        console.log("totalDeposited", totalDeposited);
+        console.log("totalWithdrawn", totalWithdrawn);
+        console.log("positionValue", positionValue);
+    }
 
     const lifetimeEarnings = totalWithdrawn + positionValue - totalDeposited;
 

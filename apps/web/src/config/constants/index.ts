@@ -17,7 +17,7 @@ export const RoutesPaths = {
     Leaderboard: "/leaderboard",
     DeprecatedVaults: "/deprecated-vaults",
 };
-export const VAULT_NEW_DURATION = 7 * 24 * 60 * 60; // 7 days
+export const VAULT_NEW_DURATION = 5 * 24 * 60 * 60; // 7 days
 export const SNAPSHOT_SPACE_ID = "contrax.eth";
 export const SNAPSHOT_APP_NAME = "Beratrax Finance";
 export const SNAPSHOT_HUB_URL = "https://hub.snapshot.org";
@@ -42,7 +42,7 @@ export const SHUSHISWAP_CHEF_GRAPH_URL = "https://api.thegraph.com/subgraphs/nam
 export const SWAPFISH_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/swapfish/swapfish";
 export const WEB3AUTH_CLIENT_ID = import.meta.env.REACT_APP_WEB3AUTH_CLIENT_ID;
 export const EARNINGS_GRAPH_URL =
-    "https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/13.0.0/gn";
+    "https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/14.0.0/gn";
 export const EARNINGS_GRAPH_URL_BASE =
     "https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const HOP_EXCHANGE_APY_URL = "https://assets.hop.exchange/v1.1-pool-stats.json";

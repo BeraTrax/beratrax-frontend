@@ -49,6 +49,7 @@ export interface VaultEarnings {
     earnings1?: string;
     token1?: string;
     changeInAssets?: string;
+    lifetimeEarnings?: string;
 }
 
 export interface FetchEarningsAction {

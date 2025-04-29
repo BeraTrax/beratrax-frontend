@@ -29,7 +29,10 @@ const Vaults: React.FC = () => {
             return 0;
         });
     }, [unsortedVaults]);
-    const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable), [vaults]);
+    const deprecatedVaults = useMemo(
+        () => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable),
+        [vaults]
+    );
     const upgradableVaults = useMemo(() => vaults.filter((vault) => vault.isUpgradable), [vaults]);
     const { balances } = useTokens();
     const { isConnecting, currentWallet, getPublicClient } = useWallet();
@@ -133,7 +136,8 @@ const Vaults: React.FC = () => {
                     vaults.length > 0 ? (
                         vaults
                             .filter((vault) => !vault.isUpcoming)
-                            .map((vault) => <VaultItem vault={vault} key={vault.id} />)) : (
+                            .map((vault) => <VaultItem vault={vault} key={vault.id} />)
+                    ) : (
                         <EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>
                             <div className="flex flex-col justify-center mb-4">
                                 <iframe
@@ -170,3 +174,4 @@ const Vaults: React.FC = () => {
 };
 
 export default Vaults;
+

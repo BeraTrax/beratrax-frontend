@@ -10,6 +10,7 @@ import { VaultMigrator } from "src/components/VaultMigrator/VaultMigrator";
 import { RoutesPaths } from "src/config/constants";
 import useTrax from "src/hooks/useTrax";
 import useWallet from "src/hooks/useWallet";
+import { useFarmTransactions } from "src/state/transactions/useFarmTransactions";
 import state, { useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
@@ -39,14 +40,14 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const [isClaiming, setIsClaiming] = useState(false);
     const navigate = useNavigate();
     const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
+    const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
     const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
+    const { data: txHistory } = useFarmTransactions(vault.id, 1);
+    const lastTransaction = useMemo(() => {
+        if (!txHistory) return null;
+        return txHistory[0];
+    }, [txHistory]);
     const { balances, prices, decimals, reloadBalances } = useTokens();
-    const lastTransaction = useAppSelector((state) => {
-        const filteredTransactions = state.transactions.transactions.filter(
-            (transaction) => transaction.farmId === vault.id
-        );
-        return filteredTransactions.length > 0 ? filteredTransactions[0] : null;
-    });
 
     const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
     const currentVaultEarningsUsd = useMemo(() => {
@@ -77,7 +78,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     );
     const changeInAssetsValueUsd = changeInAssetsValue * (prices[vault.chainId][vault.lp_address] || 0);
     const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
-    const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
+
     const { getTraxApy } = useTrax();
     const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
     const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
@@ -307,70 +308,42 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
             </div>
 
             <div className={`grid ${estimateTrax && Number(estimateTrax) > 0 ? "grid-cols-3" : "grid-cols-2"}`}>
-                {/* Your Stake */}
-                <div className="text-textSecondary border-r border-bgPrimary">
-                    <div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
-                        <p className="flex items-center gap-2">Earnings</p>
-                    </div>
-                    {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
-                        <div className="text-textWhite text-lg font-league-spartan leading-5">
-                            <p className="text-green-500">+${formatCurrency(totalEarningsUsd, 5)}</p>
-                            {lastTransaction?.date && typeof lastTransaction.date === "string" && (
-                                <p className="text-textSecondary text-sm">
-                                    In{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    )}{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    ) === 1
-                                        ? "day"
-                                        : "days"}
-                                </p>
-                            )}
-                            {/* <div style={{ minWidth: 60 }}>
-                            {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
-                            {!isLoadingOldData &&
-                                oldPrice &&
-                                Number(
-                                    (
-                                        userVaultBalance * priceOfSingleToken -
-                                        userVaultBalance * oldPrice[0].price
-                                    ).toFixed(2)
-                                ) !== 0 &&
-                                (oldPrice[0].price > priceOfSingleToken ? (
-                                    <span className="flex items-center text-red-500">
-                                        <GoArrowDown />
-                                        <p className="m-0 text-xs">
-                                            $
-                                            {formatCurrency(
-                                                Math.abs(
-                                                    userVaultBalance * priceOfSingleToken -
-                                                        userVaultBalance * oldPrice[0].price
-                                                )
-                                            )}
-                                        </p>
-                                    </span>
-                                ) : (
-                                    <span className="flex items-center text-green-500">
-                                        <GoArrowUp className="m-0 text-xs" />
-                                        <p style={{ margin: 0, fontSize: 10 }}>
-                                            $
-                                            {formatCurrency(
-                                                Math.abs(
-                                                    userVaultBalance * oldPrice[0].price -
-                                                        userVaultBalance * priceOfSingleToken
-                                                )
-                                            )}
-                                        </p>
-                                    </span>
-                                ))}
-                        </div> */}
+                {/* Earnings*/}
+                {vault.id !== 42 ? (
+                    <div className="text-textSecondary border-r border-bgPrimary">
+                        <div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+                            <p className="flex items-center gap-2">Earnings</p>
                         </div>
-                    ) : (
-                        <div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
-                    )}
-                </div>
+                        {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+                            <div className="text-textWhite text-lg font-league-spartan leading-5">
+                                <p className="text-green-500">
+                                    +$
+                                    {customCommify(totalEarningsUsd, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 5,
+                                    })}
+                                </p>
+                                {lastTransaction?.date && typeof lastTransaction.date === "string" && (
+                                    <p className="text-textSecondary text-sm">
+                                        In{" "}
+                                        {Math.floor(
+                                            (Date.now() - new Date(lastTransaction.date).getTime()) /
+                                                (1000 * 60 * 60 * 24)
+                                        )}{" "}
+                                        {Math.floor(
+                                            (Date.now() - new Date(lastTransaction.date).getTime()) /
+                                                (1000 * 60 * 60 * 24)
+                                        ) === 1
+                                            ? "day"
+                                            : "days"}
+                                    </p>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
+                        )}
+                    </div>
+                ) : null}
 
                 {/* APY */}
                 <div
@@ -403,6 +376,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                     </div>
                 )}
             </div>
+            {/* Your Stake */}
             <div className="flex justify-end items-end gap-2">
                 <div className="inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
                     <div className="uppercase font-arame-mono text-textPrimary text-md">

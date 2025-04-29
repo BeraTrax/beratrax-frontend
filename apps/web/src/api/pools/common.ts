@@ -290,7 +290,7 @@ export const zapInBase: ZapInBaseFn = async ({
 
         const fee = logs[0].args.fee.toString();
         const vaultShares = logs[0].args.shares.toString();
-        const lpTokens = logs[0].args.tokenInAmount.toString();
+        const lpTokens = logs[0].args.assetsIn.toString();
         const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
             amount: asset.amounts.toString(),
             token: asset.tokens,

@@ -58,6 +58,7 @@ export interface PoolDef {
     secondary_platform?: string;
     secondary_platform_logo?: string;
     createdAt?: number;
+    priorityOrder?: number; // New field for custom sorting priority
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -411,8 +412,8 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
-        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1", // LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1",
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0xfCAcd22Ce85DAd636d79234c533A49E442f38A60", // vault address
         createdAt: 1745348610,
@@ -516,7 +517,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x3879451f4f69F0c2d37CaD45319cFf2E7d29C596", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
         createdAt: 1745348610,
@@ -620,7 +621,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xaD445256Ff81171043A5e7Cd8831e4371B000176", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBGTiBeraLp.rewardVault
+        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0x491da46162A4A5F52cc30f6E63B352885bd7B419", // Vault address
         createdAt: 1745348610,
@@ -690,6 +691,52 @@ const pools_json: PoolDef[] = [
             },
         ],
     },
+    // {
+    //     id: 42,
+    //     priorityOrder: 1,
+    //     chainId: CHAIN_ID.BERACHAIN,
+    //     token_type: "LP Token",
+    //     name: "iBERA",
+    //     url_name: "iBERA",
+    //     originPlatform: FarmOriginPlatform.Infrared,
+    //     platform_logo: "infrared.ico",
+    //     source: "https://infrared.finance/ibera",
+    //     name1: "iBERA",
+    //     description:
+    //         "This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBERA or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA, not your starting token before zapping.) ",
+    //     stableCoin: false,
+    //     platform_alt: "Infrared logo",
+    //     total_apy: 36.477,
+    //     rewards_apy: 0,
+    //     pair1: "iBERA",
+    //     token1: "0x9b6761bf2397Bb5a6624a856cC84A3A14Dcd3fe5",
+    //     zapper_addr: "0x756a3C23De0b37a836369992B3F93358543Ce4C7",
+    //     alt1: "iBERA logo",
+    //     logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x9b6761bf2397bb5a6624a856cc84a3a14dcd3fe5/logo.png",
+    //     rewards1: "infrared.ico",
+    //     rewards1_alt: "Infrared logo",
+    //     isDeprecated: false,
+    //     isUpgradable: false,
+    //     isAutoCompounded: false,
+    //     lp_address: "0x9b6761bf2397Bb5a6624a856cC84A3A14Dcd3fe5", // Asset LP address
+    //     // rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
+    //     decimals: 18,
+    //     vault_addr: "0x29e953B1dC492973B6e55827Fd29674ACFa643C8", // Vault address
+    //     createdAt: 1745847659,
+    //     zap_symbol: "HONEY",
+    //     zap_currencies: [
+    //         {
+    //             symbol: "HONEY",
+    //             address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+    //             decimals: 18,
+    //         },
+    //         {
+    //             symbol: "BERA",
+    //             address: zeroAddress,
+    //             decimals: 18,
+    //         },
+    //     ],
+    // },
     {
         id: 28,
         chainId: CHAIN_ID.BERACHAIN,

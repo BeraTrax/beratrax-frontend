@@ -85,6 +85,32 @@ export const getEarnings = async (userAddress: string) => {
     }
 };
 
+const fetchAllTransactions = async (query: string, variables: any) => {
+    let allResults: any[] = [];
+    let hasMore = true;
+    let skip = 0;
+    const pageSize = 1000;
+
+    while (hasMore) {
+        const response = await axios.post(EARNINGS_GRAPH_URL, {
+            query,
+            variables: {
+                ...variables,
+                first: pageSize,
+                skip,
+            },
+        });
+
+        const results = response.data.data[query.includes("deposits") ? "deposits" : "withdraws"];
+        allResults = [...allResults, ...results];
+
+        hasMore = results.length === pageSize;
+        skip += pageSize;
+    }
+
+    return allResults;
+};
+
 export const getEarningsForPlatforms = async (userAddress: string) => {
     try {
         const client = createPublicClient({
@@ -96,27 +122,14 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         const balances = state.tokens.balances;
 
         const depositsQuery = `
-        query GetUserDeposits {
-          deposits(where: { from: "${userAddress.toLowerCase()}" }) {
-            id
-            tokenId
-            tokenName
-            platformName
-            from
-            value
-            shares
-            userBalance
-            blockTimestamp
-            blockNumber
-            userAssetBalance
-          }
-        }`;
-        const depositResponse = await axios.post(EARNINGS_GRAPH_URL, { query: depositsQuery });
-        const deposits = depositResponse.data.data.deposits;
-
-        const withdrawsQuery = `
-        query GetUserWithdraws {
-          withdraws(where: { from: "${userAddress.toLowerCase()}" }) {
+        query GetUserDeposits($first: Int!, $skip: Int!) {
+          deposits(
+            first: $first
+            skip: $skip
+            where: { from: "${userAddress.toLowerCase()}" }
+            orderBy: blockTimestamp
+            orderDirection: desc
+          ) {
             id
             tokenId
             tokenName
@@ -131,8 +144,33 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
           }
         }`;
 
-        const withdrawResponse = await axios.post(EARNINGS_GRAPH_URL, { query: withdrawsQuery });
-        const withdraws = withdrawResponse.data.data.withdraws;
+        const withdrawsQuery = `
+        query GetUserWithdraws($first: Int!, $skip: Int!) {
+          withdraws(
+            first: $first
+            skip: $skip
+            where: { from: "${userAddress.toLowerCase()}" }
+            orderBy: blockTimestamp
+            orderDirection: desc
+          ) {
+            id
+            tokenId
+            tokenName
+            platformName
+            from
+            value
+            shares
+            userBalance
+            blockTimestamp
+            blockNumber
+            userAssetBalance
+          }
+        }`;
+
+        const [deposits, withdraws] = await Promise.all([
+            fetchAllTransactions(depositsQuery, {}),
+            fetchAllTransactions(withdrawsQuery, {}),
+        ]);
 
         // Add type field to each deposit and withdrawal object
         const depositsWithType = deposits.map((deposit: any) => ({
@@ -195,6 +233,13 @@ const getEarningsForInfrared = async (
                     };
                 }
 
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
+
                 // Get only the last transaction
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
                 const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
@@ -221,6 +266,7 @@ const getEarningsForInfrared = async (
                     earnings0: "0",
                     token0: pool.lp_addr,
                     changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
                 };
             })
         );
@@ -231,6 +277,7 @@ const getEarningsForInfrared = async (
         return [];
     }
 };
+
 const getEarningsForSteer = async (
     combinedTransactions: any,
     client: PublicClient,
@@ -429,6 +476,13 @@ const getEarningsForKodiak = async (
                     };
                 }
 
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
+
                 // Get only the last transaction
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
                 const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
@@ -513,6 +567,7 @@ const getEarningsForKodiak = async (
                             : "0",
                     token0: pool.lp_addr,
                     changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
                 };
             })
         );
@@ -564,6 +619,13 @@ const getEarningsForBurrbear = async (
                         token0: pool.lp_addr,
                     };
                 }
+
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
 
                 // Get only the last transaction
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
@@ -658,6 +720,7 @@ const getEarningsForBurrbear = async (
                     earnings0: lpPrice > 0 ? toWei(userShareOfFees / lpPrice).toString() : "0",
                     token0: pool.lp_addr,
                     changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
                 };
             })
         );
@@ -666,5 +729,43 @@ const getEarningsForBurrbear = async (
         console.error(error);
         return [];
     }
+};
+
+const calculateLifetimeLpEarnings = async (
+    transactions: any[],
+    vault_addr: string,
+    client: PublicClient,
+    balances: any
+): Promise<bigint> => {
+    if (!transactions || transactions.length === 0) return BigInt(0);
+
+    let totalDeposited = BigInt(0);
+    let totalWithdrawn = BigInt(0);
+    let lastUserAssetBalance = BigInt(0);
+
+    for (const tx of transactions) {
+        const value = BigInt(tx.value ?? "0");
+        const userAssetBalance = BigInt(tx.userAssetBalance ?? "0");
+
+        if (tx.type === "deposit") {
+            totalDeposited += value;
+        } else if (tx.type === "withdraw") {
+            totalWithdrawn += value;
+        }
+
+        lastUserAssetBalance = userAssetBalance;
+    }
+    const positionValue =
+        (await calculateChangeInAssets({
+            vault_addr: vault_addr as `0x${string}`,
+            client,
+            balances,
+            chainId: 80094,
+            lastTransactionAssets: lastUserAssetBalance,
+        })) + lastUserAssetBalance;
+
+    const lifetimeEarnings = totalWithdrawn + positionValue - totalDeposited;
+
+    return lifetimeEarnings;
 };
 

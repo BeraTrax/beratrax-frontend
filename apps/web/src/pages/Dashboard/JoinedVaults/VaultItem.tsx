@@ -316,7 +316,13 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                         </div>
                         {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
                             <div className="text-textWhite text-lg font-league-spartan leading-5">
-                                <p className="text-green-500">+${formatCurrency(totalEarningsUsd, 5)}</p>
+                                <p className="text-green-500">
+                                    +$
+                                    {customCommify(totalEarningsUsd, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 5,
+                                    })}
+                                </p>
                                 {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                                     <p className="text-textSecondary text-sm">
                                         In{" "}

@@ -5,13 +5,7 @@ import useWallet from "../../../hooks/useWallet";
 import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
-
-// Function to check if a vault is new (created within the last 7 days)
-const isVaultNew = (createdAt: number) => {
-    const now = Date.now() / 1000; // Convert to seconds
-    const sevenDaysInSeconds = 7 * 24 * 60 * 60;
-    return now - createdAt < sevenDaysInSeconds;
-};
+import { isVaultNew } from "src/utils/common";
 
 const useEarnPage = () => {
     const { externalChainId } = useWallet();

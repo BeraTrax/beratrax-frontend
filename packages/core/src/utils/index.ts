@@ -1,7 +1,16 @@
+/* global __DEV__ */
+import { Platform } from 'react-native';
+// import Clipboard from "@react-native-clipboard/clipboard";
 
 export const copyToClipboard = (text: string, cb: Function | null = null) => {
-    navigator.clipboard.writeText(text);
+    if (Platform.OS === 'web') {
+        navigator.clipboard.writeText(text);
+    } else {
+        // Clipboard.setString(text);
+        console.log("copyToClipboard", text);
+    }
     setTimeout(() => {
+        console.log("copyToClipboard cb");
         if (cb) cb();
     }, 1000);
 };

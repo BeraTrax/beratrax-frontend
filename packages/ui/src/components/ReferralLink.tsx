@@ -5,6 +5,7 @@ import { View, Text } from "react-native";
 import useAccountData from "@beratrax/core/src/state/account/useAccountData";
 import { CopyIcon } from "../icons/Copy"
 import { TwitterIcon } from "../icons/Twitter"
+import { Platform } from "react-native";
 
 interface IProps { }
 
@@ -40,32 +41,20 @@ export const ReferralLink: React.FC<IProps> = () => {
           <View className="relative w-full">
             <View className="flex flex-row justify-between items-center">
               <Text className="font-arame-mono text-base text-textWhite font-normal py-1">
-                YOUR REFERRAL LINK
+                YOUR REFERRAL {Platform.OS === 'web' ? 'LINK' : 'CODE'}
               </Text>
             </View>
             <Text className="font-league-spartan font-light text-base text-gray-300 leading-5 mb-2">
-              Share your referral link and earn exactly the same amount of BTX
+              Share your referral {Platform.OS === 'web' ? 'link' : 'code'} and earn exactly the same amount of BTX
               points of anyone who clicks it!
             </Text>
             <View
-              className={`flex flex-row gap-4 w-full rounded-2xl bg-bgSecondary p-4 relative`}
+              className={`flex flex-row  p-4 relative justify-between`}
             >
-              <View className="flex flex-col ">
-                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
-                  Web Link:
-                </Text>
-                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
-                  Mobile Link:
-                </Text>
-              </View>
-
 
               <View className="flex flex-col ">
                 <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
-                  {referralLink}
-                </Text>
-                <Text className="font-league-spartan font-light text-base text-textWhite leading-5 overflow-hidden whitespace-nowrap text-ellipsis">
-                  {referralCode}
+                  {Platform.OS === 'web' ? referralLink : referralCode}
                 </Text>
               </View>
 

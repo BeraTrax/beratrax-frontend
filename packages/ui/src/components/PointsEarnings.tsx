@@ -59,10 +59,10 @@ export const PointsEarnings: React.FC<Props> = () => {
         />
         <View className="pl-3">
           <Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">
-            TOTAL POINTS FROM
+            TOTAL POINTS
           </Text>
           <Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">
-            STAKING
+            FROM STAKING
           </Text>
           <Text className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
             {customCommify(stakingPoints, {
@@ -71,7 +71,7 @@ export const PointsEarnings: React.FC<Props> = () => {
               showDollarSign: false,
             })}
           </Text>
-          <GradientText>x2 Multiplier - Mainnet 🚀</GradientText>
+          <GradientText>x2 Multiplier-Mainnet 🚀</GradientText>
           {boosts && boosts.includes(Boosts.NFT) && (
             <GradientText>x2 Multiplier - NFT 🚀</GradientText>
           )}
@@ -98,10 +98,10 @@ export const PointsEarnings: React.FC<Props> = () => {
         <Text
           className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3`}
         >
-          TOTAL POINTS FROM
+          TOTAL POINTS 
         </Text>
         <Text className="font-arame-mono font-normal text-base leading-4 pl-3">
-          REFERRALS
+          FROM REFERRALS
         </Text>
         <Text className="font-league-spartan font-bold text-bgDark text-3xl leading-10 pl-3 pt-2">
           {customCommify(referralPoints || 0, {

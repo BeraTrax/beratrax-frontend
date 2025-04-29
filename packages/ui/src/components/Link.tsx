@@ -3,6 +3,7 @@ import { Linking, Text, TouchableOpacity } from "react-native";
 export const Link = ({
   href,
   children,
+  className,
 }: {
   href: string;
   target: string;
@@ -13,7 +14,7 @@ export const Link = ({
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <Text style={{ color: "blue", textDecorationLine: "underline" }}>
+      <Text className={className}>
         {children}
       </Text>
     </TouchableOpacity>

@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 import { mobileWalletConfig } from "@/config/mobileWalletConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -28,6 +28,7 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 const RootLayout = () => {
+  const router = useRouter();
   const [loaded] = useFonts({
     LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
   });
@@ -35,6 +36,7 @@ const RootLayout = () => {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      router.push("/Dashboard");
     }
   }, [loaded]);
 

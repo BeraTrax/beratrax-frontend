@@ -32,11 +32,12 @@ import {
   Image,
   ImageSourcePropType,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import { Link } from "./Link";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import { GradientText } from "./GradientText";
-import { CopyIcon } from "../icons/Copy";
+import { PowerIcon, CopyIcon } from "../icons";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 interface WalletAndEarningsProps {
@@ -232,13 +233,15 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({
                         <Link
                           target="_blank"
                           href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
-                          className="font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
+                          className="no-underline font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
                         >
                           {truncatedAddress}
                         </Link>
-                        <Text className="h-6 text-white ml-4 cursor-pointer">
-                          <CopyIcon onPress={copy} />
-                        </Text>
+                        <TouchableOpacity onPress={copy}>
+                          <Text className="h-6 text-white ml-4 cursor-pointer">
+                            <CopyIcon />
+                          </Text>
+                        </TouchableOpacity>
                         {/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
                         {showCopyFeedback && (
                           <View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
@@ -270,11 +273,12 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({
                   )}
                   {/* Logout Button */}
 
-                  <Text className="h-6 text-white ml-4 cursor-pointer">⏼</Text>
+                  {/* <Text className="h-6 text-white ml-4 cursor-pointer">⏼</Text> */}
                   {/* <LiaPowerOffSolid
                     onClick={() => disconnect()}
                     className="w-8 h-8 text-textWhite cursor-pointer z-10"
                   /> */}
+                  <PowerIcon onPress={() => disconnect()} size={42} strokeWidth={2}/>
                 </View>
               </View>
             ) : (

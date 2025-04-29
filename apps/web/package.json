@@ -1,6 +1,6 @@
 {
   "name": "@beratrax/web",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -129,4 +129,3 @@
     "@ethereumjs/tx": "4.0.2"
   }
 }
-

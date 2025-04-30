@@ -1,13 +1,48 @@
 import { BsClipboardData } from "react-icons/bs";
 import { FiExternalLink } from "react-icons/fi";
+import { useState } from "react";
 import useConstants from "src/hooks/useConstants";
 import { useStats } from "src/hooks/useStats";
 import { CHAIN_ID } from "src/types/enums";
 import { customCommify } from "src/utils/common";
 
+type SortColumn = "depositedTvl" | "platform" | null;
+type SortDirection = "asc" | "desc";
+
 export const VaultStatsTable = () => {
     const { vaultStats } = useStats();
     const { BLOCK_EXPLORER_URL } = useConstants(CHAIN_ID.BERACHAIN);
+    const [sortColumn, setSortColumn] = useState<SortColumn>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+    const handleSort = (column: SortColumn) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            setSortColumn(column);
+            setSortDirection("desc");
+        }
+    };
+
+    const getSortedVaults = () => {
+        if (!vaultStats || !sortColumn) return vaultStats;
+
+        return [...vaultStats].sort((a, b) => {
+            let comparison = 0;
+
+            if (sortColumn === "depositedTvl") {
+                comparison = a.depositedTvl - b.depositedTvl;
+            } else if (sortColumn === "platform") {
+                const aPlatform = [a.originPlatform, a.secondaryPlatform].filter(Boolean).join(" | ");
+                const bPlatform = [b.originPlatform, b.secondaryPlatform].filter(Boolean).join(" | ");
+                comparison = aPlatform.localeCompare(bPlatform);
+            }
+
+            return sortDirection === "asc" ? comparison : -comparison;
+        });
+    };
+
+    const sortedVaults = getSortedVaults();
 
     return (
         <div className="bg-bgSecondary rounded-lg p-6 border border-borderDark text-textWhite">
@@ -17,15 +52,25 @@ export const VaultStatsTable = () => {
                     <thead>
                         <tr className="text-textBlack text-left tracking-wide uppercase bg-bgPrimary border-b border-borderDark">
                             <th className="p-4 w-[200px]">TITLE</th>
-                            <th className="p-4">PLATFORM</th>
-                            <th className="p-4">DEPOSITED TVL</th>
+                            <th
+                                className="p-4 cursor-pointer hover:text-textSecondary"
+                                onClick={() => handleSort("platform")}
+                            >
+                                PLATFORM {sortColumn === "platform" && (sortDirection === "asc" ? "↑" : "↓")}
+                            </th>
+                            <th
+                                className="p-4 cursor-pointer hover:text-textSecondary"
+                                onClick={() => handleSort("depositedTvl")}
+                            >
+                                DEPOSITED TVL {sortColumn === "depositedTvl" && (sortDirection === "asc" ? "↑" : "↓")}
+                            </th>
                             <th className="p-4">AVERAGE DEPOSITS</th>
                             <th className="p-4">NO OF DEPOSITS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {vaultStats && vaultStats.length > 0 ? (
-                            vaultStats
+                        {sortedVaults && sortedVaults.length > 0 ? (
+                            sortedVaults
                                 .sort((a, b) => (a.isDeprecated ? 1 : b.isDeprecated ? -1 : 0))
                                 .map(
                                     ({
@@ -123,3 +168,4 @@ const EmptyTable = () => {
         </div>
     );
 };
+

@@ -8,15 +8,4 @@ import useStCoreRedeem from "./useStCoreRedeem";
 import useFarms from "./useFarms";
 import useEarnPage from "./useEarnPage";
 
-export {
-  useFarmApy,
-  useFarmApys,
-  useFarmDetails,
-  useDeposit,
-  useWithdraw,
-  useZapOut,
-  useZapIn,
-  useStCoreRedeem,
-  useFarms,
-  useEarnPage,
-};
+export { useFarmApy, useFarmApys, useFarmDetails, useDeposit, useWithdraw, useZapOut, useZapIn, useStCoreRedeem, useFarms, useEarnPage };

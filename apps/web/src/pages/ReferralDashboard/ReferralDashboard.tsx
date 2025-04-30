@@ -8,58 +8,56 @@ import { ReferralDashboardTable } from "web/src/components/ReferralDashboardTabl
 import styles from "./ReferralDashboard.module.css";
 
 const ReferralDashboard: React.FC = () => {
-  const { lightMode } = useApp();
-  const { referralLink } = useAccountData();
-  const { currentWallet } = useWallet();
-  const [copied, setCopied] = useState(false);
-  const { data } = useReferralDashboard();
-  const [tweetCopied, setTweetCopied] = useState(false);
-  const topThreeReferrals = useMemo(() => {
-    return data?.sort((a, b) => b.tvlFromReferrals - a.tvlFromReferrals).slice(0, 3) ?? [];
-  }, [data]);
+	const { lightMode } = useApp();
+	const { referralLink } = useAccountData();
+	const { currentWallet } = useWallet();
+	const [copied, setCopied] = useState(false);
+	const { data } = useReferralDashboard();
+	const [tweetCopied, setTweetCopied] = useState(false);
+	const topThreeReferrals = useMemo(() => {
+		return data?.sort((a, b) => b.tvlFromReferrals - a.tvlFromReferrals).slice(0, 3) ?? [];
+	}, [data]);
 
-  const copy = () => {
-    if (referralLink) {
-      setCopied(true);
-      copyToClipboard(referralLink, () => setCopied(false));
-    }
-  };
-  const tweetMessage = referralLink ? (
-    <p>
-      DeFi staking can be complex, but there's a new platform that makes it easy to start. If you want to earn over 10%
-      on ETH and stables in a few clicks, check it out here:
-      <br />
-      <a href={referralLink} target="_blank" rel="noopener noreferrer">
-        {referralLink}
-      </a>
-      <br />
-      <br />
-      Just follow along:{" "}
-      <a href="https://www.youtube.com/watch?v=cqJkiNrbVqk" target="_blank" rel="noopener noreferrer">
-        https://www.youtube.com/watch?v=cqJkiNrbVqk
-      </a>
-    </p>
-  ) : (
-    "Please login to see tweet template with your referral link"
-  );
+	const copy = () => {
+		if (referralLink) {
+			setCopied(true);
+			copyToClipboard(referralLink, () => setCopied(false));
+		}
+	};
+	const tweetMessage = referralLink ? (
+		<p>
+			DeFi staking can be complex, but there's a new platform that makes it easy to start. If you want to earn over 10% on ETH and stables
+			in a few clicks, check it out here:
+			<br />
+			<a href={referralLink} target="_blank" rel="noopener noreferrer">
+				{referralLink}
+			</a>
+			<br />
+			<br />
+			Just follow along:{" "}
+			<a href="https://www.youtube.com/watch?v=cqJkiNrbVqk" target="_blank" rel="noopener noreferrer">
+				https://www.youtube.com/watch?v=cqJkiNrbVqk
+			</a>
+		</p>
+	) : (
+		"Please login to see tweet template with your referral link"
+	);
 
-  const tweetCopiedMessage = (content: string | React.ReactElement) => {
-    if (referralLink) {
-      setTweetCopied(true);
-      const text =
-        typeof content === "string"
-          ? content
-          : (new DOMParser().parseFromString(
-              ReactDOMServer.renderToString(content).replaceAll("<br/>", "\n"),
-              "text/html"
-            ).body.textContent as string);
-      copyToClipboard(text, () => setTweetCopied(false));
-    }
-  };
+	const tweetCopiedMessage = (content: string | React.ReactElement) => {
+		if (referralLink) {
+			setTweetCopied(true);
+			const text =
+				typeof content === "string"
+					? content
+					: (new DOMParser().parseFromString(ReactDOMServer.renderToString(content).replaceAll("<br/>", "\n"), "text/html").body
+							.textContent as string);
+			copyToClipboard(text, () => setTweetCopied(false));
+		}
+	};
 
-  return (
-    <div className={styles.container}>
-      {/* <h1 className={styles.mainHeading}>Intract Referral Contest! 🎉</h1>
+	return (
+		<div className={styles.container}>
+			{/* <h1 className={styles.mainHeading}>Intract Referral Contest! 🎉</h1>
             <h2 className={styles.subHeading}>$500 in prizes for top 3 referrers. Contest ends March 13th</h2>
             <section className={styles.paraSection}>
                 <p className={styles.para}>
@@ -135,21 +133,17 @@ const ReferralDashboard: React.FC = () => {
                 </div>
             </section>
             <br /> */}
-      <h1 className={styles.mainHeading}>🥇 Current Standings</h1>
-      <br />
-      <div className={styles.topRow}>
-        {topThreeReferrals.length > 0 &&
-          topThreeReferrals.map((referral, i) => (
-            <ReferralCard
-              key={referral.address}
-              heading={`Currently ${getPositionSuffix(i + 1)} Place`}
-              address={referral.address}
-            />
-          ))}
-      </div>
-      <ReferralDashboardTable referrals={data} />
-    </div>
-  );
+			<h1 className={styles.mainHeading}>🥇 Current Standings</h1>
+			<br />
+			<div className={styles.topRow}>
+				{topThreeReferrals.length > 0 &&
+					topThreeReferrals.map((referral, i) => (
+						<ReferralCard key={referral.address} heading={`Currently ${getPositionSuffix(i + 1)} Place`} address={referral.address} />
+					))}
+			</div>
+			<ReferralDashboardTable referrals={data} />
+		</div>
+	);
 };
 
 export default ReferralDashboard;

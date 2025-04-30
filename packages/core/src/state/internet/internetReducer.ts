@@ -2,20 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 import { StateInterface } from "./types";
 
 const initialState: StateInterface = {
-    isOnline: window.navigator.onLine,
+	isOnline: window.navigator.onLine,
 };
 
 const internetSlice = createSlice({
-    name: "internet",
-    initialState: initialState,
-    reducers: {
-        setOnline: (state: StateInterface) => {
-            state.isOnline = true;
-        },
-        setOffline: (state: StateInterface) => {
-            state.isOnline = false;
-        },
-    },
+	name: "internet",
+	initialState: initialState,
+	reducers: {
+		setOnline: (state: StateInterface) => {
+			state.isOnline = true;
+		},
+		setOffline: (state: StateInterface) => {
+			state.isOnline = false;
+		},
+	},
 });
 
 export const { setOnline, setOffline } = internetSlice.actions;

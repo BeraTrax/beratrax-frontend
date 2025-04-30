@@ -5,7 +5,7 @@ window.Buffer = window.Buffer ?? Buffer;
 window.process = window.process ?? { env: {} }; // Minimal process polyfill
 // @ts-ignore
 window.Browser = {
-    T: () => {},
+	T: () => {},
 };
 
 export {};

@@ -13,55 +13,51 @@ import "./App.css";
 import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import "./styles/global.css";
-import {
-  initGA,
-  trackDailyDAppVisit,
-  trackLanguage,
-} from "@beratrax/core/src/utils/analytics";
+import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
 import { webWalletConfig, web3AuthInstance } from "./config/webWalletConfig";
 setHook("notifications", useNotifications);
 
 function App() {
-  useEffect(() => {
-    // Initialize analytics
-    initGA();
+	useEffect(() => {
+		// Initialize analytics
+		initGA();
 
-    // Track daily visit
-    trackDailyDAppVisit();
+		// Track daily visit
+		trackDailyDAppVisit();
 
-    // Track user's language
-    trackLanguage();
-  }, []);
+		// Track user's language
+		trackLanguage();
+	}, []);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider
-        theme={darkTheme({
-          accentColor: "var( --new-color_primary)",
-          accentColorForeground: "white",
-        })}
-        showRecentTransactions={false}
-        appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
-      >
-        <WalletProvider
-          walletConfig={webWalletConfig}
-          getWeb3AuthPk={() => {
-            return web3AuthInstance.provider?.request({
-              method: "eth_private_key",
-            }) as Promise<string>;
-          }}
-          isWeb3AuthConnected={() => web3AuthInstance.connected}
-          logoutWeb3Auth={() => web3AuthInstance.logout()}
-        >
-          <Router>
-            <Body />
-          </Router>
-          <ReactHooksWrapper />
-        </WalletProvider>
-        <ReactQueryDevtools />
-      </RainbowKitProvider>
-    </QueryClientProvider>
-  );
+	return (
+		<QueryClientProvider client={queryClient}>
+			<RainbowKitProvider
+				theme={darkTheme({
+					accentColor: "var( --new-color_primary)",
+					accentColorForeground: "white",
+				})}
+				showRecentTransactions={false}
+				appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
+			>
+				<WalletProvider
+					walletConfig={webWalletConfig}
+					getWeb3AuthPk={() => {
+						return web3AuthInstance.provider?.request({
+							method: "eth_private_key",
+						}) as Promise<string>;
+					}}
+					isWeb3AuthConnected={() => web3AuthInstance.connected}
+					logoutWeb3Auth={() => web3AuthInstance.logout()}
+				>
+					<Router>
+						<Body />
+					</Router>
+					<ReactHooksWrapper />
+				</WalletProvider>
+				<ReactQueryDevtools />
+			</RainbowKitProvider>
+		</QueryClientProvider>
+	);
 }
 
 export default App;

@@ -1,48 +1,47 @@
-
 import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "./../state";
 import { toggleSupportChat as _toggleSupportChat, toggleTheme } from "./../state/settings/settingsReducer";
 
 export const AppContext = React.createContext({
-  lightMode: true,
-  supportChat: true,
-  toggleLight: () => {},
-  toggleSupportChat: () => {},
+	lightMode: true,
+	supportChat: true,
+	toggleLight: () => {},
+	toggleSupportChat: () => {},
 });
 
 interface Props {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }
 
 const AppProvider: React.FC<Props> = ({ children }) => {
-  const theme = useAppSelector((state) => state.settings.theme);
-  const supportChat = useAppSelector((state) => state.settings.supportChat);
-  const dispatch = useAppDispatch();
+	const theme = useAppSelector((state) => state.settings.theme);
+	const supportChat = useAppSelector((state) => state.settings.supportChat);
+	const dispatch = useAppDispatch();
 
-  const toggleLight = () => {
-    dispatch(toggleTheme());
-  };
-  const toggleSupportChat = () => {
-    dispatch(_toggleSupportChat());
-  };
+	const toggleLight = () => {
+		dispatch(toggleTheme());
+	};
+	const toggleSupportChat = () => {
+		dispatch(_toggleSupportChat());
+	};
 
-  const lightMode = useMemo(() => theme === "light", [theme]);
+	const lightMode = useMemo(() => theme === "light", [theme]);
 
-  React.useEffect(() => {
-    document.documentElement.setAttribute("data-lightMode", `${lightMode}`);
-  }, [lightMode]);
+	React.useEffect(() => {
+		document.documentElement.setAttribute("data-lightMode", `${lightMode}`);
+	}, [lightMode]);
 
-  return (
-    <AppContext.Provider
-      value={{
-        lightMode,
-        supportChat,
-        toggleLight,
-        toggleSupportChat,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+	return (
+		<AppContext.Provider
+			value={{
+				lightMode,
+				supportChat,
+				toggleLight,
+				toggleSupportChat,
+			}}
+		>
+			{children}
+		</AppContext.Provider>
+	);
 };
 export default AppProvider;

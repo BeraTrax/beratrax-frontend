@@ -15,65 +15,62 @@ import Details from "web/src/components/FarmItem/components/Details/Details";
 import "./DropDownView.css";
 
 export const DropDownView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
-  const { lightMode } = useApp();
-  const [showMoreDetail, setShowMoreDetail] = useState(false);
-  const transactionType = useAppSelector((state) =>
-    IS_LEGACY ? FarmTransactionType.Withdraw : state.farms.farmDetailInputOptions.transactionType
-  );
-  const dispatch = useAppDispatch();
+	const { lightMode } = useApp();
+	const [showMoreDetail, setShowMoreDetail] = useState(false);
+	const transactionType = useAppSelector((state) =>
+		IS_LEGACY ? FarmTransactionType.Withdraw : state.farms.farmDetailInputOptions.transactionType
+	);
+	const dispatch = useAppDispatch();
 
-  const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
-    dispatch(setFarmDetailInputOptions(opt));
-  };
+	const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
+		dispatch(setFarmDetailInputOptions(opt));
+	};
 
-  return (
-    <div className={`dropdown_menu ${lightMode && "dropdown_menu--light"}`}>
-      <div className="basic_container">
-        <div className="type_tab">
-          <Tabs>
-            <PoolButton
-              onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Deposit })}
-              description={FarmTransactionType.Deposit}
-              active={transactionType === FarmTransactionType.Deposit}
-            />
-            <PoolButton
-              onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Withdraw })}
-              description={FarmTransactionType.Withdraw}
-              active={transactionType === FarmTransactionType.Withdraw}
-            />
-          </Tabs>
-        </div>
-        <div className="type_selector">
-          <p
-            onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Deposit })}
-            className={transactionType === FarmTransactionType.Deposit ? "active" : ""}
-          >
-            {FarmTransactionType.Deposit}
-          </p>
-          <p
-            onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Withdraw })}
-            className={transactionType === FarmTransactionType.Withdraw ? "active" : ""}
-          >
-            {FarmTransactionType.Withdraw}
-          </p>
-        </div>
-        <div className="right_container">
-          <Description farm={farm} />
-          <DetailInput farm={farm} />
-        </div>
-      </div>
+	return (
+		<div className={`dropdown_menu ${lightMode && "dropdown_menu--light"}`}>
+			<div className="basic_container">
+				<div className="type_tab">
+					<Tabs>
+						<PoolButton
+							onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Deposit })}
+							description={FarmTransactionType.Deposit}
+							active={transactionType === FarmTransactionType.Deposit}
+						/>
+						<PoolButton
+							onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Withdraw })}
+							description={FarmTransactionType.Withdraw}
+							active={transactionType === FarmTransactionType.Withdraw}
+						/>
+					</Tabs>
+				</div>
+				<div className="type_selector">
+					<p
+						onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Deposit })}
+						className={transactionType === FarmTransactionType.Deposit ? "active" : ""}
+					>
+						{FarmTransactionType.Deposit}
+					</p>
+					<p
+						onClick={() => !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Withdraw })}
+						className={transactionType === FarmTransactionType.Withdraw ? "active" : ""}
+					>
+						{FarmTransactionType.Withdraw}
+					</p>
+				</div>
+				<div className="right_container">
+					<Description farm={farm} />
+					<DetailInput farm={farm} />
+				</div>
+			</div>
 
-      {!showMoreDetail ? (
-        <div
-          className={`see_details_dropdown ${lightMode && "see_details_dropdown--light"}`}
-          onClick={() => setShowMoreDetail(true)}
-        >
-          <p className={`see_details_description ${lightMode && "see_details_description--light"}`}>See more details</p>
-          <RiArrowDownSLine />
-        </div>
-      ) : (
-        <Details farm={farm} onClick={() => setShowMoreDetail(false)} />
-      )}
-    </div>
-  );
+			{!showMoreDetail ? (
+				<div className={`see_details_dropdown ${lightMode && "see_details_dropdown--light"}`} onClick={() => setShowMoreDetail(true)}>
+					<p className={`see_details_description ${lightMode && "see_details_description--light"}`}>See more details</p>
+					<RiArrowDownSLine />
+				</div>
+			) : (
+				<Details farm={farm} onClick={() => setShowMoreDetail(false)} />
+			)}
+		</div>
+	);
 };

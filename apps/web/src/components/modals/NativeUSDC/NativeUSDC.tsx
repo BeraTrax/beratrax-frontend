@@ -4,59 +4,53 @@ import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./NativeUSDC.module.css";
 
 interface IProps {
-    handleClose: Function;
-    handleInitateSwap: Function;
-    formattedBalance: number;
+	handleClose: Function;
+	handleInitateSwap: Function;
+	formattedBalance: number;
 }
 
 const NativeUSDC: React.FC<IProps> = ({ handleClose, handleInitateSwap, formattedBalance }) => {
-    const [swapAmount, setSwapAmopunt] = React.useState(0);
+	const [swapAmount, setSwapAmopunt] = React.useState(0);
 
-    const handleMax = () => {
-        setSwapAmopunt(formattedBalance);
-    };
+	const handleMax = () => {
+		setSwapAmopunt(formattedBalance);
+	};
 
-    const handleSubmit = () => {
-        handleInitateSwap(toWei(swapAmount, 6));
-        handleClose();
-    };
+	const handleSubmit = () => {
+		handleInitateSwap(toWei(swapAmount, 6));
+		handleClose();
+	};
 
-    return (
-        <ModalLayout onClose={handleClose} className={styles.borderClass} wrapperClassName="lg:w-full">
-            <div className={styles.container}>
-                <h1 className={styles.nativeHeading}>Swap USDC.e to USDC</h1>
-                <div></div>
-                <div className={styles.inputContainer}>
-                    <div className={styles.inputWrapper}>
-                        <input
-                            type="text"
-                            placeholder="Enter here"
-                            required
-                            value={swapAmount}
-                            min={0}
-                            onChange={(e) => setSwapAmopunt(Number(e.target.value))}
-                        />
-                    </div>
-                    <button className={`custom-button ${styles.maxBtn}`} onClick={handleMax}>
-                        Max
-                    </button>
-                </div>
-                <p className={styles.usdceBalance}>USDC.e Balance: ${formattedBalance}</p>
-                <p className={styles.para2}>
-                Beratrax vaults use USDC. Type how much you want to swap, or click max to swap it all.
-                </p>
-                <div className={styles.btnContainer}>
-                    <button
-                        className={`custom-button  ${styles.submitButton}`}
-                        onClick={handleSubmit}
-                        disabled={swapAmount > formattedBalance}
-                    >
-                        Swap
-                    </button>
-                </div>
-            </div>
-        </ModalLayout>
-    );
+	return (
+		<ModalLayout onClose={handleClose} className={styles.borderClass} wrapperClassName="lg:w-full">
+			<div className={styles.container}>
+				<h1 className={styles.nativeHeading}>Swap USDC.e to USDC</h1>
+				<div></div>
+				<div className={styles.inputContainer}>
+					<div className={styles.inputWrapper}>
+						<input
+							type="text"
+							placeholder="Enter here"
+							required
+							value={swapAmount}
+							min={0}
+							onChange={(e) => setSwapAmopunt(Number(e.target.value))}
+						/>
+					</div>
+					<button className={`custom-button ${styles.maxBtn}`} onClick={handleMax}>
+						Max
+					</button>
+				</div>
+				<p className={styles.usdceBalance}>USDC.e Balance: ${formattedBalance}</p>
+				<p className={styles.para2}>Beratrax vaults use USDC. Type how much you want to swap, or click max to swap it all.</p>
+				<div className={styles.btnContainer}>
+					<button className={`custom-button  ${styles.submitButton}`} onClick={handleSubmit} disabled={swapAmount > formattedBalance}>
+						Swap
+					</button>
+				</div>
+			</div>
+		</ModalLayout>
+	);
 };
 
 export default NativeUSDC;

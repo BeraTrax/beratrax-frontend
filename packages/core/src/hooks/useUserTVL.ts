@@ -3,18 +3,18 @@ import { FarmDataProcessed } from "./../api/pools/types";
 import { useAppSelector } from "./../state";
 
 const useTVL = () => {
-  const { farmDetails } = useAppSelector((state) => state.farms);
-  const [userTVL, setUserTVL] = useState(0);
+	const { farmDetails } = useAppSelector((state) => state.farms);
+	const [userTVL, setUserTVL] = useState(0);
 
-  useEffect(() => {
-    let totalValueLockedUser = 0;
-    Object.values(farmDetails).forEach((e: FarmDataProcessed) => {
-      totalValueLockedUser += Number(e?.withdrawableAmounts[0].amountDollar);
-    });
-    setUserTVL(totalValueLockedUser);
-  }, [farmDetails]);
+	useEffect(() => {
+		let totalValueLockedUser = 0;
+		Object.values(farmDetails).forEach((e: FarmDataProcessed) => {
+			totalValueLockedUser += Number(e?.withdrawableAmounts[0].amountDollar);
+		});
+		setUserTVL(totalValueLockedUser);
+	}, [farmDetails]);
 
-  return { userTVL };
+	return { userTVL };
 };
 
 export default useTVL;

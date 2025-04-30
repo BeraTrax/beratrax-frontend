@@ -14,26 +14,26 @@ import Test from "./pages/Test/Test";
 import UserGuide from "./pages/UserGuide/UserGuide";
 
 function Body() {
-  usePageTracking();
-  useDataRefresh();
+	usePageTracking();
+	useDataRefresh();
 
-  return (
-    <Routes>
-      <Route path={RoutesPaths.Home} element={<Home />}>
-        <Route path={RoutesPaths.Farms} element={<Farms />} />
-        <Route path="/earn/:vaultAddress" element={<FarmAction />} />
-        <Route path={RoutesPaths.Test} element={<Test />} />
-        <Route path={RoutesPaths.Test_pro_max} element={<FarmInfo />} />
-        <Route path={RoutesPaths.Stats} element={<Stats />} />
-        <Route path={RoutesPaths.Stats + "/withdrawals"} element={<Withdrawals />} />
-        <Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />
-        <Route path={RoutesPaths.UserGuide} element={<UserGuide />} />
-        <Route path="" element={<Dashboard />} />
-        <Route path="/:refCode" element={<Dashboard />} />
-        <Route path="*" element={<h3 style={{ color: "white" }}>Not Found</h3>} />
-      </Route>
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route path={RoutesPaths.Home} element={<Home />}>
+				<Route path={RoutesPaths.Farms} element={<Farms />} />
+				<Route path="/earn/:vaultAddress" element={<FarmAction />} />
+				<Route path={RoutesPaths.Test} element={<Test />} />
+				<Route path={RoutesPaths.Test_pro_max} element={<FarmInfo />} />
+				<Route path={RoutesPaths.Stats} element={<Stats />} />
+				<Route path={RoutesPaths.Stats + "/withdrawals"} element={<Withdrawals />} />
+				<Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />
+				<Route path={RoutesPaths.UserGuide} element={<UserGuide />} />
+				<Route path="" element={<Dashboard />} />
+				<Route path="/:refCode" element={<Dashboard />} />
+				<Route path="*" element={<h3 style={{ color: "white" }}>Not Found</h3>} />
+			</Route>
+		</Routes>
+	);
 }
 
 export default Body;

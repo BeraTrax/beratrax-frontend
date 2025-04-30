@@ -1,0 +1,10 @@
+# .prettierignore
+node_modules
+dist
+*.lock
+.turbo
+**/node_modules
+**/dist
+**/.yarn
+**/*.lock
+**/.turbo

@@ -1,30 +1,30 @@
 import { PoolDef } from "./../../config/constants/pools_json";
 
 export interface StateInterface {
-  apys: { [farmId: number]: Apys };
-  isLoading: boolean;
-  isFetched: boolean;
-  error?: string | null;
+	apys: { [farmId: number]: Apys };
+	isLoading: boolean;
+	isFetched: boolean;
+	error?: string | null;
 }
 
 export interface AddApysAction {
-  [farmId: number]: Apys;
+	[farmId: number]: Apys;
 }
 
 export interface Apys {
-  feeApr: number;
-  rewardsApr: number;
-  apy: number;
-  compounding: number;
-  boost?: number;
+	feeApr: number;
+	rewardsApr: number;
+	apy: number;
+	compounding: number;
+	boost?: number;
 }
 
 export interface AddApyAction {
-  data: Apys;
-  farmId: number;
+	data: Apys;
+	farmId: number;
 }
 
 export interface FetchApysThunk {
-  chainId: number;
-  farms: PoolDef[];
+	chainId: number;
+	farms: PoolDef[];
 }

@@ -15,28 +15,28 @@ import { webWalletConfig } from "./config/webWalletConfig";
 
 // Configuration for toast notifications
 setUpNotifications({
-  defaultProps: {
-    position: "top-right",
-    dismissible: true,
-    showDismissButton: true,
-    dismissAfter: 3000,
-  },
+	defaultProps: {
+		position: "top-right",
+		dismissible: true,
+		showDismissButton: true,
+		dismissAfter: 3000,
+	},
 });
 // supportChatConfig(window, document);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <WagmiProvider config={webWalletConfig}>
-      <Provider store={store}>
-        {/* <PersistGate loading={null} persistor={persistor}> */}
-        <NotificationsProvider>
-          <AppProvider>
-            <App />
-            <Notifications />
-          </AppProvider>
-        </NotificationsProvider>
-        {/* </PersistGate> */}
-      </Provider>
-    </WagmiProvider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<WagmiProvider config={webWalletConfig}>
+			<Provider store={store}>
+				{/* <PersistGate loading={null} persistor={persistor}> */}
+				<NotificationsProvider>
+					<AppProvider>
+						<App />
+						<Notifications />
+					</AppProvider>
+				</NotificationsProvider>
+				{/* </PersistGate> */}
+			</Provider>
+		</WagmiProvider>
+	</React.StrictMode>
 );

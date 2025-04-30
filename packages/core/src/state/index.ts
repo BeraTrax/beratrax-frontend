@@ -15,15 +15,15 @@ import tokensReducer from "./tokens/tokensReducer";
 import transactionsReducer from "./transactions/transactionsReducer";
 
 const rootReducer = combineReducers({
-  account: accountReducer,
-  settings: settingsReducer,
-  internet: internetReducer,
-  apys: apysReducer,
-  farms: farmsReducer,
-  fees: feesReducer,
-  transactions: transactionsReducer,
-  notification: notificationReducer,
-  tokens: tokensReducer,
+	account: accountReducer,
+	settings: settingsReducer,
+	internet: internetReducer,
+	apys: apysReducer,
+	farms: farmsReducer,
+	fees: feesReducer,
+	transactions: transactionsReducer,
+	notification: notificationReducer,
+	tokens: tokensReducer,
 });
 
 // const persistConfig = getPersistConfig({
@@ -48,17 +48,17 @@ const rootReducer = combineReducers({
 // export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer: rootReducer,
-  // devTools: process.env.NODE_ENV !== "production",
-  // devTools: true,
-  // reducer: persistedReducer,
-  // middleware(getDefaultMiddleware) {
-  //   return getDefaultMiddleware({
-  //     serializableCheck: {
-  //       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-  //     },
-  //   });
-  // },
+	reducer: rootReducer,
+	// devTools: process.env.NODE_ENV !== "production",
+	// devTools: true,
+	// reducer: persistedReducer,
+	// middleware(getDefaultMiddleware) {
+	//   return getDefaultMiddleware({
+	//     serializableCheck: {
+	//       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+	//     },
+	//   });
+	// },
 });
 
 export default store;

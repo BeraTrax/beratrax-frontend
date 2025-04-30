@@ -3,23 +3,23 @@ import backiconbg from "@beratrax/core/src/assets/images/backiconbg.svg";
 import { FC } from "react";
 
 interface IProps {
-    onClick: () => void;
-    className?: string;
+	onClick: () => void;
+	className?: string;
 }
 
 const BackIcon = () => {
-    return (
-        <div className="relative rounded-lg">
-            <img src={backiconbg} alt="" className=" rounded-[10px]" />
-            <img src={backiconarrow} alt="backIcon" className="absolute top-[30%] right-[26%] " />
-        </div>
-    );
+	return (
+		<div className="relative rounded-lg">
+			<img src={backiconbg} alt="" className=" rounded-[10px]" />
+			<img src={backiconarrow} alt="backIcon" className="absolute top-[30%] right-[26%] " />
+		</div>
+	);
 };
 
 const BackButton: FC<IProps> = ({ className, onClick }) => {
-    return (
-        <button onClick={onClick} className={`bg-btnBgSecondary px-4 py-3 rounded-lg ${className}`}>
-            {/* <svg xmlns="http://www.w3.org/2000/svg" width={7} height={12} viewBox="0 0 7 12" fill="none">
+	return (
+		<button onClick={onClick} className={`bg-btnBgSecondary px-4 py-3 rounded-lg ${className}`}>
+			{/* <svg xmlns="http://www.w3.org/2000/svg" width={7} height={12} viewBox="0 0 7 12" fill="none">
                 <path
                     fillRule="evenodd"
                     clipRule="evenodd"
@@ -27,9 +27,9 @@ const BackButton: FC<IProps> = ({ className, onClick }) => {
                     fill="#90BB62"
                 />
             </svg> */}
-            <BackIcon />
-        </button>
-    );
+			<BackIcon />
+		</button>
+	);
 };
 
 export default BackButton;

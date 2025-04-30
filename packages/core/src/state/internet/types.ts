@@ -1,3 +1,3 @@
 export interface StateInterface {
-    isOnline: boolean;
+	isOnline: boolean;
 }

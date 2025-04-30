@@ -3,24 +3,24 @@ import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import styles from "./SuccessfulEarnTrax.module.css";
 
 interface IProps {
-    handleClose: Function;
+	handleClose: Function;
 }
 
 const SuccessfulEarnTrax: React.FC<IProps> = ({ handleClose }) => {
-    return (
-        <ModalLayout onClose={handleClose} className={styles.borderClass} wrapperClassName="lg:w-full">
-            <div className={styles.container}>
-                <h1>Congratulations!</h1>
-                <p className={styles.para1}>Your BTX earning has been enabled.</p>
-                <p className={styles.para2}>You can earn BTX now on each farm with yield.</p>
-                <div className={styles.btnContainer}>
-                    <button className={`custom-button ${styles.okButton}`} onClick={() => handleClose()}>
-                        OK!
-                    </button>
-                </div>
-            </div>
-        </ModalLayout>
-    );
+	return (
+		<ModalLayout onClose={handleClose} className={styles.borderClass} wrapperClassName="lg:w-full">
+			<div className={styles.container}>
+				<h1>Congratulations!</h1>
+				<p className={styles.para1}>Your BTX earning has been enabled.</p>
+				<p className={styles.para2}>You can earn BTX now on each farm with yield.</p>
+				<div className={styles.btnContainer}>
+					<button className={`custom-button ${styles.okButton}`} onClick={() => handleClose()}>
+						OK!
+					</button>
+				</div>
+			</div>
+		</ModalLayout>
+	);
 };
 
 export default SuccessfulEarnTrax;

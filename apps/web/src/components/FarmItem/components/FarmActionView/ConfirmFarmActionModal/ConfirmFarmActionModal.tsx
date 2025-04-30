@@ -8,106 +8,106 @@ import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import TransactionDetails from "web/src/pages/Dashboard/Transactions/components/TransactionDetails";
 
 interface DepositInfo {
-  amount: string;
-  showInUsd: boolean;
-  token: string;
-  transactionType: FarmTransactionType;
+	amount: string;
+	showInUsd: boolean;
+	token: string;
+	transactionType: FarmTransactionType;
 }
 
 interface IProps {
-  farm: PoolDef;
-  handleClose: (closeDepositModal?: boolean) => void;
-  txId: string;
-  depositInfo?: DepositInfo;
+	farm: PoolDef;
+	handleClose: (closeDepositModal?: boolean) => void;
+	txId: string;
+	depositInfo?: DepositInfo;
 }
 
 const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositInfo }) => {
-  const { isLoading, reset } = useTransactions();
-  const { errors, success, clearAllNotifications } = useNotification();
-  const amount = useMemo(() => formatBalance(depositInfo?.amount ?? "0", { maximumFractionDigits: 3 }), []);
+	const { isLoading, reset } = useTransactions();
+	const { errors, success, clearAllNotifications } = useNotification();
+	const amount = useMemo(() => formatBalance(depositInfo?.amount ?? "0", { maximumFractionDigits: 3 }), []);
 
-  const getTransactionTitle = () => {
-    if (!depositInfo) return "";
-    const action = depositInfo.transactionType === FarmTransactionType.Deposit ? "Depositing" : "Withdrawing";
-    const currency = depositInfo.showInUsd ? "$" : "";
-    return `${action} ${currency}${amount} ${depositInfo.token}`;
-  };
+	const getTransactionTitle = () => {
+		if (!depositInfo) return "";
+		const action = depositInfo.transactionType === FarmTransactionType.Deposit ? "Depositing" : "Withdrawing";
+		const currency = depositInfo.showInUsd ? "$" : "";
+		return `${action} ${currency}${amount} ${depositInfo.token}`;
+	};
 
-  const getTransactionDescription = () => {
-    if (!depositInfo) return "";
-    const action = depositInfo.transactionType === FarmTransactionType.Deposit ? "deposit" : "withdraw";
-    const currency = depositInfo.showInUsd ? "$" : "";
-    return `We are taking care of all the steps to ${action} ${currency}${amount} ${depositInfo.token} ${
-      depositInfo.transactionType === FarmTransactionType.Deposit ? "into" : "from"
-    } ${farm.name} Vault for you!`;
-  };
+	const getTransactionDescription = () => {
+		if (!depositInfo) return "";
+		const action = depositInfo.transactionType === FarmTransactionType.Deposit ? "deposit" : "withdraw";
+		const currency = depositInfo.showInUsd ? "$" : "";
+		return `We are taking care of all the steps to ${action} ${currency}${amount} ${depositInfo.token} ${
+			depositInfo.transactionType === FarmTransactionType.Deposit ? "into" : "from"
+		} ${farm.name} Vault for you!`;
+	};
 
-  useEffect(() => {
-    clearAllNotifications();
-  }, []);
+	useEffect(() => {
+		clearAllNotifications();
+	}, []);
 
-  return (
-    <ModalLayout
-      onClose={() => {
-        clearAllNotifications();
-        handleClose();
-      }}
-      wrapperClassName="w-full lg:w-[92%]"
-      style={{ borderColor: "var(--new-border_dark)" }}
-    >
-      <div className="text-textWhite flex flex-col gap-4">
-        <p className="text-xl font-bold align-middle uppercase">{getTransactionTitle()}</p>
-        <p className="text-textWhite mt-2 text-[16px] font-light leading-relaxed">{getTransactionDescription()}</p>
+	return (
+		<ModalLayout
+			onClose={() => {
+				clearAllNotifications();
+				handleClose();
+			}}
+			wrapperClassName="w-full lg:w-[92%]"
+			style={{ borderColor: "var(--new-border_dark)" }}
+		>
+			<div className="text-textWhite flex flex-col gap-4">
+				<p className="text-xl font-bold align-middle uppercase">{getTransactionTitle()}</p>
+				<p className="text-textWhite mt-2 text-[16px] font-light leading-relaxed">{getTransactionDescription()}</p>
 
-        <div className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
-          <TransactionDetails transactionId={txId} open={true} farm={undefined} tx={undefined} />
-          {isLoading && (
-            <div className="center">
-              <div className="w-[18px] h-[18px] border-2 border-solid border-current border-b-transparent border-r-transparent rounded-full box-border animate-rotation" />
-            </div>
-          )}
-        </div>
+				<div className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
+					<TransactionDetails transactionId={txId} open={true} farm={undefined} tx={undefined} />
+					{isLoading && (
+						<div className="center">
+							<div className="w-[18px] h-[18px] border-2 border-solid border-current border-b-transparent border-r-transparent rounded-full box-border animate-rotation" />
+						</div>
+					)}
+				</div>
 
-        {success.length > 0 && (
-          <>
-            <div className="bg-green-800/30 border border-green-600 rounded-md p-4 mt-2">
-              {success.map((notification, index) => (
-                <div key={index} className="mb-2 last:mb-0">
-                  {notification.title && <p className="text-green-400 font-semibold mb-1">{notification.title}</p>}
-                  <p className="text-green-400">{notification.message}</p>
-                </div>
-              ))}
-            </div>{" "}
-            <button
-              className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-              onClick={() => handleClose(true)}
-            >
-              Go Back
-            </button>
-          </>
-        )}
+				{success.length > 0 && (
+					<>
+						<div className="bg-green-800/30 border border-green-600 rounded-md p-4 mt-2">
+							{success.map((notification, index) => (
+								<div key={index} className="mb-2 last:mb-0">
+									{notification.title && <p className="text-green-400 font-semibold mb-1">{notification.title}</p>}
+									<p className="text-green-400">{notification.message}</p>
+								</div>
+							))}
+						</div>{" "}
+						<button
+							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
+							onClick={() => handleClose(true)}
+						>
+							Go Back
+						</button>
+					</>
+				)}
 
-        {errors.length > 0 && (
-          <>
-            <div className="bg-red-800/30 border border-red-600 rounded-md p-4 mt-2">
-              {errors.map((error, index) => (
-                <div key={index} className="mb-2 last:mb-0">
-                  {error.title && <p className="text-red-400 font-semibold mb-1">{error.title}</p>}
-                  <p className="text-red-400">{error.message}</p>
-                </div>
-              ))}
-            </div>
-            <button
-              className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-              onClick={() => handleClose()}
-            >
-              Close
-            </button>
-          </>
-        )}
-      </div>
-    </ModalLayout>
-  );
+				{errors.length > 0 && (
+					<>
+						<div className="bg-red-800/30 border border-red-600 rounded-md p-4 mt-2">
+							{errors.map((error, index) => (
+								<div key={index} className="mb-2 last:mb-0">
+									{error.title && <p className="text-red-400 font-semibold mb-1">{error.title}</p>}
+									<p className="text-red-400">{error.message}</p>
+								</div>
+							))}
+						</div>
+						<button
+							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
+							onClick={() => handleClose()}
+						>
+							Close
+						</button>
+					</>
+				)}
+			</div>
+		</ModalLayout>
+	);
 };
 
 export default ConfirmFarmActionModal;

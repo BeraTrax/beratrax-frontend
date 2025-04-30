@@ -116,7 +116,7 @@ const TokenEarning = ({
                     <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
                         ${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                     </h1>
-                    <p className="text-textSecondary text-sm flex items-center gap-1">
+                    <div className="text-textSecondary text-sm flex items-center gap-1">
                         Lifetime Earnings
                         <div className="group relative">
                             <div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
@@ -126,7 +126,7 @@ const TokenEarning = ({
                                 Based on current token prices, swap fee is not included.
                             </div>
                         </div>
-                    </p>
+                    </div>
                 </div>
                 <div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
                     <span className="text-green-500 text-md">↑</span>
@@ -210,8 +210,6 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
     }, [vaultEarnings, farm.id]);
 
     const renderEarningsSection = () => {
-        if (farm.id === 42) return null;
-
         return (
             <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">

@@ -5,7 +5,8 @@ import {
     KODIAK_EARNINGS_GRAPH_URL,
     STEER_PROTOCOL_EARNINGS_GRAPH_URL,
 } from "src/config/constants";
-import { getPricesByTime, getTokenPricesBackend } from "src/api/token";
+import { getPricesByTime } from "src/api/token";
+import { getApyByTime } from "src/api/stats";
 import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { toEth, toWei } from "src/utils/common";
 import store from "src/state";
@@ -14,8 +15,6 @@ import vaultAbi from "src/assets/abis/vault.json";
 import pools_json from "src/config/constants/pools_json";
 import { berachain } from "viem/chains";
 import { VaultEarnings } from "src/state/farms/types";
-import { tokenNamesAndImages } from "src/config/constants/pools_json";
-
 interface Response {
     deposit: string;
     vaultAddress: string;
@@ -27,21 +26,19 @@ interface Response {
     chainId: number;
 }
 
-interface CalculateChangeInAssetsParams {
+interface CalculateFinalPositionAssetsParams {
     vault_addr: `0x${string}`;
     client: PublicClient;
     balances: any;
     chainId: number;
-    lastTransactionAssets: bigint;
 }
 
-const calculateChangeInAssets = async ({
+const calculateFinalPositionAssets = async ({
     vault_addr,
     client,
     balances,
     chainId,
-    lastTransactionAssets,
-}: CalculateChangeInAssetsParams): Promise<bigint> => {
+}: CalculateFinalPositionAssetsParams): Promise<bigint> => {
     const contract = getContract({
         address: vault_addr,
         abi: vaultAbi.abi,
@@ -49,7 +46,7 @@ const calculateChangeInAssets = async ({
     });
     const currentShares = balances[chainId][vault_addr]?.valueWei || BigInt(0);
     const currentAssets = (await contract.read.convertToAssets([currentShares])) as bigint;
-    return currentAssets - lastTransactionAssets;
+    return currentAssets;
 };
 
 export const getEarnings = async (userAddress: string) => {
@@ -188,7 +185,8 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         const infraredEarnings = await getEarningsForInfrared(combinedTransactions, client, balances);
         const steerEarnings = await getEarningsForSteer(combinedTransactions, client, balances);
         const kodiakEarnings = await getEarningsForKodiak(combinedTransactions, client, balances);
-        return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings];
+        const iberaEarnings = await calculateIBeraEarnings(combinedTransactions);
+        return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings, iberaEarnings];
     } catch (err: any) {
         console.error(err);
         return [];
@@ -204,6 +202,7 @@ const getEarningsForInfrared = async (
         const infraredPools = pools_json
             .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
             .filter((pool) => pool.originPlatform === FarmOriginPlatform.Infrared)
+            .filter((pool) => pool.id !== 42)
             .map((pool) => ({
                 vault_addr: pool.vault_addr,
                 lp_addr: pool.lp_address,
@@ -242,13 +241,14 @@ const getEarningsForInfrared = async (
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
                 const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
 
-                const changeInAssets = await calculateChangeInAssets({
+                const finalPositionAssets = await calculateFinalPositionAssets({
                     vault_addr: pool.vault_addr!,
                     client,
                     balances,
                     chainId: pool.chainId,
-                    lastTransactionAssets,
                 });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
                 // If user has no balance after the last transaction, return zero earnings
                 if (changeInAssets <= 0) {
@@ -485,13 +485,14 @@ const getEarningsForKodiak = async (
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
                 const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
 
-                const changeInAssets = await calculateChangeInAssets({
+                const finalPositionAssets = await calculateFinalPositionAssets({
                     vault_addr: pool.vault_addr!,
                     client,
                     balances,
                     chainId: pool.chainId,
-                    lastTransactionAssets,
                 });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
                 // If user has no balance after the last transaction, return zero earnings
                 if (changeInAssets <= 0) {
@@ -547,24 +548,23 @@ const getEarningsForKodiak = async (
                 // Calculate user's share of these fees
                 const userShareOfFees0 =
                     BigInt(currentFeeData.outputTokenSupply) > 0
-                        ? (accumulatedFees0 * Number(toEth(changeInAssets, currentFeeData.outputToken.decimals))) /
+                        ? (accumulatedFees0 * Number(toEth(finalPositionAssets, currentFeeData.outputToken.decimals))) /
                           Number(toEth(currentFeeData.outputTokenSupply, currentFeeData.outputToken.decimals))
                         : 0;
 
                 // Calculate token prices
                 const priceToken0 = currentFeeData.outputTokenPriceUSD;
+                const earnings0 =
+                    priceToken0 > 0
+                        ? toWei(userShareOfFees0 / priceToken0, Number(currentFeeData.outputToken.decimals)).toString()
+                        : "0";
+
                 return {
                     tokenId: pool.farmId.toString(),
-                    earnings0:
-                        priceToken0 > 0
-                            ? toWei(
-                                  userShareOfFees0 / priceToken0,
-                                  Number(currentFeeData.outputToken.decimals)
-                              ).toString()
-                            : "0",
+                    earnings0,
                     token0: pool.lp_addr,
                     changeInAssets: changeInAssets.toString(),
-                    lifetimeEarnings: lifetimeEarnings.toString(),
+                    lifetimeEarnings: (lifetimeEarnings + BigInt(earnings0)).toString(), // Added earnings0 to lifetimeEarnings to make sure lifetimeEarnings is atleast equal to current earnings
                 };
             })
         );
@@ -628,13 +628,14 @@ const getEarningsForBurrbear = async (
                 const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
                 const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
 
-                const changeInAssets = await calculateChangeInAssets({
+                const finalPositionAssets = await calculateFinalPositionAssets({
                     vault_addr: pool.vault_addr!,
                     client,
                     balances,
                     chainId: pool.chainId,
-                    lastTransactionAssets,
                 });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
                 // If user has no balance after the last transaction, return zero earnings
                 if (changeInAssets <= 0) {
@@ -708,16 +709,18 @@ const getEarningsForBurrbear = async (
                 // Calculate user's share of these fees
                 const userShareOfFees =
                     currentFeeData.totalLiquidity > 0
-                        ? (accumulatedFees * Number(toEth(changeInAssets))) /
+                        ? (accumulatedFees * Number(toEth(finalPositionAssets))) /
                           Number(currentFeeData.totalLiquidity / lpPrice)
                         : 0;
 
+                const earnings0 = lpPrice > 0 ? toWei(userShareOfFees / lpPrice).toString() : "0";
+
                 return {
                     tokenId: pool.farmId.toString(),
-                    earnings0: lpPrice > 0 ? toWei(userShareOfFees / lpPrice).toString() : "0",
+                    earnings0,
                     token0: pool.lp_addr,
                     changeInAssets: changeInAssets.toString(),
-                    lifetimeEarnings: lifetimeEarnings.toString(),
+                    lifetimeEarnings: (lifetimeEarnings + BigInt(earnings0)).toString(), // Added earnings0 to lifetimeEarnings to make sure lifetimeEarnings is atleast equal to current earnings
                 };
             })
         );
@@ -725,6 +728,88 @@ const getEarningsForBurrbear = async (
     } catch (error) {
         console.error(error);
         return [];
+    }
+};
+
+export const calculateIBeraEarnings = async (combinedTransactions: any): Promise<VaultEarnings> => {
+    try {
+        const iberaPool = pools_json.find((pool) => pool.id === 42);
+        if (!iberaPool) {
+            return {
+                tokenId: "42",
+                earnings0: "0",
+                token0: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
+                changeInAssets: "0",
+                lifetimeEarnings: "0",
+            };
+        }
+
+        const filtered = combinedTransactions
+            .filter((tx: any) => tx.tokenId === "42")
+            .sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+
+        if (filtered.length === 0) {
+            return {
+                tokenId: "42",
+                earnings0: "0",
+                token0: iberaPool.lp_address,
+                changeInAssets: "0",
+                lifetimeEarnings: "0",
+            };
+        }
+
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        // Batch all timestamps for APY fetch
+        const timestamps = filtered.map((tx: any) => ({
+            address: iberaPool.vault_addr,
+            timestamp: Number(tx.blockTimestamp),
+            chainId: iberaPool.chainId,
+        }));
+
+        const apyData = await getApyByTime(timestamps);
+
+        let totalEarnings = BigInt(0);
+        let lastEarnings = BigInt(0);
+
+        for (let i = 0; i < filtered.length; i++) {
+            const tx = filtered[i];
+            const nextTx = filtered[i + 1];
+            const start = Number(tx.blockTimestamp);
+            const end = nextTx ? Number(nextTx.blockTimestamp) : currentTimestamp;
+            const timePeriod = end - start;
+            const timeInYears = timePeriod / (365 * 24 * 60 * 60);
+
+            const apyObj = apyData?.[iberaPool.chainId]?.[iberaPool.vault_addr]?.find(
+                (entry) => Math.abs(entry.timestamp - start) < 3600 // within 1 hour
+            );
+            const apy = apyObj?.apy?.rewardsApr ?? 0;
+            const apyPercent = Math.floor((apy / 100) * 1e18); // scaled for precision
+
+            const userBalance = BigInt(tx.userAssetBalance || "0");
+            const earnings = (userBalance * BigInt(apyPercent) * BigInt(Math.floor(timeInYears * 1e18))) / BigInt(1e36);
+
+            totalEarnings += earnings;
+            if (i === filtered.length - 1) {
+                lastEarnings = earnings;
+            }
+        }
+
+        return {
+            tokenId: "42",
+            earnings0: lastEarnings.toString(),
+            token0: iberaPool.lp_address,
+            lifetimeEarnings: totalEarnings.toString(),
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            tokenId: "42",
+            earnings0: "0",
+            token0: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
+            changeInAssets: "0",
+            lifetimeEarnings: "0",
+        };
     }
 };
 
@@ -752,20 +837,12 @@ const calculateLifetimeLpEarnings = async (
 
         lastUserAssetBalance = userAssetBalance;
     }
-    const positionValue =
-        (await calculateChangeInAssets({
-            vault_addr: vault_addr as `0x${string}`,
-            client,
-            balances,
-            chainId: 80094,
-            lastTransactionAssets: lastUserAssetBalance,
-        })) + lastUserAssetBalance;
-
-    if (vault_addr === "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302") {
-        console.log("totalDeposited", totalDeposited);
-        console.log("totalWithdrawn", totalWithdrawn);
-        console.log("positionValue", positionValue);
-    }
+    const positionValue = await calculateFinalPositionAssets({
+        vault_addr: vault_addr as `0x${string}`,
+        client,
+        balances,
+        chainId: 80094,
+    });
 
     const lifetimeEarnings = totalWithdrawn + positionValue - totalDeposited;
 

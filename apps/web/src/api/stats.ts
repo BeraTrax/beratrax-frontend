@@ -1,6 +1,7 @@
 import { backendApi } from ".";
 import { Order, AccountDetails } from "src/types";
 import { UsersTableColumns } from "src/types/enums";
+import { Address } from "viem";
 
 interface UserStatsResponse {
     data: AccountDetails[];
@@ -151,6 +152,17 @@ export const fetchSpecificVaultTvl = async (id: number) => {
 export const fetchSpecificVaultApy = async (id: number) => {
     const res = await backendApi.get<VaultsApyResponse>(`stats/vault/apy/30d?farmId=${id}`);
     return res.data.data;
+};
+
+export const getApyByTime = async (data: { address: Address; timestamp: number; chainId: number }[]) => {
+    try {
+        const res = await backendApi.post<{
+            data: { [chainId: string]: { [address: string]: { timestamp: number; apy: { rewardsApr: number } }[] } };
+        }>("stats/vault/apy/time", { query: data }, { cache: true });
+        return res.data.data;
+    } catch (err) {
+        return undefined;
+    }
 };
 
 export const fetchTotalBtxPoints = async () => {

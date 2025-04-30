@@ -15,7 +15,8 @@ import { GradientText } from "./GradientText";
 import { useWallet as importedUseWallet } from "@beratrax/core/src/hooks";
 import VaultItem from "./VaultItem";
 import { ReloadIcon } from "../icons/Reload";
-export const VaultsShared: FC<React.PropsWithChildren> = ({
+
+export const Vaults: FC<React.PropsWithChildren> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { reloadFarmData } = useFarmDetails();
@@ -29,8 +30,8 @@ export const VaultsShared: FC<React.PropsWithChildren> = ({
     });
   }, [unsortedVaults]);
 
-  const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable), [vaults]);
-  const upgradableVaults = useMemo(() => vaults.filter((vault) => vault.isUpgradable), [vaults]);
+  // const deprecatedVaults = useMemo(() => vaults.filter((vault) => vault.isDeprecated && vault.isUpgradable), [vaults]);
+  // const upgradableVaults = useMemo(() => vaults.filter((vault) => vault.isUpgradable), [vaults]);
   const { balances } = useTokens();
   const { isConnecting, currentWallet, getPublicClient } = useWallet();
 

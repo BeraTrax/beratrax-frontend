@@ -4,7 +4,7 @@ import {
   WalletAndEarnings,
   EmptyComponent,
   ReferralLink,
-  VaultsShared,
+  Vaults
 } from "@beratrax/ui";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
@@ -22,7 +22,7 @@ const Dashboard = () => {
             <>
               <PointsEarnings />
               <ReferralLink />
-              <VaultsShared />
+              <Vaults />
             {/* <TokenBalances />
             <Transactions />} */}
             </>

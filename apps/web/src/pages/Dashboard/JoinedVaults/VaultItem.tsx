@@ -309,41 +309,37 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 
             <div className={`grid ${estimateTrax && Number(estimateTrax) > 0 ? "grid-cols-3" : "grid-cols-2"}`}>
                 {/* Earnings*/}
-                {vault.id !== 42 ? (
-                    <div className="text-textSecondary border-r border-bgPrimary">
-                        <div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
-                            <p className="flex items-center gap-2">Earnings</p>
-                        </div>
-                        {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
-                            <div className="text-textWhite text-lg font-league-spartan leading-5">
-                                <p className="text-green-500">
-                                    +$
-                                    {customCommify(totalEarningsUsd, {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 5,
-                                    })}
-                                </p>
-                                {lastTransaction?.date && typeof lastTransaction.date === "string" && (
-                                    <p className="text-textSecondary text-sm">
-                                        In{" "}
-                                        {Math.floor(
-                                            (Date.now() - new Date(lastTransaction.date).getTime()) /
-                                                (1000 * 60 * 60 * 24)
-                                        )}{" "}
-                                        {Math.floor(
-                                            (Date.now() - new Date(lastTransaction.date).getTime()) /
-                                                (1000 * 60 * 60 * 24)
-                                        ) === 1
-                                            ? "day"
-                                            : "days"}
-                                    </p>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
-                        )}
+                <div className="text-textSecondary border-r border-bgPrimary">
+                    <div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+                        <p className="flex items-center gap-2">Earnings</p>
                     </div>
-                ) : null}
+                    {!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+                        <div className="text-textWhite text-lg font-league-spartan leading-5">
+                            <p className="text-green-500">
+                                +$
+                                {customCommify(totalEarningsUsd, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 5,
+                                })}
+                            </p>
+                            {lastTransaction?.date && typeof lastTransaction.date === "string" && (
+                                <p className="text-textSecondary text-sm">
+                                    In{" "}
+                                    {Math.floor(
+                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                                    )}{" "}
+                                    {Math.floor(
+                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
+                                    ) === 1
+                                        ? "day"
+                                        : "days"}
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
+                    )}
+                </div>
 
                 {/* APY */}
                 <div

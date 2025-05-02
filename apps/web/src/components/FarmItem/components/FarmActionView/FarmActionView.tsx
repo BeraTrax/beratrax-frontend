@@ -32,7 +32,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 			[farm.chainId]: { [farm.vault_addr]: vaultPrice },
 		},
 		totalSupplies,
-		isLoading: isTotalSuppliesLoading,
+		isTotalSuppliesLoading,
 	} = useTokens();
 	const [marketCap, setMarketCap] = useState<string | null>(null);
 	const [vaultTvl, setVaultTvl] = useState<string | null>(null);
@@ -108,9 +108,9 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 													!currentWallet
 														? openConnectModal && openConnectModal()
 														: !IS_LEGACY &&
-															setFarmOptions({
+														  setFarmOptions({
 																transactionType: FarmTransactionType.Deposit,
-															});
+														  });
 												}}
 											>
 												{!currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit}

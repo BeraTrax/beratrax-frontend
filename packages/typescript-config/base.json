@@ -20,7 +20,8 @@
       "@beratrax/ui/*": ["packages/ui/*"],
       "@beratrax/web/*": ["apps/web/*"],
       "@beratrax/mobile/*": ["apps/mobile/*"],
-      "web/src/*": ["apps/web/src/*"]
+      "web/src/*": ["apps/web/src/*"],
+      "ui/src/*": ["packages/ui/src/*"]
     }
   },
   "exclude": ["node_modules"]

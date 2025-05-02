@@ -7,6 +7,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "web/src/components/BackButton/BackButton";
 import FarmRow from "web/src/components/FarmItem/FarmRow";
+import MobileFarmRow from "ui/src/components/FarmItem/FarmRow";
 import { FarmSortOptions } from "@beratrax/core/src/types/enums";
 
 function Farms() {
@@ -160,6 +161,31 @@ function Farms() {
 						<FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
 					))}
 				</div>
+
+        {/* Mobile Vaults */}
+        <div className="flex flex-col gap-2">
+          {sortedFarms
+            ? sortedFarms
+                .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+                .map((farm, index) => (
+                  <MobileFarmRow
+                    key={index + "nowallet"}
+                    farm={farm}
+                    openedFarm={openedFarm}
+                    setOpenedFarm={setOpenedFarm}
+                  />
+                ))
+            : farms
+                .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+                .map((farm, index) => (
+                  <MobileFarmRow
+                    key={index + "nowallet"}
+                    farm={farm}
+                    openedFarm={openedFarm}
+                    setOpenedFarm={setOpenedFarm}
+                  />
+                ))}
+        </div>
 				{/* Bottom padding */}
 				{(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) && upcomingFarms.length > 0 && (
 					<div className="flex flex-col mt-2 gap-2">
@@ -175,3 +201,4 @@ function Farms() {
 }
 
 export default Farms;
+

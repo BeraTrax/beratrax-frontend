@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 import { mobileWalletConfig } from "@/config/mobileWalletConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { Tabs, useRouter } from "expo-router";
+import { Tabs, useRouter, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -27,11 +27,23 @@ SplashScreen.preventAutoHideAsync();
 // Setup queryClient
 const queryClient = new QueryClient();
 
+// Add routes where tab bar should be hidden
+const hiddenTabBarRoutes = [
+  /^\/Earn\/[^\/]+$/, // Vault details page
+  // Add more route patterns here as needed
+  // Example: /^\/Stats\/details$/,
+  // Example: /^\/Dashboard\/settings$/,
+];
+
 const RootLayout = () => {
-	const router = useRouter();
-	const [loaded] = useFonts({
-		LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
-	});
+  const router = useRouter();
+  const [loaded] = useFonts({
+    LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
+  });
+  const pathname = usePathname();
+
+  // Check if the current path matches any route where tab bar should be hidden
+  const shouldHideTabBar = hiddenTabBarRoutes.some((pattern) => pathname.match(pattern));
 
 	useEffect(() => {
 		if (loaded) {
@@ -48,44 +60,44 @@ const RootLayout = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 	};
 
-	return (
-		<WagmiProvider config={mobileWalletConfig}>
-			<QueryClientProvider client={queryClient}>
-				<WalletProvider walletConfig={mobileWalletConfig}>
-					<Provider store={store}>
-						<SafeAreaProvider>
-							<SafeAreaView style={{ flex: 1 }}>
-								<AppKit />
-								<Tabs
-									initialRouteName="Dashboard"
-									screenOptions={{
-										tabBarActiveTintColor: "#3772FF",
-										tabBarInactiveTintColor: "#888",
-										tabBarStyle: styles.tabBar,
-										tabBarShowLabel: true,
-										headerShown: false,
-									}}
-								>
-									{Object.entries(tabOptions).map(([key, value]) => (
-										<Tabs.Screen
-											key={key}
-											name={key}
-											options={{
-												...value,
-											}}
-											listeners={{
-												tabPress: () => handleTabPress(),
-											}}
-										/>
-									))}
-								</Tabs>
-							</SafeAreaView>
-						</SafeAreaProvider>
-					</Provider>
-				</WalletProvider>
-			</QueryClientProvider>
-		</WagmiProvider>
-	);
+  return (
+    <WagmiProvider config={mobileWalletConfig}>
+      <QueryClientProvider client={queryClient}>
+        <WalletProvider walletConfig={mobileWalletConfig}>
+          <Provider store={store}>
+            <SafeAreaProvider>
+              <SafeAreaView style={{ flex: 1 }}>
+                <AppKit />
+                <Tabs
+                  initialRouteName="Dashboard"
+                  screenOptions={{
+                    tabBarActiveTintColor: "#3772FF",
+                    tabBarInactiveTintColor: "#888",
+                    tabBarStyle: shouldHideTabBar ? { display: "none" } : styles.tabBar,
+                    tabBarShowLabel: true,
+                    headerShown: false,
+                  }}
+                >
+                  {Object.entries(tabOptions).map(([key, value]) => (
+                    <Tabs.Screen
+                      key={key}
+                      name={key}
+                      options={{
+                        ...value,
+                      }}
+                      listeners={{
+                        tabPress: () => handleTabPress(),
+                      }}
+                    />
+                  ))}
+                </Tabs>
+              </SafeAreaView>
+            </SafeAreaProvider>
+          </Provider>
+        </WalletProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -134,3 +146,4 @@ const tabOptions = {
 };
 
 export default RootLayout;
+

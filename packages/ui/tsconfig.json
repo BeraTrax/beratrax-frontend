@@ -1,10 +1,5 @@
 {
   "extends": "@beratrax/typescript-config/vite.json",
   "include": ["."],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-   "paths": {
-      "src/*": ["./src/*"],
-    },
-  }
+  "exclude": ["node_modules"]
 }

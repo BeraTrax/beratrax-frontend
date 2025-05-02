@@ -1,4 +1,4 @@
-import { FarmActionView } from "web/src/components/FarmItem/components/FarmActionView/FarmActionView";
+import { FarmActionView } from "@beratrax/ui";
 import { useParams } from "react-router-dom";
 import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
 
@@ -12,3 +12,4 @@ export default function FarmAction() {
 		</div>
 	);
 }
+

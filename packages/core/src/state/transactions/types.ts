@@ -7,6 +7,12 @@ export interface StateInterface {
 	error?: string | null;
 }
 
+export enum BridgeService {
+	LIFI = "LIFI",
+	SOCKET_TECH = "SOCKET_TECH",
+	LAYER_ZERO = "LAYER_ZERO",
+}
+
 export enum TransactionStatus {
 	SUCCESS = "SUCCESS",
 	FAILED = "FAILED",
@@ -61,7 +67,16 @@ export interface EditTransaction {
 	steps?: TransactionStep[];
 }
 
-export type TransactionStep = ApproveZapStep | ZapInStep | ZapOutStep | WithdrawFromRewardVaultStep | StakeIntoRewardVaultStep;
+export type TransactionStep =
+	| GetBridgeQuoteStep
+	| ApproveBridgeStep
+	| InitiateBridgeStep
+	| WaitForBridgeResultsStep
+	| ApproveZapStep
+	| ZapInStep
+	| ZapOutStep
+	| WithdrawFromRewardVaultStep
+	| StakeIntoRewardVaultStep;
 
 export enum TransactionTypes {
 	GET_BRIDGE_QUOTE = "Get Bridge Quote",
@@ -73,6 +88,29 @@ export enum TransactionTypes {
 	ZAP_OUT = "Zap Out",
 	WITHDRAW_FROM_REWARD_VAULT = "Withdraw from reward vault",
 	STAKE_INTO_REWARD_VAULT = "Stake into reward vault",
+}
+
+export interface GetBridgeQuoteStep extends BaseStep {
+	type: TransactionTypes.GET_BRIDGE_QUOTE;
+}
+
+export interface ApproveBridgeStep extends BaseStep {
+	type: TransactionTypes.APPROVE_BRIDGE;
+}
+
+export interface InitiateBridgeStep extends BaseStep {
+	type: TransactionTypes.INITIATE_BRIDGE;
+}
+
+export interface WaitForBridgeResultsStep extends BaseStep {
+	type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS;
+	bridgeInfo: {
+		txHash?: Hex;
+		fromChain: number;
+		toChain: number;
+		beforeBridgeBalance: string;
+		tool?: string;
+	} & ({ bridgeService: BridgeService.LIFI; tool: string } | { bridgeService: BridgeService.SOCKET_TECH | BridgeService.LAYER_ZERO });
 }
 
 export interface ApproveZapStep extends BaseStep {

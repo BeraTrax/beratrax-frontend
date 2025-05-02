@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Skeleton } from "web/src/components/Skeleton/Skeleton";
-import styles from "./FarmLpGraph.module.css";
 import { LP_Prices } from "@beratrax/core/src/api/stats";
-import { useApp } from "@beratrax/core/src/hooks";
 import { useLp } from "@beratrax/core/src/hooks";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import { formatCurrency } from "@beratrax/core/src/utils/common";
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 
@@ -43,7 +42,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 };
 
 const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
-	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
+	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("week");
 
 	const graphFiltersList: { text: string; type: GraphFilterType }[] = [
 		{ text: "1H", type: "hour" },
@@ -124,6 +123,13 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 	const { lp, isLpPriceLoading } = useLp(farm.id);
 	const newData = useMemo(() => downsampleData(lp || [], graphFilter), [lp, graphFilter]);
 
+	const [minLp, maxLp] = useMemo(() => {
+		if (!newData || newData.length === 0) return [0, 100];
+
+		const values = newData.map((d) => parseFloat(d.lp));
+		return [Math.min(...values), Math.max(...values)];
+	}, [newData]);
+
 	return (
 		<div className="z-10 relative">
 			<div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
@@ -140,11 +146,11 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									</linearGradient>
 								</defs>
 								<XAxis dataKey="date" tick={false} axisLine={false} height={0} />
-								<YAxis tick={false} axisLine={false} width={0} />
+								<YAxis tick={false} axisLine={false} width={0} domain={[minLp * 0.9, maxLp * 1.1]} />
 								<Tooltip
 									contentStyle={{ background: "#1a1a1a", border: "none" }}
 									labelStyle={{ color: "#fff" }}
-									formatter={(value: any) => [`$${value}`, "Price"]}
+									formatter={(value: any) => [`$${formatCurrency(value)}`, "Price"]}
 									labelFormatter={(label) => label}
 								/>
 								<Area type="monotone" dataKey="lp" stroke="#90BB62" strokeWidth={2} fill="url(#colorUv)" fillOpacity={1} connectNulls />
@@ -162,6 +168,9 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 						onClick={() => setGraphFilter(filter.type)}
 					/>
 				))}
+			</div>
+			<div className="text-center my-4">
+				<p className="text-sm text-textSecondary">Historical Price of the underlying token</p>
 			</div>
 		</div>
 	);

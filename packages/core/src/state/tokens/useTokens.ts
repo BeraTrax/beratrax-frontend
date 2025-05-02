@@ -86,7 +86,7 @@ const useTokens = () => {
 
 		const arr: { address: Address; decimals: number }[] = [];
 		for (const farm of farms) {
-			if (farm.name !== "GMX") set.add(farm.lp_address);
+			set.add(farm.lp_address);
 		}
 
 		set.forEach((address) => {
@@ -212,9 +212,9 @@ const useTokens = () => {
 		reloadDecimals,
 
 		totalSupplies,
-		isTotalSuppliesLoading: isTotalSuppliesLoading && !isTotalSuppliesFetched,
-		isTotalSuppliesFetched,
-		isTotalSuppliesFetching: isTotalSuppliesLoading,
+		isLoading: (isTotalSuppliesLoading || isDecimalsLoading) && !isTotalSuppliesFetched && !isDecimalsFetched,
+		isFetched: isTotalSuppliesFetched && isDecimalsFetched,
+		isFetching: isTotalSuppliesLoading || isDecimalsLoading,
 		reloadSupplies,
 
 		tokens,

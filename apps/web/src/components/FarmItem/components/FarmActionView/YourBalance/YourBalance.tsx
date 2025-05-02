@@ -2,43 +2,167 @@ import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constant
 import { useWallet } from "@beratrax/core/src/hooks";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { customCommify, formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import { useMemo } from "react";
-import { getAddress } from "viem";
+import { Address, getAddress } from "viem";
 
 // Reusable component for token earnings
 const TokenEarning = ({
-	earnings,
+	currentVaultEarnings,
 	token,
 	chainId,
 	prices,
+	farm,
+	changeInAssets,
+	lifetimeEarnings,
 }: {
-	earnings: string | number | undefined;
+	currentVaultEarnings: any;
 	token: string | undefined;
 	chainId: number;
 	prices: Record<number, Record<string, number>>;
+	farm: PoolDef;
+	changeInAssets: string | number | undefined;
+	lifetimeEarnings: string | number | undefined;
 }) => {
-	if (!earnings || !token) return null;
+	if (!currentVaultEarnings || !token) return null;
+	const { decimals } = useTokens();
+	const { data: txHistory } = useFarmTransactions(farm.id, 1);
+	const lastTransaction = useMemo(() => {
+		if (!txHistory) return null;
+		return txHistory[0];
+	}, [txHistory]);
+
+	const currentVaultEarningsUsd = useMemo(() => {
+		return (
+			Number(
+				toEth(BigInt(currentVaultEarnings?.earnings0 || 0n), decimals[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)])
+			) *
+				prices[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
+			(currentVaultEarnings?.token1
+				? Number(
+						toEth(
+							BigInt(currentVaultEarnings?.earnings1 || 0n),
+							decimals[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+						)
+				  ) * prices[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+				: 0)
+		);
+	}, [currentVaultEarnings]);
+
+	const lifetimeEarningsUsd = useMemo(() => {
+		return (
+			Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])) *
+			(prices[farm.chainId][farm.lp_address] || 0)
+		);
+	}, [lifetimeEarnings]);
+
+	const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets?.toString();
+	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr || 0), decimals[farm.chainId][farm.lp_address as Address]));
+	const changeInAssetsValueUsd = changeInAssetsValue * (prices[farm.chainId][farm.lp_address] || 0);
+	const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
+
+	// Convert any zero earnings to "0" string to ensure proper display
+	const earningsStr = currentVaultEarningsUsd.toString();
 
 	const tokenAddress = token ? getAddress(token) : "";
 	const tokenName = token ? tokenNamesAndImages[tokenAddress]?.name || "" : "";
-	const earningsValue = Number(toEth(BigInt(earnings.toString())));
-	const earningsValueUsd = earningsValue * (prices[chainId][tokenAddress] || 0);
 
 	return (
-		<div className="flex-1">
+		<div className="flex flex-row justify-between flex-1 mx-2">
 			<div className="flex items-center gap-x-3">
 				<div className="flex flex-col">
-					<h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">${customCommify(earningsValueUsd.toFixed(2))}</h1>
+					<h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+						${customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+					</h1>
+					{lastTransaction?.date && typeof lastTransaction.date === "string" && (
+						<p className="text-textSecondary text-sm">
+							In {Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24))}{" "}
+							{Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)) === 1 ? "day" : "days"} (
+							{changeInAssetsValue > 0
+								? "+" +
+								  customCommify(Number(changeInAssetsValue), {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 5,
+								  })
+								: customCommify(Number(changeInAssetsValue), {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 5,
+								  })}{" "}
+							{farm.name})
+						</p>
+					)}
 				</div>
 				<div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
 					<span className="text-green-500 text-md">↑</span>
 				</div>
 			</div>
+			<div className="flex items-center gap-x-3">
+				<div className="flex flex-col">
+					<h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+						${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+					</h1>
+					<div className="text-textSecondary text-sm flex items-center gap-1">
+						Lifetime Earnings
+						<div className="group relative">
+							<div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
+								<span className="text-textSecondary/60 text-sm">?</span>
+							</div>
+							<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[200px] text-center">
+								Based on current token prices, swap fee is not included.
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
+					<span className="text-green-500 text-md">↑</span>
+				</div>
+			</div>
+			{/* <div className="flex items-center gap-x-2 mt-2">
+							<p className="text-green-400/80 text-[16px] font-light">
+									{customCommify(earningsValue, { minimumFractionDigits: 2, maximumFractionDigits: 5 })} {tokenName}
+							</p>
+					</div> */}
+		</div>
+	);
+};
+
+const LpAssetChange = ({
+	changeInAssets,
+	farm,
+	isLoading,
+}: {
+	changeInAssets: string | number | undefined;
+	farm: PoolDef;
+	isLoading?: boolean;
+}) => {
+	if (isLoading) {
+		return <div className="h-7 w-32 bg-gray-700 rounded animate-pulse" />;
+	}
+
+	if (!changeInAssets) return null;
+
+	const { decimals, prices } = useTokens();
+	const changeInAssetsStr = changeInAssets === 0 || changeInAssets === "0" ? "0" : changeInAssets.toString();
+	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr), decimals[farm.chainId][farm.lp_address as Address]));
+	const changeInAssetsValueUsd = changeInAssetsValue * (prices[farm.chainId][farm.lp_address] || 0);
+
+	return (
+		<div className="flex-1">
+			<div className="flex items-center gap-x-3">
+				<div className="flex flex-col">
+					<h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+						${customCommify(changeInAssetsValueUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+					</h1>
+				</div>
+				<div className="h-6 w-6 rounded-full bg-blue-500/10 flex items-center justify-center">
+					<span className="text-green-500 text-md">↗</span>
+				</div>
+			</div>
 			<div className="flex items-center gap-x-2 mt-2">
-				<p className="text-green-400/80 text-[16px] font-light">
-					{customCommify(earningsValue.toFixed(5))} {tokenName}
+				<p className="text-green-500/80 text-[16px] font-light">
+					{customCommify(changeInAssetsValue, { minimumFractionDigits: 2, maximumFractionDigits: 5 })} {farm.name}
 				</p>
 			</div>
 		</div>
@@ -46,7 +170,7 @@ const TokenEarning = ({
 };
 
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
-	const { isConnecting } = useWallet();
+	const { currentWallet, isConnecting } = useWallet();
 	const { balances, isBalancesLoading: isLoading, prices } = useTokens();
 	const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
 	const stakedTokenValueUsd = useMemo(() => Number(balances[farm.chainId][farm.vault_addr]?.valueUsd), [balances]);
@@ -56,13 +180,15 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 	);
 
 	const farmEarnings = useMemo(() => {
-		if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "" };
+		if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "", lifetimeEarnings: 0 };
 		return (
 			vaultEarnings.find((earning) => earning.tokenId === farm.id.toString()) || {
 				earnings0: 0,
 				token0: "",
 				earnings1: 0,
 				token1: "",
+				changeInAssets: 0,
+				lifetimeEarnings: 0,
 			}
 		);
 	}, [vaultEarnings, farm.id]);
@@ -77,10 +203,22 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 					) : (
 						<>
 							<div className="flex flex-row gap-4">
-								<TokenEarning earnings={farmEarnings.earnings0} token={farmEarnings.token0} chainId={farm.chainId} prices={prices} />
-								{farmEarnings?.earnings1 && (
-									<TokenEarning earnings={farmEarnings.earnings1} token={farmEarnings.token1} chainId={farm.chainId} prices={prices} />
-								)}
+								<TokenEarning
+									currentVaultEarnings={farmEarnings}
+									token={farmEarnings.token0}
+									chainId={farm.chainId}
+									prices={prices}
+									farm={farm}
+									changeInAssets={farmEarnings.changeInAssets}
+									lifetimeEarnings={farmEarnings.lifetimeEarnings}
+								/>
+								{/* {farm.isAutoCompounded && (
+																	<LpAssetChange
+																			changeInAssets={farmEarnings.changeInAssets}
+																			farm={farm}
+																			isLoading={isVaultEarningsFirstLoad}
+																	/>
+															)} */}
 							</div>
 						</>
 					)}
@@ -116,11 +254,16 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 		);
 	};
 
-	if (stakedTokenValueUsd === 0) return null;
+	if (stakedTokenValueUsd === 0 || !currentWallet) return null;
 
 	return (
 		<div className="mt-10 relative">
-			{(farm.originPlatform === FarmOriginPlatform.Infrared || farm.originPlatform === FarmOriginPlatform.Steer) && !farm.isDeprecated ? (
+			{(farm.originPlatform === FarmOriginPlatform.Infrared ||
+				farm.originPlatform === FarmOriginPlatform.Steer ||
+				farm.originPlatform === FarmOriginPlatform.Kodiak ||
+				farm.originPlatform === FarmOriginPlatform.Burrbear ||
+				farm.originPlatform === FarmOriginPlatform.BeraPaw) &&
+			!farm.isDeprecated ? (
 				<div className="flex flex-col md:flex-row gap-4 md:items-stretch">
 					{renderEarningsSection()}
 					{renderPositionSection()}

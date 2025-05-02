@@ -7,7 +7,7 @@ export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
 
 	const isAutoCompounding = useMemo(() => {
-		if (transactionType === FarmTransactionType.Deposit && farm.originPlatform !== FarmOriginPlatform.Peapods) return true;
+		if (transactionType === FarmTransactionType.Deposit) return true;
 		return false;
 	}, [farm, transactionType]);
 
@@ -18,7 +18,7 @@ export const Description: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 				{farm.url_name}
 			</a>{" "}
 			{isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
-			{currencySymbol === "ETH" ? ` "Max" excludes a little ETH for gas.` : ""}
+			{currencySymbol === "ETH" ? ` BeraTrax contracts are continuously audited by CyberScope.` : ""}
 		</div>
 	);
 };

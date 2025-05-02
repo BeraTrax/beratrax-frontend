@@ -1,10 +1,10 @@
-import { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import pools_json, { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useZapIn, useZapOut } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { deleteTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
-import { TransactionStatus, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
+import { Transaction, TransactionStatus, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
 import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
@@ -18,13 +18,19 @@ import { ModalLayout } from "web/src/components/modals/ModalLayout/ModalLayout";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import TransactionDetails from "./components/TransactionDetails";
+import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 
-const Transactions = () => {
+interface TransactionProps {
+	farmId?: number;
+}
+
+const Transactions: FC<TransactionProps> = ({ farmId }) => {
 	const [open, setOpen] = useState(false);
-	const allTransactions = useAppSelector((state) => state.transactions.transactions);
-	const transactions = useMemo(() => {
-		return allTransactions.slice(0, 3);
-	}, [allTransactions]);
+	const { data: transactions, isLoading } = useFarmTransactions(farmId, 3);
+
+	if (isLoading || !transactions) {
+		return <div className="center text-textWhite">Loading transactions...</div>; // or a spinner
+	}
 
 	return (
 		<div>
@@ -43,25 +49,27 @@ const Transactions = () => {
 			<div className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
 				{transactions.length === 0 && <p className="center text-textSecondary">No transactions yet</p>}
 				{transactions.map((item, i) => (
-					<Row _id={item._id} key={i} />
+					<Row tx={item} key={i} />
 				))}
 			</div>
-			{open && <TransactionsModal setOpenModal={setOpen} />}
+			{open && <TransactionsModal setOpenModal={setOpen} farmId={farmId} />}
 		</div>
 	);
 };
 
 export default Transactions;
 
-const Row: FC<{ _id: string }> = ({ _id }) => {
-	const { tx, farm } = useTransaction(_id);
+const Row: FC<{ tx: Transaction }> = ({ tx }) => {
+	const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
 	const { prices, decimals } = useTokens();
 	const [open, setOpen] = useState(false);
 	const dispatch = useAppDispatch();
-	if (!farm || !tx) return null;
-	const { zapIn } = useZapIn(farm);
-	const { zapOut } = useZapOut(farm);
 	const chainId = useChainId();
+	const { zapIn } = useZapIn(farm as PoolDef);
+	const { zapOut } = useZapOut(farm as PoolDef);
+
+	if (!farm || !tx) return null;
+
 	const {
 		type,
 		amountInWei,
@@ -75,6 +83,8 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 		fee,
 		returnedAssets,
 		vaultShares,
+		lpTokens,
+		lpTokenPrice,
 		farmId,
 	} = tx;
 
@@ -106,7 +116,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 	}, [steps]);
 	const retryTransaction = (e: any) => {
 		e.stopPropagation();
-		dispatch(deleteTransactionDb(_id));
+		dispatch(deleteTransactionDb(tx._id));
 		if (tx.type === "deposit") {
 			zapIn({
 				zapAmount: Number(toEth(BigInt(tx.amountInWei), decimals[farm.chainId][token])),
@@ -143,13 +153,22 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 					{/* Vault Name and Retry Button */}
 					<div className="flex-grow flex flex-col">
 						<div className="flex items-center gap-1.5">
-							<p className={`font-league-spartan font-medium text-lg leading-6 text-textWhite`}>{farm.name}</p>
+							<p className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-green-400" : "text-red-400"}`}>
+								{farm.name}
+							</p>
+							<span
+								className={`text-xs px-1.5 py-0.5 rounded ${
+									type === "deposit" ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"
+								}`}
+							>
+								{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
+							</span>
 							{tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
 								<button
 									className="border border-red-500 rounded-md 
-                                            px-1 py-0.5 bg-transparent 
-                                            flex items-center gap-0.5 
-                                            text-red-500 text-[0.8rem] cursor-pointer"
+																					px-1 py-0.5 bg-transparent 
+																					flex items-center gap-0.5 
+																					text-red-500 text-[0.8rem] cursor-pointer"
 									onClick={retryTransaction}
 								>
 									<CiRepeat /> Retry
@@ -159,12 +178,13 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 							{showExtraInfo && (
 								<div className="group relative pb-1">
 									<IoInformationCircle className="text-xl text-textSecondary cursor-help" onClick={(e) => e.stopPropagation()} />
-									<div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+									<div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
 										<div className="flex flex-col justify-end gap-2">
-											<div className="flex justify-between items-start">
-												<span className="text-textSecondary">{type === "deposit" ? "Zap In Amount:" : "Vault Shares:"}</span>
+											{/* Main Amount - Zap In/Out */}
+											<div className="flex justify-between items-start bg-[#2A2A2A] p-2 rounded-lg">
+												<span className="text-textSecondary text-xs">{type === "deposit" ? "Zap In Amount:" : "Zap Out Amount:"}</span>
 												<div className="flex flex-col items-end">
-													<span className="text-base">
+													<span className="text-sm font-bold text-buttonPrimaryLight">
 														$ {""}
 														{formatCurrency(
 															Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
@@ -174,92 +194,117 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 														)}
 													</span>
 													<span className="text-xs text-textSecondary">
-														{formatCurrency(formatUnits(BigInt(amountInWei || "0"), 18))}{" "}
-														{type === "deposit" ? tokenNamesAndImages[token].name : "BTX-" + farm.name}
+														{formatCurrency(tokenAmount)} {tokenNamesAndImages[token].name}
 													</span>
 												</div>
 											</div>
 
-											{fee !== undefined && (
+											{/* Zap Out Amount Received */}
+											{type === "withdraw" && (
 												<div className="flex justify-between items-start">
-													<span className="text-textSecondary">BeraTrax Fee:</span>
+													<span className="text-textSecondary text-xs">Net Received:</span>
 													<div className="flex flex-col items-end">
-														<span className="text-base">
-															$
+														<span className="text-sm text-textWhite">
+															${" "}
 															{formatCurrency(
-																Number(toEth(BigInt(fee), decimals[farm.chainId][token])) * (tokenPrice || prices[farm.chainId][token])
+																Number(formatUnits(BigInt(netAmount || amountInWei), decimals[farm.chainId][token])) *
+																	(showExtraInfo
+																		? tokenPrice || prices[farm.chainId][token]
+																		: vaultPrice || prices[farm.chainId][farm.vault_addr])
 															)}
 														</span>
 														<span className="text-xs text-textSecondary">
-															{formatCurrency(toEth(BigInt(fee), decimals[farm.chainId][token]))} {tokenNamesAndImages[token].name}
+															{formatCurrency(Number(formatUnits(BigInt(netAmount || amountInWei), decimals[farm.chainId][token])))}{" "}
+															{tokenNamesAndImages[token].name}
 														</span>
 													</div>
 												</div>
 											)}
 
-											{actualSlippage !== undefined && (
+											{/* LP Received */}
+											{lpTokens !== undefined && (
 												<div className="flex justify-between items-start">
-													<span className="text-textSecondary">Slippage:</span>
+													<span className="text-textSecondary text-xs">LP Received:</span>
 													<div className="flex flex-col items-end">
-														<span className="text-base">$ {formatCurrency(actualSlippage)}</span>
-														<span className="text-xs text-textSecondary">
-															{formatCurrency(actualSlippage / (tokenPrice || prices[farm.chainId][token]))}{" "}
-															{tokenNamesAndImages[tx.token].name}
-														</span>
-													</div>
-												</div>
-											)}
-
-											{filteredReturnedAssets.length > 0 && (
-												<div className="mt-2">
-													<span className="text-textSecondary block mb-1">Returned:</span>
-													{filteredReturnedAssets.map((asset, index) => (
-														<div key={index} className="flex justify-between items-start pl-2">
-															<span>{tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}</span>
-															<div className="flex flex-col items-end">
-																<span className="text-base">
-																	$
-																	{formatCurrency(
-																		Number(toEth(BigInt(asset.amount), 18)) * (tokenPrice || prices[farm.chainId][asset.token as Address])
-																	)}
-																</span>
-																<span className="text-xs text-textSecondary">
-																	{Number(formatUnits(BigInt(asset.amount), 18)).toLocaleString()}{" "}
-																	{tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}
-																</span>
-															</div>
-														</div>
-													))}
-												</div>
-											)}
-
-											{vaultShares !== undefined && (
-												<div className="flex justify-between items-start">
-													<span className="text-textSecondary">{type === "deposit" ? "Vault Shares:" : "Zap Out Amount:"}</span>
-													<div className="flex flex-col items-end">
-														<span className="text-base">
+														<span className="text-sm text-textWhite">
 															${" "}
-															{type === "deposit"
-																? formatCurrency(
-																		Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])) *
-																			(vaultPrice || prices[farm.chainId][farm.vault_addr]),
-																		4
-																	)
-																: formatCurrency(
-																		Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])) *
-																			(tokenPrice || prices[farm.chainId][token]),
-																		4
-																	)}
+															{formatCurrency(
+																Number(toEth(BigInt(lpTokens), decimals[farm.chainId][farm.lp_address])) * (lpTokenPrice || 0)
+															)}
 														</span>
 														<span className="text-xs text-textSecondary">
-															{type === "deposit"
-																? formatCurrency(Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])))
-																: formatCurrency(Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])))}{" "}
-															{type === "deposit" ? "BTX-" + farm.name : tokenNamesAndImages[token].name}
+															{formatCurrency(Number(toEth(BigInt(lpTokens), decimals[farm.chainId][farm.lp_address])))} {farm.name}
 														</span>
 													</div>
 												</div>
 											)}
+
+											{/* LP Price */}
+											<div className="flex justify-between items-start">
+												<span className="text-textSecondary text-xs">LP Price:</span>
+												<div className="flex flex-col items-end">
+													<span className="text-sm text-textWhite">$ {formatCurrency(lpTokenPrice)}</span>
+												</div>
+											</div>
+
+											{/* Additional Information */}
+											<div className="mt-2 pt-2 border-t border-gray-700">
+												{fee !== undefined && (
+													<div className="flex justify-between items-start">
+														<span className="text-textSecondary text-xs">BeraTrax Fee:</span>
+														<div className="flex flex-col items-end">
+															<span className="text-xs text-textSecondary">
+																$
+																{formatCurrency(
+																	Number(toEth(BigInt(fee), decimals[farm.chainId][token])) * (tokenPrice || prices[farm.chainId][token])
+																)}
+															</span>
+															<span className="text-xs text-textSecondary">
+																{formatCurrency(toEth(BigInt(fee), decimals[farm.chainId][token]))} {tokenNamesAndImages[token].name}
+															</span>
+														</div>
+													</div>
+												)}
+												{/* Slippage */}
+												{actualSlippage !== undefined && (
+													<div className="flex justify-between items-start">
+														<span className="text-textSecondary text-xs">Swap Slippage:</span>
+														<div className="flex flex-col items-end">
+															<span className="text-xs text-textSecondary">$ {formatCurrency(actualSlippage)}</span>
+															<span className="text-xs text-textSecondary">
+																{formatCurrency(actualSlippage / (tokenPrice || prices[farm.chainId][token]))}{" "}
+																{tokenNamesAndImages[tx.token].name}
+															</span>
+														</div>
+													</div>
+												)}
+
+												{/* Returned Assets */}
+												{filteredReturnedAssets.length > 0 && (
+													<div className="mt-2">
+														<span className="text-textSecondary text-xs block mb-1">Returned:</span>
+														{filteredReturnedAssets.map((asset, index) => (
+															<div key={index} className="flex justify-between items-start pl-2">
+																<span className="text-textSecondary text-xs">
+																	- {tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}
+																</span>
+																<div className="flex flex-col items-end">
+																	<span className="text-xs text-textSecondary">
+																		$
+																		{formatCurrency(
+																			Number(toEth(BigInt(asset.amount), 18)) * (tokenPrice || prices[farm.chainId][asset.token as Address])
+																		)}
+																	</span>
+																	<span className="text-xs text-textSecondary">
+																		{Number(formatUnits(BigInt(asset.amount), 18)).toLocaleString()}{" "}
+																		{tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}
+																	</span>
+																</div>
+															</div>
+														))}
+													</div>
+												)}
+											</div>
 										</div>
 									</div>
 								</div>
@@ -308,27 +353,27 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 						</p>
 					</div>
 				</div>
-				<TransactionDetails transactionId={_id} open={open} farm={undefined} tx={undefined} />
+				<TransactionDetails transactionId={undefined} open={open} farm={farm} tx={tx} />
 			</div>
 		</>
 	);
 };
 
-const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ setOpenModal }) => {
-	const transactions = useAppSelector((state) => state.transactions.transactions);
-	const { fetchTransactions, isLoading, fetchedAll } = useTransactions();
+const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: number }> = ({ setOpenModal, farmId }) => {
+	const { data: transactions, isLoading } = useFarmTransactions(farmId, 20);
+	const { fetchTransactions, fetchedAll } = useTransactions();
 	const timeout = useRef<NodeJS.Timeout>();
 
 	return (
 		<ModalLayout
 			onClose={() => setOpenModal(false)}
 			className="
-            max-w-[500px] w-[80vw] 
-            h-[80vh] 
-            flex flex-col"
+					max-w-[500px] w-[80vw] 
+					h-[80vh] 
+					flex flex-col"
 			wrapperClassName="lg:w-full"
 			onWheel={(e) => {
-				if (fetchedAll) return;
+				if (isLoading) return;
 				let ele: Element = e.currentTarget as Element;
 				let percent = (ele.scrollTop / (ele.scrollHeight - ele.clientHeight)) * 100;
 				if (percent === 100 && !isLoading) {
@@ -342,19 +387,17 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 			<p className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem]">Transactions</p>
 			<div className="flex-1 overflow-y-auto">
 				<div className="flex flex-col gap-[0.7rem]">
-					{transactions.map((item, i) => (
-						<Row _id={item._id} key={i} />
-					))}
+					{transactions?.map((item, i) => <Row tx={item} key={i} />)}
 					{isLoading && (
 						<div className="center">
 							<div
 								className="
-                                    w-[18px] h-[18px] 
-                                    border-2 border-solid 
-                                    border-current border-b-transparent border-r-transparent 
-                                    rounded-full 
-                                    box-border 
-                                    animate-rotation"
+																	w-[18px] h-[18px] 
+																	border-2 border-solid 
+																	border-current border-b-transparent border-r-transparent 
+																	rounded-full 
+																	box-border 
+																	animate-rotation"
 							/>
 						</div>
 					)}

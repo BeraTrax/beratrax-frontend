@@ -103,10 +103,9 @@ export const UserStatsTable: FC = () => {
 										{accountInfo && accountInfo.referrer ? (
 											<div className="flex items-center gap-2 group relative">
 												<p>
-													{`${accountInfo.referrer.address?.substring(
-														0,
-														4
-													)}...${accountInfo.referrer.address?.substring(accountInfo.referrer.address.length - 3)}`}
+													{`${accountInfo.referrer.address?.substring(0, 4)}...${accountInfo.referrer.address?.substring(
+														accountInfo.referrer.address.length - 3
+													)}`}
 												</p>
 												<span className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-textWhite">
 													{accountInfo.referrer.address}

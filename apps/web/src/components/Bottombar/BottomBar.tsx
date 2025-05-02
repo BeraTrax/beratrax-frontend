@@ -4,6 +4,8 @@ import EarnActiveIcon from "@beratrax/core/src/assets/images/earnactiveicon.svg"
 import EarnNonActiveIcon from "@beratrax/core/src/assets/images/earnnonactiveicon.svg";
 import LeaderboardActiveIcon from "@beratrax/core/src/assets/images/leaderboardactiveicon.svg";
 import LeaderboardNonActiveIcon from "@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg";
+import CoinsActiveIcon from "@beratrax/core/src/assets/images/coinsactiveicon.svg";
+import CoinsNonActiveIcon from "@beratrax/core/src/assets/images/coinsnonactiveicon.svg";
 import UserGuideActiveIcon from "@beratrax/core/src/assets/images/userguideactiveicon.svg";
 import UserGuideNonActiveIcon from "@beratrax/core/src/assets/images/userguidenonactiveicon.svg";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
@@ -39,7 +41,14 @@ function BottomBar() {
 			route: RoutesPaths.Leaderboard,
 			activeIcon: LeaderboardActiveIcon,
 			nonActiveIcon: LeaderboardNonActiveIcon,
-			title: "BTX Points",
+			title: "Leaderboard",
+		},
+		{
+			route: RoutesPaths.Buy,
+			activeIcon: CoinsActiveIcon,
+			nonActiveIcon: CoinsNonActiveIcon,
+			title: "Buy (thoon!)",
+			target: "noop",
 		},
 		{
 			route: RoutesPaths.UserGuide,
@@ -50,6 +59,7 @@ function BottomBar() {
 	];
 
 	const handleNavigation = (route: string, target?: string) => {
+		if (target === "noop") return;
 		if (target) window.open(route, target);
 		else navigate(route);
 	};

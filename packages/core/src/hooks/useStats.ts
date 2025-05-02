@@ -21,10 +21,6 @@ export const useStats = (forGalxe?: boolean) => {
 	const { farms } = useFarms();
 	const { currentWallet, isConnecting } = useWallet();
 
-	useEffect(() => {
-		console.log("currentWallet", currentWallet);
-	}, [currentWallet]);
-
 	const { isLoading, error, data, isFetching } = useQuery({
 		queryKey: ["stats/tvl", page, sortBy, order, search],
 		queryFn: () => fetchUserTVLs(page, sortBy, order, search),

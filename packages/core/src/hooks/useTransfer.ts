@@ -1,17 +1,36 @@
 import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { Address, erc20Abi, getContract, zeroAddress } from "viem";
 import { TRANSFER_TOKEN } from "./../config/constants/query";
-import { awaitTransaction } from "./../utils/common";
+import { awaitTransaction, getNetworkName, subtractGas } from "./../utils/common";
 import useWallet from "./useWallet";
+import { errorMessages } from "../config/constants/notifyMessages";
 
 const useTransfer = () => {
-	const { currentWallet, estimateTxGas, getClients } = useWallet();
+	const { currentWallet, estimateTxGas, isSponsored, getClients } = useWallet();
 
 	const _transferEth = async ({ to, amount, max, chainId }: { to: Address; amount: bigint; max?: boolean; chainId: number }) => {
 		if (!currentWallet) return;
 		const client = await getClients(chainId);
 		const balance = await client.public.getBalance({ address: currentWallet });
 		if (max) amount = balance;
+		if (!isSponsored) {
+			const afterGasCut = await subtractGas(
+				amount,
+				client,
+				estimateTxGas({
+					chainId,
+					to: to,
+					value: amount,
+					data: "0x",
+				}),
+				false,
+				balance
+			);
+			if (!afterGasCut) {
+				throw { message: errorMessages.insufficientGas().message };
+			}
+			amount = afterGasCut;
+		}
 		const response = await awaitTransaction(
 			client.wallet.sendTransaction({
 				to,
@@ -21,6 +40,7 @@ const useTransfer = () => {
 		);
 		return response;
 	};
+
 	const _transferToken = async ({
 		tokenAddress,
 		to,

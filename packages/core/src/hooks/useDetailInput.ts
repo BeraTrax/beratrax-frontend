@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PoolDef } from "./../config/constants/pools_json";
-import { useAppDispatch, useAppSelector } from "./../state";
+import store, { useAppDispatch, useAppSelector } from "./../state";
 import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "./../state/farms/farmsReducer";
 import useDeposit from "./../state/farms/hooks/useDeposit";
 import useFarmDetails from "./../state/farms/hooks/useFarmDetails";
@@ -30,7 +30,7 @@ export const useDetailInput = (farm: PoolDef) => {
 	const { isLoading: isDepositing, depositAsync, slippageDeposit } = useDeposit(farm);
 	const { isLoading: isZappingOut, zapOutAsync, slippageZapOut } = useZapOut(farm);
 	const { isLoading: isWithdrawing, withdrawAsync, slippageWithdraw } = useWithdraw(farm);
-	const { farmDetails, isLoading } = useFarmDetails();
+	const { farmDetails, isLoading, reloadVaultEarnings } = useFarmDetails();
 	const farmData = farmDetails[farm.id];
 	const { currentWallet } = useWallet();
 	const [depositable, setDepositable] = React.useState(farmData?.depositableAmounts[0]);
@@ -55,6 +55,33 @@ export const useDetailInput = (farm: PoolDef) => {
 	const getTokenAmount = () => {
 		let amt = Number(amount);
 		if (!depositable) return amt;
+
+		const appState = store.getState();
+		const earnings = appState.farms.earnings?.[farm.id] || 0;
+
+		// Improved earnings detection with relative threshold and detailed logging
+		const displayedEarningsValue = showInUsd ? earnings : earnings / prices[farm.chainId][farm.vault_addr];
+		const absoluteDifference = Math.abs(amt - displayedEarningsValue);
+		// Use a percentage-based threshold for small earnings values
+		const relativeThreshold = Math.max(displayedEarningsValue * 0.1, 0.0001); // 10% or 0.0001 minimum
+
+		const isEarningsWithdrawal =
+			type === FarmTransactionType.Withdraw &&
+			(absoluteDifference < relativeThreshold ||
+				// Special case for tiny values
+				(displayedEarningsValue < 0.001 && amt < 0.002 && amt > 0));
+
+		// If this is an earnings withdrawal, use the exact earnings value
+		if (isEarningsWithdrawal) {
+			console.log("getTokenAmount: Detected earnings withdrawal");
+			console.log("Amount:", amt);
+			console.log("Earnings:", displayedEarningsValue);
+			console.log("Absolute difference:", absoluteDifference);
+			console.log("Threshold:", relativeThreshold);
+
+			return showInUsd ? earnings / prices[farm.chainId][farm.vault_addr] : amt;
+		}
+
 		if (type === FarmTransactionType.Deposit) {
 			if (showInUsd) {
 				return amt / depositable.price;

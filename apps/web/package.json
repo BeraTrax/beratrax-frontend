@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@coinbase/onchainkit": "^0.37.8",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@rainbow-me/rainbowkit": "^2.2.1",
     "@react-native-vector-icons/common": "^11.0.0",

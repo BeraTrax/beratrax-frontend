@@ -196,7 +196,7 @@ const Details: React.FC<Props> = ({ farm, ...props }) => {
 					) : null}
 				</div>
 				<div className="farm_apy_lp_graph_container_details">
-					<FarmApyGraph farm={farm} />
+					{/* <FarmApyGraph farm={farm} /> */}
 					<FarmLpGraph farm={farm} />
 				</div>
 			</div>

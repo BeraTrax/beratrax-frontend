@@ -125,7 +125,14 @@ const PlatformTVLGraph = () => {
 		"November",
 		"December",
 	];
-	const newData = useMemo(() => downsampleData(platformTVLHistory || [], graphFilter), [platformTVLHistory, graphFilter]);
+	const newData = useMemo(() => (downsampleData(platformTVLHistory || [], graphFilter) || []).reverse(), [platformTVLHistory, graphFilter]);
+
+	const [minTvl, maxTvl] = useMemo(() => {
+		if (!newData || newData.length === 0) return [0, 100];
+
+		const values = newData.map((d) => parseFloat(d.tvl));
+		return [Math.min(...values), Math.max(...values)];
+	}, [newData]);
 
 	return (
 		<div className="z-10 relative bg-bgSecondary rounded-lg p-6 border border-borderDark">
@@ -157,7 +164,10 @@ const PlatformTVLGraph = () => {
 								<YAxis
 									stroke="#666"
 									tick={{ fill: "#fff" }}
-									tickFormatter={(value) => (value / 1000000).toFixed(1)}
+									tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+									tickCount={6}
+									interval="preserveStartEnd"
+									domain={[minTvl * 0.9, maxTvl * 1.1]}
 									label={{
 										value: "TVL (Millions $)",
 										angle: -90,

@@ -6,6 +6,7 @@ import { FarmTransactionType } from "./../../types/enums";
 export interface StateInterface {
 	farmDetails: FarmDetails;
 	earnings: Earnings;
+	earningsUsd: number | null;
 	vaultEarnings: VaultEarnings[];
 	isLoadingEarnings: boolean;
 	isLoadingVaultEarnings: boolean;
@@ -47,6 +48,8 @@ export interface VaultEarnings {
 	token0: string;
 	earnings1?: string;
 	token1?: string;
+	changeInAssets?: string;
+	lifetimeEarnings?: string;
 }
 
 export interface FetchEarningsAction {
@@ -57,4 +60,10 @@ export interface FetchEarningsAction {
 	balances: Balances;
 	totalSupplies: TotalSupplies;
 	getPublicClient: (chainId: number) => IClients["public"];
+}
+
+export interface VaultEarningsProp {
+	currentWallet: string;
+	prices: Prices;
+	decimals: Decimals;
 }

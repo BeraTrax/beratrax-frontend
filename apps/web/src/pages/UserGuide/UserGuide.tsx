@@ -284,7 +284,7 @@ const UserGuide = () => {
 				<div>
 					<Link
 						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer mb-1
-                    transition-all duration-200 ease-in-out"
+									transition-all duration-200 ease-in-out"
 						to="https://docs.beratrax.com/beratrax-beta/"
 						target="_blank"
 						rel="noopener noreferrer"

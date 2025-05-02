@@ -22,7 +22,7 @@ import { Web3AuthConnector } from "@web3auth/web3auth-wagmi-connector";
 import { http, type HttpTransport } from "viem";
 import { createConnector as createWagmiConnector } from "wagmi";
 
-import { walletConnectProjectId, WEB3AUTH_CLIENT_ID } from "@beratrax/core/src/config/constants";
+import { walletConnectProjectId, web3authClientId } from "@beratrax/core/src/config/constants";
 import {
 	supportedChains,
 	discordIcon,
@@ -33,7 +33,7 @@ import {
 	blockExplorersByChainId,
 } from "@beratrax/core/src/config/baseWalletConfig";
 
-const clientId = WEB3AUTH_CLIENT_ID as string;
+const clientId = web3authClientId as string;
 const chainConfig = {
 	chainId: "0x" + berachain.id.toString(16),
 	rpcTarget: berachain.rpcUrls.default.http[0],

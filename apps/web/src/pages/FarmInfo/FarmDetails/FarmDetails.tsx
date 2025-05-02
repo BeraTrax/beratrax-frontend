@@ -13,7 +13,7 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { getLpAddressForFarmsPrice } from "@beratrax/core/src/utils/common";
 import { zeroAddress } from "viem";
-import FarmApyGraph from "web/src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
+// import FarmApyGraph from "web/src/pages/FarmInfo/FarmApyGraph/FarmApyGraph";
 import FarmLpGraph from "web/src/pages/FarmInfo/FarmLpGraph/FarmLpGraph";
 import styles from "./styles.module.css";
 
@@ -84,7 +84,7 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
 							<div className="pool_title">
 								<p className={`pool_name ${lightMode && "pool_name--light"}`}>{farm.name}</p>
 								<div className="rewards_div">
-									<p className={`farm_type ${lightMode && "farm_type--light"}`}>{farm.platform}</p>
+									<p className={`farm_type ${lightMode && "farm_type--light"}`}>{farm.originPlatform}</p>
 									<img alt={""} className="rewards_image" src={farm.platform_logo} />
 								</div>
 							</div>
@@ -139,7 +139,7 @@ const FarmDetailsRow: React.FC<{ farm: PoolDef; poolFees: PoolFees[]; isLoadingP
 							</div>
 						</div>
 						<SlippageIndividual farm={farm} />
-						<FarmApyGraph farm={farm} />
+						{/* <FarmApyGraph farm={farm} /> */}
 						<FarmLpGraph farm={farm} />
 						<div style={{ marginTop: "3rem" }}>
 							<div className={"specificApy"}>

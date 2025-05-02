@@ -811,7 +811,7 @@ const pools_json: PoolDef[] = [
         rewards1_alt: "BeraPaw logo",
         isDeprecated: false,
         isUpgradable: false,
-        isAutoCompounded: false,
+        isAutoCompounded: true,
         lp_address: "0x705Fc16BA5A1EB67051934F2Fb17EacaE660F6c7", // Asset LP address
         decimals: 18,
         vault_addr: "0xb5B652d6D4Ae3f61507Fe05052b224596c42D6C0", // Vault address
@@ -2149,4 +2149,3 @@ export const tokenNamesAndImages = pools_json.reduce(
         },
     } as Record<string, { name: string; logos: string[] }>
 );
-

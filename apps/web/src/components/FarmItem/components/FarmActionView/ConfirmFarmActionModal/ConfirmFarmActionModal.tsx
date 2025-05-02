@@ -24,7 +24,24 @@ interface IProps {
 const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositInfo }) => {
 	const { isLoading, reset } = useTransactions();
 	const { errors, success, clearAllNotifications } = useNotification();
-	const amount = useMemo(() => formatBalance(depositInfo?.amount ?? "0", { maximumFractionDigits: 3 }), []);
+
+	// Update useMemo to depend on depositInfo and use more decimal places for precision
+	const amount = useMemo(() => {
+		// For earnings withdrawals, we need to maintain higher precision
+		const isEarningsWithdrawal =
+			depositInfo?.transactionType === FarmTransactionType.Withdraw &&
+			depositInfo?.token &&
+			depositInfo.amount &&
+			parseFloat(depositInfo.amount) > 0 &&
+			parseFloat(depositInfo.amount) < 0.1;
+
+		// Use higher precision for small amounts (likely earnings)
+		const fractionDigits = isEarningsWithdrawal ? 8 : 4;
+
+		return formatBalance(depositInfo?.amount ?? "0", {
+			maximumFractionDigits: fractionDigits,
+		});
+	}, [depositInfo]); // Add dependency on depositInfo to refresh when it changes
 
 	const getTransactionTitle = () => {
 		if (!depositInfo) return "";

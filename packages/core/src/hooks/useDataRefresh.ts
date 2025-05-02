@@ -16,21 +16,21 @@ export const useDataRefresh = () => {
 	const dispatch = useAppDispatch();
 
 	// Network status effect
-	// useEffect(() => {
-	//     window.addEventListener("online", () => {
-	//         window.location.reload();
-	//     });
-	//     window.addEventListener("offline", () => {
-	//         dispatch(setOffline());
-	//     });
-	// }, []);
+	useEffect(() => {
+		window.addEventListener("online", () => {
+			window.location.reload();
+		});
+		window.addEventListener("offline", () => {
+			dispatch(setOffline());
+		});
+	}, []);
 
 	// Account data refresh
 	useEffect(() => {
 		fetchAccountData();
 		const interval = setInterval(
 			() => {
-				// if (document.hidden) return;
+				if (document.hidden) return;
 				fetchAccountData();
 			},
 			1000 * 60 * 5
@@ -43,7 +43,7 @@ export const useDataRefresh = () => {
 		reloadPrices();
 		const interval = setInterval(
 			() => {
-				// if (document.hidden) return;
+				if (document.hidden) return;
 				reloadPrices();
 			},
 			1000 * 60 * 5
@@ -68,7 +68,7 @@ export const useDataRefresh = () => {
 		reloadBalances();
 		const interval = setInterval(
 			() => {
-				// if (document.hidden) return;
+				if (document.hidden) return;
 				reloadBalances();
 			},
 			1000 * 60 * 0.5
@@ -81,7 +81,7 @@ export const useDataRefresh = () => {
 		reloadSupplies();
 		const interval = setInterval(
 			() => {
-				// if (document.hidden) return;
+				if (document.hidden) return;
 				reloadSupplies();
 			},
 			1000 * 60 * 2

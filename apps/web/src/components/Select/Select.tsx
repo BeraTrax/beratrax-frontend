@@ -36,24 +36,23 @@ export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, 
 			});
 
 			document.body.removeChild(tempDiv);
-			setMaxWidth(Math.max(...widths) + 70);
+			const baseWidth = images ? 70 : 40;
+			setMaxWidth(Math.max(...widths) + baseWidth);
 		}
-	}, [options, extraText]);
+	}, [options, extraText, images]);
 
 	return (
-		<div className={`${className} relative w-fit justify-self-end `}>
+		<div className={`${className} relative w-fit justify-self-end rounded-2xl`}>
 			<OutsideClickHandler display="inline-block" onOutsideClick={() => setOpenSelect(false)}>
 				<div
-					className={`relative rounded-2xl flex gap-x-6 w-auto px-3 py-4 cursor-pointer text-text bg-bgSecondary ${
-						size === "small" ? "w-[50px]" : ""
-					}`}
-					style={{ minWidth: `${Math.max(200, maxWidth)}px` }}
+					className={`relative rounded-2xl flex gap-x-6 w-auto px-3 py-2 cursor-pointer text-text ${size === "small" ? "w-[50px]" : ""}`}
+					style={{ minWidth: `${Math.max(120, maxWidth)}px` }}
 					onClick={() => setOpenSelect((prev) => !prev)}
 				>
 					<div className="flex gap-2 items-center justify-between flex-grow">
 						{extraText && options && (
 							<span className="flex">
-								<img className="w-5 h-5" src={images?.[value]?.[0]} alt="logo" style={{ clipPath: "circle(50%)" }} />
+								{images && <img className="w-5 h-5" src={images?.[value]?.[0]} alt="logo" style={{ clipPath: "circle(50%)" }} />}
 								{images && images?.[value]?.length > 1 && (
 									<img className="w-5 h-5 -ml-3" src={images?.[value]?.[1]} alt="logo" style={{ clipPath: "circle(50%)" }} />
 								)}
@@ -90,8 +89,8 @@ export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, 
 				</div>
 				{openSelect && (
 					<div
-						className="absolute right-0 z-10 w-auto max-w-[400px] bg-bgSecondary rounded top-[120%] p-2 flex flex-wrap justify-around"
-						style={{ minWidth: `${Math.max(200, maxWidth)}px` }}
+						className="absolute right-0 z-10 w-auto max-w-[400px] bg-bgSecondary rounded top-[120%] p-2 flex flex-col flex-wrap justify-around"
+						style={{ minWidth: `${Math.max(120, maxWidth)}px` }}
 					>
 						{options?.map((option, index) => (
 							<div
@@ -104,7 +103,7 @@ export const Select: FC<IProps> = ({ value, setValue, options, extraText, size, 
 							>
 								<div className="flex gap-x-2 justify-between items-center">
 									<span className="flex">
-										<img className="w-5 h-5" src={images?.[option]?.[0]} alt="logo" style={{ clipPath: "circle(50%)" }} />
+										{images && <img className="w-5 h-5" src={images?.[option]?.[0]} alt="logo" style={{ clipPath: "circle(50%)" }} />}
 										{images && images?.[option]?.length > 1 && (
 											<img className="w-5 h-5 -ml-3" src={images?.[option]?.[1]} alt="logo" style={{ clipPath: "circle(50%)" }} />
 										)}

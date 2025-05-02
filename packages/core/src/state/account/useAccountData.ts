@@ -11,29 +11,22 @@ const useAccountData = () => {
 	const { currentWallet } = useWallet();
 	const { reloadBalances } = useTokens();
 	const dispatch = useAppDispatch();
-	// const [urlSearchParams] = useSearchParams();
-	const referralCodeFromUrl = "test"; // urlSearchParams.get("refCode");
+	const [urlSearchParams] = useSearchParams();
+	const referralCodeFromUrl = urlSearchParams.get("refCode");
 
 	const referralLink = useMemo(
 		() =>
 			referralCode
 				? `${
-						window?.location?.origin?.includes("staging") ? "https://beta.beratrax.com" : window?.location?.origin
+						window.location.origin.includes("staging") ? "https://beta.beratrax.com" : window.location.origin
 					}/${encodeURIComponent(referralCode)}`
 				: undefined,
 		[referralCode]
 	);
 	const fetchAccountData = useCallback(async () => {
-		console.log("refCodeLoaded", refCodeLoaded);
-		// if (!refCodeLoaded) return;
+		if (!refCodeLoaded) return;
 
-		await dispatch(
-			addAccount({
-				address: currentWallet,
-				referrerCode,
-				referralCodeFromUrl: referralCodeFromUrl!,
-			})
-		);
+		await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
 		await reloadBalances();
 		if (!currentWallet) return;
 		await dispatch(updatePoints(currentWallet));
@@ -42,7 +35,6 @@ const useAccountData = () => {
 	return {
 		fetchAccountData,
 		referralLink,
-		referralCode,
 	};
 };
 

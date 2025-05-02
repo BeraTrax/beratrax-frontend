@@ -9,10 +9,13 @@ import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { addTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import {
+	ApproveBridgeStep,
 	ApproveZapStep,
+	InitiateBridgeStep,
 	TransactionStep,
 	TransactionStepStatus,
 	TransactionTypes,
+	WaitForBridgeResultsStep,
 	ZapInStep,
 } from "@beratrax/core/src/state/transactions/types";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
@@ -36,7 +39,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 	const { lightMode } = useApp();
 	const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
 	const [showSlippageModal, setShowSlippageModal] = useState(false);
-	const [showNotSlipageModal, setShowNotSlipageModal] = useState(false);
+	const [showNotSlippageModal, setShowNotSlippageModal] = useState(false);
 	const [showZapModal, setShowZapModal] = useState(false);
 	const { getPublicClient } = useWallet();
 	const {
@@ -100,8 +103,8 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 		e?.preventDefault();
 		if (slippage && slippage > 2 && !showSlippageModal) {
 			setShowSlippageModal(true);
-		} else if (slippage === undefined && !showNotSlipageModal) {
-			setShowNotSlipageModal(true);
+		} else if (slippage === undefined && !showNotSlippageModal) {
+			setShowNotSlippageModal(true);
 		} else {
 			let amountInWei = toWei(
 				getTokenAmount(),
@@ -114,6 +117,20 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 			);
 			const toBalDiff = toWei(getTokenAmount(), 18) - toBal;
 			let steps: TransactionStep[] = [];
+			if (toBalDiff >= 0) {
+				steps.push({
+					status: TransactionStepStatus.PENDING,
+					type: TransactionTypes.APPROVE_BRIDGE,
+				} as ApproveBridgeStep);
+				steps.push({
+					status: TransactionStepStatus.PENDING,
+					type: TransactionTypes.INITIATE_BRIDGE,
+				} as InitiateBridgeStep);
+				steps.push({
+					status: TransactionStepStatus.PENDING,
+					type: TransactionTypes.WAIT_FOR_BRIDGE_RESULTS,
+				} as WaitForBridgeResultsStep);
+			}
 
 			steps.push({ status: TransactionStepStatus.PENDING, type: TransactionTypes.APPROVE_ZAP } as ApproveZapStep);
 			steps.push({
@@ -169,6 +186,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 								value={currencySymbol}
 								setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
 								size="small"
+								className="bg-bgSecondary"
 								// extraText={selectExtraOptions}
 							/>
 						</div>
@@ -238,6 +256,7 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 							value={currencySymbol}
 							setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
 							extraText={selectExtraOptions}
+							className="bg-bgSecondary"
 						/>
 					) : (
 						<div></div>
@@ -291,40 +310,40 @@ const DetailInput: React.FC<Props> = ({ farm }) => {
 					percentage={slippage || 0}
 				/>
 			)}
-			{showNotSlipageModal && (
+			{showNotSlippageModal && (
 				<SlippageNotCalculate
 					handleClose={() => {
-						setShowNotSlipageModal(false);
+						setShowNotSlippageModal(false);
 					}}
 					handleSubmit={submitHandler}
 				/>
 			)}
 			{/* {showZapModal &&
-                (transactionType === FarmTransactionType.Deposit ? (
-                    <DepositModal
-                        handleClose={() => {
-                            setShowZapModal(false);
-                        }}
-                        handleSubmit={handleSubmit}
-                        farmId={farm.id}
-                        inputAmount={getTokenAmount()}
-                        max={max}
-                        token={depositable!.tokenAddress}
-                        symbol={currencySymbol.toLowerCase() === "usdc" ? "usdc" : "native"}
-                    />
-                ) : (
-                    <WithdrawModal
-                        handleClose={() => {
-                            setShowZapModal(false);
-                        }}
-                        handleSubmit={handleSubmit}
-                        farmId={farm.id}
-                        inputAmount={getTokenAmount()}
-                        max={max}
-                        token={withdrawable!.tokenAddress}
-                        symbol={currencySymbol.toLowerCase() === "usdc" ? "usdc" : "native"}
-                    />
-                ))} */}
+							(transactionType === FarmTransactionType.Deposit ? (
+									<DepositModal
+											handleClose={() => {
+													setShowZapModal(false);
+											}}
+											handleSubmit={handleSubmit}
+											farmId={farm.id}
+											inputAmount={getTokenAmount()}
+											max={max}
+											token={depositable!.tokenAddress}
+											symbol={currencySymbol.toLowerCase() === "usdc" ? "usdc" : "native"}
+									/>
+							) : (
+									<WithdrawModal
+											handleClose={() => {
+													setShowZapModal(false);
+											}}
+											handleSubmit={handleSubmit}
+											farmId={farm.id}
+											inputAmount={getTokenAmount()}
+											max={max}
+											token={withdrawable!.tokenAddress}
+											symbol={currencySymbol.toLowerCase() === "usdc" ? "usdc" : "native"}
+									/>
+							))} */}
 		</form>
 	);
 };

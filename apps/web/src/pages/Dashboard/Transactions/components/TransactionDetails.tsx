@@ -29,8 +29,8 @@ const TransactionDetails: React.FC<IProps> = (args) => {
 	let farm: PoolDef | undefined = args.farm;
 	let tx: Transaction | undefined = args.tx;
 	const obj = useTransaction(args.transactionId);
-	farm = obj?.farm;
-	tx = obj?.tx;
+	if (!farm) farm = obj?.farm;
+	if (!tx) tx = obj?.tx;
 
 	if (!farm || !tx) return;
 
@@ -87,7 +87,8 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 					<p className="font-league-spartan font-light text-base leading-5 text-textWhite">{name}</p>
 					{value && (
 						<p className={`${styles.tokenValue} text-textSecondary font-light text-base leading-5`}>
-							{formatCurrency(value)} {tokenName}
+							{/* Show more decimal places for small values (like earnings withdrawals) */}
+							{value < 0.01 ? formatCurrency(value, 8, false) : formatCurrency(value)} {tokenName}
 						</p>
 					)}
 				</div>

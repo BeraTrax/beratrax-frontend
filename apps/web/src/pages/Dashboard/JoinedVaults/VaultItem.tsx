@@ -13,23 +13,24 @@ import { useAppSelector } from "@beratrax/core/src/state";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { Vault } from "@beratrax/core/src/types";
-import { awaitTransaction, formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
-import { encodeFunctionData, formatEther, getAddress } from "viem";
+import { awaitTransaction, customCommify, formatCurrency, toEth, toFixedFloor } from "@beratrax/core/src/utils/common";
+import { Address, encodeFunctionData, formatEther, getAddress } from "viem";
 import styles from "./VaultItem.module.css";
+import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 
 interface Props {
 	vault: Vault;
 }
 
-function useOldPrice(chainId: number, address: string) {
-	const { isLoadingEarnings } = useFarmDetails();
-	const { oldPrices, isFetchingOldPrices, isLoadedOldPrices } = useAppSelector((state) => state.tokens);
+// function useOldPrice(chainId: number, address: string) {
+// 	const { isLoadingEarnings } = useFarmDetails();
+// 	const { oldPrices, isFetchingOldPrices, isLoadedOldPrices } = useAppSelector((state) => state.tokens);
 
-	return {
-		oldPrice: oldPrices[chainId]?.[address],
-		isLoading: (isLoadingEarnings || isFetchingOldPrices) && !isLoadedOldPrices,
-	};
-}
+// 	return {
+// 		oldPrice: oldPrices[chainId]?.[address],
+// 		isLoading: (isLoadingEarnings || isFetchingOldPrices) && !isLoadedOldPrices,
+// 	};
+// }
 
 const VaultItem: React.FC<Props> = ({ vault }) => {
 	const [isDepositing, setIsDepositing] = useState(false);
@@ -37,14 +38,48 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 	const [rewards, setRewards] = useState(0n);
 	const [isClaiming, setIsClaiming] = useState(false);
 	const navigate = useNavigate();
-	const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
-	const { reloadFarmData } = useFarmDetails();
-	const { balances, reloadBalances } = useTokens();
+	// const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
 	const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
+	const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
+	const { data: txHistory } = useFarmTransactions(vault.id, 1);
+	const lastTransaction = useMemo(() => {
+		if (!txHistory) return null;
+		return txHistory[0];
+	}, [txHistory]);
+	const { balances, prices, decimals, reloadBalances } = useTokens();
+
+	const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
+	const currentVaultEarningsUsd = useMemo(() => {
+		if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+
+		return (
+			Number(
+				toEth(
+					BigInt(currentVaultEarnings?.earnings0 || 0n),
+					decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+				)
+			) *
+				prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
+			(currentVaultEarnings?.token1
+				? Number(
+						toEth(
+							BigInt(currentVaultEarnings?.earnings1 || 0n),
+							decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+						)
+				  ) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+				: 0)
+		);
+	}, [isVaultEarningsFirstLoad, vaultEarnings]);
+	const changeInAssets = currentVaultEarnings?.changeInAssets;
+	const changeInAssetsStr = changeInAssets === "0" ? "0" : changeInAssets?.toString();
+	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr || 0), decimals[vault.chainId][vault.lp_address as Address]));
+	const changeInAssetsValueUsd = changeInAssetsValue * (prices[vault.chainId][vault.lp_address] || 0);
+	const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
+
 	const { getTraxApy } = useTrax();
 	const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
 	const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
-	const apy = apys?.apy;
+	const apy = apys?.apy + apys?.pointsApr;
 
 	useEffect(() => {
 		const getVaultBalance = async () => {
@@ -103,7 +138,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 					message: `Claimed rewards`,
 				});
 			}
-		} catch (e) {
+		} catch (e: any) {
 			console.log(e);
 			id && dismissNotify(id);
 			notifyError({
@@ -163,7 +198,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 					message: `Deposited to ${vault.name} reward vault`,
 				});
 			}
-		} catch (e) {
+		} catch (e: any) {
 			console.log(e);
 			id && dismissNotify(id);
 			notifyError({
@@ -182,14 +217,14 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 				navigate(`${RoutesPaths.Farms}/${vault.vault_addr}`);
 			}}
 			className={`
-                cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
-                relative transition-all duration-300 ease-in-out hover:translate-y-[-4px]
-                min-w-[calc(25%-12px)]
-                max-[2000px]:min-w-[calc(33.33%-10.66px)]
-                max-[1300px]:min-w-[calc(50%-8px)]
-                max-[768px]:min-w-full
-                ${vault.isCurrentWeeksRewardsVault ? styles.gradientAnimation : ""}
-            `}
+							cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
+							relative transition-all duration-300 ease-in-out hover:translate-y-[-4px]
+							min-w-[calc(25%-12px)]
+							max-[2000px]:min-w-[calc(33.33%-10.66px)]
+							max-[1300px]:min-w-[calc(50%-8px)]
+							max-[768px]:min-w-full
+							${vault.isCurrentWeeksRewardsVault ? styles.gradientAnimation : ""}
+					`}
 			style={{
 				...(!vault.isCurrentWeeksRewardsVault && {
 					background: "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)",
@@ -222,7 +257,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 				{/* Platform */}
 				<div className="flex-col gap-1">
 					<div className="flex items-center gap-1 mb-2 justify-end">
-						<FarmRowChip text={[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")} color="invert" />
+						<FarmRowChip text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")} color="invert" />
 						<div className="flex">
 							<img alt={vault?.platform_alt} className="w-4 rounded-full border border-bgDark" src={vault?.platform_logo} />
 							{vault?.secondary_platform && <img className="w-4 rounded-full border border-bgDark" src={vault?.secondary_platform_logo} />}
@@ -248,52 +283,30 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 			</div>
 
 			<div className={`grid ${estimateTrax && Number(estimateTrax) > 0 ? "grid-cols-3" : "grid-cols-2"}`}>
-				{/* Your Stake */}
+				{/* Earnings*/}
 				<div className="text-textSecondary border-r border-bgPrimary">
-					<div className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
-						<p>Your Stake</p>
+					<div className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+						<p className="flex items-center gap-2">Earnings</p>
 					</div>
-					<div className="text-textWhite text-lg font-league-spartan leading-5	">
-						<p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
-						{/* <div style={{ minWidth: 60 }}>
-                            {true || (isLoadingOldData && <Skeleton w={45} h={16} className="ml-1" />)}
-                            {!isLoadingOldData &&
-                                oldPrice &&
-                                Number(
-                                    (
-                                        userVaultBalance * priceOfSingleToken -
-                                        userVaultBalance * oldPrice[0].price
-                                    ).toFixed(2)
-                                ) !== 0 &&
-                                (oldPrice[0].price > priceOfSingleToken ? (
-                                    <span className="flex items-center text-red-500">
-                                        <GoArrowDown />
-                                        <p className="m-0 text-xs">
-                                            $
-                                            {formatCurrency(
-                                                Math.abs(
-                                                    userVaultBalance * priceOfSingleToken -
-                                                        userVaultBalance * oldPrice[0].price
-                                                )
-                                            )}
-                                        </p>
-                                    </span>
-                                ) : (
-                                    <span className="flex items-center text-green-500">
-                                        <GoArrowUp className="m-0 text-xs" />
-                                        <p style={{ margin: 0, fontSize: 10 }}>
-                                            $
-                                            {formatCurrency(
-                                                Math.abs(
-                                                    userVaultBalance * oldPrice[0].price -
-                                                        userVaultBalance * priceOfSingleToken
-                                                )
-                                            )}
-                                        </p>
-                                    </span>
-                                ))}
-                        </div> */}
-					</div>
+					{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+						<div className="text-textWhite text-lg font-league-spartan leading-5">
+							<p className="text-green-500">
+								+$
+								{customCommify(totalEarningsUsd, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 5,
+								})}
+							</p>
+							{lastTransaction?.date && typeof lastTransaction.date === "string" && (
+								<p className="text-textSecondary text-sm">
+									In {Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24))}{" "}
+									{Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)) === 1 ? "day" : "days"}
+								</p>
+							)}
+						</div>
+					) : (
+						<div className="h-6 w-16 bg-white/30 rounded-md animate-pulse"></div>
+					)}
 				</div>
 
 				{/* APY */}
@@ -306,10 +319,8 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 							{vault.isCurrentWeeksRewardsVault
 								? "??? %"
 								: toFixedFloor(apy || 0, 2) == 0
-									? "--"
-									: apy < 0.01
-										? `${apy.toPrecision(2).slice(0, -1)}%`
-										: `${toFixedFloor(apy, 2).toString()}%`}
+								? "--"
+								: `${customCommify(apy || 0, { minimumFractionDigits: 0 })}%`}
 						</p>
 					</div>
 				</div>
@@ -324,6 +335,17 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 						</div>
 					</div>
 				)}
+			</div>
+			{/* Your Stake */}
+			<div className="flex justify-end items-end gap-2">
+				<div className="inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+					<div className="uppercase font-arame-mono text-textPrimary text-md">
+						<p>Your Stake</p>
+					</div>
+					<div className="text-textWhite text-md font-league-spartan">
+						<p>${formatCurrency(userVaultBalance * priceOfSingleToken)}</p>
+					</div>
+				</div>
 			</div>
 			{rewards > 0n ? (
 				<div className={`grid grid-cols-2`}>

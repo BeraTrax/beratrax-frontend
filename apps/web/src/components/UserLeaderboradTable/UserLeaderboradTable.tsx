@@ -139,34 +139,34 @@ export const UserLeaderboardTable: FC = () => {
 
 				{/* Pagination */}
 				{/* <div className="flex items-center justify-center gap-4">
-                    <button
-                        disabled={!hasPrevPage}
-                        onClick={() => setPage((prev) => prev - 1)}
-                        className={`px-4 py-2 rounded-xl ${
-                            hasPrevPage
-                                ? "bg-bgDark hover:bg-gradientPrimary hover:text-textBlack cursor-pointer"
-                                : "bg-buttonDisabled opacity-50 cursor-not-allowed"
-                        } transition-all duration-200`}
-                    >
-                        Previous
-                    </button>
+									<button
+											disabled={!hasPrevPage}
+											onClick={() => setPage((prev) => prev - 1)}
+											className={`px-4 py-2 rounded-xl ${
+													hasPrevPage
+															? "bg-bgDark hover:bg-gradientPrimary hover:text-textBlack cursor-pointer"
+															: "bg-buttonDisabled opacity-50 cursor-not-allowed"
+											} transition-all duration-200`}
+									>
+											Previous
+									</button>
 
-                    <span className="text-textWhite px-4">
-                        {page} / {totalPages}
-                    </span>
+									<span className="text-textWhite px-4">
+											{page} / {totalPages}
+									</span>
 
-                    <button
-                        disabled={!hasNextPage}
-                        onClick={() => setPage((prev) => prev + 1)}
-                        className={`px-4 py-2 rounded-xl ${
-                            hasNextPage
-                                ? "bg-bgDark hover:bg-gradientPrimary hover:text-textBlack cursor-pointer"
-                                : "bg-buttonDisabled opacity-50 cursor-not-allowed"
-                        } transition-all duration-200`}
-                    >
-                        Next
-                    </button>
-                </div> */}
+									<button
+											disabled={!hasNextPage}
+											onClick={() => setPage((prev) => prev + 1)}
+											className={`px-4 py-2 rounded-xl ${
+													hasNextPage
+															? "bg-bgDark hover:bg-gradientPrimary hover:text-textBlack cursor-pointer"
+															: "bg-buttonDisabled opacity-50 cursor-not-allowed"
+											} transition-all duration-200`}
+									>
+											Next
+									</button>
+							</div> */}
 			</div>
 		</div>
 	);

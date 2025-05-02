@@ -3,11 +3,6 @@ export enum FarmTransactionType {
 	Withdraw = "Withdraw",
 }
 export enum FarmOriginPlatform {
-	Shushiswap = "Sushiswap",
-	Peapods = "Peapods",
-	GMX = "GMX",
-	Dodo = "Dodo",
-	Frax = "Frax",
 	Hop = "Hop",
 	SwapFish = "SwapFish",
 	Clipper = "Clipper",
@@ -21,6 +16,8 @@ export enum FarmOriginPlatform {
 	Burrbear = "Burrbear",
 	Yeet = "Yeet",
 	Bex = "Bex",
+	Wasabee = "Wasabee",
+	BeraPaw = "BeraPaw",
 }
 export enum FarmTableColumns {
 	Token = "Vaults",
@@ -48,11 +45,10 @@ export enum CHAIN_ID {
 export enum FarmSortOptions {
 	Default = "Default",
 	APY_Low_to_High = "APY: Low to High",
-	APY_High_to_Low = " APY: High to Low",
-	Deposit_High_to_Low = "Deposit: High to Low",
-	Deposit_Low_to_High = "Deposit: Low to High",
-	Farms_Onchain = "Farms: Onchain",
-	Farms_Cross_Chain = "Farms: Cross Chain",
+	APY_High_to_Low = "APY High to Low",
+	Deposit_High_to_Low = "Deposit High to Low",
+	Deposit_Low_to_High = "Deposit Low to High",
+	New = "New",
 }
 
 export enum UsersTableColumns {

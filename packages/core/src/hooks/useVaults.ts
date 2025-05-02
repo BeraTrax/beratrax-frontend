@@ -3,6 +3,8 @@ import { Vault } from "./../types";
 import { useFarmApys } from "../state/farms/hooks/useFarmApy";
 import useFarms from "../state/farms/hooks/useFarms";
 import useTokens from "../state/tokens/useTokens";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSpecificVaultTvl, fetchSpecificVaultApy } from "../api/stats";
 
 export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: boolean } => {
 	const { farms } = useFarms();
@@ -34,5 +36,39 @@ export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: b
 		vaults,
 		isLoading: isLoadingPricesOfSingleToken || isLoadingApys || isLoadingUserBalances,
 		isFetched: isFetchedPricesOfSingleToken && isFetchedApys && isFetchedUserBalances,
+	};
+};
+
+export const useSpecificVaultTvl = (id: number) => {
+	const {
+		data: vaultTvl,
+		isLoading: isLoadingVaultTvl,
+		isFetched: isFetchedVaultTvl,
+	} = useQuery({
+		queryKey: ["stats/vault/tvl/30d", id],
+		queryFn: () => fetchSpecificVaultTvl(id),
+	});
+
+	return {
+		vaultTvl,
+		isLoading: isLoadingVaultTvl,
+		isFetched: isFetchedVaultTvl,
+	};
+};
+
+export const useSpecificVaultApy = (id: number) => {
+	const {
+		data: vaultApy,
+		isLoading: isLoadingVaultApy,
+		isFetched: isFetchedVaultApy,
+	} = useQuery({
+		queryKey: ["stats/apy/30d", id],
+		queryFn: () => fetchSpecificVaultApy(id),
+	});
+
+	return {
+		vaultApy,
+		isLoading: isLoadingVaultApy,
+		isFetched: isFetchedVaultApy,
 	};
 };

@@ -15,7 +15,7 @@ const useTrax = () => {
 		(vaultAddress?: string) => {
 			if (!vaults.find((item) => item.vault_addr === vaultAddress)) return undefined;
 			return Number(
-				((estimatedTraxPerDay.find((ele) => ele.vaultAddress === vaultAddress)?.estimatedTraxPerDay || 0) * 365.25).toFixed()
+				((estimatedTraxPerDay?.find((ele) => ele.vaultAddress === vaultAddress)?.estimatedTraxPerDay || 0) * 365.25).toFixed()
 			).toString();
 		},
 		[estimatedTraxPerDay, vaults]
@@ -26,7 +26,7 @@ const useTrax = () => {
 			Number(
 				(
 					(estimatedTraxPerDay?.reduce((acc, curr) => {
-						if (vaults.find((item) => item.vault_addr === curr.vaultAddress)) {
+						if (vaults?.find((item) => item.vault_addr === curr.vaultAddress)) {
 							return acc + curr.estimatedTraxPerDay;
 						} else return acc;
 					}, 0) || 0) * 365.25

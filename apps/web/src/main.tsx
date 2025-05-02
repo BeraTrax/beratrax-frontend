@@ -11,6 +11,7 @@ import { AppProvider } from "@beratrax/core/src/context";
 import "./polyfills";
 import store from "@beratrax/core/src/state";
 import { WagmiProvider } from "wagmi";
+import OnChainKitProvider from "@beratrax/core/src/context/OnChainKitProvider";
 import { webWalletConfig } from "./config/webWalletConfig";
 
 // Configuration for toast notifications
@@ -30,10 +31,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 			<Provider store={store}>
 				{/* <PersistGate loading={null} persistor={persistor}> */}
 				<NotificationsProvider>
-					<AppProvider>
-						<App />
-						<Notifications />
-					</AppProvider>
+					<OnChainKitProvider>
+						<AppProvider>
+							<App />
+							<Notifications />
+						</AppProvider>
+					</OnChainKitProvider>
 				</NotificationsProvider>
 				{/* </PersistGate> */}
 			</Provider>

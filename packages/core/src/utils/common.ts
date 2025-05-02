@@ -1,7 +1,7 @@
 import { createWeb3Name } from "@web3-name-sdk/core";
 import { Address, erc20Abi, formatUnits, getAddress, getContract, maxUint256, parseUnits, TransactionReceipt, zeroAddress } from "viem";
 import { notifyError } from "./../api/notify";
-import { defaultChainId } from "./../config/constants";
+import { defaultChainId, VAULT_NEW_DURATION } from "./../config/constants";
 import { errorMessages } from "./../config/constants/notifyMessages";
 import store from "./../state";
 import { IClients } from "./../types";
@@ -33,10 +33,7 @@ export const resolveDomainFromAddress = async (addr: string) => {
 };
 
 export const getLpAddressForFarmsPrice = (farms: PoolDef[]) => {
-	// temp fix for dodo and stargate wrapped token prices
-	// the underlyging tokens are named lp, but they are actaully just wrapped versions of platform tokens, so we
-	// cannot calculate their price like normal LP, so instead we just use the base token for price
-	return farms.map((farm) => (farm.platform === "Dodo" || farm.platform === "Stargate" ? farm.token1 : farm.lp_address));
+	return farms.map((farm) => farm.lp_address);
 };
 
 export function validateNumberDecimals(value: number, decimals: number = 18) {
@@ -68,15 +65,6 @@ export const noExponents = (n: number | string) => {
 	mag -= str.length;
 	while (mag--) z += "0";
 	return str + z;
-};
-
-export const calcCompoundingApy = (rewardsApr: number) => {
-	const period = 365 / 7; // Number of times compounded per year
-	const fee = 0.1; // 10% fee
-	const rate = (rewardsApr / 100) * (1 - fee);
-	const apy = ((1 + rate / period) ** period - 1) * 100;
-	return (apy - rewardsApr) * -1; // multiply by -1 to get positive number
-	// return apy;
 };
 
 export function getNetworkName(id: number) {
@@ -437,4 +425,9 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
 
 	const formattedAmount = new Intl.NumberFormat(navigator.language, options).format(num);
 	return formattedAmount;
+};
+
+export const isVaultNew = (createdAt: number) => {
+	const now = Math.floor(Date.now() / 1000);
+	return now - createdAt < VAULT_NEW_DURATION;
 };

@@ -7,12 +7,14 @@ import { supportedChains } from "./../../config/baseWalletConfig";
 import { IClients } from "./../../types";
 import {
 	ApproveZapStep,
+	BridgeService,
 	EditTransaction,
 	StateInterface,
 	Transaction,
 	TransactionStep,
 	TransactionStepStatus,
 	TransactionTypes,
+	WaitForBridgeResultsStep,
 	ZapInStep,
 	ZapOutStep,
 } from "./types";
@@ -70,6 +72,7 @@ export const editTransactionStepDb = createAsyncThunk(
 			stepType: string;
 			status: TransactionStepStatus;
 			amount?: string;
+			bridgeInfo?: WaitForBridgeResultsStep["bridgeInfo"];
 		},
 		_thunkApi
 	) => {
@@ -84,6 +87,8 @@ export const editTransactionStepDb = createAsyncThunk(
 				status: params.status,
 				// @ts-ignore
 				txHash: params.txHash || tx.steps[ind].txHash,
+				// @ts-ignore
+				bridgeInfo: params.bridgeInfo || tx.steps[ind].bridgeInfo,
 			});
 			return params;
 		} catch (error) {

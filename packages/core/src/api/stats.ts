@@ -1,6 +1,7 @@
 import { backendApi } from ".";
 import { Order, AccountDetails } from "../types";
 import { UsersTableColumns } from "../types/enums";
+import { Address } from "viem";
 
 interface UserStatsResponse {
 	data: AccountDetails[];
@@ -44,7 +45,10 @@ interface VaultStats {
 }
 
 interface VaultsApyResponse {
-	data: VaultsApy[];
+	data: {
+		beratraxApy: VaultsApy[];
+		underlyingApr: VaultsApy[];
+	};
 }
 
 export interface VaultsApy {
@@ -63,6 +67,10 @@ export interface LP_Prices {
 
 interface LP_PricesResponse {
 	data: LP_Prices[];
+}
+
+interface VaultTvlResponse {
+	data: TVLHistory[];
 }
 
 export interface TVLHistory {
@@ -132,6 +140,27 @@ export const fetchBoostedApy = async () => {
 export const fetchSpecificLpPrice = async (id: number) => {
 	const res = await backendApi.get<LP_PricesResponse>(`stats/lp/30d?farmId=${id}`);
 	return res.data.data;
+};
+
+export const fetchSpecificVaultTvl = async (id: number) => {
+	const res = await backendApi.get<VaultTvlResponse>(`stats/vault/tvl/30d?farmId=${id}`);
+	return res.data.data;
+};
+
+export const fetchSpecificVaultApy = async (id: number) => {
+	const res = await backendApi.get<VaultsApyResponse>(`stats/vault/apy/30d?farmId=${id}`);
+	return res.data.data;
+};
+
+export const getApyByTime = async (data: { address: Address; timestamp: number; chainId: number }[]) => {
+	try {
+		const res = await backendApi.post<{
+			data: { [chainId: string]: { [address: string]: { timestamp: number; apy: { rewardsApr: number } }[] } };
+		}>("stats/vault/apy/time", { query: data }, { cache: true });
+		return res.data.data;
+	} catch (err) {
+		return undefined;
+	}
 };
 
 export const fetchTotalBtxPoints = async () => {

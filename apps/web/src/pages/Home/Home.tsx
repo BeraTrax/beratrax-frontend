@@ -11,9 +11,13 @@ function Home() {
 	const { pathname } = useLocation();
 	useRefCodeLoaded();
 
-	const isBottomBarVisible = Object.values([RoutesPaths.Home, RoutesPaths.Farms, RoutesPaths.UserGuide, RoutesPaths.Leaderboard]).includes(
-		pathname
-	);
+	const isBottomBarVisible = Object.values([
+		RoutesPaths.Home,
+		RoutesPaths.Farms,
+		RoutesPaths.UserGuide,
+		RoutesPaths.Leaderboard,
+		RoutesPaths.Buy,
+	]).includes(pathname);
 
 	return (
 		<div className={`w-full h-[100dvh] fixed inset-0 overflow-hidden bg-bgSecondary`}>

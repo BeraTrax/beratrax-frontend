@@ -7,7 +7,7 @@ import { Tooltip } from "react-tooltip";
 import uuid from "react-uuid";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useFarmApy, useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
-import { toFixedFloor } from "@beratrax/core/src/utils/common";
+import { customCommify, isVaultNew, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
@@ -28,13 +28,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 	const isLoading = isFarmLoading || isApyLoading;
 	const key = uuid();
 	const key2 = uuid();
-	const key3 = uuid();
-	const key4 = uuid();
-	const dispatch = useAppDispatch();
-	const { getTraxApy } = useTrax();
 	const showVaultsWithFunds = useAppSelector((state) => state.settings.showVaultsWithFunds);
-	const estimateTrax = useMemo(() => getTraxApy(farm.vault_addr), [getTraxApy, farm]);
 	const navigate = useNavigate();
+
+	const isNewVault = useMemo(() => {
+		if (!farm.createdAt) return false;
+		return isVaultNew(farm.createdAt);
+	}, [farm.createdAt]);
+
 	const handleNavigation = (route: string, target?: string) => {
 		if (target) window.open(route, target);
 		else navigate(route);
@@ -57,17 +58,21 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 		!isNaN(parseFloat(farmData?.withdrawableAmounts[0].amountDollar)) &&
 		(parseInt(farmData?.withdrawableAmounts[0].amountDollar) > 0 || Number(farmData?.withdrawableAmounts[0].amountDollar) > 0);
 
-	const isHighlighted = farm.isCurrentWeeksRewardsVault;
+	const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted;
+
+	if (farm.id === 16) {
+		console.log(
+			(farmApys || farm.total_apy) && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, 2) === 0
+		);
+	}
 
 	return (
 		<div className={isHighlighted ? `relative p-[2px] rounded-3xl ${styles.gradientAnimation}` : `relative rounded-3xl bg-bgDark`}>
 			<div
 				className={`
-
-
-                            ${!isHighlighted ? "bg-bgDark" : ""} 
-                            py-6 px-4 rounded-3xl relative cursor-pointer
-                            `}
+													${!isHighlighted ? "bg-bgDark" : ""} 
+													py-6 px-4 rounded-3xl relative cursor-pointer
+													`}
 				onClick={!farm.isUpcoming ? handleClick : undefined}
 			>
 				<div className="flex justify-between items-center">
@@ -96,7 +101,10 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 								<p className="text-textWhite text-lg font-medium">{farm?.name}</p>
 							</div>
 							<div className="flex items-center gap-1">
-								<FarmRowChip text={farm?.platform + (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")} color="invert" />
+								<FarmRowChip
+									text={farm?.originPlatform + (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")}
+									color="invert"
+								/>
 								<div className="flex">
 									<img alt={farm?.platform_alt} className="w-4 rounded-full border border-bgDark" src={farm?.platform_logo} />
 									{farm?.secondary_platform && (
@@ -107,6 +115,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 										/>
 									)}
 								</div>
+								{isNewVault && <FarmRowChip text="New" color="default" gradient />}
 							</div>
 						</div>
 					</div>
@@ -114,13 +123,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 					{/* APY (Desktop) */}
 					<div className="sm:block hidden">
 						<div>
-							{farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+							{farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, 2) === 0 ? (
 								<p className="text-textWhite">--</p>
 							) : (
 								<div className="flex flex-col justify-end items-end">
 									<div className="flex justify-between gap-2">
 										{hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
 										{farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
+										{farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
 									</div>
 									<div className="flex gap-2 items-center">
 										<p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</p>
@@ -128,11 +138,20 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 									<p className="text-textWhite text-right">
 										{farm.isCurrentWeeksRewardsVault
 											? "??? "
-											: farmApys && farmApys.apy < 0.01
-												? farmApys.apy.toPrecision(2).slice(0, -1)
-												: toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
+											: customCommify((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, {
+													minimumFractionDigits: 0,
+												})}
 										%
 									</p>
+									{farmApys && farmApys.merklApr
+										? Number(toFixedFloor(farmApys.merklApr, 2)) > 0 && (
+												<p className="text-gradientPrimary text-right text-sm flex items-center">
+													<span className="mr-1">+</span>
+													{toFixedFloor(farmApys.merklApr, 2)}%<span className="ml-1 text-xs">Jumper APY</span>
+												</p>
+											)
+										: null}
+
 									<a id={key} data-tooltip-html={/* tooltip text here */ ""}>
 										{/* Possibly an info icon here */}
 									</a>
@@ -151,14 +170,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 									<p className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</p>
 									<CgInfo className="text-textSecondary hoverable w-4 h-4" />
 								</div>
-								{farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
+								{farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, 2) === 0 ? (
 									<p className="text-textWhite text-right">--</p>
 								) : (
 									<>
 										<p className="text-textWhite text-right">
-											{farmApys && farmApys.apy < 0.01
-												? farmApys.apy.toPrecision(2).slice(0, -1)
-												: toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
+											{customCommify((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, {
+												minimumFractionDigits: 0,
+											})}
 											%
 											<a id={key2} data-tooltip-html={/* tooltip text here */ ""}>
 												{/* Possibly an info icon here */}
@@ -204,13 +223,13 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
 						<div>
 							<p className={`whitespace-nowrap text-[17px] font-bold text-textWhite`}>{farm.name}</p>
 							{/* <div className="flex items-center">
-                                <p className={`text-textWhite text-sm mr-1`}>{farm.platform}</p>
-                                <img
-                                    alt={farm.platform_alt}
-                                    className="w-4 rounded-full border-black bg-black"
-                                    src={farm.platform_logo}
-                                />
-                            </div> */}
+															<p className={`text-textWhite text-sm mr-1`}>{farm.originPlatform}</p>
+															<img
+																	alt={farm.platform_alt}
+																	className="w-4 rounded-full border-black bg-black"
+																	src={farm.platform_logo}
+															/>
+													</div> */}
 						</div>
 					</div>
 				</div>
@@ -224,31 +243,19 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
 					<div className={`gap-1 justify-center items-center sm:flex hidden`}>
 						<div className={`flex items-center flex-col gap-[6px]`}>
 							<p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>
-								{farmApys && farmApys.apy < 0.01
-									? farmApys.apy.toPrecision(2).slice(0, -1)
-									: toFixedFloor(farmApys?.apy || 0, 2).toString()}
+								{farmApys && farmApys.apy + farmApys?.pointsApr < 0.01
+									? (farmApys.apy + farmApys?.pointsApr).toPrecision(2).slice(0, -1)
+									: toFixedFloor(farmApys?.apy + farmApys?.pointsApr || 0, 2).toString()}
 								%
 							</p>
 							<a
 								id={key}
 								data-tooltip-html={`<p>
-                                            <b>Base APRs</b>
-                                        </p>
-                                        ${
-																					farmApys && Number(farmApys.rewardsApr.toFixed(3))
-																						? `<p>LP Rewards: ${farmApys.rewardsApr.toFixed(3)}%</p>`
-																						: ``
-																				}
-                                        ${
-																					farmApys && Number(farmApys.feeApr.toFixed(2))
-																						? `<p>Trading Fees: ${farmApys.feeApr.toFixed(3)}%</p>`
-																						: ``
-																				}
-                                        ${
-																					farmApys && Number(farmApys.compounding.toFixed(3))
-																						? `<p>Compounding: ${farmApys.compounding.toFixed(3)}%</p>`
-																						: ``
-																				}`}
+																					<b>Base APRs</b>
+																			</p>
+																			${farmApys && Number(farmApys.rewardsApr.toFixed(3)) ? `<p>LP Rewards: ${farmApys.rewardsApr.toFixed(3)}%</p>` : ``}
+																			${farmApys && Number(farmApys.feeApr.toFixed(2)) ? `<p>Trading Fees: ${farmApys.feeApr.toFixed(3)}%</p>` : ``}
+																			${farmApys && Number(farmApys.compounding.toFixed(3)) ? `<p>Compounding: ${farmApys.compounding.toFixed(3)}%</p>` : ``}`}
 							>
 								<CgInfo className={`text-textPrimary text-right	 ml-1`} />
 							</a>
@@ -259,14 +266,14 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
 
 				{/* How much the user has deposited */}
 				{/* <div className={`flex-[2] flex flex-col justify-center items-center desktop-farm`}>
-                    {!farmData && <Skeleton w={50} h={30} />}
-                </div> */}
+									{!farmData && <Skeleton w={50} h={30} />}
+							</div> */}
 
 				{/* How much the user has Earned */}
 
 				{/* <div className={`container1 ${lightMode && "container1--light"} desktop`}>
-                    {isFarmLoading && <Skeleton w={50} h={30} />}
-                </div> */}
+									{isFarmLoading && <Skeleton w={50} h={30} />}
+							</div> */}
 
 				{/* Mobile View */}
 
@@ -279,14 +286,31 @@ const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolea
 						<div className={`flex flex-col min-w-14 gap-1 mobile:min-w-full mobile:flex-row justify-center items-center`}>
 							<p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>APY</p>
 							<p className={`whitespace-nowrap text-lg	 font-bold text-textWhite`}>
-								{farmApys && farmApys.apy < 0.01
-									? farmApys.apy.toPrecision(2).slice(0, -1)
-									: toFixedFloor(farmApys?.apy || 0, 2).toString()}
+								{farmApys &&
+									customCommify(farmApys?.apy + farmApys?.pointsApr || 0, {
+										minimumFractionDigits: 0,
+									})}
 								%
 							</p>
 						</div>
 					)}
 				</div>
+
+				{/* <div className={`mobile-view ${lightMode && "mobile-view--light"}`}> */}
+				{/* How much the user has deposited */}
+
+				{/* <div className={`container ${lightMode && "container--light"} deposite`}>
+											{isFarmLoading && <Skeleton w={50} h={30} />}
+									</div> */}
+
+				{/* How much the user has Earned */}
+
+				{/* <div className={`container1 ${lightMode && "container1--light"} earned`}>
+											{isFarmLoading && <Skeleton w={50} h={30} />}
+									</div> */}
+				{/* </div> */}
+
+				{/* <div className={`w-4 text-textWhite text-xl self-center`}>{true && <Skeleton w={20} h={20} />}</div> */}
 			</div>
 		</div>
 	);

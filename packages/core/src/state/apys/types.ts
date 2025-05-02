@@ -14,6 +14,9 @@ export interface AddApysAction {
 export interface Apys {
 	feeApr: number;
 	rewardsApr: number;
+	extraRewardsApr: number;
+	merklApr: number;
+	pointsApr: number;
 	apy: number;
 	compounding: number;
 	boost?: number;

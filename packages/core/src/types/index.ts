@@ -145,9 +145,9 @@ export interface WertOptions {
 	 */
 	click_id?: string;
 	/**
-     * By default, module will use 100% of the width and 100% of the height of the parent element.
+	 * By default, module will use 100% of the width and 100% of the height of the parent element.
 If 'true', width and height options are ignored.
-     */
+	 */
 	autosize?: boolean;
 	/**
 	 * Fixed module width, in pixels.
@@ -166,9 +166,9 @@ If 'true', width and height options are ignored.
 	 */
 	currency?: string;
 	/**
-     * Default amount in fiat currency which will be pre-filled in the module.
+	 * Default amount in fiat currency which will be pre-filled in the module.
 Minimum value is $5.
-     */
+	 */
 	currency_amount?: number;
 	/**
 	 * Default crypto asset that will be selected in the module.
@@ -187,10 +187,10 @@ Minimum value is $5.
 	 */
 	commodity_amount?: number;
 	/**
-     * User's wallet address.
+	 * User's wallet address.
 Address is checked for validity based on the chosen crypto commodity. If address is invalid, this option is ignored.
 BTC address format is used as default.
-     */
+	 */
 	address?: string;
 	/**
 	 * URL where user will be redirected from KYC emails to proceed with the payment.
@@ -205,70 +205,70 @@ BTC address format is used as default.
 	 */
 	listeners?: object;
 	/**
-     * Language of the widget
-     * @example en - for English
+	 * Language of the widget
+	 * @example en - for English
 fr - for French
-     */
+	 */
 	lang?: string;
 	/**
-     * Color customisation of specific elements of Wert module.
+	 * Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
-     */
+	 */
 	color_background?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_buttons?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_buttons_text?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_secondary_buttons?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_secondary_buttons_text?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_main_text?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_secondary_text?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_icons?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_links?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_success?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_warning?: string;
 	/**
- * Color customisation of specific elements of Wert module.
+* Color customisation of specific elements of Wert module.
 Go to the module tuner on the partner dashboard to see how each property affects the widget.
- */
+*/
 	color_error?: string;
 	[x: string]: any;
 }

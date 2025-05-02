@@ -182,6 +182,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 		const burrbearEarnings = await getEarningsForBurrbear(combinedTransactions, client, balances);
 		const infraredEarnings = await getEarningsForInfrared(combinedTransactions, client, balances);
 		const steerEarnings = await getEarningsForSteer(combinedTransactions, client, balances);
+		const kodiakEarnings = await getEarningsForKodiak(combinedTransactions, client, balances);
 		const iberaEarnings = await calculateIBeraEarnings(combinedTransactions);
 		return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings, iberaEarnings];
 	} catch (err: any) {

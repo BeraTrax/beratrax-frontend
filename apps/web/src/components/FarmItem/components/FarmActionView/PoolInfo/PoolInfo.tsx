@@ -56,6 +56,7 @@ interface IProps {
 const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading }: IProps) => {
     const {
         originPlatform,
+        secondary_platform,
         token_type: tokenType,
         token1,
         token2,
@@ -225,6 +226,17 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Autocompounded to APY
                                     </td>
+                                </tr>
+                            )}
+                            {originPlatform === FarmOriginPlatform.BeraPaw && secondary_platform == null && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <img src="/berapaw.png" alt="Berapaw" className="w-5 h-5" />
+                                            pPAW
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                                 </tr>
                             )}
                             {originPlatform === FarmOriginPlatform.Infrared && (

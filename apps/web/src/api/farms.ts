@@ -186,7 +186,15 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         const steerEarnings = await getEarningsForSteer(combinedTransactions, client, balances);
         const kodiakEarnings = await getEarningsForKodiak(combinedTransactions, client, balances);
         const iberaEarnings = await calculateIBeraEarnings(combinedTransactions);
-        return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings, iberaEarnings];
+        const berapawEarnings = await calculateBerapawEarnings(combinedTransactions);
+        return [
+            ...infraredEarnings,
+            ...steerEarnings,
+            ...kodiakEarnings,
+            ...burrbearEarnings,
+            iberaEarnings,
+            ...berapawEarnings,
+        ];
     } catch (err: any) {
         console.error(err);
         return [];
@@ -436,8 +444,10 @@ const getEarningsForKodiak = async (
             .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
             .filter(
                 (pool) =>
-                    pool.originPlatform === FarmOriginPlatform.Kodiak ||
-                    pool.originPlatform === FarmOriginPlatform.BeraPaw
+                    (pool.originPlatform === FarmOriginPlatform.Kodiak ||
+                        pool.originPlatform === FarmOriginPlatform.BeraPaw) &&
+                    pool.id !== 43 &&
+                    pool.id !== 44
             )
             .map((pool) => {
                 const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1];
@@ -810,6 +820,80 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
             changeInAssets: "0",
             lifetimeEarnings: "0",
         };
+    }
+};
+
+export const calculateBerapawEarnings = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+    try {
+        const berapawPools = pools_json.filter(
+            (pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw && pool.secondary_platform === undefined
+        );
+
+        const earnings = await Promise.all(
+            berapawPools.map(async (pool) => {
+                const filtered = combinedTransactions
+                    .filter((tx: any) => tx.tokenId === pool.id.toString())
+                    .sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+
+                if (filtered.length === 0) {
+                    return {
+                        tokenId: pool.id.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_address,
+                        changeInAssets: "0",
+                        lifetimeEarnings: "0",
+                    };
+                }
+
+                const currentTimestamp = Math.floor(Date.now() / 1000);
+
+                // Batch all timestamps for APY fetch
+                const timestamps = filtered.map((tx: any) => ({
+                    address: pool.vault_addr,
+                    timestamp: Number(tx.blockTimestamp),
+                    chainId: pool.chainId,
+                }));
+
+                const apyData = await getApyByTime(timestamps);
+                let totalEarnings = BigInt(0);
+                let lastEarnings = BigInt(0);
+
+                for (let i = 0; i < filtered.length; i++) {
+                    const tx = filtered[i];
+                    const nextTx = filtered[i + 1];
+                    const start = Number(tx.blockTimestamp);
+                    const end = nextTx ? Number(nextTx.blockTimestamp) : currentTimestamp;
+                    const timePeriod = end - start;
+                    const timeInYears = timePeriod / (365 * 24 * 60 * 60);
+
+                    const apyObj = apyData?.[pool.chainId]?.[pool.vault_addr]?.find(
+                        (entry) => Math.abs(entry.timestamp - start) < 3600 // within 1 hour
+                    );
+                    const apy = apyObj?.apy?.rewardsApr ?? 0;
+                    const apyPercent = Math.floor((apy / 100) * 1e18); // scaled for precision
+
+                    const userBalance = BigInt(tx.userAssetBalance || "0");
+                    const earnings =
+                        (userBalance * BigInt(apyPercent) * BigInt(Math.floor(timeInYears * 1e18))) / BigInt(1e36);
+
+                    totalEarnings += earnings;
+                    if (i === filtered.length - 1) {
+                        lastEarnings = earnings;
+                    }
+                }
+
+                return {
+                    tokenId: pool.id.toString(),
+                    earnings0: lastEarnings.toString(),
+                    token0: pool.lp_address,
+                    lifetimeEarnings: totalEarnings.toString(),
+                };
+            })
+        );
+        return earnings;
+    } catch (error) {
+        console.error(error);
+        return [];
     }
 };
 

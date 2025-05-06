@@ -10,10 +10,16 @@ import useTransactions from "@beratrax/core/src/state/transactions/useTransactio
 import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import moment from "moment";
 import { FC, useMemo, useRef, useState } from "react";
-import { Address, formatUnits } from "viem";
+import { formatUnits } from "viem";
 import { useChainId } from "wagmi";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Linking } from "react-native";
 import { ModalLayout } from "./modals/ModalLayout";
+import TransactionDetails from "./TransactionDetail/TransactionDetail";
+import { InfoCircleIcon } from "../icons/InfoCircle";
+import { ChevronDownIcon } from "../icons/ChevronDown";
+import { ChevronUpIcon } from "../icons/ChevronUp";
+import { ExternalLinkIcon } from "../icons/ExternalLInk";
+import Colors from "@beratrax/typescript-config/Colors";
 
 export const Transactions = () => {
 	const [open, setOpen] = useState(false);
@@ -24,25 +30,22 @@ export const Transactions = () => {
 
 	return (
 		<View>
-			<View className="flex justify-between items-center gap-2.5 mt-4">
-				<Text className="font-arame-mono font-normal text-base text-textWhite leading-4 uppercase ">Last Transactions</Text>
+			<View className="flex flex-row justify-between items-center gap-2.5 mt-4">
+				<Text className="font-arame-mono font-normal text-base text-textWhite leading-4 uppercase">Last Transactions</Text>
 				{transactions.length !== 0 && (
-					<Text
-						className="cursor-pointer font-arame-mono font-normal text-base text-textPrimary leading-4 uppercase flex"
-						onPress={() => setOpen(true)}
-					>
-						See all
-						{/* <IoIosArrowForward className="pl-1" /> */}
-					</Text>
+					<Pressable onPress={() => setOpen(true)} className="flex flex-row items-center">
+						<Text className="font-arame-mono font-normal text-base text-textPrimary leading-4 uppercase">See all</Text>
+						<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
+					</Pressable>
 				)}
 			</View>
 			<View className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
-				{transactions.length === 0 && <Text className="center text-textSecondary">No transactions yet</Text>}
+				{transactions.length === 0 && <Text className="text-center text-textSecondary">No transactions yet</Text>}
 				{transactions.map((item, i) => (
 					<Row _id={item._id} key={i} />
 				))}
 			</View>
-			{/* {open && <TransactionsModal setOpenModal={setOpen} />} */}
+			{open && <TransactionsModal setOpenModal={setOpen} />}
 		</View>
 	);
 };
@@ -120,157 +123,56 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 
 	return (
 		<>
-			<View className="rounded-2xl transition-all duration-100 ease-in-out bg-bgDark px-4 py-6 my-1">
-				<View className="flex items-center gap-4 cursor-pointer" onPress={() => setOpen(!open)}>
+			<View className="rounded-2xl transition-all duration-100 ease-in-out px-4 py-6 my-1">
+				<Pressable className="flex flex-row items-center gap-4" onPress={() => setOpen(!open)}>
 					{/* Chevron Icon to open and close the transaction details */}
 					<View
 						className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex justify-center items-center ${
 							open ? "bg-gradientSecondary" : "bg-bgSecondary"
 						}`}
 					>
-						{/* {open ? (
-							<IoChevronUpOutline className="text-buttonPrimaryLight w-5 h-5" />
+						{open ? (
+							<ChevronUpIcon stroke={Colors.gradientLight} strokeWidth={3} />
 						) : (
-							<IoChevronDownOutline className="text-buttonPrimaryLight w-5 h-5" />
-						)} */}
+							<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
+						)}
 					</View>
 
 					{/* Vault Name and Retry Button */}
 					<View className="flex-grow flex flex-col">
-						<View className="flex items-center gap-1.5">
-							<Text className={`font-league-spartan font-medium text-lg leading-6 text-textWhite`}>{farm.name}</Text>
+						<View className="flex flex-row items-center gap-1.5">
+							<Text className="font-league-spartan font-medium text-lg leading-6 text-textWhite">{farm.name}</Text>
 							{tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
 								<Pressable
 									className="border border-red-500 rounded-md 
                                             px-1 py-0.5 bg-transparent 
-                                            flex items-center gap-0.5 
-                                            text-red-500 text-[0.8rem] cursor-pointer"
+                                            flex flex-row items-center gap-0.5 
+                                            text-red-500 text-[0.8rem]"
 									onPress={retryTransaction}
 								>
-									{/* <CiRepeat /> Retry */}
+									<Text className="text-red-500 text-xs">Retry</Text>
 								</Pressable>
 							)}
 							{/* Tooltip for transaction details */}
 							{showExtraInfo && (
 								<View className="group relative pb-1">
-									{/* <IoInformationCircle className="text-xl text-textSecondary cursor-help" onClick={(e) => e.stopPropagation()} /> */}
-									<View className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-										<View className="flex flex-col justify-end gap-2">
-											<View className="flex justify-between items-start">
-												<Text className="text-textSecondary">{type === "deposit" ? "Zap In Amount:" : "Vault Shares:"}</Text>
-												<View className="flex flex-col items-end">
-													<Text className="text-base">
-														$ {""}
-														{formatCurrency(
-															Number(formatUnits(BigInt(amountInWei || "0"), 18)) *
-																(type === "deposit"
-																	? tokenPrice || prices[farm.chainId][token]
-																	: vaultPrice || prices[farm.chainId][farm.vault_addr])
-														)}
-													</Text>
-													<Text className="text-xs text-textSecondary">
-														{formatCurrency(formatUnits(BigInt(amountInWei || "0"), 18))}{" "}
-														{type === "deposit" ? tokenNamesAndImages[token].name : "BTX-" + farm.name}
-													</Text>
-												</View>
-											</View>
-
-											{fee !== undefined && (
-												<View className="flex justify-between items-start">
-													<Text className="text-textSecondary">BeraTrax Fee:</Text>
-													<View className="flex flex-col items-end">
-														<Text className="text-base">
-															$
-															{formatCurrency(
-																Number(toEth(BigInt(fee), decimals[farm.chainId][token])) * (tokenPrice || prices[farm.chainId][token])
-															)}
-														</Text>
-														<Text className="text-xs text-textSecondary">
-															{formatCurrency(toEth(BigInt(fee), decimals[farm.chainId][token]))} {tokenNamesAndImages[token].name}
-														</Text>
-													</View>
-												</View>
-											)}
-
-											{actualSlippage !== undefined && (
-												<View className="flex justify-between items-start">
-													<Text className="text-textSecondary">Slippage:</Text>
-													<View className="flex flex-col items-end">
-														<Text className="text-base">$ {formatCurrency(actualSlippage)}</Text>
-														<Text className="text-xs text-textSecondary">
-															{formatCurrency(actualSlippage / (tokenPrice || prices[farm.chainId][token]))}{" "}
-															{tokenNamesAndImages[tx.token].name}
-														</Text>
-													</View>
-												</View>
-											)}
-
-											{filteredReturnedAssets.length > 0 && (
-												<View className="mt-2">
-													<Text className="text-textSecondary block mb-1">Returned:</Text>
-													{filteredReturnedAssets.map((asset, index) => (
-														<View key={index} className="flex justify-between items-start pl-2">
-															<Text>{tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}</Text>
-															<View className="flex flex-col items-end">
-																<Text className="text-base">
-																	$
-																	{formatCurrency(
-																		Number(toEth(BigInt(asset.amount), 18)) * (tokenPrice || prices[farm.chainId][asset.token as Address])
-																	)}
-																</Text>
-																<Text className="text-xs text-textSecondary">
-																	{Number(formatUnits(BigInt(asset.amount), 18)).toLocaleString()}{" "}
-																	{tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}
-																</Text>
-															</View>
-														</View>
-													))}
-												</View>
-											)}
-
-											{vaultShares !== undefined && (
-												<View className="flex justify-between items-start">
-													<Text className="text-textSecondary">{type === "deposit" ? "Vault Shares:" : "Zap Out Amount:"}</Text>
-													<View className="flex flex-col items-end">
-														<Text className="text-base">
-															${" "}
-															{type === "deposit"
-																? formatCurrency(
-																		Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])) *
-																			(vaultPrice || prices[farm.chainId][farm.vault_addr]),
-																		4
-																	)
-																: formatCurrency(
-																		Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])) *
-																			(tokenPrice || prices[farm.chainId][token]),
-																		4
-																	)}
-														</Text>
-														<Text className="text-xs text-textSecondary">
-															{type === "deposit"
-																? formatCurrency(Number(toEth(BigInt(vaultShares), decimals[farm.chainId][farm.vault_addr])))
-																: formatCurrency(Number(toEth(BigInt(netAmount || "0"), decimals[farm.chainId][token])))}{" "}
-															{type === "deposit" ? "BTX-" + farm.name : tokenNamesAndImages[token].name}
-														</Text>
-													</View>
-												</View>
-											)}
-										</View>
-									</View>
+									<Pressable onPress={(e) => e.stopPropagation()}>
+										<InfoCircleIcon />
+									</Pressable>
 								</View>
 							)}
 							{!tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
 								<View className="group relative pl-1 pb-1">
-									{/* <FaExternalLinkAlt
-										className="text-textSecondary cursor-pointer"
-										onClick={(e) => {
+									<Pressable
+										onPress={(e) => {
 											e.stopPropagation();
-											window.open(`${blockExplorersByChainId[chainId]}/tx/${tx.steps[tx.steps.length - 1].txHash}`, "_blank");
+											if (tx.steps[tx.steps.length - 1].txHash) {
+												Linking.openURL(`${blockExplorersByChainId[chainId]}/tx/${tx.steps[tx.steps.length - 1].txHash}`);
+											}
 										}}
-									/> */}
-									<View className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-										View transaction on explorer
-									</View>
+									>
+										<ExternalLinkIcon />
+									</Pressable>
 								</View>
 							)}
 						</View>
@@ -302,8 +204,9 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 							{tokenNamesAndImages[token].name}
 						</Text>
 					</View>
-				</View>
-				{/* <TransactionDetails transactionId={_id} open={open} farm={undefined} tx={undefined} /> */}
+				</Pressable>
+
+				{open && <TransactionDetails transactionId={_id} open={open} farm={undefined} tx={undefined} />}
 			</View>
 		</>
 	);
@@ -322,9 +225,9 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
             h-[80vh] 
             flex flex-col"
 			wrapperClassName="lg:w-full"
-			onWheel={(e) => {
+			onScroll={(e) => {
 				if (fetchedAll) return;
-				let ele: Element = e.currentTarget as Element;
+				let ele = e.currentTarget;
 				let percent = (ele.scrollTop / (ele.scrollHeight - ele.clientHeight)) * 100;
 				if (percent === 100 && !isLoading) {
 					clearTimeout(timeout.current);
@@ -341,7 +244,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 						<Row _id={item._id} key={i} />
 					))}
 					{isLoading && (
-						<View className="center">
+						<View className="flex justify-center items-center">
 							<View
 								className="
                                     w-[18px] h-[18px] 

@@ -21,6 +21,39 @@ const Select: FC<IProps> = ({ value, setValue, options, extraText, size, classNa
 	const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
 	const selectRef = useRef<View>(null);
 	const dropdownRef = useRef<View>(null);
+	const optionWidths = useRef<number[]>([]);
+
+	// Calculate the required width based on all options
+	useEffect(() => {
+		if (Platform.OS === "web" && options.length > 0) {
+			// Create a temporary div to measure text width
+			const measureElement = document.createElement("div");
+			measureElement.style.position = "absolute";
+			measureElement.style.visibility = "hidden";
+			measureElement.style.fontSize = "14px"; // Adjust to match your text size
+			measureElement.style.padding = "0 30px 0 0"; // Account for extra padding and images
+			document.body.appendChild(measureElement);
+
+			let maxOptionWidth = 0;
+
+			options.forEach((option, index) => {
+				// Include both option text and extra text if available
+				const displayText = extraText ? `${option} ${extraText[index] || ""}` : option;
+				measureElement.textContent = displayText;
+
+				// Add extra width for images if present
+				const imageWidth = images && images[option] ? (images[option].length > 1 ? 30 : 20) : 0;
+				const totalWidth = measureElement.getBoundingClientRect().width + imageWidth + 40; // 40px for padding
+
+				if (totalWidth > maxOptionWidth) {
+					maxOptionWidth = totalWidth;
+				}
+			});
+
+			document.body.removeChild(measureElement);
+			setMaxWidth(Math.max(maxOptionWidth, 100));
+		}
+	}, [options, extraText, images]);
 
 	useEffect(() => {
 		if (options && options.length > 0 && !options.includes(value)) {
@@ -36,11 +69,11 @@ const Select: FC<IProps> = ({ value, setValue, options, extraText, size, classNa
 				setPosition({
 					top: rect.bottom + window.scrollY,
 					left: rect.left + window.scrollX,
-					width: rect.width,
+					width: Math.max(rect.width, maxWidth),
 				});
 			}
 		}
-	}, [openSelect]);
+	}, [openSelect, maxWidth]);
 
 	// Add event listener to close dropdown when clicking outside
 	useEffect(() => {
@@ -65,10 +98,14 @@ const Select: FC<IProps> = ({ value, setValue, options, extraText, size, classNa
 		}
 	}, [openSelect]);
 
-	const handleOptionLayout = (event: LayoutChangeEvent) => {
+	const handleOptionLayout = (event: LayoutChangeEvent, index: number) => {
 		const { width } = event.nativeEvent.layout;
-		if (width + 70 > maxWidth) {
-			setMaxWidth(width + 70);
+		optionWidths.current[index] = width;
+
+		// Find the maximum width
+		const newMaxWidth = Math.max(...optionWidths.current.filter(Boolean), 100);
+		if (newMaxWidth > maxWidth) {
+			setMaxWidth(newMaxWidth + 40); // Add some padding
 		}
 	};
 
@@ -127,9 +164,9 @@ const Select: FC<IProps> = ({ value, setValue, options, extraText, size, classNa
 					>
 						<View
 							className="flex flex-row items-center justify-between px-3 py-3 border-b last:border-b-0 cursor-pointer"
-							// onLayout={handleOptionLayout}
+							onLayout={(e) => handleOptionLayout(e, index)}
 						>
-							<View className="flex flex-row items-center gap-x-2">
+							<View className="flex flex-row gap-x-2">
 								{images && images[option] && (
 									<View className="flex flex-row">
 										<Image source={{ uri: images[option][0] }} style={{ width: 20, height: 20, borderRadius: 25 }} />

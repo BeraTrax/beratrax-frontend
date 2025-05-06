@@ -84,14 +84,14 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 
 	return (
 		<>
-			<View className="flex-1 mb-10 w-full bg-bgSecondary relative">
+			<View className="flex-1 mb-10 w-full bg-bgSecondary">
 				<View className="absolute top-[45%]">
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
 				</View>
 				<View className="absolute right-0 top-0">
 					<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
 				</View>
-				<View className="flex-1 pt-14 px-4 pb-2 relative">
+				<View className="flex-1 pt-14 px-4 pb-2">
 					{openDepositModal ? (
 						<></>
 					) : (
@@ -112,10 +112,9 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 							</ScrollView>
 
 							<View
-								className={`flex flex-row gap-2 bottom-4 left-0 right-0 justify-center w-full ${
-									Number(withdrawable?.amount || "0") ? "pr-4" : ""
-								}
-								${Platform.OS === "web" ? "fixed" : "absolute"}`}
+								className={`flex flex-row gap-2 justify-center w-full max-w-[1200px] px-4 z-10 ${
+									Platform.OS === "web" ? "fixed bottom-4" : "absolute bottom-4"
+								} ${Number(withdrawable?.amount || "0") ? "pr-4" : ""} right-1`}
 							>
 								{isConnecting || isLoading ? (
 									<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>

@@ -17,8 +17,6 @@ export const RoutesPaths = {
 	Leaderboard: "/leaderboard",
 };
 
-
-
 // Utility function to get environment variables across platforms
 const getEnvVar = (key: string): string | undefined => {
 	const envKey = `EXPO_PUBLIC_${key}`;
@@ -27,7 +25,7 @@ const getEnvVar = (key: string): string | undefined => {
 
 export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1";
 export const EARNINGS_GRAPH_URL =
-	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/14.0.0/gn";
+	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/15.0.0/gn";
 export const EARNINGS_GRAPH_URL_BASE =
 	"https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =

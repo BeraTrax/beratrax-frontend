@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../state";
-import { setOffline } from "../state/internet/internetReducer";
+import { setOnline, setOffline } from "../state/internet/internetReducer";
 import useAccountData from "../state/account/useAccountData";
 import useFarmDetails from "../state/farms/hooks/useFarmDetails";
 import useTransactions from "../state/transactions/useTransactions";
 import { useFarmApys } from "../state/farms/hooks/useFarmApy";
 import useTokens from "../state/tokens/useTokens";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { AppState, Platform } from "react-native";
 
 export const useDataRefresh = () => {
 	const { reloadApys } = useFarmApys();
@@ -14,23 +16,37 @@ export const useDataRefresh = () => {
 	const { fetchTransactions } = useTransactions();
 	const { prices, reloadPrices, reloadDecimals, reloadSupplies, reloadBalances } = useTokens();
 	const dispatch = useAppDispatch();
+	const { isConnected } = useNetInfo();
+	const [appState, setAppState] = useState(AppState.currentState);
+
+	const isHidden = Platform.OS === "web" ? document.hidden : appState !== "active";
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener("change", (nextAppState) => {
+			setAppState(nextAppState);
+		});
+
+		return () => {
+			subscription.remove();
+		};
+	}, []);
 
 	// Network status effect
 	useEffect(() => {
-		window.addEventListener("online", () => {
-			window.location.reload();
-		});
-		window.addEventListener("offline", () => {
+		// to avoid null values check. explicitly checking the boolean state
+		if (isConnected === false) {
 			dispatch(setOffline());
-		});
-	}, []);
+		} else {
+			dispatch(setOnline());
+		}
+	}, [isConnected]);
 
 	// Account data refresh
 	useEffect(() => {
 		fetchAccountData();
 		const interval = setInterval(
 			() => {
-				if (document.hidden) return;
+				if (isHidden) return;
 				fetchAccountData();
 			},
 			1000 * 60 * 5
@@ -43,7 +59,7 @@ export const useDataRefresh = () => {
 		reloadPrices();
 		const interval = setInterval(
 			() => {
-				if (document.hidden) return;
+				if (isHidden) return;
 				reloadPrices();
 			},
 			1000 * 60 * 5
@@ -68,7 +84,7 @@ export const useDataRefresh = () => {
 		reloadBalances();
 		const interval = setInterval(
 			() => {
-				if (document.hidden) return;
+				if (isHidden) return;
 				reloadBalances();
 			},
 			1000 * 60 * 0.5
@@ -81,7 +97,7 @@ export const useDataRefresh = () => {
 		reloadSupplies();
 		const interval = setInterval(
 			() => {
-				if (document.hidden) return;
+				if (isHidden) return;
 				reloadSupplies();
 			},
 			1000 * 60 * 2

@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Skeleton } from "web/src/components/Skeleton/Skeleton";
 import { TVLHistory } from "@beratrax/core/src/api/stats";
 import { useSpecificVaultTvl } from "@beratrax/core/src/hooks/useVaults";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
-import { customCommify, formatCurrency } from "@beratrax/core/src/utils/common";
-
+import { customCommify } from "@beratrax/core/src/utils/common";
+import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
 // Import victory libraries based on platform
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";

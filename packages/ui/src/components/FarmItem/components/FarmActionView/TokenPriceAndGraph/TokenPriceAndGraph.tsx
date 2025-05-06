@@ -8,6 +8,7 @@ import { View, Text, Image } from "react-native";
 import { useState } from "react";
 import FarmEarningsGraph from "../FarmEarningsGraph/FarmEarningsGraph";
 import FarmTvlGraph from "../FarmTvlGraph/FarmTvlGraph";
+import FarmApyGraph from "../FarmApyGraph/FarmApyGraph";
 
 interface TokenPriceProps {
 	farm: PoolDef;
@@ -100,7 +101,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 				{activeTab === "earnings" && <FarmEarningsGraph farm={farm} />}
 				{activeTab === "price" && <FarmLpGraph farm={farm} />}
 				{activeTab === "tvl" && <FarmTvlGraph farm={farm} />}
-        {/* {activeTab === "apy" && <FarmApyGraph farm={farm} />} */}
+        {activeTab === "apy" && <FarmApyGraph farm={farm} />}
 			</View>
 		</View>
 	);

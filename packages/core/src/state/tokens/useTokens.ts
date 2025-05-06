@@ -212,9 +212,9 @@ const useTokens = () => {
 		reloadDecimals,
 
 		totalSupplies,
-		isLoading: (isTotalSuppliesLoading || isDecimalsLoading) && !isTotalSuppliesFetched && !isDecimalsFetched,
-		isFetched: isTotalSuppliesFetched && isDecimalsFetched,
-		isFetching: isTotalSuppliesLoading || isDecimalsLoading,
+		isTotalSuppliesLoading: isTotalSuppliesLoading && !isTotalSuppliesFetched,
+		isTotalSuppliesFetched,
+		isTotalSuppliesFetching: isTotalSuppliesLoading,
 		reloadSupplies,
 
 		tokens,

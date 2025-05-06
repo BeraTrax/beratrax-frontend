@@ -17,6 +17,8 @@ export const RoutesPaths = {
 	Leaderboard: "/leaderboard",
 };
 
+
+
 // Utility function to get environment variables across platforms
 const getEnvVar = (key: string): string | undefined => {
 	const envKey = `EXPO_PUBLIC_${key}`;

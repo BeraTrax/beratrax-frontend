@@ -13,7 +13,6 @@ const nodeLibs = require('node-libs-react-native');
 const { FileStore } = require('metro-cache');
 
 const projectRoot = __dirname;
-// This can be replaced with `find-yarn-workspace-root`
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
 /** @type {import('expo/metro-config').MetroConfig} */
@@ -30,10 +29,10 @@ config.watchFolders = [workspaceRoot];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
+  path.resolve(workspaceRoot, "packages/core/node_modules"),
+  path.resolve(workspaceRoot, "packages/ui/node_modules"),
 ];
 
-// #3 - Force resolving nested modules to the folders below
-//This line is REQUIRED to make Nativewind work within monorepo packages.
 config.resolver.disableHierarchicalLookup = true;
 
 function convertToNodePrefix(input) {
@@ -50,10 +49,11 @@ config.cacheStores = [
   }),
 ];
 
-// Handle node: protocol imports
 config.resolver.extraNodeModules = {
   ...nodeLibs,
   ...convertToNodePrefix(nodeLibs),
+  "core/src": path.resolve(workspaceRoot, "packages/core/src"),
+  "ui/src": path.resolve(workspaceRoot, "packages/ui/src"),
 };
 
 
@@ -62,8 +62,8 @@ config.resolver.assetExts = assetExts.filter((extension) => extension !== "svg")
 config.resolver.sourceExts = [...sourceExts, 'svg', 'cjs'];
 
 
-module.exports = withNativeWind(config, { 
-  input: "./global.css", 
-  configPath: "./tailwind.config.js", 
-  projectRoot, 
+module.exports = withNativeWind(config, {
+  input: "./global.css",
+  configPath: "./tailwind.config.js",
+  projectRoot,
 });

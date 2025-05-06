@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+import { View, Text, Image, ScrollView, Platform, ImageSourcePropType } from "react-native";
+import Earnpagedots from "@beratrax/core/src/assets/images/earnpagedots.svg";
+import Earnpageleaves from "@beratrax/core/src/assets/images/earnpagetoprightleaves1.svg";
+import Earnpageleaves2 from "@beratrax/core/src/assets/images/earnpagetoprightleaves2.svg";
+import { useRouter } from "expo-router";
+import BackButton from "ui/src/components/BackButton/BackButton";
+import FarmRow from "ui/src/components/FarmItem/FarmRow";
+import { IS_LEGACY } from "@beratrax/core/src/config/constants";
+import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
+
+export function FarmView() {
+  const [openedFarm, setOpenedFarm] = useState<number | undefined>();
+  const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } =
+    useEarnPage();
+
+  const router = useRouter();
+
+  return (
+    <View className="relative bg-bgSecondary text-textWhite h-full overflow-hidden font-league-spartan">
+      {/* Background Leaves */}
+      <View className="absolute z-10 top-14 right-1 w-50">
+        <Earnpageleaves2 />
+      </View>
+      <View className="absolute top-2 -right-2 w-40">
+        <Earnpageleaves />
+      </View>
+      <View className="absolute top-2 right-5 w-40">
+        <Earnpagedots />
+      </View>
+
+      <ScrollView className="h-full pt-14 px-4 pb-2">
+        <BackButton onClick={() => router.back()} />
+
+        {/* Heading */}
+        <View className="mt-4">
+          <Text className="text-3xl font-bold uppercase text-white">Earn</Text>
+        </View>
+
+        {farms.length === 0 ? (
+          <View className="flex flex-col gap-2">
+            <Text className="mb-9 text-lg font-light text-white">Vaults coming soon</Text>
+          </View>
+        ) : (
+          <Text className="mb-9 text-lg font-light text-white">Available Protocols</Text>
+        )}
+
+        {/* Vaults */}
+        <View className="flex flex-col gap-2">
+          {(sortedFarms || farms)
+            .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+            .map((farm, index) => (
+              <FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+            ))}
+        </View>
+
+        {/* Upcoming Farms (only for dev/staging) */}
+        {/* {__DEV__ && upcomingFarms.length > 0 && (
+          <View className="flex flex-col mt-2 gap-2">
+            {upcomingFarms.map((farm, index) => (
+              <FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+            ))}
+          </View>
+        )} */}
+
+        {/* Bottom padding */}
+        <View className="h-32" />
+      </ScrollView>
+    </View>
+  );
+}
+

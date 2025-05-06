@@ -39,3 +39,4 @@ export const GradientText = ({ children, className = "", style = {} }: GradientT
 		</Text>
 	);
 };
+

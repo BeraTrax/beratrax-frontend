@@ -1,0 +1,57 @@
+.pool-button-1 {
+    width: 100px;
+    padding: 7px;
+    background-color: var(--new-background_primary);
+    color: var(--color_disabled);
+    font-weight: bold;
+    margin-bottom: 7px;
+    font-size: 13px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.pool-button-2 {
+    min-width: 150px;
+    padding: 10px;
+    color: var(--new-color_white);
+    background-color: var(--new-background_dark);
+    font-weight: bold;
+    margin-bottom: 7px;
+    font-size: 16px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.button--selected-1 {
+    color: white;
+    background-color: var(--color_primary);
+}
+
+.button--selected-2 {
+    color: white;
+    background-color: var(--new-background_primary);
+}
+
+.button--selected--light {
+    color: white;
+    background-color: var(--color_primary);
+}
+
+.pool-button-1:first-child,
+.pool-button-2:first-child {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.pool-button-1:last-child,
+.pool-button-2:last-child {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.pool-button-1:hover,
+.pool-button-2:hover {
+    cursor: pointer;
+}

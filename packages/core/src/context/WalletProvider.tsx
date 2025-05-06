@@ -247,3 +247,4 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 };
 
 export default WalletProvider;
+

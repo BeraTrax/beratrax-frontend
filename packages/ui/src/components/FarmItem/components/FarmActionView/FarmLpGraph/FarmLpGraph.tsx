@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
-import styles from "./FarmLpGraph.module.css";
+import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
 import { LP_Prices } from "@beratrax/core/src/api/stats";
 import { useLp } from "@beratrax/core/src/hooks";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";

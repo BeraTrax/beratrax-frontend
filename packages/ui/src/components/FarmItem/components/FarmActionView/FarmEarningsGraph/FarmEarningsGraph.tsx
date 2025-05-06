@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Skeleton } from "web/src/components/Skeleton/Skeleton";
-import { Select } from "web/src/components/Select/Select";
+import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
+import Select from "@beratrax/ui/src/components/Select/Select";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import useFarmApy from "@beratrax/core/src/state/farms/hooks/useFarmApy";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
@@ -172,11 +171,13 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 	}, [screenWidth]);
 
 	return (
-		<View className="z-10 relative">
+		<View className="relative">
 			<View className="flex flex-col items-center mb-4">
 				<View className="flex flex-row gap-4 mb-2 items-center">
 					<View className="relative h-12">
-						<View className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary">$</View>
+						<View className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary">
+							<Text className="text-textSecondary">$</Text>
+						</View>
 						<input
 							type="number"
 							value={investmentAmount || ""}
@@ -187,7 +188,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 							step="0.01"
 						/>
 					</View>
-					<View className="relative z-10 h-12">
+					<View className="relative h-12">
 						<View className="h-full">
 							<Select
 								value={months.toString()}
@@ -205,7 +206,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 				{isApyLoading ? (
 					<Skeleton h={300} w={"100%"} />
 				) : (
-					<>
+					<View>
 						<VictoryChart
 							width={screenWidth}
 							height={300}
@@ -218,12 +219,12 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 							containerComponent={
 								<VictoryVoronoiContainer
 									voronoiDimension="x"
-									voronoiBlacklist={["simpleAprArea", "autoCompoundedApyArea"]}
+									voronoiBlacklist={["simpleAprArea", "autoCompoundedApyArea", farm.isAutoCompounded ? "simpleApr" : "autoCompoundedApy"]}
 									labels={({ datum }) => {
 										const autoCompoundedValue = isAutoCompounded && datum.y ? datum.y : 0;
 										const simpleAprValue = simpleAprChartData.find((d) => d.x === datum.x)?.y || 0;
 
-										return `${datum.x}\nBeraTrax APY : $${customCommify(autoCompoundedValue.toFixed(2))}\nUnderlying APR : $${customCommify(simpleAprValue.toFixed(2))}`;
+										return `${datum.x}${farm.isAutoCompounded ? `\nBeraTrax APY : $${customCommify(autoCompoundedValue.toFixed(2))}` : ""}\nUnderlying APR : $${customCommify(simpleAprValue.toFixed(2))}`;
 									}}
 									labelComponent={
 										<VictoryTooltip
@@ -275,7 +276,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={simpleAprChartData}
 								style={{
 									data: {
-										stroke: "#90BB62",
+										stroke: farm.isAutoCompounded ? "#8884d8" : "#90BB62",
 										strokeWidth: 2,
 									},
 								}}
@@ -286,7 +287,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={simpleAprChartData}
 								style={{
 									data: {
-										fill: "url(#areaGradient)",
+										fill: farm.isAutoCompounded ? "url(#colorAutoCompounded)" : "url(#areaGradient)",
 										strokeWidth: 0,
 									},
 								}}
@@ -297,7 +298,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={autoCompoundedChartData}
 								style={{
 									data: {
-										stroke: "#8884d8",
+										stroke: farm.isAutoCompounded ? "#90BB62" : "#8884d8",
 										strokeWidth: 2,
 									},
 								}}
@@ -308,7 +309,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={autoCompoundedChartData}
 								style={{
 									data: {
-										fill: "url(#colorAutoCompounded)",
+										fill: farm.isAutoCompounded ? "url(#areaGradient)" : "url(#colorAutoCompounded)",
 										strokeWidth: 0,
 									},
 								}}
@@ -328,10 +329,13 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								</LinearGradient>
 							</Defs>
 						</VictoryChart>
-					</>
+					</View>
 				)}
 			</View>
-			<View className="text-center my-2">
+			{/* Fix positioning for smaller screens to move text lower */}
+			<View
+				className={`text-center ${screenWidth >= 768 ? "absolute bottom-0 left-0 right-0 mb-4" : screenWidth >= 576 ? "mt-6" : "mt-12"}`}
+			>
 				<Text className="text-sm text-center text-textSecondary">
 					{months}-Month Projection of ${formatCurrency(investmentAmount)} Investment
 				</Text>

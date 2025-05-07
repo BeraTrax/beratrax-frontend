@@ -84,28 +84,28 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
     const apy = apys?.apy + apys?.pointsApr;
 
-    useEffect(() => {
-        const getVaultBalance = async () => {
-            try {
-                const client = await getClients(vault.chainId);
-                const vaultBalance =
-                    BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
-                    BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
-                if (!vault.rewardVault) return;
-                const rewards = (await client.public.readContract({
-                    address: getAddress(vault.rewardVault!),
-                    abi: rewardVaultAbi,
-                    functionName: "earned",
-                    args: [currentWallet!],
-                })) as bigint;
-                setRewards(rewards);
-                setVaultBalance(vaultBalance);
-            } catch (e) {
-                console.log(e);
-            }
-        };
-        getVaultBalance();
-    }, [isDepositing, isClaiming]);
+    // useEffect(() => {
+    //     const getVaultBalance = async () => {
+    //         try {
+    //             const client = await getClients(vault.chainId);
+    //             const vaultBalance =
+    //                 BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
+    //                 BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
+    //             if (!vault.rewardVault) return;
+    //             const rewards = (await client.public.readContract({
+    //                 address: getAddress(vault.rewardVault!),
+    //                 abi: rewardVaultAbi,
+    //                 functionName: "earned",
+    //                 args: [currentWallet!],
+    //             })) as bigint;
+    //             setRewards(rewards);
+    //             setVaultBalance(vaultBalance);
+    //         } catch (e) {
+    //             console.log(e);
+    //         }
+    //     };
+    //     getVaultBalance();
+    // }, [isDepositing, isClaiming]);
 
     const claimRewards = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();

@@ -60,6 +60,7 @@ export interface PoolDef {
     secondary_platform_logo?: string;
     createdAt?: number;
     priorityOrder?: number; // New field for custom sorting priority
+    platform?: string;
     zap_currencies?: {
         symbol: string;
         address: Address;
@@ -76,6 +77,7 @@ const pools_json: PoolDef[] = [
         name: "LBGT-wBERA",
         url_name: "LBGT-wBERA",
         originPlatform: FarmOriginPlatform.Kodiak,
+        platform: "Kodiak",
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x337ef1eb6c8bbed571170fc2b468608ab9e2aac8?farm=0x9d65da133391b2c055509d049c835a821d84e922&chain=berachain_mainnet",
@@ -102,7 +104,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x337eF1eB6c8BBeD571170Fc2b468608ab9e2Aac8", // Asset LP address
-        // rewardVault: "0x9d65dA133391b2c055509d049C835A821d84e922", // LbgtWberaLp.rewardVault
+        rewardVault: "0x9d65dA133391b2c055509d049C835A821d84e922", // LbgtWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x74bCE2096803B3eEFDCE767b00383481CD408B4E",
         createdAt: 1745217830,
@@ -128,6 +130,7 @@ const pools_json: PoolDef[] = [
         name: "rUSD-HONEY",
         url_name: "rUSD-HONEY",
         originPlatform: FarmOriginPlatform.Kodiak,
+        platform: "Kodiak",
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?farm=0x34852c863d266100f573d4d1fd1d0cfe20602da0&chain=berachain_mainnet",
@@ -154,7 +157,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x7fd165B73775884a38AA8f2B384A53A3Ca7400E6", // Asset LP address
-        // rewardVault: "0x34852C863D266100f573D4D1fD1D0CFE20602Da0", // RusdHoneyLp.rewardVault
+        rewardVault: "0x34852C863D266100f573D4D1fD1D0CFE20602Da0", // RusdHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0x96c0712b7B23eB33a7bdD2d737D6Eb87Ae007751",
         createdAt: 1745348610,
@@ -180,6 +183,7 @@ const pools_json: PoolDef[] = [
         url_name: "wBERA-HONEY-BeraPaw",
         synthetic: true,
         originPlatform: FarmOriginPlatform.Kodiak,
+        platform: "Kodiak",
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x45325df4a6a6ebd268f4693474aaaa1f3f0ce8ca&chain=berachain_mainnet",
@@ -206,7 +210,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x4a254B11810B8EBb63C5468E438FC561Cb1bB1da", // Asset LP address
-        // rewardVault: "0x45325Df4A6A6ebD268f4693474AaAa1f3f0ce8Ca", // WberaHoneyLp.rewardVault
+        rewardVault: "0x45325Df4A6A6ebD268f4693474AaAa1f3f0ce8Ca", // WberaHoneyLp.rewardVault
         decimals: 18,
         vault_addr: "0xB3fd1c9Df6C9FB81ca0419EEf0549c337D650509",
         createdAt: 1745348610,
@@ -231,6 +235,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC-BeraPaw",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
@@ -258,7 +263,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xF06EA29FCF4765200742d29E685973a1870EaC98", // Asset LP address
-        // rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
+        rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x2dacFB135bB494BbF7B5273232628A535E147451",
         createdAt: 1745348610,
@@ -283,6 +288,8 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH-BeraPaw",
+
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
@@ -310,7 +317,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x9659dc8c1565E0bd82627267e3b4eEd1a377ebE6", // Asset LP address
-        // rewardVault: "0xFB657cd154E661dDF3E229529D92545640b19292", // WberaWethLp.rewardVault
+        rewardVault: "0xFB657cd154E661dDF3E229529D92545640b19292", // WberaWethLp.rewardVault
         decimals: 18,
         vault_addr: "0x0bd961356E316f0266Fb530844Fb5AEC99B4670f",
         createdAt: 1745348610,
@@ -336,6 +343,7 @@ const pools_json: PoolDef[] = [
         url_name: "iBGT-wBERA",
         synthetic: true,
         originPlatform: FarmOriginPlatform.Kodiak,
+        platform: "Kodiak",
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x564f011d557aad1ca09bfc956eb8a17c35d490e0?farm=0x3be1be98efaca8c1eb786cbf38234c84b5052eeb&chain=berachain_mainnet",
@@ -362,7 +370,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x564f011D557aAd1cA09BFC956Eb8a17C35d490e0", // Asset LP address
-        // rewardVault: "0x3Be1bE98eFAcA8c1Eb786Cbf38234c84B5052EeB", // iBGTWberaLp.rewardVault
+        rewardVault: "0x3Be1bE98eFAcA8c1Eb786Cbf38234c84B5052EeB", // iBGTWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0xadFEBD4b9B2c0E04b0C506Fd99BE3380d277D58D",
         createdAt: 1745348610,
@@ -384,6 +392,7 @@ const pools_json: PoolDef[] = [
         id: 36,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "BR-wBERA",
         url_name: "BR-wBERA",
@@ -414,7 +423,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1",
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
+        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // BRWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0xfCAcd22Ce85DAd636d79234c533A49E442f38A60", // vault address
         createdAt: 1745348610,
@@ -436,6 +445,7 @@ const pools_json: PoolDef[] = [
         id: 37,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "SolvBTC-XSolvBTC",
         url_name: "SolvBTC-XSolvBTC",
@@ -466,7 +476,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x43E487126c4F37D1915cF02a90B5C5295AFb1790", // LP address
-        // rewardVault: "0x3fc5cB0290C82680Afe9EF8CddE5468d74C85705", // SolvBtcXSolvBtcLp.rewardVault
+        rewardVault: "0x3fc5cB0290C82680Afe9EF8CddE5468d74C85705", // SolvBtcXSolvBtcLp.rewardVault
         decimals: 18,
         vault_addr: "0x11663095b13c46E71f1a00A97101aFc1c0039e38", // vault address
         createdAt: 1745348610,
@@ -488,6 +498,7 @@ const pools_json: PoolDef[] = [
         id: 38,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "wBTC-SolvBTC",
         url_name: "wBTC-SolvBTC",
@@ -518,7 +529,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x3879451f4f69F0c2d37CaD45319cFf2E7d29C596", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
+        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
         createdAt: 1745348610,
@@ -540,6 +551,7 @@ const pools_json: PoolDef[] = [
         id: 39,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "iBERA-wBERA",
         url_name: "iBERA-wBERA",
@@ -570,7 +582,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xE3EeB9e48934634d8B5B39A0d15DD89eE0F969C4", // Asset LP address
-        // rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
+        rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x9Bb2Ffc17837Fecef317a65a4f5369157D5ee5B4", // Vault address
         createdAt: 1745348610,
@@ -592,6 +604,7 @@ const pools_json: PoolDef[] = [
         id: 40,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "osBGT-iBERA",
         url_name: "osBGT-iBERA",
@@ -622,7 +635,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xaD445256Ff81171043A5e7Cd8831e4371B000176", // Asset LP address
-        // rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
+        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4", // osBgtIberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x491da46162A4A5F52cc30f6E63B352885bd7B419", // Vault address
         createdAt: 1745348610,
@@ -644,6 +657,7 @@ const pools_json: PoolDef[] = [
         id: 41,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "sUSDa-USDa",
         url_name: "sUSDa-USDa",
@@ -674,7 +688,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x7CeBCc76A2faecC0aE378b340815fcbb71eC1Fe0", // Asset LP address
-        // rewardVault: "0xc196D595DECE185Ea39f8e1C3cE07a274aC31985", // sUsdaUsdaLp.rewardVault
+        rewardVault: "0xc196D595DECE185Ea39f8e1C3cE07a274aC31985", // sUsdaUsdaLp.rewardVault
         decimals: 18,
         vault_addr: "0x4723BebA547c95A671709175fDc98795d2B2cf84", // Vault address
         createdAt: 1745348610,
@@ -697,7 +711,7 @@ const pools_json: PoolDef[] = [
         priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
-
+        platform: "Infrared",
         token_type: "LP Token",
         name: "iBERA",
         url_name: "iBERA",
@@ -722,7 +736,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: false,
         lp_address: "0x9b6761bf2397Bb5a6624a856cC84A3A14Dcd3fe5", // Asset LP address
-        // rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
+        rewardVault: "0xa2c5adB20A446Fa71A1762002E3C9B4Dd37DBAf4", // iBeraWberaLp.rewardVault
         decimals: 18,
         vault_addr: "0x29e953B1dC492973B6e55827Fd29674ACFa643C8", // Vault address
         createdAt: 1745847659,
@@ -744,7 +758,7 @@ const pools_json: PoolDef[] = [
         id: 43,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
-
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "stLBGT",
         url_name: "stLBGT",
@@ -790,6 +804,7 @@ const pools_json: PoolDef[] = [
         id: 44,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "wBERA-LBGT",
         url_name: "wBERA-LBGT",
@@ -842,6 +857,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-RAMEN",
         url_name: "wBERA-RAMEN",
+        platform: "Kodiak",
         synthetic: true,
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "kodiak.jpg",
@@ -870,7 +886,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x93A913351CaE2D8C82C4b85f699726947eB76d32",
-        // rewardVault: "0x6B23E121C6A13c959d69493Ea5cA015A5847596A",
+        rewardVault: "0x6B23E121C6A13c959d69493Ea5cA015A5847596A",
         decimals: 18,
         vault_addr: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
         createdAt: 1744717830,
@@ -892,6 +908,7 @@ const pools_json: PoolDef[] = [
         id: 26,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "wBERA-BM",
         url_name: "wBERA-BM",
@@ -922,7 +939,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x0FD67ac75F9DF51f5d81F582417B318F44b45f5c",
-        // rewardVault: "0x193fF57dc9EFA1DeC154946c10332bA31C8e72b2",
+        rewardVault: "0x193fF57dc9EFA1DeC154946c10332bA31C8e72b2",
         decimals: 18,
         vault_addr: "0xfA224a2184976956471e41d36A1eE465f197dB7B",
         createdAt: 1744717830,
@@ -948,6 +965,7 @@ const pools_json: PoolDef[] = [
         url_name: "wBERA-NAV",
         synthetic: true,
         originPlatform: FarmOriginPlatform.Kodiak,
+        platform: "Kodiak",
         platform_logo: "kodiak.jpg",
         secondary_platform_logo: "kodiak.jpg",
         source: "https://app.kodiak.finance/#/liquidity/pools/0xef8c3239e0d8be9d58f145e18f5909ddad681365?farm=0x66eb42c499372e897929efbf6026821b0a148119&chain=berachain_mainnet",
@@ -974,7 +992,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xEf8C3239E0D8Be9d58f145E18F5909Ddad681365",
-        // rewardVault: "0x66EB42C499372E897929eFBF6026821B0a148119",
+        rewardVault: "0x66EB42C499372E897929eFBF6026821B0a148119",
         decimals: 18,
         vault_addr: "0x738d85C6A53f9b924314f35ad5B73ac01f72dc65",
         createdAt: 1744717830,
@@ -996,6 +1014,7 @@ const pools_json: PoolDef[] = [
         id: 29,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
+        platform: "Kodiak",
         token_type: "LP Token",
         name: "wBERA-stBGT",
         url_name: "wBERA-stBGT",
@@ -1026,7 +1045,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x8b161685135e9FbC5475169e1adDc0F2C4b7c343",
-        // rewardVault: "0xCf77d23cFC561E34e3b6137C736EA5CB395BcDA0",
+        rewardVault: "0xCf77d23cFC561E34e3b6137C736EA5CB395BcDA0",
         decimals: 18,
         vault_addr: "0x6D943AD0791F68F715f7A4317999Ce547baCc909",
         createdAt: 1744717830,
@@ -1050,6 +1069,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wgBERA",
         url_name: "wBERA-wgBERA",
+        platform: "Burrbear",
         originPlatform: FarmOriginPlatform.Burrbear,
         synthetic: true,
         source: "https://app.burrbear.io/#/berachain/pool/0x567f32e86be3e3963cdbc1887b5043b701f113d9000000000000000000000006",
@@ -1101,6 +1121,7 @@ const pools_json: PoolDef[] = [
         token_type: "Token",
         name: "iBGT",
         url_name: "iBGT",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         source: "https://infrared.finance/ibgt",
         name1: "iBGT",
@@ -1149,6 +1170,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "Nect-wgBERA",
         url_name: "Nect-wgBERA",
+        platform: "Burrbear",
         originPlatform: FarmOriginPlatform.Burrbear,
         synthetic: true,
         source: "https://app.burrbear.io/#/berachain/pool/0xe416c064946112c1626d6700d1081a750b1b1dd7000200000000000000000008",
@@ -1201,6 +1223,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "Nect-USDC-Honey",
         url_name: "Nect-USDC-Honey",
+        platform: "Burrbear",
         originPlatform: FarmOriginPlatform.Burrbear,
         source: "https://app.burrbear.io/#/berachain/pool/0xd10e65a5f8ca6f835f2b1832e37cf150fb955f23000000000000000000000004",
         name1: "Nect",
@@ -1256,6 +1279,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
         secondary_platform_logo: "bex.ico",
@@ -1310,6 +1334,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0xc3846436a0e321bcc63ab24731cd650044ace81c",
         name1: "wBERA",
@@ -1358,6 +1383,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
         source: "https://infrared.finance/vaults/bex-wbera-wbtc",
@@ -1412,6 +1438,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
         source: "https://infrared.finance/vaults/bex-wbera-weth",
@@ -1466,6 +1493,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "HONEY-BYUSD",
         url_name: "HONEY-BYUSD",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
         secondary_platform_logo: "bex.ico",
@@ -1521,6 +1549,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "USDC-HONEY",
         url_name: "USDC-HONEY",
+        platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
         secondary_platform_logo: "bex.ico",
@@ -1576,6 +1605,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x40c4d0a87157c3c1df26267ac02505d930baeeeb&chain=berachain_mainnet",
         name1: "wBERA",
@@ -1622,6 +1652,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         source: "https://app.kodiak.finance/#/liquidity/pools/0x9659dc8c1565e0bd82627267e3b4eed1a377ebe6?farm=0xf41ecc551e3c7449e74a7a7464bb2674fa76954c&chain=berachain_mainnet",
         name1: "wBERA",
@@ -1668,6 +1699,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-YEET",
         url_name: "wBERA-YEET",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         source: "https://app.kodiak.finance/#/liquidity/pools/0xec8ba456b4e009408d0776cde8b91f8717d13fa1?farm=0x1c8e199c6c42d5cce652cf02002694d937118177&chain=berachain_mainnet",
         name1: "wBERA",
@@ -1714,6 +1746,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-RAMEN",
         url_name: "wBERA-RAMEN",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         source: "https://app.kodiak.finance/#/liquidity/pools/0x93a913351cae2d8c82c4b85f699726947eb76d32?farm=0x6f22221dc5845a25597bc96629d92f2b4979d943&chain=berachain_mainnet",
         name1: "wBERA",
@@ -1760,6 +1793,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC",
+        platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         source: "https://app.kodiak.finance/#/liquidity/pools/0xf06ea29fcf4765200742d29e685973a1870eac98?farm=0x0d74359866a86d0f192f5cd53d103d299043165b&chain=berachain_mainnet",
         name1: "wBERA",
@@ -1806,6 +1840,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-HONEY",
         url_name: "wBERA-HONEY",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0xa7A15127c3b5a65244F07f6730E56F90918087e6",
         name1: "wBERA",
@@ -1854,6 +1889,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0x3C62a8Fcd7c4cf19Bf71DEB35b43aD976a541aCF",
         name1: "wBERA",
@@ -1902,6 +1938,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wETH-HONEY",
         url_name: "wETH-HONEY",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0xcD02e0bC03593c4a38822A1226934742d4722988",
         name1: "wETH",
@@ -1950,6 +1987,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "USDC-HONEY",
         url_name: "USDC-HONEY",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0xdCb3E75CdbDDfe7b08494eaA6C0Df98189C65f03",
         name1: "USDC",
@@ -1998,6 +2036,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBTC-HONEY",
         url_name: "wBTC-HONEY",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0xa9CbF1DcdeD90E046F6D300A7050a40E7600f4eD",
         name1: "wBTC",
@@ -2046,6 +2085,7 @@ const pools_json: PoolDef[] = [
         token_type: "LP Token",
         name: "wBTC-wETH",
         url_name: "wBTC-wETH",
+        platform: "Steer",
         originPlatform: FarmOriginPlatform.Steer,
         source: "https://app.steer.finance/vault/0x55c66603Ec52E4cD08e17BaF184BBB7a7e18DA11",
         name1: "wBTC",

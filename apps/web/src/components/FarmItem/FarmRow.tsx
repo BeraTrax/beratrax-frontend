@@ -154,6 +154,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                             ) : (
                                 <div className="flex flex-col justify-end items-end">
                                     <div className="flex justify-between gap-2">
+                                        {farm.synthetic && <FarmRowChip text="Synthetic Reward Vault" />}
                                         {hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
                                         {farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
                                         {farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
@@ -197,8 +198,13 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                     </div>
 
                     {/* APY (Mobile) */}
-                    <div className="flex flex-col items-center justify-center min-w-[60px] mobile:block mobile:min-w-fit sm:hidden">
-                        {hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
+                    <div className="flex flex-col items-end justify-center min-w-[60px] mobile:block mobile:min-w-fit sm:hidden">
+                        {
+                            <div className="flex gap-2 items-center">
+                                {farm.synthetic && <FarmRowChip text="Synthetic Reward Vault" />}
+                                {hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
+                            </div>
+                        }
                         {
                             <>
                                 <div className="flex gap-2 items-center">

@@ -5,7 +5,6 @@ import earnpageleaves from "src/assets/images/earnpagetoprightleaves1.svg";
 import earnpageleaves2 from "src/assets/images/earnpagetoprightleaves2.svg";
 import BackButton from "src/components/BackButton/BackButton";
 import FarmRow from "src/components/FarmItem/FarmRow";
-import { IS_LEGACY } from "src/config/constants";
 import useEarnPage from "src/state/farms/hooks/useEarnPage";
 import { FarmSortOptions } from "src/types/enums";
 

@@ -59,6 +59,7 @@ export interface PoolDef {
 	secondary_platform_logo?: string;
 	createdAt?: number;
 	priorityOrder?: number; // New field for custom sorting priority
+	platform?: string;
 	zap_currencies?: {
 		symbol: string;
 		address: Address;

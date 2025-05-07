@@ -4,7 +4,7 @@ import { customCommify } from "@beratrax/core/src/utils/common";
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import FarmLpGraph from "ui/src/components/FarmItem/components/FarmActionView/FarmLpGraph/FarmLpGraph";
 import FarmRowChip from "ui/src/components/FarmItem/components/FarmRowChip/FarmRowChip";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import { useState } from "react";
 import FarmEarningsGraph from "../FarmEarningsGraph/FarmEarningsGraph";
 import FarmTvlGraph from "../FarmTvlGraph/FarmTvlGraph";
@@ -85,15 +85,15 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 			</View>
 			<View className="flex flex-row gap-4 mt-6 mb-4">
 				{tabs.map((tab) => (
-					<button
+					<Pressable
 						key={tab.id}
-						onClick={() => setActiveTab(tab.id)}
+						onPress={() => setActiveTab(tab.id)}
 						className={`px-4 py-2 rounded-lg font-medium transition-all ${
 							activeTab === tab.id ? "bg-gradientSecondary text-textWhite" : "text-textSecondary hover:text-textWhite"
 						}`}
 					>
-						{tab.label}
-					</button>
+						<Text className="text-textWhite">{tab.label}</Text>
+					</Pressable>
 				))}
 			</View>
 
@@ -101,7 +101,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 				{activeTab === "earnings" && <FarmEarningsGraph farm={farm} />}
 				{activeTab === "price" && <FarmLpGraph farm={farm} />}
 				{activeTab === "tvl" && <FarmTvlGraph farm={farm} />}
-        {activeTab === "apy" && <FarmApyGraph farm={farm} />}
+				{activeTab === "apy" && <FarmApyGraph farm={farm} />}
 			</View>
 		</View>
 	);

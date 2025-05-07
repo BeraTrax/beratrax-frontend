@@ -6,7 +6,7 @@ import useFarmApy from "@beratrax/core/src/state/farms/hooks/useFarmApy";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { customCommify, formatCurrency } from "@beratrax/core/src/utils/common";
-import { View, Text, Platform, Dimensions } from "react-native";
+import { View, Text, Platform, Dimensions, TextInput } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 
 // Import victory libraries based on platform
@@ -178,14 +178,22 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 						<View className="absolute left-3 top-1/2 -translate-y-1/2 text-textSecondary">
 							<Text className="text-textSecondary">$</Text>
 						</View>
-						<input
-							type="number"
-							value={investmentAmount || ""}
-							onChange={handleInvestmentChange}
-							className="bg-bgDark text-textWhite text-center text-lg h-full pl-8 pr-4 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-gradientSecondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-transparent"
+						<TextInput
+							keyboardType="numeric"
+							value={investmentAmount ? investmentAmount.toString() : ""}
+							onChangeText={(value) => {
+								if (value === "") {
+									setInvestmentAmount(0);
+								} else {
+									const numValue = parseFloat(value);
+									if (!isNaN(numValue) && numValue >= 0) {
+										setInvestmentAmount(numValue);
+									}
+								}
+							}}
+							className="bg-bgDark text-textWhite text-center text-lg h-full pl-8 pr-4 rounded-lg w-32"
 							placeholder="Enter amount"
-							min="0"
-							step="0.01"
+							placeholderTextColor="transparent"
 						/>
 					</View>
 					<View className="relative h-12">

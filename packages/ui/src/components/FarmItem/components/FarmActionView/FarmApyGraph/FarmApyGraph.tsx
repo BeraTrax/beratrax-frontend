@@ -224,8 +224,8 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 	}, [screenWidth]);
 
 	return (
-		<div className="z-10 relative">
-			<div style={{ marginTop: "10px", width: "100%", height: "300px" }}>
+		<View className="z-10 relative">
+			<View style={{ marginTop: 10, width: "100%", height: 300 }}>
 				{isLoadingVaultApy ? (
 					<Skeleton h={300} w={"100%"} />
 				) : (
@@ -362,8 +362,8 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 						)}
 					</>
 				)}
-			</div>
-			<div className="flex justify-around sm:justify-center sm:gap-4">
+			</View>
+			<View className="flex flex-row justify-around pt-2 sm:justify-center sm:gap-4">
 				{graphFiltersList.map((filter, index) => (
 					<GraphFilter
 						key={index}
@@ -372,11 +372,13 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 						onClick={() => setGraphFilter(filter.type)}
 					/>
 				))}
-			</div>
-			<div className="text-center my-4">
-				<p className="text-sm text-textSecondary">Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault</p>
-			</div>
-		</div>
+			</View>
+			<View className="text-center my-4">
+				<Text className="text-sm text-textSecondary text-center">
+					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+				</Text>
+			</View>
+		</View>
 	);
 };
 export default FarmApyGraph;

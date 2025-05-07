@@ -13,7 +13,6 @@ import { formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Platform } from "react-native";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
@@ -21,7 +20,7 @@ import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform } from "react-native";
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const dispatch = useAppDispatch();
@@ -48,11 +47,6 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const transactionType = useAppSelector((state) =>
 		IS_LEGACY ? FarmTransactionType.Withdraw : state.farms.farmDetailInputOptions.transactionType
 	);
-
-	const buttonStyle =
-		Platform.OS === "web"
-			? { position: "fixed", bottom: 16, left: 16, right: 16 }
-			: { position: "absolute", bottom: 16, left: 0, right: 0 };
 
 	useEffect(() => {
 		(async () => {
@@ -84,36 +78,35 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 
 	return (
 		<>
-			<View className="flex-1 mb-10 w-full bg-bgSecondary">
+			<View className="flex-1 w-full min-h-screen bg-bgSecondary relative">
 				<View className="absolute top-[45%]">
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
 				</View>
 				<View className="absolute right-0 top-0">
 					<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
 				</View>
-				<View className="flex-1 pt-14 px-4 pb-2">
+				<View className={`pt-14 px-4 pb-2 ${Platform.OS === "web" ? "" : "mb-24"}`}>
 					{openDepositModal ? (
 						<></>
 					) : (
 						<>
 							<ScrollView>
 								<BackButton onClick={handleGoBack} />
-								<View className="relative mt-4 pb-24 mb-24 sm:mb-0">
+								<View className="relative mt-4 mb-24 sm:mb-0">
 									<TokenPriceAndGraph farm={farm} />
 									<YourBalance farm={farm} />
 									<PoolInfo
-										farm={farm}
 										marketCap={`$${marketCap}`}
 										vaultTvl={`$${vaultTvl}`}
 										marketCapLoading={isMarketCapAndVaultLoading}
 										vaultTvlLoading={isMarketCapAndVaultLoading}
+										farm={farm}
 									/>
 								</View>
 							</ScrollView>
-
 							<View
 								className={`flex flex-row gap-2 justify-center w-full max-w-[1200px] px-4 z-10 ${
-									Platform.OS === "web" ? "fixed bottom-4" : "absolute bottom-4"
+									Platform.OS === "web" ? "fixed bottom-4" : "absolute top-[82vh]"
 								} ${Number(withdrawable?.amount || "0") ? "pr-4" : ""} right-1`}
 							>
 								{isConnecting || isLoading ? (

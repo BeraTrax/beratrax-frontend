@@ -16,8 +16,6 @@ import { toFixedFloor } from "@beratrax/core/src/utils/common";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { FarmType } from "@beratrax/core/src/types/enums";
 import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
-import lbgtLogo from "@beratrax/core/src/assets/images/lbgt.svg";
-import btxLogo from "@beratrax/core/src/assets/images/btxTokenLogo.png";
 
 const getImageSource = () => {
 	if (Platform.OS === "web") {
@@ -106,6 +104,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 	const honeyLogo = tokenNamesAndImages["0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce"]?.logos[0];
 	const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
 	const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
+	const lbgtLogo = tokenNamesAndImages["0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe"]?.logos[0];
+	const infraredLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico";
+	const burrbearLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico";
+	const beraborrowLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/beraborrow/beraborrow.ico";
+	const btxLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png";
 
 	return (
 		<View className=" mt-4 relative">
@@ -130,119 +133,135 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 					resizeMode="contain"
 				/>
 			)}
-			<div className="mt-6 mb-6">
-				<h3 className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest mb-4">REWARDS BREAKDOWN</h3>
-				<div className="overflow-hidden rounded-xl bg-bgSecondary">
-					<table className="w-full border-collapse">
-						<tbody>
-							{tokenType === FarmType.advanced && (
-								<tr className="border-b border-gray-700">
-									<td className="p-4 text-textWhite font-medium">
-										<div className="flex items-center">
-											<div className="flex -space-x-2.5 mr-2">
-												{token1Image && <img src={token1Image} alt={token1} className="w-5 h-5 relative z-30" />}
-												{token2Image && <img src={token2Image} alt={token2} className="w-5 h-5 relative z-20" />}
-												{token3Image && <img src={token3Image} alt={token3} className="w-5 h-5 relative z-10" />}
-											</div>
-											LP Trading fees
-										</div>
-									</td>
-									<td className="p-4 text-gradientPrimary font-bold text-right">Included in APY</td>
-								</tr>
-							)}
+			<View className="mt-6 mb-6">
+				<Text className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest mb-4">
+					REWARDS BREAKDOWN
+				</Text>
+				<View className="overflow-hidden rounded-xl bg-bgSecondary">
+					<View className="w-full">
+						{tokenType === FarmType.advanced && (
+							<View className="flex-row border-b border-gray-700">
+								<View className="flex-1 p-4">
+									<View className="flex-row items-center">
+										<View className="flex-row -space-x-2.5 mr-2">
+											{token1Image && <Image source={{ uri: token1Image }} alt={token1} className="w-5 h-5 relative z-30" />}
+											{token2Image && <Image source={{ uri: token2Image }} alt={token2} className="w-5 h-5 relative z-20" />}
+											{token3Image && <Image source={{ uri: token3Image }} alt={token3} className="w-5 h-5 relative z-10" />}
+										</View>
+										<Text className="text-textWhite font-medium">LP Trading fees</Text>
+									</View>
+								</View>
+								<View className="p-4">
+									<Text className="text-gradientPrimary font-bold text-right">Included in APY</Text>
+								</View>
+							</View>
+						)}
 
-							{/* TODO: change to dynamic reward token */}
-							{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
-								<tr className="border-b border-gray-700">
-									<td className="p-4 text-textWhite font-medium">
-										<div className="flex items-center gap-2">
-											{originPlatform === FarmOriginPlatform.Infrared && tokenType === FarmType.advanced ? (
-												<>
-													<img src={ibgtLogo} alt="iBGT" className="w-5 h-5" />
-													iBGT
-												</>
-											) : originPlatform === FarmOriginPlatform.Burrbear || originPlatform === FarmOriginPlatform.BeraPaw ? (
-												<>
-													{farm.id === 22 ? (
-														<>
-															<img src={wberaLogo} alt="WBERA" className="w-5 h-5" />
-															WBERA
-														</>
-													) : (
-														<>
-															<img src={lbgtLogo} alt="LBGT" className="w-5 h-5" />
-															LBGT
-														</>
-													)}
-												</>
-											) : (
-												<>
-													<img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
-													HONEY
-												</>
-											)}
-										</div>
-									</td>
-									<td className="p-4 text-gradientPrimary font-bold text-right">Autocompounded to APY</td>
-								</tr>
-							)}
-							{originPlatform === FarmOriginPlatform.Infrared && (
-								<tr className="border-b border-gray-700">
-									<td className="p-4 text-textWhite font-medium">
-										<div className="flex items-center gap-2">
-											<img src="/infrared.ico" alt="Infrared" className="w-5 h-5" />
-											Infrared airdrop
-										</div>
-									</td>
-									<td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
-								</tr>
-							)}
-							{originPlatform === FarmOriginPlatform.Burrbear && (
-								<>
-									{farm.name.includes("wgBERA") && (
-										<tr className="border-b border-gray-700">
-											<td className="p-4 text-textWhite font-medium">
-												<div className="flex items-center gap-2">
-													<img src="/smilee.png" alt="Smilee" className="w-5 h-5" />
-													Love Score airdrop
-												</div>
-											</td>
-											<td className="p-4 text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</td>
-										</tr>
-									)}
-									<tr className="border-b border-gray-700">
-										<td className="p-4 text-textWhite font-medium">
-											<div className="flex items-center gap-2">
-												<img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
-												BURR Points (Burrbear Airdrop)
-											</div>
-										</td>
-										<td className="p-4 text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</td>
-									</tr>
-									<tr className="border-b border-gray-700">
-										<td className="p-4 text-textWhite font-medium">
-											<div className="flex items-center gap-2">
-												<img src="/beraborrow.png" alt="Beraborrow" className="w-5 h-5" />
-												Pollen Points (Beraborrow Airdrop)
-											</div>
-										</td>
-										<td className="p-4 text-gradientPrimary font-bold text-right">4x Pollen Points (Future Claim)</td>
-									</tr>
-								</>
-							)}
-							<tr>
-								<td className="p-4 text-textWhite font-medium">
-									<div className="flex items-center gap-2">
-										<img src={btxLogo} alt="BTX" className="w-5 h-5" />
-										BTX Points (BeraTrax Airdrop)
-									</div>
-								</td>
-								<td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+						{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
+							<View className="flex-row border-b border-gray-700">
+								<View className="flex-1 p-4">
+									<View className="flex-row items-center gap-2">
+										{originPlatform === FarmOriginPlatform.Infrared && tokenType === FarmType.advanced ? (
+											<>
+												<Image source={{ uri: ibgtLogo }} alt="iBGT" className="w-5 h-5" />
+												<Text className="text-textWhite font-medium">iBGT</Text>
+											</>
+										) : originPlatform === FarmOriginPlatform.Burrbear || originPlatform === FarmOriginPlatform.BeraPaw ? (
+											<>
+												{farm.id === 22 ? (
+													<>
+														<Image source={{ uri: wberaLogo }} alt="WBERA" className="w-5 h-5" />
+														<Text className="text-textWhite font-medium">WBERA</Text>
+													</>
+												) : (
+													<>
+														<Image source={{ uri: lbgtLogo }} alt="LBGT" className="w-5 h-5" />
+														<Text className="text-textWhite font-medium">LBGT</Text>
+													</>
+												)}
+											</>
+										) : (
+											<>
+												<Image source={{ uri: honeyLogo }} alt="HONEY" className="w-5 h-5" />
+												<Text className="text-textWhite font-medium">HONEY</Text>
+											</>
+										)}
+									</View>
+								</View>
+								<View className="p-4">
+									<Text className="text-gradientPrimary font-bold text-right">Autocompounded to APY</Text>
+								</View>
+							</View>
+						)}
+
+						{originPlatform === FarmOriginPlatform.Infrared && (
+							<View className="flex-row border-b border-gray-700">
+								<View className="flex-1 p-4">
+									<View className="flex-row items-center gap-2">
+										<Image source={{ uri: infraredLogo }} alt="Infrared" className="w-5 h-5" />
+										<Text className="text-textWhite font-medium">Infrared airdrop</Text>
+									</View>
+								</View>
+								<View className="p-4">
+									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+								</View>
+							</View>
+						)}
+
+						{originPlatform === FarmOriginPlatform.Burrbear && (
+							<>
+								{farm.name.includes("wgBERA") && (
+									<View className="flex-row border-b border-gray-700">
+										<View className="flex-1 p-4">
+											<View className="flex-row items-center gap-2">
+												<Image src="/smilee.png" alt="Smilee" className="w-5 h-5" />
+												<Text className="text-textWhite font-medium">Love Score airdrop</Text>
+											</View>
+										</View>
+										<View className="p-4">
+											<Text className="text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</Text>
+										</View>
+									</View>
+								)}
+								<View className="flex-row border-b border-gray-700">
+									<View className="flex-1 p-4">
+										<View className="flex-row items-center gap-2">
+											<Image source={{ uri: burrbearLogo }} alt="Burrbear" className="w-5 h-5" />
+											<Text className="text-textWhite font-medium">BURR Points (Burrbear Airdrop)</Text>
+										</View>
+									</View>
+									<View className="p-4">
+										<Text className="text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</Text>
+									</View>
+								</View>
+								<View className="flex-row border-b border-gray-700">
+									<View className="flex-1 p-4">
+										<View className="flex-row items-center gap-2">
+											<Image source={{ uri: beraborrowLogo }} alt="Beraborrow" className="w-5 h-5" />
+											<Text className="text-textWhite font-medium">Pollen Points (Beraborrow Airdrop)</Text>
+										</View>
+									</View>
+									<View className="p-4">
+										<Text className="text-gradientPrimary font-bold text-right">4x Pollen Points (Future Claim)</Text>
+									</View>
+								</View>
+							</>
+						)}
+
+						<View className="flex-row">
+							<View className="flex-1 p-4">
+								<View className="flex-row items-center gap-2">
+									<Image source={{ uri: btxLogo }} alt="BTX" className="w-5 h-5" />
+									<Text className="text-textWhite font-medium">BTX Points (BeraTrax Airdrop)</Text>
+								</View>
+							</View>
+							<View className="p-4">
+								<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+							</View>
+						</View>
+					</View>
+				</View>
+			</View>
 
 			<View className="mt-4 flex flex-col gap-2">
 				<StatInfo title="Market cap" value={marketCap} iconUrl={<MarketCapIcon />} isStatLoading={marketCapLoading} />

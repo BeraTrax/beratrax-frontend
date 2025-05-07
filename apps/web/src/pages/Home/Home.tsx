@@ -29,7 +29,7 @@ function Home() {
 
 				{/* right side */}
 				<div
-					className={`flex-[10] w-full h-full flex flex-col relative overflow-y-auto pb-16 lg:pb-0 [&>p]:text-textWhite [&>p]:text-3xl [&>p]:font-bold`}
+					className={`flex-[10] w-full h-full flex flex-col relative overflow-y-auto lg:pb-0 [&>p]:text-textWhite [&>p]:text-3xl [&>p]:font-bold`}
 				>
 					<Outlet />
 					{isBottomBarVisible ? <BottomBar /> : <></>}

@@ -7,7 +7,7 @@ export default function FarmAction() {
 	const { farms } = useEarnPage();
 	const farmData = farms.find((farm) => farm.vault_addr === vaultAddress);
 	return (
-		<div className={`overflow-auto`}>
+		<div>
 			<FarmActionView farm={farmData!} />
 		</div>
 	);

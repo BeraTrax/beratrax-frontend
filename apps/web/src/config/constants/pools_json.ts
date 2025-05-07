@@ -2,6 +2,7 @@ import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { Address, zeroAddress } from "viem";
 
 export interface PoolDef {
+    synthetic?: boolean;
     isUpgradable: boolean;
     isDeprecated?: boolean;
     isStablePool?: boolean;
@@ -70,6 +71,7 @@ const pools_json: PoolDef[] = [
     {
         id: 30,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
         token_type: "LP Token",
         name: "LBGT-wBERA",
         url_name: "LBGT-wBERA",
@@ -122,6 +124,7 @@ const pools_json: PoolDef[] = [
     {
         id: 31,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
         token_type: "LP Token",
         name: "rUSD-HONEY",
         url_name: "rUSD-HONEY",
@@ -226,6 +229,8 @@ const pools_json: PoolDef[] = [
     {
         id: 33,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBERA-wBTC",
         url_name: "wBERA-wBTC-BeraPaw",
@@ -278,6 +283,8 @@ const pools_json: PoolDef[] = [
     {
         id: 34,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBERA-wETH",
         url_name: "wBERA-wETH-BeraPaw",
@@ -382,6 +389,8 @@ const pools_json: PoolDef[] = [
     {
         id: 36,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "BR-wBERA",
         url_name: "BR-wBERA",
@@ -434,6 +443,8 @@ const pools_json: PoolDef[] = [
     {
         id: 37,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "SolvBTC-XSolvBTC",
         url_name: "SolvBTC-XSolvBTC",
@@ -486,6 +497,8 @@ const pools_json: PoolDef[] = [
     {
         id: 38,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBTC-SolvBTC",
         url_name: "wBTC-SolvBTC",
@@ -538,6 +551,8 @@ const pools_json: PoolDef[] = [
     {
         id: 39,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "iBERA-wBERA",
         url_name: "iBERA-wBERA",
@@ -590,6 +605,8 @@ const pools_json: PoolDef[] = [
     {
         id: 40,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "osBGT-iBERA",
         url_name: "osBGT-iBERA",
@@ -642,6 +659,8 @@ const pools_json: PoolDef[] = [
     {
         id: 41,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "sUSDa-USDa",
         url_name: "sUSDa-USDa",
@@ -695,6 +714,8 @@ const pools_json: PoolDef[] = [
         id: 42,
         priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "iBERA",
         url_name: "iBERA",
@@ -740,6 +761,8 @@ const pools_json: PoolDef[] = [
     {
         id: 43,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "stLBGT",
         url_name: "stLBGT",
@@ -784,6 +807,8 @@ const pools_json: PoolDef[] = [
     {
         id: 44,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBERA-LBGT",
         url_name: "wBERA-LBGT",
@@ -885,6 +910,8 @@ const pools_json: PoolDef[] = [
     {
         id: 26,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBERA-BM",
         url_name: "wBERA-BM",
@@ -989,6 +1016,8 @@ const pools_json: PoolDef[] = [
     {
         id: 29,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+
         token_type: "LP Token",
         name: "wBERA-stBGT",
         url_name: "wBERA-stBGT",
@@ -1189,6 +1218,7 @@ const pools_json: PoolDef[] = [
     {
         id: 22,
         chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
         token_type: "LP Token",
         name: "Nect-USDC-Honey",
         url_name: "Nect-USDC-Honey",

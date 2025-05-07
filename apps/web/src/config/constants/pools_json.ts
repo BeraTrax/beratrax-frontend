@@ -757,7 +757,6 @@ const pools_json: PoolDef[] = [
     {
         id: 43,
         chainId: CHAIN_ID.BERACHAIN,
-        synthetic: true,
         platform: "Kodiak",
         token_type: "LP Token",
         name: "stLBGT",
@@ -803,7 +802,6 @@ const pools_json: PoolDef[] = [
     {
         id: 44,
         chainId: CHAIN_ID.BERACHAIN,
-        synthetic: true,
         platform: "Kodiak",
         token_type: "LP Token",
         name: "wBERA-LBGT",

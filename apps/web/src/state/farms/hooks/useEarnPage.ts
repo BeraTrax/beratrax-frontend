@@ -13,13 +13,13 @@ type Comparator<T> = (a: T, b: T) => number;
  * Chains multiple comparators in order: each is tried in turn until one returns non-zero.
  */
 function chainSort<T>(...fns: Comparator<T>[]): Comparator<T> {
-  return (a, b) => {
-    for (const fn of fns) {
-      const res = fn(a, b);
-      if (res !== 0) return res;
-    }
-    return 0;
-  };
+    return (a, b) => {
+        for (const fn of fns) {
+            const res = fn(a, b);
+            if (res !== 0) return res;
+        }
+        return 0;
+    };
 }
 
 const useEarnPage = () => {
@@ -47,6 +47,11 @@ const useEarnPage = () => {
         }
 
         data = data.filter((item) => !item.isUpcoming && !item.isDeprecated);
+
+        // Filter for new vaults when New sort option is selected
+        if (sortSelected === FarmSortOptions.New) {
+            data = data.filter((item) => isVaultNew(Number(item.createdAt)));
+        }
 
         if (!isFetched) {
             return data;

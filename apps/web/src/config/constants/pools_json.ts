@@ -263,7 +263,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0xF06EA29FCF4765200742d29E685973a1870EaC98", // Asset LP address
-        rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99", // WbtcSolvBtcLp.rewardVault
+        rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99",
         decimals: 18,
         vault_addr: "0x2dacFB135bB494BbF7B5273232628A535E147451",
         createdAt: 1745348610,
@@ -529,7 +529,7 @@ const pools_json: PoolDef[] = [
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x3879451f4f69F0c2d37CaD45319cFf2E7d29C596", // Asset LP address
-        rewardVault: "0x15F1156F56a06AF851cbdc0aceB0780bbCb913c4",
+        rewardVault: "0x11Fadf69a02340A676B4BD2A27FFd952094faE99",
         decimals: 18,
         vault_addr: "0x22FF5a7CC33b6D219c0993C598F93ef251D21e93", // Vault address
         createdAt: 1745348610,

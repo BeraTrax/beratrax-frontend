@@ -84,28 +84,28 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
     const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
     const apy = apys?.apy + apys?.pointsApr;
 
-    useEffect(() => {
-        const getVaultBalance = async () => {
-            try {
-                const client = await getClients(vault.chainId);
-                const vaultBalance =
-                    BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
-                    BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
-                if (!vault.rewardVault) return;
-                const rewards = (await client.public.readContract({
-                    address: getAddress(vault.rewardVault!),
-                    abi: rewardVaultAbi,
-                    functionName: "earned",
-                    args: [currentWallet!],
-                })) as bigint;
-                setRewards(rewards);
-                setVaultBalance(vaultBalance);
-            } catch (e) {
-                console.log(e);
-            }
-        };
-        getVaultBalance();
-    }, [isDepositing, isClaiming]);
+    // useEffect(() => {
+    //     const getVaultBalance = async () => {
+    //         try {
+    //             const client = await getClients(vault.chainId);
+    //             const vaultBalance =
+    //                 BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
+    //                 BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
+    //             if (!vault.rewardVault) return;
+    //             const rewards = (await client.public.readContract({
+    //                 address: getAddress(vault.rewardVault!),
+    //                 abi: rewardVaultAbi,
+    //                 functionName: "earned",
+    //                 args: [currentWallet!],
+    //             })) as bigint;
+    //             setRewards(rewards);
+    //             setVaultBalance(vaultBalance);
+    //         } catch (e) {
+    //             console.log(e);
+    //         }
+    //     };
+    //     getVaultBalance();
+    // }, [isDepositing, isClaiming]);
 
     const claimRewards = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -325,14 +325,22 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                             {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                                 <p className="text-textSecondary text-sm">
                                     In{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    )}{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    ) === 1
-                                        ? "day"
-                                        : "days"}
+                                    {(() => {
+                                        const timeDiffMs = Date.now() - new Date(lastTransaction.date).getTime();
+                                        const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
+                                        const hours = Math.floor(
+                                            (timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                                        );
+                                        const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                        if (days > 0) {
+                                            return `${days} ${days === 1 ? "day" : "days"}`;
+                                        } else if (hours > 0) {
+                                            return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+                                        } else {
+                                            return `${Math.max(minutes, 1)} ${minutes === 1 ? "minute" : "minutes"}`;
+                                        }
+                                    })()}{" "}
                                 </p>
                             )}
                         </div>

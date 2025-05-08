@@ -188,7 +188,7 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                         className="text-xl text-textSecondary cursor-help"
                                         onClick={(e) => e.stopPropagation()}
                                     />
-                                    <div className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                    <div className="absolute z-50 right-0 top-full sm:left-auto sm:right-0 md:left-auto md:right-0 lg:left-1/2 lg:-translate-x-1/2  mt-2 lg:mb-2 lg:mt-0 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-64 max-w-[90vw] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                         <div className="flex flex-col justify-end gap-2">
                                             {/* Main Amount - Zap In/Out */}
                                             <div className="flex justify-between items-start bg-[#2A2A2A] p-2 rounded-lg">
@@ -395,7 +395,7 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
                                             );
                                         }}
                                     />
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                    <div className="absolute z-50 right-0 top-full sm:left-0 sm:right-auto md:left-auto md:right-0 lg:left-1/2 lg:-translate-x-1/2 lg:top-auto lg:bottom-full mt-2 lg:mb-2 lg:mt-0 px-4 py-2 bg-bgSecondary rounded-lg text-sm text-textWhite w-64 max-w-[90vw] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                         View transaction on explorer
                                     </div>
                                 </div>

@@ -56,6 +56,7 @@ interface IProps {
 const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading }: IProps) => {
     const {
         originPlatform,
+        secondary_platform,
         token_type: tokenType,
         token1,
         token2,
@@ -65,6 +66,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
         source,
     } = farm;
     const { apy: farmApys } = useFarmApy(farm);
+    const isSyntheticFarm = farm.synthetic;
 
     const _underlyingApy = useMemo(() => {
         return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
@@ -128,6 +130,47 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                         </p>
                     )} */}
                     <p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
+                    {isSyntheticFarm && (
+                        <>
+                            <p className="text-textWhite mt-2 text-[16px] font-light">
+                                Synthetic Reward Vaults are deposits into Rewards Vaults where the BGT is always claimed
+                                as a BGT liquid wrapper and autocompound. BeraTrax always claims the BGT wrapper that is
+                                the highest price that minute. The current wrappers that are supported for compounding:
+                            </p>
+                            <div className="mt-4 overflow-hidden rounded-xl bg-bgSecondary">
+                                <table className="w-full border-collapse">
+                                    <tbody>
+                                        <tr className="border-b border-gray-700">
+                                            <td className="p-4 text-textWhite font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <img
+                                                        src="https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png"
+                                                        alt="yBGT"
+                                                        className="w-6 h-6"
+                                                    />
+                                                    <span className="font-bold">yBGT</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-textWhite">Yearn BGT</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-4 text-textWhite font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    <img
+                                                        src="https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe/logo.png"
+                                                        alt="lBGT"
+                                                        className="w-6 h-6"
+                                                    />
+                                                    <span className="font-bold">LBGT</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-textWhite">Liquid BGT</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
+                    )}
                     <p className="text-textWhite mt-4 text-[16px] font-light">
                         You can see the underlying vault on the platform{" "}
                         <a href={source} target="_blank" className="text-gradientPrimary uppercase hover:underline">
@@ -225,6 +268,17 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                     <td className="p-4 text-gradientPrimary font-bold text-right">
                                         Autocompounded to APY
                                     </td>
+                                </tr>
+                            )}
+                            {originPlatform === FarmOriginPlatform.BeraPaw && secondary_platform == null && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <img src="/berapaw.png" alt="Berapaw" className="w-5 h-5" />
+                                            pPAW
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                                 </tr>
                             )}
                             {originPlatform === FarmOriginPlatform.Infrared && (

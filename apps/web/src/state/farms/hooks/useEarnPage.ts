@@ -7,6 +7,21 @@ import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
 import { isVaultNew } from "src/utils/common";
 
+type Comparator<T> = (a: T, b: T) => number;
+
+/**
+ * Chains multiple comparators in order: each is tried in turn until one returns non-zero.
+ */
+function chainSort<T>(...fns: Comparator<T>[]): Comparator<T> {
+    return (a, b) => {
+        for (const fn of fns) {
+            const res = fn(a, b);
+            if (res !== 0) return res;
+        }
+        return 0;
+    };
+}
+
 const useEarnPage = () => {
     const { externalChainId } = useWallet();
     const { farms } = useFarms();
@@ -15,116 +30,106 @@ const useEarnPage = () => {
     const [sortSelected, setSortSelected] = useState<FarmSortOptions>(FarmSortOptions.APY_High_to_Low);
     const { apys } = useFarmApys();
 
-    const sortFn = () => {
+    const sortFn = (): FarmDataExtended[] => {
         let data: FarmDataExtended[] = farms.map((ele) => {
-            const queryData = Object.values(farmDetails).find((item: FarmData) => item?.id === ele.id);
+            const queryData = Object.values(farmDetails).find((item) => item?.id === ele.id) as FarmData;
             return {
                 ...ele,
                 ...queryData,
-                apy: apys[ele.id]?.apy,
+                apy: apys[ele.id]?.apy ?? 0,
             };
         });
 
-        // Apply platform filter
         if (selectedPlatform) {
             data = data.filter(
                 (item) => item.originPlatform === selectedPlatform || item.secondary_platform === selectedPlatform
             );
         }
 
-        // Filter out upcoming and deprecated farms
         data = data.filter((item) => !item.isUpcoming && !item.isDeprecated);
 
-        if (!isFetched) return data;
+        // Filter for new vaults when New sort option is selected
+        if (sortSelected === FarmSortOptions.New) {
+            data = data.filter((item) => isVaultNew(Number(item.createdAt)));
+        }
 
-        // First sort by the selected criteria
+        if (!isFetched) {
+            return data;
+        }
+
+        data = data.map((item) => {
+            const amtDollar = Number(item.withdrawableAmounts?.[0]?.amountDollar ?? 0);
+            return {
+                ...item,
+                _hasDeposit: amtDollar > 0,
+                _depositAmt: amtDollar,
+                _apy: item.apy,
+                _priority: item.priorityOrder ?? Number.NEGATIVE_INFINITY,
+            };
+        });
+
+        // 5) Build comparators for each priority
+        const hasDepositCmp: Comparator<any> = (a, b) => (a._hasDeposit === b._hasDeposit ? 0 : a._hasDeposit ? -1 : 1);
+
+        const apyHighCmp: Comparator<any> = (a, b) => b._apy - a._apy;
+        const apyLowCmp: Comparator<any> = (a, b) => a._apy - b._apy;
+
+        const depositHighCmp: Comparator<any> = (a, b) => b._depositAmt - a._depositAmt;
+        const depositLowCmp: Comparator<any> = (a, b) => a._depositAmt - b._depositAmt;
+
+        const newVaultCmp: Comparator<any> = (a, b) => {
+            const aNew = isVaultNew(Number(a.createdAt));
+            const bNew = isVaultNew(Number(b.createdAt));
+            return aNew === bNew ? 0 : aNew ? -1 : 1;
+        };
+
+        const currentWeekRewardCmp: Comparator<any> = (a, b) =>
+            b.isCurrentWeeksRewardsVault === a.isCurrentWeeksRewardsVault ? 0 : a.isCurrentWeeksRewardsVault ? -1 : 1;
+
+        const tokenTypeCmp: Comparator<any> = (a, b) => {
+            if (a.token_type === b.token_type) return 0;
+            return a.token_type === "Token" ? -1 : 1;
+        };
+
+        const crossChainCmp: Comparator<any> = (a, b) => (b.isCrossChain ? 1 : 0) - (a.isCrossChain ? 1 : 0);
+
+        const platformCmp: Comparator<any> = (a, b) => a.originPlatform.localeCompare(b.originPlatform);
+
+        const priorityOrderCmp: Comparator<any> = (a, b) => b._priority - a._priority;
+
+        let comparator: Comparator<any>;
+
         switch (sortSelected) {
             case FarmSortOptions.APY_High_to_Low:
-                data = data.sort((a, b) => b.apy - a.apy);
+                comparator = chainSort(hasDepositCmp, apyHighCmp);
                 break;
             case FarmSortOptions.APY_Low_to_High:
-                data = data.sort((a, b) => a.apy - b.apy);
+                comparator = chainSort(hasDepositCmp, apyLowCmp);
                 break;
             case FarmSortOptions.Deposit_High_to_Low:
-                data = data.sort(
-                    (a, b) =>
-                        Number(b.withdrawableAmounts![0].amountDollar) - Number(a.withdrawableAmounts![0].amountDollar)
-                );
+                comparator = chainSort(hasDepositCmp, depositHighCmp);
                 break;
             case FarmSortOptions.Deposit_Low_to_High:
-                data = data.sort((a, b) => {
-                    const aWithdrawableAmount =
-                        a.withdrawableAmounts && a.withdrawableAmounts[0]
-                            ? Number(a.withdrawableAmounts[0].amountDollar)
-                            : 0;
-                    const bWithdrawableAmount =
-                        b.withdrawableAmounts && b.withdrawableAmounts[0]
-                            ? Number(b.withdrawableAmounts[0].amountDollar)
-                            : 0;
-
-                    if (aWithdrawableAmount === 0 && bWithdrawableAmount !== 0) return 1;
-                    if (aWithdrawableAmount !== 0 && bWithdrawableAmount === 0) return -1;
-                    return aWithdrawableAmount - bWithdrawableAmount;
-                });
+                comparator = chainSort(hasDepositCmp, depositLowCmp);
                 break;
             case FarmSortOptions.New:
-                // First filter to only show new vaults
-                data = data.filter((item) => {
-                    const time = typeof item.createdAt === "string" ? parseInt(item.createdAt) : item.createdAt;
-                    return time && isVaultNew(time);
-                });
-                // Then sort by APY
-                data = data.sort((a, b) => b.apy - a.apy);
+                comparator = chainSort(newVaultCmp, hasDepositCmp, apyHighCmp);
                 break;
             default:
-                data = data.sort((a, b) => {
-                    if (a.isCurrentWeeksRewardsVault && !b.isCurrentWeeksRewardsVault) return -1;
-                    if (!a.isCurrentWeeksRewardsVault && b.isCurrentWeeksRewardsVault) return 1;
-
-                    const aWithdrawableAmount =
-                        a.withdrawableAmounts && a.withdrawableAmounts[0]
-                            ? Number(a.withdrawableAmounts[0].amountDollar)
-                            : 0;
-                    const bWithdrawableAmount =
-                        b.withdrawableAmounts && b.withdrawableAmounts[0]
-                            ? Number(b.withdrawableAmounts[0].amountDollar)
-                            : 0;
-
-                    if (aWithdrawableAmount !== bWithdrawableAmount) {
-                        return bWithdrawableAmount - aWithdrawableAmount;
-                    }
-
-                    if (a.token_type !== b.token_type) {
-                        if (a.token_type === "Token") return -1;
-                        if (b.token_type === "Token") return 1;
-                    }
-
-                    if (a.isCrossChain !== b.isCrossChain) {
-                        // @ts-ignore
-                        return a.isCrossChain - b.isCrossChain;
-                    }
-                    return 0;
-                });
+                // Default: multi-priority chain
+                comparator = chainSort(
+                    hasDepositCmp,
+                    currentWeekRewardCmp,
+                    depositHighCmp,
+                    tokenTypeCmp,
+                    crossChainCmp,
+                    platformCmp,
+                    priorityOrderCmp
+                );
                 break;
         }
 
-        // Then group by platform while maintaining the order
-        data = data.sort((a, b) => {
-            if (a.originPlatform !== b.originPlatform) {
-                return a.originPlatform.localeCompare(b.originPlatform);
-            }
-            return 0;
-        });
-
-        // Then apply priority order as a secondary sort
-        data = data.sort((a, b) => {
-            if (a.priorityOrder !== undefined && b.priorityOrder !== undefined) {
-                return b.priorityOrder - a.priorityOrder;
-            }
-            if (a.priorityOrder !== undefined) return -1;
-            if (b.priorityOrder !== undefined) return 1;
-            return 0;
-        });
+        data.sort(comparator);
 
         return data;
     };

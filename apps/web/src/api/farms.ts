@@ -874,7 +874,7 @@ export const calculateBerapawEarnings = async (combinedTransactions: any): Promi
                     const apyObj = apyData?.[pool.chainId]?.[pool.vault_addr]?.find(
                         (entry) => Math.abs(entry.timestamp - start) < 3600 // within 1 hour
                     );
-                    const apy = apyObj?.apy?.rewardsApr ?? 0;
+                    const apy = apyObj?.apy?.beratraxApr ?? 0;
                     const apyPercent = Math.floor((apy / 100) * 1e18); // scaled for precision
 
                     const userBalance = BigInt(tx.userAssetBalance || "0");

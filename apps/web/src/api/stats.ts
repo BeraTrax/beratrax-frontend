@@ -157,7 +157,14 @@ export const fetchSpecificVaultApy = async (id: number) => {
 export const getApyByTime = async (data: { address: Address; timestamp: number; chainId: number }[]) => {
     try {
         const res = await backendApi.post<{
-            data: { [chainId: string]: { [address: string]: { timestamp: number; apy: { rewardsApr: number } }[] } };
+            data: {
+                [chainId: string]: {
+                    [address: string]: {
+                        timestamp: number;
+                        apy: { rewardsApr: number; beratraxApr: number; feeApr: number };
+                    }[];
+                };
+            };
         }>("stats/vault/apy/time", { query: data }, { cache: true });
         return res.data.data;
     } catch (err) {

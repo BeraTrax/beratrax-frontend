@@ -325,14 +325,22 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                             {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                                 <p className="text-textSecondary text-sm">
                                     In{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    )}{" "}
-                                    {Math.floor(
-                                        (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                                    ) === 1
-                                        ? "day"
-                                        : "days"}
+                                    {(() => {
+                                        const timeDiffMs = Date.now() - new Date(lastTransaction.date).getTime();
+                                        const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
+                                        const hours = Math.floor(
+                                            (timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                                        );
+                                        const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                        if (days > 0) {
+                                            return `${days} ${days === 1 ? "day" : "days"}`;
+                                        } else if (hours > 0) {
+                                            return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+                                        } else {
+                                            return `${Math.max(minutes, 1)} ${minutes === 1 ? "minute" : "minutes"}`;
+                                        }
+                                    })()}{" "}
                                 </p>
                             )}
                         </div>

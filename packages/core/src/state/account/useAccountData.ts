@@ -5,8 +5,10 @@ import { RoutesPaths } from "./../../config/constants";
 import useWallet from "./../../hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "./../../state";
 import { addAccount, updateAccountField, updatePoints } from "./../../state/account/accountReducer";
+import { Platform } from "react-native";
 
-const useAccountData = () => {
+// Web-specific implementation using react-router-dom hooks
+const useAccountDataWeb = () => {
 	const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);
 	const { currentWallet } = useWallet();
 	const { reloadBalances } = useTokens();
@@ -23,6 +25,7 @@ const useAccountData = () => {
 				: undefined,
 		[referralCode]
 	);
+
 	const fetchAccountData = useCallback(async () => {
 		if (!refCodeLoaded) return;
 
@@ -35,12 +38,40 @@ const useAccountData = () => {
 	return {
 		fetchAccountData,
 		referralLink,
+		referralCode,
 	};
 };
 
-export default useAccountData;
+// Native-specific implementation without react-router-dom dependencies
+const useAccountDataNative = () => {
+	const { referralCode, referrerCode, refCodeLoaded } = useAppSelector((state) => state.account);
+	const { currentWallet } = useWallet();
+	const { reloadBalances } = useTokens();
+	const dispatch = useAppDispatch();
 
-export const useRefCodeLoaded = () => {
+	const referralLink = useMemo(
+		() => (referralCode ? `https://beratrax.com/${encodeURIComponent(referralCode)}` : undefined),
+		[referralCode]
+	);
+
+	const fetchAccountData = useCallback(async () => {
+		if (!refCodeLoaded) return;
+
+		await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: "" }));
+		await reloadBalances();
+		if (!currentWallet) return;
+		await dispatch(updatePoints(currentWallet));
+	}, [currentWallet, referrerCode, refCodeLoaded]);
+
+	return {
+		fetchAccountData,
+		referralLink,
+		referralCode,
+	};
+};
+
+// Web-specific implementation of useRefCodeLoaded
+export const useRefCodeLoadedWeb = () => {
 	const { refCode } = useParams();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -51,7 +82,24 @@ export const useRefCodeLoaded = () => {
 			navigate(`/`);
 		}
 		dispatch(updateAccountField({ field: "refCodeLoaded", value: true }));
-	}, [refCode]);
+	}, [refCode, navigate, dispatch]);
 
 	return refCode;
 };
+
+// Native-specific implementation of useRefCodeLoaded
+export const useRefCodeLoadedNative = () => {
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		dispatch(updateAccountField({ field: "refCodeLoaded", value: true }));
+	}, [dispatch]);
+
+	return null;
+};
+
+// Export the appropriate hook based on platform
+const useAccountData = Platform.OS === "web" ? useAccountDataWeb : useAccountDataNative;
+export const useRefCodeLoaded = Platform.OS === "web" ? useRefCodeLoadedWeb : useRefCodeLoadedNative;
+
+export default useAccountData;

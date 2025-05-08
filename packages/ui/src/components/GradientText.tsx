@@ -12,7 +12,7 @@ export const GradientText = ({ children, className = "", style = {} }: GradientT
 		return (
 			<Text
 				className={twMerge(
-					`animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 bg-clip-text text-transparent font-extrabold ${Platform.OS === "web" ? "text-lg" : "text-xs"} drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] hover:scale-105 transition-transform duration-200 uppercase`,
+					`animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 bg-clip-text text-transparent font-extrabold ${Platform.OS === "web" ? "text-lg" : "text-xs"} drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] hover:scale-105 transition-transform uppercase`,
 					className
 				)}
 				style={style}

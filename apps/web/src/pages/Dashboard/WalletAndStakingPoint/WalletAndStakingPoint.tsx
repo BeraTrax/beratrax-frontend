@@ -25,6 +25,97 @@ import { formatCurrency } from "src/utils/common";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
 import StakingModal from "../Staking/StakingModal";
 
+const TokenSale: React.FC = () => {
+    const [timeLeft, setTimeLeft] = useState<{
+        hours: number;
+        minutes: number;
+        seconds: number;
+    }>({ hours: 24, minutes: 0, seconds: 0 });
+    const [isSaleEnded, setIsSaleEnded] = useState(false);
+
+    useEffect(() => {
+        const saleStartTime = new Date();
+        saleStartTime.setUTCHours(14, 0, 0, 0); // UTC 12:30 PM
+        const saleEndTime = new Date(saleStartTime.getTime() + 24 * 60 * 60 * 1000); // 24 hours later
+
+        const timer = setInterval(() => {
+            const now = new Date();
+            const difference = saleEndTime.getTime() - now.getTime();
+
+            if (difference <= 0) {
+                setIsSaleEnded(true);
+                clearInterval(timer);
+                return;
+            }
+
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            setTimeLeft({ hours, minutes, seconds });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    if (isSaleEnded) return null;
+
+    const buttonStyle = `bg-gradientPrimary text-bgDark font-bold text-lg px-8 py-4 rounded-2xl 
+                        hover:scale-105 transition-all duration-200 shadow-lg 
+                        border border-transparent hover:border-borderLight
+                        relative overflow-hidden
+                        before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent 
+                        before:via-white/20 before:to-transparent before:-translate-x-full hover:before:translate-x-full
+                        before:transition-transform before:duration-700 before:ease-in-out`;
+
+    return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-gradientPrimary via-bgPrimary to-gradientSecondary p-1 rounded-2xl mb-8 animate-gradient-x">
+            <div className="bg-bgDark rounded-xl p-6 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-gradientPrimary/20 via-bgPrimary/20 to-gradientSecondary/20 animate-pulse"></div>
+                <div className="relative z-10">
+                    <h2 className="text-2xl font-bold text-textWhite mb-4 text-center animate-bounce font-league-spartan">
+                        🚀 TRAX Token Sale Registration is Live! 🚀
+                    </h2>
+                    <p className="text-textWhite/90 text-center mb-6 font-arame-mono">
+                        Register to purchase your TRAX tokens on Ramen before the allocation fills up
+                    </p>
+
+                    <div className="flex justify-center gap-4 mb-6">
+                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
+                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
+                                {timeLeft.hours}
+                            </div>
+                            <div className="text-textGrey text-sm font-arame-mono">Hours</div>
+                        </div>
+                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
+                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
+                                {timeLeft.minutes}
+                            </div>
+                            <div className="text-textGrey text-sm font-arame-mono">Minutes</div>
+                        </div>
+                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
+                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
+                                {timeLeft.seconds}
+                            </div>
+                            <div className="text-textGrey text-sm font-arame-mono">Seconds</div>
+                        </div>
+                    </div>
+
+                    <a
+                        href="https://reserve.ramen.finance/beratrax"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gradient-to-r from-green-400 via-orange-400 to-cyan-400 text-textBlack font-bold py-4 px-8 rounded-xl text-center transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-400/30 font-league-spartan animate-gradient-x"
+                        style={{ animationDuration: "3s" }}
+                    >
+                        Register Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const WalletAndStakingPoint: React.FC = () => {
     const {
         referralCode,
@@ -180,6 +271,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                 <div className="h-[100vh] w-full bg-bgDark"></div>
             ) : (
                 <div className="p-5">
+                    <TokenSale />
                     <div className="bg-bgDark">
                         {currentWallet ? (
                             <div className="flex items-center justify-between p-4">

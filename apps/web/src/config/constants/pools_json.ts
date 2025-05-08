@@ -757,7 +757,7 @@ const pools_json: PoolDef[] = [
     {
         id: 43,
         chainId: CHAIN_ID.BERACHAIN,
-        platform: "Kodiak",
+        platform: "BeraPaw",
         token_type: "LP Token",
         name: "stLBGT",
         url_name: "stLBGT",
@@ -802,7 +802,7 @@ const pools_json: PoolDef[] = [
     {
         id: 44,
         chainId: CHAIN_ID.BERACHAIN,
-        platform: "Kodiak",
+        platform: "BeraPaw",
         token_type: "LP Token",
         name: "wBERA-LBGT",
         url_name: "wBERA-LBGT",

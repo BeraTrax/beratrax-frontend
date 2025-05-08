@@ -143,11 +143,20 @@ const Select: FC<IProps> = ({ value, setValue, options, extraText, size, classNa
 					width: position.width,
 					minWidth: maxWidth,
 					zIndex: 9999,
-					elevation: 5,
-					shadowColor: "#000",
-					shadowOffset: { width: 0, height: 2 },
-					shadowOpacity: 0.25,
-					shadowRadius: 3.84,
+					...Platform.select({
+						ios: {
+							shadowColor: "#000",
+							shadowOffset: { width: 0, height: 2 },
+							shadowOpacity: 0.25,
+							shadowRadius: 3.84,
+						},
+						android: {
+							elevation: 5,
+						},
+						web: {
+							boxShadow: "0px 2px 3.84px rgba(0, 0, 0, 0.25)",
+						}
+					})
 				}}
 			>
 				{options.map((option, index) => (

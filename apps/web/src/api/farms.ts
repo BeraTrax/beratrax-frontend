@@ -264,6 +264,7 @@ const getEarningsForInfrared = async (
                         tokenId: pool.farmId.toString(),
                         earnings0: "0",
                         token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
                     };
                 }
 
@@ -510,6 +511,7 @@ const getEarningsForKodiak = async (
                         tokenId: pool.farmId.toString(),
                         earnings0: "0",
                         token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
                     };
                 }
 
@@ -533,6 +535,7 @@ const getEarningsForKodiak = async (
                         tokenId: pool.farmId.toString(),
                         earnings0: "0",
                         token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
                     };
                 }
 
@@ -653,6 +656,7 @@ const getEarningsForBurrbear = async (
                         tokenId: pool.farmId.toString(),
                         earnings0: "0",
                         token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
                     };
                 }
 
@@ -680,6 +684,7 @@ const getEarningsForBurrbear = async (
                         tokenId: pool.farmId.toString(),
                         earnings0: "0",
                         token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
                     };
                 }
 
@@ -921,6 +926,7 @@ const calculateLifetimeLpEarnings = async (
 
         lastUserAssetBalance = userAssetBalance;
     }
+
     const positionValue = await calculateFinalPositionAssets({
         vault_addr: vault_addr as `0x${string}`,
         client,

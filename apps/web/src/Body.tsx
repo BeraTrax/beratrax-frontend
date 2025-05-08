@@ -14,6 +14,7 @@ import Withdrawals from "./pages/Stats/Withdrawals";
 import Test from "./pages/Test/Test";
 import UserGuide from "./pages/UserGuide/UserGuide";
 import { Buy } from "./pages/Buy/Buy";
+import BurrBearAdmin from "./pages/BurrBearAdmin/BurrBearAdmin";
 
 function Body() {
     usePageTracking();
@@ -32,6 +33,7 @@ function Body() {
                 <Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />
                 <Route path={RoutesPaths.UserGuide} element={<UserGuide />} />
                 <Route path={RoutesPaths.Buy} element={<Buy />} />
+                <Route path={RoutesPaths.BurrBearAdmin} element={<BurrBearAdmin />} />
                 <Route path="" element={<Dashboard />} />
                 <Route path="/:refCode" element={<Dashboard />} />
                 <Route path="*" element={<h3 style={{ color: "white" }}>Not Found</h3>} />
@@ -41,3 +43,4 @@ function Body() {
 }
 
 export default Body;
+

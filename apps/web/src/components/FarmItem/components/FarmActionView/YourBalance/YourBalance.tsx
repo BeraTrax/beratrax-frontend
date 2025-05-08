@@ -84,14 +84,20 @@ const TokenEarning = ({
                     {lastTransaction?.date && typeof lastTransaction.date === "string" && (
                         <p className="text-textSecondary text-sm">
                             In{" "}
-                            {Math.floor(
-                                (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                            )}{" "}
-                            {Math.floor(
-                                (Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)
-                            ) === 1
-                                ? "day"
-                                : "days"}{" "}
+                            {(() => {
+                                const timeDiffMs = Date.now() - new Date(lastTransaction.date).getTime();
+                                const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
+                                const hours = Math.floor((timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                if (days > 0) {
+                                    return `${days} ${days === 1 ? "day" : "days"}`;
+                                } else if (hours > 0) {
+                                    return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+                                } else {
+                                    return `${Math.max(minutes, 1)} ${minutes === 1 ? "minute" : "minutes"}`;
+                                }
+                            })()}{" "}
                             (
                             {changeInAssetsValue > 0
                                 ? "+" +
@@ -112,10 +118,39 @@ const TokenEarning = ({
                 </div>
             </div>
             <div className="flex items-center gap-x-3">
-                <div className="flex flex-col">
-                    <h1 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
-                        ${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
-                    </h1>
+                <div className="flex flex-col text-textSecondary">
+                    <div className="flex flex-row items-center gap-x-2">
+                        <h3 className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+                            $
+                            {customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                        </h3>
+                        <div className="group relative">
+                            <div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
+                                <span className="text-textSecondary text-sm">?</span>
+                            </div>
+                            <div className="absolute z-100 bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex items-center justify-center gap-2">
+                                        <span className="text-green-400">
+                                            {customCommify(
+                                                Number(
+                                                    toEth(
+                                                        BigInt(lifetimeEarnings || 0),
+                                                        decimals[farm.chainId][farm.lp_address as Address]
+                                                    )
+                                                ),
+                                                { minimumFractionDigits: 2, maximumFractionDigits: 5 }
+                                            )}
+                                        </span>
+                                        <span className="text-textPrimary font-medium">{farm.name}</span>
+                                    </div>
+                                    <span className="text-xs text-textSecondary/60 mt-1">
+                                        Your total accumulated LP tokens
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="text-textSecondary text-sm flex items-center gap-1">
                         Lifetime Earnings
                         <div className="group relative">

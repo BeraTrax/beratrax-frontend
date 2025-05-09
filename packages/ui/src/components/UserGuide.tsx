@@ -4,7 +4,13 @@ import userguideimageone from "@beratrax/core/src/assets/images/userguideimageon
 import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
 import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
 import userguideimagetwo from "@beratrax/core/src/assets/images/userguideimagetwo.png";
-import { View, Text, Image, ScrollView, TouchableOpacity, Linking, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Linking, StyleSheet, ImageSourcePropType, Platform } from "react-native";
+import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
+import { DiamondFillIcon } from "../icons/DiamondFill";
+import { QuestionIcon } from "../icons/Question";
+import { ChatCircleIcon } from "../icons/ChatCircle";
+import { WebsiteIcon } from "../icons/Website";
+import Colors from "@beratrax/typescript-config/Colors";
 
 // Type the imported images explicitly as ImageSourcePropType
 const images = {
@@ -15,6 +21,10 @@ const images = {
 	five: userguideimagefive as ImageSourcePropType,
 	six: userguideimagesix as ImageSourcePropType,
 };
+
+function getImageSource() {
+	return Platform.OS === "web" ? { uri: CheckMark } : require("@beratrax/core/src/assets/images/checkmark.png");
+}
 
 export const UserGuide = () => {
 	return (
@@ -37,22 +47,34 @@ export const UserGuide = () => {
 					<Text style={styles.paragraph}>BeraTrax offers two ways to get started:</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
+						</View>
 						<Text style={styles.bold}>Social Login</Text> – Sign in instantly using an email, Twitter, or Discord (you own your social
 						wallet, & can export you key)
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
+						</View>
 						<Text style={styles.bold}>Wallet Connection</Text> – Use <Text style={styles.bold}>MetaMask, WalletConnect, or Ledger</Text> to
 						connect an existing wallet.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>First-time users? </Text>
 						If signing in via social login, BeraTrax will <Text style={styles.bold}>automatically create a wallet</Text> for you on
 						Berachain's mainnet.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>Gas money? </Text>
 						All transactions are covered on BeraTrax so you don't need have BERA to use it.
 					</Text>
@@ -62,10 +84,16 @@ export const UserGuide = () => {
 					<Text style={styles.subTitle}>Step 2: Funding Your Wallet</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						Until then, you must either have airdrop funds from Berachain, or bridge them over to your wallet.
 					</Text>
 
@@ -73,11 +101,17 @@ export const UserGuide = () => {
 					<Image source={images.two} style={styles.image} resizeMode="contain" />
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) & pick which vault you want to deposit into, tap
 						it, and open up the details page.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then confirm. That's all it takes!
 					</Text>
 				</>
@@ -92,14 +126,23 @@ export const UserGuide = () => {
 					<Image source={images.three} style={styles.image} resizeMode="contain" />
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>Your Portfolio</Text> – Track your balances, staked assets, and earnings in real-time.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>Transaction History</Text> – Review past deposits, claims, and withdrawals.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>BTX Points</Text> – Monitor your earned{" "}
 						<Text style={styles.bold}>BTX governance points and BGT staking rewards (coming soon).</Text>
 					</Text>
@@ -116,14 +159,17 @@ export const UserGuide = () => {
 					<Text style={styles.paragraph}>Each vault displays:</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>Supported Assets</Text> – (e.g., BERA or HONEY)
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>Current APY</Text> – (estimated yield on our vaults)
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
 					</Text>
 
@@ -148,11 +194,13 @@ export const UserGuide = () => {
 					<Image source={images.five} style={styles.image} resizeMode="contain" />
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>Auto-compounding is enabled by default</Text> — your rewards are continuously reinvested to maximize
 						yield.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>Deposits are gas-free</Text> — BeraTrax covers transaction costs for you.
 					</Text>
 				</>
@@ -178,6 +226,9 @@ export const UserGuide = () => {
 					<Text style={styles.paragraph}>Confirm the transaction — your assets will be unstaked and sent to your wallet.</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>BGT & BTX rewards remain in your account</Text>, even after withdrawal.
 					</Text>
 				</>
@@ -191,16 +242,19 @@ export const UserGuide = () => {
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>All vault fees are pooled and used to bribe validators</Text>, increasing BGT emissions for staked
 						users.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						Users can <Text style={styles.bold}>opt-in to auto-convert BGT into iBGT</Text>, earning{" "}
 						<Text style={styles.bold}>boosted validator rewards</Text> without extra steps.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<Image source={getImageSource()} alt="Check mark" style={styles.icon} />
 						<Text style={styles.bold}>iBGT is liquid</Text>—users can swap, stake, or hold for further rewards.
 					</Text>
 
@@ -215,11 +269,17 @@ export const UserGuide = () => {
 					<Text style={styles.sectionTitle}>Earning BTX Points by Staking & Referring</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>BTX Points</Text>: Earn points for staking in vaults—these points determine your share of the upcoming
 						BeraTrax token airdrop.
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<DiamondFillIcon />
+						</View>
 						<Text style={styles.bold}>Referrals</Text>: Grab your unique referral link from the Dashboard. Earn the same BTX points as every
 						user you bring into BeraTrax!
 					</Text>
@@ -233,6 +293,9 @@ export const UserGuide = () => {
 					<Text style={styles.sectionTitle}>Frequently Asked Questions (FAQ)</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<QuestionIcon />
+						</View>
 						<Text style={styles.bold}>What makes BeraTrax different from other DeFi platforms?</Text>
 					</Text>
 
@@ -242,6 +305,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<QuestionIcon />
+						</View>
 						<Text style={styles.bold}>Do I need BERA tokens for gas?</Text>
 					</Text>
 
@@ -250,6 +316,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<QuestionIcon />
+						</View>
 						<Text style={styles.bold}>How do I claim my BGT and iBGT rewards?</Text>
 					</Text>
 
@@ -260,6 +329,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<QuestionIcon />
+						</View>
 						<Text style={styles.bold}>Is BeraTrax safe?</Text>
 					</Text>
 
@@ -277,6 +349,9 @@ export const UserGuide = () => {
 					<Text style={styles.paragraph}>Want to stay updated and get involved? Follow us here:</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<WebsiteIcon />
+						</View>
 						<Text style={styles.bold}>Website: </Text>
 						<Text style={styles.link} onPress={() => Linking.openURL("https://www.beratrax.com/")}>
 							beratrax.com
@@ -291,6 +366,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<Text style={styles.paragraph}>
+						<View style={styles.iconContainer}>
+							<ChatCircleIcon />
+						</View>
 						<Text style={styles.bold}>Discord: </Text>
 						<Text style={styles.link} onPress={() => Linking.openURL("https://discord.gg/beratrax")}>
 							Community Chat
@@ -354,7 +432,7 @@ const styles = StyleSheet.create({
 		marginVertical: 20,
 	},
 	link: {
-		color: "#007AFF",
+		color: "#72b21f",
 		textDecorationLine: "underline",
 	},
 	buttonContainer: {
@@ -363,15 +441,26 @@ const styles = StyleSheet.create({
 		marginBottom: 32,
 	},
 	button: {
-		backgroundColor: "#007AFF",
 		paddingVertical: 12,
 		paddingHorizontal: 24,
 		borderRadius: 8,
+		backgroundColor: "#5B8E19",
 	},
 	buttonText: {
 		color: "white",
 		fontWeight: "bold",
 		textTransform: "uppercase",
+	},
+	iconContainer: {
+		marginRight: 8,
+		width: 24,
+		flexShrink: 0,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	icon: {
+		width: 26,
+		height: 24,
 	},
 });
 

@@ -337,238 +337,236 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
 	return (
 		<MobileModalContainer open={open}>
-			<ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={true}>
-				<View className="px-4 py-4 bg-bgDark">
-					<View className="h-12 w-full relative">
-						<Pressable
-							onPress={() => setOpen(false)}
-							style={{
-								position: "absolute",
-								top: 0,
-								right: 0,
-								padding: 12,
-								zIndex: 10,
+			<View className="px-4 py-3 pb-24 bg-bgDark">
+				<View className="h-10 w-full relative">
+					<Pressable
+						onPress={() => setOpen(false)}
+						style={{
+							position: "absolute",
+							top: 0,
+							right: 0,
+							padding: 10,
+							zIndex: 10,
+						}}
+					>
+						<SvgImage source={Closemodalicon} height={32} width={32} />
+					</Pressable>
+				</View>
+				<View className="flex flex-col items-center gap-3 mx-2 text-textWhite text-center">
+					<Text className="text-textWhite text-[18px] font-bold align-middle uppercase">{farm.name}</Text>
+					<View>
+						<Text className="text-textWhite text-center text-[16px] leading-[20px]">
+							{transactionType} {transactionType === FarmTransactionType.Deposit ? "into" : "from"} the{" "}
+							<Link href={farm.source} target="_blank" className="text-gradientPrimary span ">
+								{farm.url_name}
+							</Link>{" "}
+							{isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
+							{currencySymbol === "BERA" ? ` "Max" excludes a little BERA for gas.` : ""}
+						</Text>
+					</View>
+					<View className="my-1 flex justify-center">
+						{!isLoadingFarm && currentWallet ? (
+							<Select
+								options={selectOptions!}
+								images={selectImages}
+								value={currencySymbol}
+								setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
+								extraText={selectExtraOptions}
+								className="text-textWhite font-light text-[16px]"
+								bgSecondary={true}
+							/>
+						) : (
+							<View></View>
+						)}
+					</View>
+					<View className="flex flex-col items-center gap-y-1 mx-6">
+						{width >= 768 ? (
+							<CurrencyInput
+								placeholder={showInUsd ? "$0" : "0"}
+								value={amount}
+								decimalsLimit={4}
+								prefix={showInUsd ? "$" : ""}
+								onChange={(e) => wrapperHandleInput(e.target.value)}
+								disableGroupSeparators={true}
+								onValueChange={(value, name, values) => wrapperHandleInput(value || "0")}
+								onSelect={handleSelect}
+								onKeyUp={handleSelect}
+								onClick={handleSelect}
+								ref={inputRef}
+								className={`max-w-full text-[48px] font-bold ${
+									noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
+								} break-words text-center bg-transparent border-none focus:outline-none`}
+							/>
+						) : (
+							<Text
+								className={`max-w-full text-[48px] font-bold text-center ${
+									noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
+								} my-2 break-words	`}
+							>
+								{showInUsd ? "$" : ""}
+								{amount ? noExponents(amount) : "0"}
+							</Text>
+						)}
+						<Pressable onPress={handleToggleShowInUsdc}>
+							<View className="cursor-pointer">
+								<SvgImage source={Exchange} height={30} width={30} />
+							</View>
+						</Pressable>
+						<Text className={`text-[18px] leading-[20px] break-words ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"}`}>
+							{!showInUsd ? "$" : ""}
+							{toggleAmount ? noExponents(toggleAmount) : "0"}
+							{!showInUsd ? "" : ` ${currencySymbol}`}
+						</Text>
+						<View className="flex flex-row justify-around sm:justify-center gap-4 ">
+							{quickDepositList.map((filter, index) => (
+								<QuickDepositButtons
+									key={index}
+									text={filter}
+									extraText={"%"}
+									isSelected={
+										filter === "MAX"
+											? Number(amount) === Number(maxBalance)
+											: Math.abs(Number(Number(amount)) - Number((Number(maxBalance) * parseInt(filter)) / 100)) < 0.0001
+									}
+									onClick={() => {
+										if (filter === "MAX") {
+											setMax(true);
+										} else {
+											const percent = parseFloat(maxBalance) * (parseInt(filter) / 100);
+											wrapperHandleInput(percent.toString());
+										}
+									}}
+								/>
+							))}
+						</View>
+						<DialPad
+							inputValue={amount}
+							setInputValue={wrapperHandleInput}
+							cursorPosition={cursorPosition}
+							onCursorPositionChange={(pos) => {
+								setCursorPosition(pos);
+								setTimeout(() => restoreCursor(pos), 0);
 							}}
-						>
-							<SvgImage source={Closemodalicon} height={200} width={200} />
+						/>
+						{(currencySymbol.toLowerCase() === "bera" ||
+							currencySymbol.toLowerCase() === "honey" ||
+							(currencySymbol.toLowerCase() === "ibgt" && farm.lp_address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b")) && (
+							<View className="flex flex-row justify-start items-center ">
+								<Text className={"text-textWhite text-[13px]"}>Slippage: &nbsp;</Text>
+								<View className={"text-textWhite text-[13px]"}>
+									{fetchingSlippage ? (
+										<Skeleton w={50} h={20} style={{}} />
+									) : (
+										<Text className="text-textWhite">{`~${slippage?.toString() && !isNaN(slippage) ? slippage?.toFixed(2) : "- "}%`}</Text>
+									)}
+								</View>
+							</View>
+						)}
+						{slippage && slippage > 0 && (
+							<View className="flex flex-row justify-start items-center ">
+								<Text className="text-textWhite">No Deposit & Withdraw fees!</Text>
+							</View>
+						)}
+						<Pressable onPress={handleToggleModal}>
+							<Text
+								disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
+								className={`lg:max-w-64 mt-4 uppercase ${
+									noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
+										? "bg-buttonDisabled cursor-not-allowed"
+										: "bg-buttonPrimaryLight"
+								} text-textBlack w-full py-5 px-4 text-xl font-bold tracsking-widest rounded-[40px]`}
+							>
+								{!currentWallet
+									? "Please Login"
+									: parseFloat(amount) > 0
+										? parseFloat(amount) > parseFloat(maxBalance)
+											? "Insufficent Balance"
+											: fetchingSlippage
+												? "Simulating..."
+												: isLoadingTransaction
+													? "Loading..."
+													: transactionType === FarmTransactionType.Deposit
+														? "Deposit"
+														: "Withdraw"
+										: "Enter Amount"}
+							</Text>
 						</Pressable>
 					</View>
-					<View className="flex flex-col items-center gap-4 mx-2 text-textWhite text-center">
-						<Text className="text-textWhite text-[18px] font-bold align-middle uppercase">{farm.name}</Text>
-						<View className="	">
-							<Text className="text-textWhite text-[18px] leading-[20px]">
-								{transactionType} {transactionType === FarmTransactionType.Deposit ? "into" : "from"} the{" "}
-								<Link href={farm.source} target="_blank" className="text-gradientPrimary span ">
-									{farm.url_name}
-								</Link>{" "}
-								{isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
-								{currencySymbol === "BERA" ? ` "Max" excludes a little BERA for gas.` : ""}
-							</Text>
-						</View>
-						<View className="my-2 flex justify-center ">
-							{!isLoadingFarm && currentWallet ? (
-								<Select
-									options={selectOptions!}
-									images={selectImages}
-									value={currencySymbol}
-									setValue={(val) => setFarmOptions({ currencySymbol: val as string })}
-									extraText={selectExtraOptions}
-									className=" text-textWhite font-light text-[16px]"
-									bgSecondary={true}
-								/>
-							) : (
-								<View></View>
-							)}
-						</View>
-						<View className="flex flex-col items-center gap-y-1 mx-6">
-							{width >= 768 ? (
-								<CurrencyInput
-									placeholder={showInUsd ? "$0" : "0"}
-									value={amount}
-									decimalsLimit={4}
-									prefix={showInUsd ? "$" : ""}
-									onChange={(e) => wrapperHandleInput(e.target.value)}
-									disableGroupSeparators={true}
-									onValueChange={(value, name, values) => wrapperHandleInput(value || "0")}
-									onSelect={handleSelect}
-									onKeyUp={handleSelect}
-									onClick={handleSelect}
-									ref={inputRef}
-									className={`max-w-full text-[48px] font-bold ${
-										noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
-									} break-words text-center bg-transparent border-none focus:outline-none`}
-								/>
-							) : (
-								<Text
-									className={`max-w-full text-[48px] font-bold text-center ${
-										noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"
-									} my-2 break-words	`}
-								>
-									{showInUsd ? "$" : ""}
-									{amount ? noExponents(amount) : "0"}
-								</Text>
-							)}
-							<Pressable onPress={handleToggleShowInUsdc}>
-								<View className="cursor-pointer">
-									<SvgImage source={Exchange} height={200} width={200} />
-								</View>
-							</Pressable>
-							<Text className={`text-[18px] leading-[20px] break-words ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"}`}>
-								{!showInUsd ? "$" : ""}
-								{toggleAmount ? noExponents(toggleAmount) : "0"}
-								{!showInUsd ? "" : ` ${currencySymbol}`}
-							</Text>
-							<View className="flex flex-row justify-around sm:justify-center gap-4 ">
-								{quickDepositList.map((filter, index) => (
-									<QuickDepositButtons
-										key={index}
-										text={filter}
-										extraText={"%"}
-										isSelected={
-											filter === "MAX"
-												? Number(amount) === Number(maxBalance)
-												: Math.abs(Number(Number(amount)) - Number((Number(maxBalance) * parseInt(filter)) / 100)) < 0.0001
-										}
-										onClick={() => {
-											if (filter === "MAX") {
-												setMax(true);
-											} else {
-												const percent = parseFloat(maxBalance) * (parseInt(filter) / 100);
-												wrapperHandleInput(percent.toString());
-											}
-										}}
-									/>
-								))}
-							</View>
-							<DialPad
-								inputValue={amount}
-								setInputValue={wrapperHandleInput}
-								cursorPosition={cursorPosition}
-								onCursorPositionChange={(pos) => {
-									setCursorPosition(pos);
-									setTimeout(() => restoreCursor(pos), 0);
-								}}
-							/>
-							{(currencySymbol.toLowerCase() === "bera" ||
-								currencySymbol.toLowerCase() === "honey" ||
-								(currencySymbol.toLowerCase() === "ibgt" && farm.lp_address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b")) && (
-								<View className="flex flex-row justify-start items-center ">
-									<Text className={"text-textWhite text-[13px]"}>Slippage: &nbsp;</Text>
-									<View className={"text-textWhite text-[13px]"}>
-										{fetchingSlippage ? (
-											<Skeleton w={50} h={20} style={{}} />
-										) : (
-											<Text className="text-textWhite">{`~${slippage?.toString() && !isNaN(slippage) ? slippage?.toFixed(2) : "- "}%`}</Text>
-										)}
-									</View>
-								</View>
-							)}
-							{slippage && slippage > 0 && (
-								<View className="flex flex-row justify-start items-center ">
-									<Text className="text-textWhite">No Deposit & Withdraw fees!</Text>
-								</View>
-							)}
-							<Pressable onPress={handleToggleModal}>
-								<Text
-									disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
-									className={`lg:max-w-64 mt-4 uppercase ${
-										noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
-											? "bg-buttonDisabled cursor-not-allowed"
-											: "bg-buttonPrimaryLight"
-									} text-textBlack w-full py-5 px-4 text-xl font-bold tracsking-widest rounded-[40px]`}
-								>
-									{!currentWallet
-										? "Please Login"
-										: parseFloat(amount) > 0
-											? parseFloat(amount) > parseFloat(maxBalance)
-												? "Insufficent Balance"
-												: fetchingSlippage
-													? "Simulating..."
-													: isLoadingTransaction
-														? "Loading..."
-														: transactionType === FarmTransactionType.Deposit
-															? "Deposit"
-															: "Withdraw"
-											: "Enter Amount"}
-								</Text>
-							</Pressable>
-						</View>
-					</View>
 				</View>
+			</View>
 
-				{/* Confirm Deposit / Withdraw Modal */}
-				{confirmDeposit ? (
-					<ConfirmFarmActionModal
-						farm={farm}
-						txId={txId}
-						handleClose={(closeDepositModal?: boolean) => {
-							setConfirmDeposit(false);
-							if (closeDepositModal) {
-								setOpen(false);
-								try {
-									router.replace("/");
-								} catch (error) {
-									console.warn("Router not ready", error);
-								}
+			{/* Confirm Deposit / Withdraw Modal */}
+			{confirmDeposit ? (
+				<ConfirmFarmActionModal
+					farm={farm}
+					txId={txId}
+					handleClose={(closeDepositModal?: boolean) => {
+						setConfirmDeposit(false);
+						if (closeDepositModal) {
+							setOpen(false);
+							try {
+								router.replace("/");
+							} catch (error) {
+								console.warn("Router not ready", error);
 							}
-						}}
-						depositInfo={{
-							amount,
-							showInUsd,
-							token: currencySymbol,
-							transactionType,
-						}}
-					/>
-				) : null}
+						}
+					}}
+					depositInfo={{
+						amount,
+						showInUsd,
+						token: currencySymbol,
+						transactionType,
+					}}
+				/>
+			) : null}
 
-				{/* Slippage Modal */}
-				{showSlippageModal ? (
-					<SlippageWarning
-						handleClose={() => {
-							setShowSlippageModal(false);
-						}}
-						handleSubmit={handleConfirm}
-						percentage={slippage || 0}
-					/>
-				) : null}
+			{/* Slippage Modal */}
+			{showSlippageModal ? (
+				<SlippageWarning
+					handleClose={() => {
+						setShowSlippageModal(false);
+					}}
+					handleSubmit={handleConfirm}
+					percentage={slippage || 0}
+				/>
+			) : null}
 
-				{/* No Slippage Modal */}
-				{showNotSlipageModal ? (
-					<SlippageNotCalculate
-						handleClose={() => {
-							setShowNotSlipageModal(false);
-						}}
-						handleSubmit={handleConfirm}
-					/>
-				) : null}
+			{/* No Slippage Modal */}
+			{showNotSlipageModal ? (
+				<SlippageNotCalculate
+					handleClose={() => {
+						setShowNotSlipageModal(false);
+					}}
+					handleSubmit={handleConfirm}
+				/>
+			) : null}
 
-				{showOneTimeZappingModal ? (
-					<OneTimeZapping
-						inputToken={currencySymbol}
-						outputToken={farm.name}
-						handleClose={() => {
-							setShowOneTimeZappingModal(false);
-						}}
-						handleSubmit={() => {
-							setShownOneTimeZappingModal(true);
-							setShowOneTimeZappingModal(false);
-							handleConfirm();
-						}}
-					/>
-				) : null}
+			{showOneTimeZappingModal ? (
+				<OneTimeZapping
+					inputToken={currencySymbol}
+					outputToken={farm.name}
+					handleClose={() => {
+						setShowOneTimeZappingModal(false);
+					}}
+					handleSubmit={() => {
+						setShownOneTimeZappingModal(true);
+						setShowOneTimeZappingModal(false);
+						handleConfirm();
+					}}
+				/>
+			) : null}
 
-				{showConfirmWithdrawModal ? (
-					<ConfirmWithdraw
-						handleClose={() => {
-							setShowConfirmWithdrawModal(false);
-							setWithdrawModalShown(false);
-						}}
-						handleSubmit={() => {
-							handleToggleModal();
-						}}
-					/>
-				) : null}
-			</ScrollView>
+			{showConfirmWithdrawModal ? (
+				<ConfirmWithdraw
+					handleClose={() => {
+						setShowConfirmWithdrawModal(false);
+						setWithdrawModalShown(false);
+					}}
+					handleSubmit={() => {
+						handleToggleModal();
+					}}
+				/>
+			) : null}
 		</MobileModalContainer>
 	);
 };

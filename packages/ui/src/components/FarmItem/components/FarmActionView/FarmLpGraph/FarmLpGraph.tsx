@@ -10,7 +10,9 @@ import { Defs, LinearGradient, Stop } from "react-native-svg";
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";
 
-const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip, VictoryVoronoiContainer } =
+const VoronoiContainer = Platform.OS === "web" ? Victory.VictoryVoronoiContainer : VictoryNative.createContainer("voronoi", "voronoi");
+
+const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip } =
 	Platform.OS === "web" ? Victory : VictoryNative;
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
@@ -224,7 +226,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									y: yDomain,
 								}}
 								containerComponent={
-									<VictoryVoronoiContainer
+									<VoronoiContainer
 										voronoiDimension="x"
 										voronoiBlacklist={["priceArea"]}
 										labels={({ datum }) => `${datum.x}\nPrice: $${datum.y.toFixed(2)}`}

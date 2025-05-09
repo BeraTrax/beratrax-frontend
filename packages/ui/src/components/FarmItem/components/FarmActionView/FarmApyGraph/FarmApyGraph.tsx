@@ -13,7 +13,9 @@ import { LinearGradient, Stop } from "react-native-svg";
 import { Defs } from "react-native-svg";
 import { customCommify } from "@beratrax/core/src/utils/common";
 
-const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip, VictoryVoronoiContainer } =
+const VoronoiContainer = Platform.OS === "web" ? Victory.VictoryVoronoiContainer : VictoryNative.createContainer("voronoi", "voronoi");
+
+const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip } =
 	Platform.OS === "web" ? Victory : VictoryNative;
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
@@ -245,7 +247,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 									y: [minApy, maxApy],
 								}}
 								containerComponent={
-									<VictoryVoronoiContainer
+									<VoronoiContainer
 										voronoiDimension="x"
 										voronoiBlacklist={["underlyingAprArea", "beratraxApyArea", farm.isAutoCompounded ? "underlyingApr" : ""]}
 										labels={({ datum }) => {

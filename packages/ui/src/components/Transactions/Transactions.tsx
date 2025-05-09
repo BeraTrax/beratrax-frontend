@@ -288,7 +288,18 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 					{/* Vault Name and Retry Button */}
 					<View className="flex-grow flex flex-col">
 						<View className="flex flex-row items-center gap-1.5">
-							<Text className="font-league-spartan font-medium text-lg leading-6 text-textWhite">{farm.name}</Text>
+							<Text
+								className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-green-400" : "text-red-400"}`}
+							>
+								{farm.name}
+							</Text>
+							<Text
+								className={`text-xs px-1.5 py-0.5 rounded ${
+									type === "deposit" ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"
+								}`}
+							>
+								{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
+							</Text>
 							{tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
 								<Pressable
 									className="border border-red-500 rounded-md 

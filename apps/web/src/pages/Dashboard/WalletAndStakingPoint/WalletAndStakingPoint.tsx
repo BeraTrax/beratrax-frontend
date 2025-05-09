@@ -71,45 +71,38 @@ const TokenSale: React.FC = () => {
     return (
         <div className="relative overflow-hidden bg-gradient-to-r from-gradientPrimary via-bgPrimary to-gradientSecondary p-1 rounded-2xl mb-8 animate-gradient-x">
             <div className="bg-bgDark rounded-xl p-6 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-gradientPrimary/20 via-bgPrimary/20 to-gradientSecondary/20 animate-pulse"></div>
-                <div className="relative z-10">
-                    <h2 className="text-2xl font-bold text-textWhite mb-4 text-center animate-bounce font-league-spartan">
-                        🚀 TRAX Token Sale Registration is Live! 🚀
-                    </h2>
-                    <p className="text-textWhite/90 text-center mb-6 font-arame-mono">
-                        Register to purchase your TRAX tokens on Ramen before the allocation fills up
-                    </p>
-
-                    <div className="flex justify-center gap-4 mb-6">
-                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
-                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
-                                {timeLeft.hours}
-                            </div>
-                            <div className="text-textGrey text-sm font-arame-mono">Hours</div>
+                <div className="absolute inset-0 bg-black/60 rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-gradientPrimary/20 via-bgPrimary/20 to-gradientSecondary/20 animate-pulse rounded-xl"></div>
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0 bg-gradientPrimary rounded-full p-2 animate-pulse">
+                            <svg
+                                className="w-6 h-6 text-bgDark"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                ></path>
+                            </svg>
                         </div>
-                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
-                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
-                                {timeLeft.minutes}
-                            </div>
-                            <div className="text-textGrey text-sm font-arame-mono">Minutes</div>
-                        </div>
-                        <div className="bg-bgPrimary/10 rounded-lg p-4 min-w-[80px] text-center backdrop-blur-sm border border-borderLight/20">
-                            <div className="text-3xl font-bold text-textWhite font-league-spartan">
-                                {timeLeft.seconds}
-                            </div>
-                            <div className="text-textGrey text-sm font-arame-mono">Seconds</div>
+                        <div>
+                            <h3 className="text-gradientPrimary font-bold text-lg mb-1 font-arame-mono drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
+                                Ramen Registration Update
+                            </h3>
+                            <p className="text-white font-medium [text-shadow:_0_1px_2px_rgba(0,0,0,1)]">
+                                Registration filled up in just 12 hours! Stay tuned for launch details on
+                                <span className="text-gradientPrimary font-bold mx-1 drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
+                                    Monday, May 12th
+                                </span>
+                            </p>
                         </div>
                     </div>
-
-                    <a
-                        href="https://reserve.ramen.finance/beratrax"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full bg-gradient-to-r from-green-400 via-orange-400 to-cyan-400 text-textBlack font-bold py-4 px-8 rounded-xl text-center transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-400/30 font-league-spartan animate-gradient-x"
-                        style={{ animationDuration: "3s" }}
-                    >
-                        Register Now
-                    </a>
                 </div>
             </div>
         </div>

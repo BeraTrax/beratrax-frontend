@@ -44,7 +44,7 @@ const TransactionDetails: React.FC<IProps> = (args) => {
 			)}
 			<View style={{ marginTop: 20 }}>
 				{tx.steps.map((step, i) => {
-					const decimals = tx.type === "deposit" ? (tx.token === zeroAddress ? 18 : 18) : 18;
+					const decimals = 18;
 					const amount = Number(formatUnits(BigInt(step.amount ?? 0), decimals));
 					const amountInUsd = (amount * tx.vaultPrice!) / tx.tokenPrice!;
 					return (

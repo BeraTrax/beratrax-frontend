@@ -14,6 +14,7 @@ import {
 	Vaults as VaultsShared,
 	TokenBalances as TokenBalancesShared,
 	Transactions as TransactionsShared,
+	UserGuide as UserGuideShared,
 } from "@beratrax/ui";
 
 function Dashboard() {
@@ -38,6 +39,7 @@ function Dashboard() {
 						<TokenBalancesShared />
 						<Transactions />
 						<TransactionsShared />
+						<UserGuideShared />
 					</>
 				) : (
 					<EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>Sign in/up to view your dashboard.</EmptyComponent>

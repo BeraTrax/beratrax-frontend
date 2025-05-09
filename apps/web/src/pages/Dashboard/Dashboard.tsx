@@ -13,6 +13,7 @@ import {
 	ReferralLink,
 	Vaults as VaultsShared,
 	TokenBalances as TokenBalancesShared,
+	Transactions as TransactionsShared,
 } from "@beratrax/ui";
 
 function Dashboard() {
@@ -36,6 +37,7 @@ function Dashboard() {
 						<TokenBalances />
 						<TokenBalancesShared />
 						<Transactions />
+						<TransactionsShared />
 					</>
 				) : (
 					<EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>Sign in/up to view your dashboard.</EmptyComponent>

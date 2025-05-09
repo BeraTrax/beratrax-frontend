@@ -1,13 +1,10 @@
-import { Link } from "expo-router";
-import { StyleSheet, View, Text } from "react-native";
+import { UserGuide as UserGuideSharedComponent } from "@beratrax/ui";
+import { StyleSheet, View } from "react-native";
 
 const UserGuide = () => {
 	return (
 		<View style={styles.container}>
-			<Text>User Guide</Text>
-			<Link href=".." style={styles.link}>
-				<Text>Go to home screen!</Text>
-			</Link>
+			<UserGuideSharedComponent />
 		</View>
 	);
 };
@@ -20,6 +17,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		padding: 20,
+		backgroundColor: "black",
 	},
 	link: {
 		marginTop: 15,

@@ -266,7 +266,7 @@ export const UserGuide = () => {
 					<View className="h-px bg-[#999] my-5" />
 					<Text style={styles.sectionTitle}>Frequently Asked Questions (FAQ)</Text>
 
-					<BulletPoint icon={<QuestionIcon />}>
+					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="font-bold">What makes BeraTrax different from other DeFi platforms?</Text>
 					</BulletPoint>
 
@@ -275,7 +275,7 @@ export const UserGuide = () => {
 						built-in PoL participation make it <Text className="font-bold">the easiest way to earn yield on Berachain</Text>.
 					</Text>
 
-					<BulletPoint icon={<QuestionIcon />}>
+					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="font-bold">Do I need BERA tokens for gas?</Text>
 					</BulletPoint>
 
@@ -283,7 +283,7 @@ export const UserGuide = () => {
 						No! <Text className="font-bold">BeraTrax covers all transaction fees</Text>, so you don't need BERA for gas.
 					</Text>
 
-					<BulletPoint icon={<QuestionIcon />}>
+					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="font-bold">How do I claim my BGT and iBGT rewards?</Text>
 					</BulletPoint>
 
@@ -293,7 +293,7 @@ export const UserGuide = () => {
 						iBGT earning opportunities are coming soon.
 					</Text>
 
-					<BulletPoint icon={<QuestionIcon />}>
+					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="font-bold">Is BeraTrax safe?</Text>
 					</BulletPoint>
 

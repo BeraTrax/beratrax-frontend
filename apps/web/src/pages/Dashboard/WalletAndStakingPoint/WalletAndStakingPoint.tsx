@@ -109,6 +109,90 @@ const TokenSale: React.FC = () => {
     );
 };
 
+const CountdownToSale: React.FC = () => {
+    const [timeLeft, setTimeLeft] = useState<{
+        days: number;
+        hours: number;
+        minutes: number;
+        seconds: number;
+    }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+    useEffect(() => {
+        const targetDate = new Date(Date.UTC(2025, 4, 14, 8, 0, 0)); // Note: month is 0-based, so 4 = May
+
+        const timer = setInterval(() => {
+            const now = new Date();
+            const difference = targetDate.getTime() - now.getTime();
+
+            if (difference <= 0) {
+                clearInterval(timer);
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            setTimeLeft({ days, hours, minutes, seconds });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-gradientPrimary via-bgPrimary to-gradientSecondary p-1 rounded-2xl mb-8 animate-gradient-x">
+            <div className="bg-bgDark rounded-xl p-6 relative">
+                <div className="absolute inset-0 bg-black/60 rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-gradientPrimary/20 via-bgPrimary/20 to-gradientSecondary/20 animate-pulse rounded-xl"></div>
+                <div className="relative z-10 flex flex-col items-center text-center">
+                    <h3 className="text-gradientPrimary font-bold text-xl mb-2 font-sans drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
+                        Whitelist GTD Purchase Countdown
+                    </h3>
+                    <p className="text-white font-medium mb-4 [text-shadow:_0_1px_2px_rgba(0,0,0,1)] max-w-2xl font-sans">
+                        The Ramen Gacha for $TRAX is live. Whitelisted users will have 6 hours to purchase. They’ll get
+                        1 extra hour to claim leftovers. Any remaining spots will open to the community.
+                    </p>
+
+                    <div className="flex gap-4 mb-6 justify-center">
+                        <div className="bg-bgPrimary/30 rounded-lg p-3 text-center min-w-[80px]">
+                            <div className="text-2xl font-bold text-gradientPrimary">{timeLeft.days}</div>
+                            <div className="text-sm text-white">Days</div>
+                        </div>
+                        <div className="bg-bgPrimary/30 rounded-lg p-3 text-center min-w-[80px]">
+                            <div className="text-2xl font-bold text-gradientPrimary">{timeLeft.hours}</div>
+                            <div className="text-sm text-white">Hours</div>
+                        </div>
+                        <div className="bg-bgPrimary/30 rounded-lg p-3 text-center min-w-[80px]">
+                            <div className="text-2xl font-bold text-gradientPrimary">{timeLeft.minutes}</div>
+                            <div className="text-sm text-white">Minutes</div>
+                        </div>
+                        <div className="bg-bgPrimary/30 rounded-lg p-3 text-center min-w-[80px]">
+                            <div className="text-2xl font-bold text-gradientPrimary">{timeLeft.seconds}</div>
+                            <div className="text-sm text-white">Seconds</div>
+                        </div>
+                    </div>
+
+                    <a
+                        href="https://app.ramen.finance/trax"
+                        target="__blank"
+                        rel="noopener noreferrer"
+                        className="inline-block bg-gradientPrimary text-bgDark font-bold text-lg px-8 py-4 rounded-2xl 
+                        hover:scale-105 transition-all duration-200 shadow-lg 
+                        border border-transparent hover:border-borderLight
+                        relative overflow-hidden
+                        before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent 
+                        before:via-white/20 before:to-transparent before:-translate-x-full hover:before:translate-x-full
+                        before:transition-transform before:duration-700 before:ease-in-out"
+                    >
+                        TRAX Sale
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const WalletAndStakingPoint: React.FC = () => {
     const {
         referralCode,
@@ -264,7 +348,8 @@ export const WalletAndStakingPoint: React.FC = () => {
                 <div className="h-[100vh] w-full bg-bgDark"></div>
             ) : (
                 <div className="p-5">
-                    <TokenSale />
+                    {/* <TokenSale /> */}
+                    <CountdownToSale />
                     <div className="bg-bgDark">
                         {currentWallet ? (
                             <div className="flex items-center justify-between p-4">

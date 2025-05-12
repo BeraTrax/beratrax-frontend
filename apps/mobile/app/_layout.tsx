@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 
 import { mobileWalletConfig } from "@/config/mobileWalletConfig";
 import { useFonts } from "expo-font";
-import { Stack, useRouter, usePathname } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -41,7 +41,7 @@ const tabOptions = {
 	Dashboard: {
 		name: "Dashboard",
 		tabBarLabel: "Dashboard",
-		route: "/Dashboard",
+		route: "/",
 		// You'll need to have these images in your assets folder:
 		activeIcon: require("@beratrax/core/src/assets/images/dashboardactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/dashboardnonactiveicon.svg").default,
@@ -78,7 +78,7 @@ const tabOptions = {
 };
 
 const RootLayout = () => {
-	const router = useRouter();
+	// const router = useRouter();
 	const [loaded] = useFonts({
 		LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
 	});
@@ -90,7 +90,7 @@ const RootLayout = () => {
 	useEffect(() => {
 		if (loaded) {
 			SplashScreen.hideAsync();
-			router.push("/Dashboard");
+			// router.push("/Dashboard");
 		}
 	}, [loaded]);
 

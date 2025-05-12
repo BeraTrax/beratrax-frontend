@@ -79,10 +79,10 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	return (
 		<>
 			<View className={`flex-1 w-full bg-bgSecondary relative ${Platform.OS === "web" ? "" : "min-h-screen"}`}>
-				<View className="absolute top-[45%]">
+				<View className={`${Platform.OS === "web" ? "fixed" : "absolute"} top-[45%]`}>
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
 				</View>
-				<View className="absolute right-0 top-0">
+				<View className={`${Platform.OS === "web" ? "fixed" : "absolute"} right-0 top-0`}>
 					<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
 				</View>
 				<View className={`px-4 pb-2 ${Platform.OS === "web" ? "" : "mb-24"}`}>

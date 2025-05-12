@@ -78,19 +78,19 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 
 	return (
 		<>
-			<View className="flex-1 w-full min-h-screen bg-bgSecondary relative">
+			<View className={`flex-1 w-full bg-bgSecondary relative ${Platform.OS === "web" ? "" : "min-h-screen"}`}>
 				<View className="absolute top-[45%]">
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
 				</View>
 				<View className="absolute right-0 top-0">
 					<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
 				</View>
-				<View className={`pt-14 px-4 pb-2 ${Platform.OS === "web" ? "" : "mb-24"}`}>
+				<View className={`px-4 pb-2 ${Platform.OS === "web" ? "" : "mb-24"}`}>
 					{openDepositModal ? (
 						<></>
 					) : (
 						<>
-							<ScrollView>
+							<ScrollView className="pt-14">
 								<BackButton onClick={handleGoBack} />
 								<View className="relative mt-4 mb-24 sm:mb-0">
 									<TokenPriceAndGraph farm={farm} />

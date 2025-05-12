@@ -54,7 +54,7 @@ export const updateFarmDetails = createAsyncThunk(
 						balances,
 						prices,
 						decimals,
-						totalSupplies[farm.chainId][farm.vault_addr].supplyWei
+						totalSupplies[farm.chainId][farm.vault_addr]?.supplyWei
 					);
 				});
 
@@ -108,8 +108,8 @@ export const updateEarnings = createAsyncThunk(
 
 				let expectedLpAmount = balance * BigInt(balances[farms[i / 2].chainId][farms[i / 2].vault_addr].valueWei);
 
-				if (totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr].supplyWei !== "0")
-					expectedLpAmount = expectedLpAmount / BigInt(totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr].supplyWei);
+				if (totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr]?.supplyWei !== "0")
+					expectedLpAmount = expectedLpAmount / BigInt(totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr]?.supplyWei);
 				if (lpTokenBalance < expectedLpAmount) {
 					const withdrawableAmount = expectedLpAmount - lpTokenBalance;
 					const balanceAfterWithdraw = lpTokenBalance + withdrawableAmount;

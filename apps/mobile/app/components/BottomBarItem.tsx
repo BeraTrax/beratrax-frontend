@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, ViewStyle } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -8,24 +8,9 @@ interface BottomBarItemProps {
 	Icon: any; // Image source
 	label: string;
 	onPress: () => void;
-	position: "left" | "middle" | "right";
 }
 
-const BottomBarItem = ({ isActive, Icon, label, onPress, position }: BottomBarItemProps) => {
-	// Get border radius based on position
-	const getBorderRadius = (): ViewStyle => {
-		if (!isActive) return {};
-
-		switch (position) {
-			case "left":
-				return { borderTopLeftRadius: 12 };
-			case "right":
-				return { borderTopRightRadius: 12 };
-			default:
-				return {};
-		}
-	};
-
+const BottomBarItem = ({ isActive, Icon, label, onPress }: BottomBarItemProps) => {
 	const handlePress = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		onPress();

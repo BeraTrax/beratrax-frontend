@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import WalletProvider from "@beratrax/core/src/context/WalletProvider";
-import * as Haptics from "expo-haptics";
 import { StyleSheet, View } from "react-native";
 import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -27,14 +26,6 @@ SplashScreen.preventAutoHideAsync();
 
 // Setup queryClient
 const queryClient = new QueryClient();
-
-// Add routes where tab bar should be hidden
-const hiddenTabBarRoutes = [
-	/^\/Earn\/[^\/]+$/, // Vault details page
-	// Add more route patterns here as needed
-	// Example: /^\/Stats\/details$/,
-	// Example: /^\/Dashboard\/settings$/,
-];
 
 // Matching the web app tabs configuration
 const tabOptions = {
@@ -82,10 +73,6 @@ const RootLayout = () => {
 	const [loaded] = useFonts({
 		LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
 	});
-	const pathname = usePathname();
-
-	// Check if the current path matches any route where tab bar should be hidden
-	const shouldHideTabBar = hiddenTabBarRoutes.some((pattern) => pathname.match(pattern));
 
 	useEffect(() => {
 		if (loaded) {
@@ -97,10 +84,6 @@ const RootLayout = () => {
 	if (!loaded) {
 		return null;
 	}
-
-	const handleTabPress = () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-	};
 
 	return (
 		<WagmiProvider config={mobileWalletConfig}>
@@ -116,7 +99,7 @@ const RootLayout = () => {
 											headerShown: false,
 										}}
 									/>
-									<BottomBar tabOptions={tabOptions} hiddenTabBarRoutes={hiddenTabBarRoutes} />
+									<BottomBar tabOptions={tabOptions} />
 								</View>
 							</SafeAreaView>
 						</SafeAreaProvider>

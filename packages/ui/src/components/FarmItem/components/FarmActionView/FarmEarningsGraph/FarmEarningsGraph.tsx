@@ -13,6 +13,12 @@ import { Defs, LinearGradient, Stop } from "react-native-svg";
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";
 
+// Create a wrapper component to filter out stringMap prop
+const VictoryDefsWrapper = (props: any) => {
+	const { stringMap, standalone, ...rest } = props;
+	return <Defs {...rest} />;
+};
+
 const VoronoiContainer = Platform.OS === "web" ? Victory.VictoryVoronoiContainer : VictoryNative.createContainer("voronoi", "voronoi");
 
 const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip } =
@@ -120,18 +126,24 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 	}, [projectedAutoCompoundedEarnings, investmentAmount, isAutoCompounded]);
 
 	const simpleAprChartData = useMemo(() => {
-		const result = projectedAutoCompoundedEarnings.map((d) => ({
-			x: d.date,
-			y: parseFloat(d.simpleApr), // ensure y is a number
-		}));
+		const result = projectedAutoCompoundedEarnings.map((d) => {
+			const y = parseFloat(d.simpleApr);
+			return {
+				x: d.date,
+				y: isNaN(y) ? 0 : y, // Replace NaN with 0
+			};
+		});
 		return result;
 	}, [projectedAutoCompoundedEarnings]);
 
 	const autoCompoundedChartData = useMemo(() => {
-		const result = projectedAutoCompoundedEarnings.map((d) => ({
-			x: d.date,
-			y: parseFloat(d.autoCompounded), // ensure y is a number
-		}));
+		const result = projectedAutoCompoundedEarnings.map((d) => {
+			const y = parseFloat(d.autoCompounded);
+			return {
+				x: d.date,
+				y: isNaN(y) ? 0 : y, // Replace NaN with 0
+			};
+		});
 		return result;
 	}, [projectedAutoCompoundedEarnings]);
 
@@ -353,19 +365,19 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								}}
 							/>
 
-							<Defs>
+							<VictoryDefsWrapper>
 								<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
 									<Stop offset="5%" stopColor="#90BB62" stopOpacity="0.3" />
 									<Stop offset="95%" stopColor="#90BB62" stopOpacity="0" />
 								</LinearGradient>
-							</Defs>
+							</VictoryDefsWrapper>
 
-							<Defs>
+							<VictoryDefsWrapper>
 								<LinearGradient id="colorAutoCompounded" x1="0" y1="0" x2="0" y2="1">
 									<Stop offset="5%" stopColor="#8884d8" stopOpacity="0.3" />
 									<Stop offset="95%" stopColor="#8884d8" stopOpacity="0" />
 								</LinearGradient>
-							</Defs>
+							</VictoryDefsWrapper>
 						</VictoryChart>
 					</View>
 				)}

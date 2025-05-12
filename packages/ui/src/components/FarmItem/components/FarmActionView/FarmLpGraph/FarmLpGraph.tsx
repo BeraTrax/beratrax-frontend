@@ -10,6 +10,12 @@ import { Defs, LinearGradient, Stop } from "react-native-svg";
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";
 
+// Create a wrapper component to filter out stringMap prop
+const VictoryDefsWrapper = (props: any) => {
+	const { stringMap, standalone, ...rest } = props;
+	return <Defs {...rest} />;
+};
+
 const VoronoiContainer = Platform.OS === "web" ? Victory.VictoryVoronoiContainer : VictoryNative.createContainer("voronoi", "voronoi");
 
 const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, VictoryTooltip } =
@@ -285,12 +291,12 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									}}
 								/>
 
-								<Defs>
+								<VictoryDefsWrapper>
 									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
 										<Stop offset="5%" stopColor="#90BB62" stopOpacity="0.3" />
 										<Stop offset="95%" stopColor="#90BB62" stopOpacity="0" />
 									</LinearGradient>
-								</Defs>
+								</VictoryDefsWrapper>
 
 								<VictoryArea
 									name="priceArea"

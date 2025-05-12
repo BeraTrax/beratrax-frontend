@@ -105,9 +105,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 								</View>
 							</ScrollView>
 							<View
-								className={`flex flex-row gap-2 justify-center w-full max-w-[1200px] px-4 z-10 ${
-									Platform.OS === "web" ? "fixed bottom-4" : "absolute top-[82vh]"
-								} ${Number(withdrawable?.amount || "0") ? "pr-4" : ""} right-1`}
+								className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
+									Platform.OS === "web"
+										? "fixed left-0 right-0 bottom-6 max-w-[600px] md:left-[calc(16.67%+0.5rem)] md:right-4 sm:left-4 sm:right-4"
+										: "absolute bottom-8 left-4 right-4"
+								}`}
 							>
 								{isConnecting || isLoading ? (
 									<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>

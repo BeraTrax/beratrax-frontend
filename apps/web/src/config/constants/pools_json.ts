@@ -865,7 +865,7 @@ const pools_json: PoolDef[] = [
             "This vault is built on BeraPaw's TRAX vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
         stableCoin: false,
         platform_alt: "BeraPaw logo",
-        total_apy: 200,
+        total_apy: 550,
         rewards_apy: 0,
         pair1: "TRAX",
         token1: "0x6969696969696969696969696969696969696969",

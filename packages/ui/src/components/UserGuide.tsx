@@ -37,9 +37,9 @@ const BulletPoint = ({ icon, children }: { icon: ReactNode; children: ReactNode 
 	);
 };
 
-const sectionTitleStyle = "text-[20px] mt-4 mb-2 text-white font-bold";
-const subTitleStyle = "text-[18px] mt-2 mb-1 text-white font-bold";
-const paragraphStyle = "text-xl text-textWhite font-light";
+const sectionTitleStyle = "text-[36px] mt-4 mb-2 text-white";
+const subTitleStyle = "text-[28px] mt-2 mb-1 text-white";
+const paragraphStyle = "text-[20px] text-textWhite font-light";
 const linkStyle = "text-[#72b21f] underline";
 
 const ResponsiveImage = ({ source, aspectRatio = 1.4 }: { source: ImageSourcePropType; aspectRatio?: number }) => {
@@ -366,9 +366,10 @@ export const UserGuide = () => {
 					</BulletPoint>
 				</>
 
-				<View className={"items-center mt-4 mb-8"}>
+				<View className={"flex mt-4 mb-8"}>
 					<TouchableOpacity
-						className="py-3 px-6 rounded-lg bg-[#5B8E19]"
+						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-7 py-5 rounded-lg cursor-pointer mb-1
+									transition-all duration-200 ease-in-out"
 						onPress={() => window.open("https://docs.beratrax.com/beratrax-beta/", "_blank")}
 					>
 						<Text className={"text-white font-bold uppercase"}>FULL USER DOCS</Text>

@@ -52,13 +52,6 @@ function Sidebar() {
 			target: undefined,
 		},
 		{
-			title: "User Guide Shared",
-			icon: <HiDocumentText size={18} />,
-			iconRight: <AiOutlineExport size={12} />,
-			path: RoutesPaths.UserGuideShared,
-			target: undefined,
-		},
-		{
 			title: "Stats",
 			icon: <ImStatsDots size={15} />,
 			path: RoutesPaths.Stats,

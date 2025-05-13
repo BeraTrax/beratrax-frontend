@@ -13,7 +13,6 @@ import Withdrawals from "./pages/Stats/Withdrawals";
 import Test from "./pages/Test/Test";
 import UserGuide from "./pages/UserGuide/UserGuide";
 import { Buy } from "./pages/Buy/Buy";
-import UserGuideShared from "./pages/UserGuideShared/UserGuideShared";
 function Body() {
 	usePageTracking();
 	useDataRefresh();
@@ -29,7 +28,6 @@ function Body() {
 				<Route path={RoutesPaths.Stats + "/withdrawals"} element={<Withdrawals />} />
 				<Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />
 				<Route path={RoutesPaths.UserGuide} element={<UserGuide />} />
-				<Route path={RoutesPaths.UserGuideShared} element={<UserGuideShared />} />
 				<Route path={RoutesPaths.Buy} element={<Buy />} />
 				<Route path="" element={<Dashboard />} />
 				<Route path="/:refCode" element={<Dashboard />} />

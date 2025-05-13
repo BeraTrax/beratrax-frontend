@@ -1,10 +1,10 @@
 import { UserGuide as UserGuideSharedComponent } from "@beratrax/ui";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { View, SafeAreaView } from "react-native";
 
 const UserGuide = () => {
 	return (
-		<SafeAreaView style={styles.safeArea}>
-			<View style={styles.container}>
+		<SafeAreaView className="flex-1 bg-black">
+			<View className="flex-1 w-full overflow-hidden">
 				<UserGuideSharedComponent />
 			</View>
 		</SafeAreaView>
@@ -12,15 +12,3 @@ const UserGuide = () => {
 };
 
 export default UserGuide;
-
-const styles = StyleSheet.create({
-	safeArea: {
-		flex: 1,
-		backgroundColor: "black",
-	},
-	container: {
-		flex: 1,
-		width: "100%",
-		overflow: "hidden", // Prevent content from going outside the container
-	},
-});

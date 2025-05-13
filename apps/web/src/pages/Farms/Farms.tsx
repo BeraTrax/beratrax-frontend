@@ -187,7 +187,7 @@ function Farms() {
                         />
                     ))}
                 </div>
-                {/* Bottom padding */}
+                {/* Bottom padding
                 {(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) &&
                     upcomingFarms.length > 0 && (
                         <div className="flex flex-col mt-2 gap-2">
@@ -200,7 +200,7 @@ function Farms() {
                                 />
                             ))}
                         </div>
-                    )}
+                    )} */}
                 <div className="h-32"></div>
             </div>
         </div>

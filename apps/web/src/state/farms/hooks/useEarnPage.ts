@@ -45,8 +45,7 @@ const useEarnPage = () => {
                 (item) => item.originPlatform === selectedPlatform || item.secondary_platform === selectedPlatform
             );
         }
-
-        data = data.filter((item) => !item.isUpcoming && !item.isDeprecated);
+        data = data.filter((item) => !item.isDeprecated);
 
         // Filter for new vaults when New sort option is selected
         if (sortSelected === FarmSortOptions.New) {
@@ -101,30 +100,30 @@ const useEarnPage = () => {
 
         switch (sortSelected) {
             case FarmSortOptions.APY_High_to_Low:
-                comparator = chainSort(hasDepositCmp, apyHighCmp);
+                comparator = chainSort(priorityOrderCmp, hasDepositCmp, apyHighCmp);
                 break;
             case FarmSortOptions.APY_Low_to_High:
-                comparator = chainSort(hasDepositCmp, apyLowCmp);
+                comparator = chainSort(priorityOrderCmp, hasDepositCmp, apyLowCmp);
                 break;
             case FarmSortOptions.Deposit_High_to_Low:
-                comparator = chainSort(hasDepositCmp, depositHighCmp);
+                comparator = chainSort(priorityOrderCmp, hasDepositCmp, depositHighCmp);
                 break;
             case FarmSortOptions.Deposit_Low_to_High:
-                comparator = chainSort(hasDepositCmp, depositLowCmp);
+                comparator = chainSort(priorityOrderCmp, hasDepositCmp, depositLowCmp);
                 break;
             case FarmSortOptions.New:
-                comparator = chainSort(newVaultCmp, hasDepositCmp, apyHighCmp);
+                comparator = chainSort(priorityOrderCmp, newVaultCmp, hasDepositCmp, apyHighCmp);
                 break;
             default:
                 // Default: multi-priority chain
                 comparator = chainSort(
+                    priorityOrderCmp,
                     hasDepositCmp,
                     currentWeekRewardCmp,
                     depositHighCmp,
                     tokenTypeCmp,
                     crossChainCmp,
-                    platformCmp,
-                    priorityOrderCmp
+                    platformCmp
                 );
                 break;
         }

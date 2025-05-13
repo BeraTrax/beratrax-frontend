@@ -13,7 +13,6 @@ import Withdrawals from "./pages/Stats/Withdrawals";
 import Test from "./pages/Test/Test";
 import UserGuide from "./pages/UserGuide/UserGuide";
 import { Buy } from "./pages/Buy/Buy";
-
 function Body() {
 	usePageTracking();
 	useDataRefresh();

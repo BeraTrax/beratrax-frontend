@@ -12,6 +12,7 @@ import { GiWorld } from "react-icons/gi";
 import { IconBaseProps, IconType } from "react-icons/lib";
 import { PiNumberCircleFourLight, PiNumberCircleOneLight, PiNumberCircleThreeLight, PiNumberCircleTwoLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
+import { UserGuide as UserGuideShared } from "@beratrax/ui";
 
 const IconWithHeading: React.FC<{ Icon: IconType; children?: ReactNode } & IconBaseProps> = ({ Icon, children, ...iconProps }) => (
 	<div className="flex items-stretch gap-x-2">
@@ -293,6 +294,11 @@ const UserGuide = () => {
 						<AiOutlineExport size={18} />
 					</Link>
 				</div>
+			</div>
+
+			{/* Shared Version */}
+			<div className="bg-black">
+				<UserGuideShared />
 			</div>
 		</div>
 	);

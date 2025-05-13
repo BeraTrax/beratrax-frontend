@@ -1,7 +1,7 @@
 import { customCommify } from "@beratrax/core/src/utils/common";
 import { useAppSelector } from "@beratrax/core/src/state";
-import ReferralLogo from "../assets/images/referralLogo.png";
-import DailyRateLogo from "../assets/images/dailyRateLogo.png";
+import ReferralLogo from "@beratrax/core/src/assets/images/referralLogo.png";
+import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.png";
 import { Boosts } from "@beratrax/core/src/state/account/types";
 import { useState } from "react";
 import { useEffect } from "react";

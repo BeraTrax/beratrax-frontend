@@ -141,16 +141,16 @@ const CountdownToSale: React.FC = () => {
     }, []);
 
     return (
-        <div className="relative overflow-hidden bg-gradient-to-r from-gradientPrimary via-bgPrimary to-gradientSecondary p-1 rounded-2xl mb-8 animate-gradient-x">
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#A0FF3A] via-[#7ACC2E] to-[#4D9922] p-1 rounded-2xl mb-8">
             <div className="bg-bgDark rounded-xl p-6 relative">
                 <div className="absolute inset-0 bg-black/60 rounded-xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-gradientPrimary/20 via-bgPrimary/20 to-gradientSecondary/20 animate-pulse rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#A0FF3A]/30 via-[#7ACC2E]/20 to-[#4D9922]/20 rounded-xl"></div>
                 <div className="relative z-10 flex flex-col items-center text-center">
                     <h3 className="text-gradientPrimary font-bold text-xl mb-2 font-sans drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
                         Whitelist GTD Purchase Countdown
                     </h3>
                     <p className="text-white font-medium mb-4 [text-shadow:_0_1px_2px_rgba(0,0,0,1)] max-w-2xl font-sans">
-                        The Ramen Gacha for $TRAX is live. Whitelisted users will have 6 hours to purchase. They’ll get
+                        The Ramen Gacha for $TRAX is live. Whitelisted users will have 6 hours to purchase. They'll get
                         1 extra hour to claim leftovers. Any remaining spots will open to the community.
                     </p>
 

@@ -1,14 +1,5 @@
 import { ScrollView, View } from "react-native";
-import {
-	PointsEarnings,
-	WalletAndEarnings,
-	EmptyComponent,
-	ReferralLink,
-	Vaults,
-	TokenBalances,
-	Transactions,
-	UserGuide,
-} from "@beratrax/ui";
+import { PointsEarnings, WalletAndEarnings, EmptyComponent, ReferralLink, Vaults, TokenBalances, Transactions } from "@beratrax/ui";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
 
@@ -28,7 +19,6 @@ const Dashboard = () => {
 							<Vaults />
 							<TokenBalances />
 							<Transactions />
-							<UserGuide />
 						</>
 					) : (
 						<EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>Sign in/up to view your dashboard.</EmptyComponent>

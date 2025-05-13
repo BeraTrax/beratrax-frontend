@@ -5,7 +5,8 @@ import userguideimageone from "@beratrax/core/src/assets/images/userguideimageon
 import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
 import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
 import userguideimagetwo from "@beratrax/core/src/assets/images/userguideimagetwo.png";
-import { View, Text, Image, ScrollView, TouchableOpacity, Linking, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, ImageSourcePropType, Dimensions } from "react-native";
+import { Link } from "expo-router";
 import { DiamondFillIcon } from "../icons/DiamondFill";
 import { QuestionIcon } from "../icons/Question";
 import { ChatCircleIcon } from "../icons/ChatCircle";
@@ -31,17 +32,50 @@ const BulletPoint = ({ icon, children }: { icon: ReactNode; children: ReactNode 
 	return (
 		<View className="flex flex-row items-start items-stretch mb-2">
 			<View className="shrink-0 mr-2">{icon}</View>
-			<Text style={{ color: "white", lineHeight: 20, flex: 1 }}>{children}</Text>
+			<Text style={{ color: "white", lineHeight: 20, flex: 1, fontSize: 20 }}>{children}</Text>
+		</View>
+	);
+};
+
+const sectionTitleStyle = "text-[20px] mt-4 mb-2 text-white font-bold";
+const subTitleStyle = "text-[18px] mt-2 mb-1 text-white font-bold";
+const paragraphStyle = "text-xl text-textWhite font-light";
+const linkStyle = "text-[#72b21f] underline";
+
+const ResponsiveImage = ({ source, aspectRatio = 1.4 }: { source: ImageSourcePropType; aspectRatio?: number }) => {
+	const screenWidth = Dimensions.get("window").width;
+
+	// calculates the optimal width for the image based on the device's screen width
+	const width = Math.min(screenWidth - 40, 600);
+
+	return (
+		<View className="w-full max-w-full overflow-hidden items-center my-4">
+			<Image
+				source={source}
+				style={{
+					width: width,
+					height: width / aspectRatio,
+					maxWidth: "100%",
+				}}
+				resizeMode="contain"
+			/>
 		</View>
 	);
 };
 
 export const UserGuide = () => {
 	return (
-		<ScrollView className="flex flex-1">
-			<View className="p-5 gap-4">
-				<Text className="text-white font-bold text-2xl uppercase">💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain</Text>
-				<Text style={styles.paragraph}>
+		<ScrollView
+			className="flex flex-1 overflow-auto"
+			contentContainerStyle={{ flexGrow: 1 }}
+			showsHorizontalScrollIndicator={false}
+			horizontal={false}
+		>
+			<View className="p-5 gap-4 text-xl">
+				<Text className="font-bold text-4xl leading-none uppercase text-textWhite">
+					💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
+				</Text>
+				<Text className={paragraphStyle}>
 					Welcome to <Text className="font-bold">BeraTrax</Text>, the easiest way to access{" "}
 					<Text className="font-bold">
 						yield-earning vaults, auto-compounded rewards, and Berachain's Proof of Liquidity system—all through your phone.
@@ -52,13 +86,13 @@ export const UserGuide = () => {
 
 				{/* SECTION 1 GETTING STARTED*/}
 				<>
-					<Text style={styles.sectionTitle}>Getting Started with BeraTrax</Text>
-					<Text style={styles.subTitle}>Step 1: Signing In</Text>
-					<Text style={styles.paragraph}>BeraTrax offers two ways to get started:</Text>
+					<Text className={sectionTitleStyle}>Getting Started with BeraTrax</Text>
+					<Text className={subTitleStyle}>Step 1: Signing In</Text>
+					<Text className={paragraphStyle}>BeraTrax offers two ways to get started:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="font-bold">Social Login</Text> – Sign in instantly using an email, Twitter, or Discord (you own your social
-						wallet, & can export you key)
+						wallet, &amp; can export you key)
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
@@ -77,9 +111,9 @@ export const UserGuide = () => {
 						All transactions are covered on BeraTrax so you don't need to have BERA to use it.
 					</BulletPoint>
 
-					<Image source={images.one} style={styles.image} resizeMode="contain" />
+					<ResponsiveImage source={images.one} aspectRatio={600 / 425} />
 
-					<Text style={styles.subTitle}>Step 2: Funding Your Wallet</Text>
+					<Text className={subTitleStyle}>Step 2: Funding Your Wallet</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
@@ -89,19 +123,19 @@ export const UserGuide = () => {
 						Until then, you must either have airdrop funds from Berachain, or bridge them over to your wallet.
 					</BulletPoint>
 
-					<Text style={styles.subTitle}>Step 3: Earn Rewards</Text>
-					<Image source={images.two} style={styles.image} resizeMode="contain" />
+					<Text className={subTitleStyle}>Step 3: Earn Rewards</Text>
+					<ResponsiveImage source={images.two} aspectRatio={800 / 80} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) & pick which vault you want to deposit into, tap
-						it, and open up the details page.
+						Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) &amp; pick which vault you want to deposit into,
+						tap it, and open up the details page.
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then confirm. That's all it takes!
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>Each vault displays:</Text>
+					<Text className={paragraphStyle}>Each vault displays:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="font-bold">Supported Assets</Text> – (e.g., BERA or HONEY)
@@ -118,12 +152,12 @@ export const UserGuide = () => {
 
 				{/* SECTION 2 DASHBOARD */}
 				<>
-					<Text style={styles.sectionTitle}>Exploring the Dashboard</Text>
-					<Text style={styles.paragraph}>
+					<Text className={sectionTitleStyle}>Exploring the Dashboard</Text>
+					<Text className={paragraphStyle}>
 						After signing in, you'll land on the <Text className="font-bold">BeraTrax Dashboard.</Text>
 					</Text>
-					<Text style={styles.paragraph}>Here's what you'll see:</Text>
-					<Image source={images.three} style={styles.image} resizeMode="contain" />
+					<Text className={paragraphStyle}>Here's what you'll see:</Text>
+					<ResponsiveImage source={images.three} aspectRatio={600 / 375} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className="font-bold">Your Portfolio</Text> – Track your balances, staked assets, and earnings in real-time.
@@ -141,13 +175,13 @@ export const UserGuide = () => {
 
 				{/* SECTION 3 DEPOSITING */}
 				<>
-					<Text style={styles.sectionTitle}>Depositing into Yield Vaults (Earning Rewards)</Text>
-					<Text style={styles.subTitle}>Step 1: Choosing a Vault</Text>
-					<Text style={styles.paragraph}>
+					<Text className={sectionTitleStyle}>Depositing into Yield Vaults (Earning Rewards)</Text>
+					<Text className={subTitleStyle}>Step 1: Choosing a Vault</Text>
+					<Text className={paragraphStyle}>
 						Navigate to the <Text className="font-bold">"Earn" page</Text>, where you'll find all available vaults.
 					</Text>
-					<Image source={images.four} style={styles.image} resizeMode="contain" />
-					<Text style={styles.paragraph}>Each vault displays:</Text>
+					<ResponsiveImage source={images.four} aspectRatio={500 / 600} />
+					<Text className={paragraphStyle}>Each vault displays:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="font-bold">Supported Assets</Text> – (e.g., BERA or HONEY)
@@ -161,7 +195,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
 					</BulletPoint>
 
-					<Text style={styles.subTitle}>Step 2: Depositing Funds</Text>
+					<Text className={subTitleStyle}>Step 2: Depositing Funds</Text>
 
 					<BulletPoint icon={<CircleOneIcon />}>
 						<Text className="font-bold">Tap on a vault</Text> to see details and performance history.
@@ -179,7 +213,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Confirm your deposit</Text> — BeraTrax automates swaps, LP creation, and vault deposits for you!
 					</BulletPoint>
 
-					<Image source={images.five} style={styles.image} resizeMode="contain" />
+					<ResponsiveImage source={images.five} aspectRatio={400 / 730} />
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="font-bold">Auto-compounding is enabled by default</Text> — your rewards are continuously reinvested to maximize
@@ -193,33 +227,33 @@ export const UserGuide = () => {
 
 				{/* SECTION 4 WITHDRAWING */}
 				<>
-					<Text style={styles.sectionTitle}>Withdrawing & Managing Funds</Text>
-					<Text style={styles.subTitle}>Step 1: Withdrawing from a Vault</Text>
-					<Image source={images.six} style={styles.image} resizeMode="contain" />
+					<Text className={sectionTitleStyle}>Withdrawing &amp; Managing Funds</Text>
+					<Text className={subTitleStyle}>Step 1: Withdrawing from a Vault</Text>
+					<ResponsiveImage source={images.six} aspectRatio={700 / 150} />
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						Go to <Text className="font-bold">"My Vaults"</Text> on the Dashboard.
 					</Text>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						Click the <Text className="font-bold">Withdraw</Text> button next to your staked position.
 					</Text>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						Choose to withdraw <Text className="font-bold">partial or full </Text>funds.
 					</Text>
 
-					<Text style={styles.paragraph}>Confirm the transaction — your assets will be unstaked and sent to your wallet.</Text>
+					<Text className={paragraphStyle}>Confirm the transaction — your assets will be unstaked and sent to your wallet.</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="font-bold">BGT & BTX rewards remain in your account</Text>, even after withdrawal.
+						<Text className="font-bold">BGT &amp; BTX rewards remain in your account</Text>, even after withdrawal.
 					</BulletPoint>
 				</>
 
 				{/* SECTION 5 Maximizing Rewards */}
 				<>
-					<Text style={styles.sectionTitle}>Maximizing Rewards with the BGT Flywheel</Text>
-					<Text style={styles.paragraph}>
+					<Text className={sectionTitleStyle}>Maximizing Rewards with the BGT Flywheel</Text>
+					<Text className={paragraphStyle}>
 						BeraTrax <Text className="font-bold">automatically optimizes yield</Text> using Berachain's{" "}
 						<Text className="font-bold">Proof of Liquidity (PoL)</Text> mechanism:
 					</Text>
@@ -238,7 +272,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">iBGT is liquid</Text>—users can swap, stake, or hold for further rewards.
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						You don't need to manually participate in Berachain's PoL system—BeraTrax <Text className="font-bold">does it all for you</Text>{" "}
 						in the background.
 					</Text>
@@ -246,7 +280,7 @@ export const UserGuide = () => {
 
 				{/* SECTION 6 Maximizing Rewards */}
 				<>
-					<Text style={styles.sectionTitle}>Earning BTX Points by Staking & Referring</Text>
+					<Text className={sectionTitleStyle}>Earning BTX Points by Staking &amp; Referring</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className="font-bold">BTX Points</Text>: Earn points for staking in vaults—these points determine your share of the
@@ -258,19 +292,19 @@ export const UserGuide = () => {
 						every user you bring into BeraTrax!
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>~~ &nbsp;The more you stake and refer, the more rewards you earn! 🚀~~ &nbsp;</Text>
+					<Text className={paragraphStyle}>~~ &nbsp;The more you stake and refer, the more rewards you earn! 🚀~~ &nbsp;</Text>
 				</>
 
 				{/* SECTION 7 FAQ */}
 				<>
 					<View className="h-px bg-[#999] my-5" />
-					<Text style={styles.sectionTitle}>Frequently Asked Questions (FAQ)</Text>
+					<Text className={sectionTitleStyle}>Frequently Asked Questions (FAQ)</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="font-bold">What makes BeraTrax different from other DeFi platforms?</Text>
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						BeraTrax <Text className="font-bold">removes complexity</Text>—one-click deposits, gas-free transactions, auto-compounding, and
 						built-in PoL participation make it <Text className="font-bold">the easiest way to earn yield on Berachain</Text>.
 					</Text>
@@ -279,7 +313,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Do I need BERA tokens for gas?</Text>
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						No! <Text className="font-bold">BeraTrax covers all transaction fees</Text>, so you don't need BERA for gas.
 					</Text>
 
@@ -287,7 +321,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">How do I claim my BGT and iBGT rewards?</Text>
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						Your earned rewards can be viewed on the <Text className="font-bold">Dashboard</Text> and claimed at any time. BeraTrax{" "}
 						<Text className="font-bold">auto-compounds</Text> your rewards so that they are continuously reinvested for higher APY. BGT and
 						iBGT earning opportunities are coming soon.
@@ -297,7 +331,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Is BeraTrax safe?</Text>
 					</BulletPoint>
 
-					<Text style={styles.paragraph}>
+					<Text className={paragraphStyle}>
 						Security is a top priority. BeraTrax only utilizes <Text className="font-bold">audited smart contracts</Text> and Berachain's{" "}
 						<Text className="font-bold">native PoL</Text> system to ensure safe, trustless yield farming. We even protect against any
 						unknown exploits using Spherex's zero day exploit protection on every one of our contracts!
@@ -307,35 +341,35 @@ export const UserGuide = () => {
 				{/* SECTION 8 JOIN BERATRAX COMMUNITY */}
 				<>
 					<View className="h-px bg-[#999] my-5" />
-					<Text style={styles.sectionTitle}>Join the BeraTrax Community</Text>
-					<Text style={styles.paragraph}>Want to stay updated and get involved? Follow us here:</Text>
+					<Text className={sectionTitleStyle}>Join the BeraTrax Community</Text>
+					<Text className={paragraphStyle}>Want to stay updated and get involved? Follow us here:</Text>
 
 					<BulletPoint icon={<WebsiteIcon stroke={Colors.gradientLight} />}>
 						<Text className="font-bold">Website: </Text>
-						<Text style={styles.link} onPress={() => Linking.openURL("https://www.beratrax.com/")}>
+						<Link href="https://www.beratrax.com/" className={linkStyle} target="_blank" rel="noopener noreferrer">
 							beratrax.com
-						</Text>
+						</Link>
 					</BulletPoint>
 
 					<BulletPoint icon={<Text style={{ fontSize: 18, width: 24, height: 24 }}>📢</Text>}>
 						<Text className="font-bold">Twitter: </Text>
-						<Text style={styles.link} onPress={() => Linking.openURL("https://twitter.com/BeraTrax")}>
+						<Link href="https://twitter.com/BeraTrax" className={linkStyle} target="_blank" rel="noopener noreferrer">
 							@BeraTrax
-						</Text>
+						</Link>
 					</BulletPoint>
 
 					<BulletPoint icon={<ChatCircleIcon />}>
 						<Text className="font-bold">Discord: </Text>
-						<Text style={styles.link} onPress={() => Linking.openURL("https://discord.gg/beratrax")}>
+						<Link href="https://discord.gg/beratrax" className={linkStyle} target="_blank" rel="noopener noreferrer">
 							Community Chat
-						</Text>
+						</Link>
 					</BulletPoint>
 				</>
 
 				<View className={"items-center mt-4 mb-8"}>
 					<TouchableOpacity
 						className="py-3 px-6 rounded-lg bg-[#5B8E19]"
-						onPress={() => Linking.openURL("https://docs.beratrax.com/beratrax-beta/")}
+						onPress={() => window.open("https://docs.beratrax.com/beratrax-beta/", "_blank")}
 					>
 						<Text className={"text-white font-bold uppercase"}>FULL USER DOCS</Text>
 					</TouchableOpacity>
@@ -344,35 +378,5 @@ export const UserGuide = () => {
 		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	sectionTitle: {
-		fontSize: 20,
-		marginTop: 16,
-		marginBottom: 8,
-		color: "white",
-	},
-	subTitle: {
-		fontSize: 18,
-		marginTop: 8,
-		marginBottom: 4,
-		color: "white",
-	},
-	paragraph: {
-		marginBottom: 8,
-		lineHeight: 20,
-		color: "white",
-	},
-	image: {
-		width: "100%",
-		height: 300,
-		alignSelf: "center",
-		marginVertical: 16,
-	},
-	link: {
-		color: "#72b21f",
-		textDecorationLine: "underline",
-	},
-});
 
 export default UserGuide;

@@ -13,8 +13,7 @@ function Farms() {
     const [openedFarm, setOpenedFarm] = useState<number | undefined>();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } =
-        useEarnPage();
+    const { sortedFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
 
     // Get unique platforms from farms including both original and secondary platforms
     const platforms = useMemo(() => {
@@ -72,9 +71,7 @@ function Farms() {
                             <button
                                 onClick={() =>
                                     setSortSelected(
-                                        sortSelected === FarmSortOptions.New
-                                            ? FarmSortOptions.APY_High_to_Low
-                                            : FarmSortOptions.New
+                                        sortSelected === FarmSortOptions.New ? undefined : FarmSortOptions.New
                                     )
                                 }
                                 className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${

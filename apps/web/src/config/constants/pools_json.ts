@@ -708,7 +708,6 @@ const pools_json: PoolDef[] = [
     },
     {
         id: 42,
-        priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
         platform: "Infrared",
@@ -852,7 +851,7 @@ const pools_json: PoolDef[] = [
     {
         id: 45,
         chainId: CHAIN_ID.BERACHAIN,
-        priorityOrder: 2,
+        priorityOrder: 1,
         isUpcoming: true,
         platform: "BeraTrax",
         token_type: "LP Token",
@@ -881,7 +880,7 @@ const pools_json: PoolDef[] = [
         isAutoCompounded: true,
         lp_address: "0x705Fc16BA5A1EB67051934F2Fb17EacaE660F6c7", // Asset LP address
         decimals: 18,
-        vault_addr: "0xb5B652d6D4Ae3f61507Fe05052b224596c42D6C0", // Vault address
+        vault_addr: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8", // Vault address
         createdAt: 1746190811,
         zap_symbol: "HONEY",
         zap_currencies: [

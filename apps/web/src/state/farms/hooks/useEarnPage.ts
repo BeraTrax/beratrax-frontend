@@ -22,12 +22,19 @@ function chainSort<T>(...fns: Comparator<T>[]): Comparator<T> {
     };
 }
 
+function multiSort<T>(data: T[], fns: Comparator<T>[]): T[] {
+    fns.forEach((fn) => {
+        data = data.sort(fn);
+    });
+    return data;
+}
+
 const useEarnPage = () => {
     const { externalChainId } = useWallet();
     const { farms } = useFarms();
     const { farmDetails, isLoading, isFetched } = useFarmDetails();
     const [selectedPlatform, setSelectedPlatform] = useState<null | string>(null);
-    const [sortSelected, setSortSelected] = useState<FarmSortOptions>(FarmSortOptions.APY_High_to_Low);
+    const [sortSelected, setSortSelected] = useState<FarmSortOptions>();
     const { apys } = useFarmApys();
 
     const sortFn = (): FarmDataExtended[] => {
@@ -52,10 +59,6 @@ const useEarnPage = () => {
             data = data.filter((item) => isVaultNew(Number(item.createdAt)));
         }
 
-        if (!isFetched) {
-            return data;
-        }
-
         data = data.map((item) => {
             const amtDollar = Number(item.withdrawableAmounts?.[0]?.amountDollar ?? 0);
             return {
@@ -63,12 +66,12 @@ const useEarnPage = () => {
                 _hasDeposit: amtDollar > 0,
                 _depositAmt: amtDollar,
                 _apy: item.apy,
-                _priority: item.priorityOrder ?? Number.NEGATIVE_INFINITY,
+                _priority: item.priorityOrder ?? Number.POSITIVE_INFINITY,
             };
         });
 
         // 5) Build comparators for each priority
-        const hasDepositCmp: Comparator<any> = (a, b) => (a._hasDeposit === b._hasDeposit ? 0 : a._hasDeposit ? -1 : 1);
+        const hasDepositCmp: Comparator<any> = (a, b) => b._depositAmt - a._depositAmt;
 
         const apyHighCmp: Comparator<any> = (a, b) => b._apy - a._apy;
         const apyLowCmp: Comparator<any> = (a, b) => a._apy - b._apy;
@@ -90,60 +93,44 @@ const useEarnPage = () => {
             return a.token_type === "Token" ? -1 : 1;
         };
 
-        const crossChainCmp: Comparator<any> = (a, b) => (b.isCrossChain ? 1 : 0) - (a.isCrossChain ? 1 : 0);
-
         const platformCmp: Comparator<any> = (a, b) => a.originPlatform.localeCompare(b.originPlatform);
 
-        const priorityOrderCmp: Comparator<any> = (a, b) => b._priority - a._priority;
+        const priorityOrderCmp: Comparator<any> = (a, b) => a._priority - b._priority;
 
-        let comparator: Comparator<any>;
+        let comparator: Comparator<any>[] = [];
 
         switch (sortSelected) {
             case FarmSortOptions.APY_High_to_Low:
-                comparator = chainSort(priorityOrderCmp, hasDepositCmp, apyHighCmp);
+                comparator.push(priorityOrderCmp, hasDepositCmp, apyHighCmp);
                 break;
             case FarmSortOptions.APY_Low_to_High:
-                comparator = chainSort(priorityOrderCmp, hasDepositCmp, apyLowCmp);
+                comparator.push(priorityOrderCmp, hasDepositCmp, apyLowCmp);
                 break;
             case FarmSortOptions.Deposit_High_to_Low:
-                comparator = chainSort(priorityOrderCmp, hasDepositCmp, depositHighCmp);
+                comparator.push(priorityOrderCmp, hasDepositCmp, depositHighCmp);
                 break;
             case FarmSortOptions.Deposit_Low_to_High:
-                comparator = chainSort(priorityOrderCmp, hasDepositCmp, depositLowCmp);
+                comparator.push(priorityOrderCmp, hasDepositCmp, depositLowCmp);
                 break;
             case FarmSortOptions.New:
-                comparator = chainSort(priorityOrderCmp, newVaultCmp, hasDepositCmp, apyHighCmp);
+                comparator.push(priorityOrderCmp, newVaultCmp, hasDepositCmp, apyHighCmp);
                 break;
             default:
-                // Default: multi-priority chain
-                comparator = chainSort(
-                    priorityOrderCmp,
-                    hasDepositCmp,
-                    currentWeekRewardCmp,
-                    depositHighCmp,
-                    tokenTypeCmp,
-                    crossChainCmp,
-                    platformCmp
-                );
+                comparator.push(apyHighCmp, priorityOrderCmp, hasDepositCmp);
                 break;
         }
 
-        data.sort(comparator);
+        data = multiSort(data, comparator);
 
         return data;
     };
 
     const sortedFarms = useMemo(() => {
         return sortFn();
-    }, [sortSelected, selectedPlatform, farmDetails, farms, isFetched, externalChainId]);
-
-    const upcomingFarms = useMemo(() => {
-        return farms.filter((item) => item.isUpcoming);
-    }, [farms]);
+    }, [sortSelected, selectedPlatform, farmDetails, farms, isFetched, externalChainId, apys]);
 
     return {
         sortedFarms,
-        upcomingFarms,
         farms,
         apys,
         farmDetails,

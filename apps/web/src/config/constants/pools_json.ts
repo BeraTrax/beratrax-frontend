@@ -708,7 +708,6 @@ const pools_json: PoolDef[] = [
     },
     {
         id: 42,
-        priorityOrder: 1,
         chainId: CHAIN_ID.BERACHAIN,
         synthetic: true,
         platform: "Infrared",
@@ -834,6 +833,54 @@ const pools_json: PoolDef[] = [
         lp_address: "0x705Fc16BA5A1EB67051934F2Fb17EacaE660F6c7", // Asset LP address
         decimals: 18,
         vault_addr: "0xb5B652d6D4Ae3f61507Fe05052b224596c42D6C0", // Vault address
+        createdAt: 1746190811,
+        zap_symbol: "HONEY",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 45,
+        chainId: CHAIN_ID.BERACHAIN,
+        priorityOrder: 1,
+        isUpcoming: true,
+        platform: "BeraTrax",
+        token_type: "LP Token",
+        name: "TRAX",
+        url_name: "TRAX",
+        originPlatform: FarmOriginPlatform.BeraTrax,
+        platform_logo: "beratrax.png",
+        source: "https://hub.berachain.com/pools/0x705fc16ba5a1eb67051934f2fb17eacae660f6c70002000000000000000000d5/details/",
+        name1: "TRAX",
+        description:
+            "This vault is built on BeraPaw's TRAX vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform_alt: "BeraPaw logo",
+        total_apy: 550,
+        rewards_apy: 0,
+        pair1: "TRAX",
+        token1: "0x6969696969696969696969696969696969696969",
+        token2: "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe",
+        zapper_addr: "0x756a3C23De0b37a836369992B3F93358543Ce4C7",
+        alt1: "TRAX logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png",
+        rewards1: "beratrax.png",
+        rewards1_alt: "Beratrax logo",
+        isDeprecated: false,
+        isUpgradable: false,
+        isAutoCompounded: true,
+        lp_address: "0x705Fc16BA5A1EB67051934F2Fb17EacaE660F6c7", // Asset LP address
+        decimals: 18,
+        vault_addr: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8", // Vault address
         createdAt: 1746190811,
         zap_symbol: "HONEY",
         zap_currencies: [

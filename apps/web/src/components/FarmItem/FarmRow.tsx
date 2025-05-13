@@ -60,7 +60,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
         (parseInt(farmData?.withdrawableAmounts[0].amountDollar) > 0 ||
             Number(farmData?.withdrawableAmounts[0].amountDollar) > 0);
 
-    const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted;
+    const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted || farm.isUpcoming;
 
     if (farm.id === 16) {
         console.log(
@@ -157,6 +157,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                         {farm.synthetic && <FarmRowChip text="Synthetic Reward Vault" />}
                                         {hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
                                         {farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
+                                        {farm.isUpcoming && <FarmRowChip text="Coming Soon" />}
                                         {farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
                                     </div>
                                     <div className="flex gap-2 items-center">

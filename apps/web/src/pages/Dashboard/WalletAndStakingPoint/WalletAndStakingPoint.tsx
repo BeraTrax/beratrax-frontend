@@ -118,7 +118,7 @@ const CountdownToSale: React.FC = () => {
     }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
-        const targetDate = new Date(Date.UTC(2025, 4, 14, 8, 0, 0)); // Note: month is 0-based, so 4 = May
+        const targetDate = new Date(Date.UTC(2025, 4, 14, 14, 0, 0)); // Note: month is 0-based, so 4 = May
 
         const timer = setInterval(() => {
             const now = new Date();
@@ -147,11 +147,10 @@ const CountdownToSale: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#A0FF3A]/30 via-[#7ACC2E]/20 to-[#4D9922]/20 rounded-xl"></div>
                 <div className="relative z-10 flex flex-col items-center text-center">
                     <h3 className="text-gradientPrimary font-bold text-xl mb-2 font-sans drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
-                        Whitelist GTD Purchase Countdown
+                        GTD WL sale open now
                     </h3>
                     <p className="text-white font-medium mb-4 [text-shadow:_0_1px_2px_rgba(0,0,0,1)] max-w-2xl font-sans">
-                        The Ramen Gacha for $TRAX is live. Whitelisted users will have 6 hours to purchase. They'll get
-                        1 extra hour to claim leftovers. Any remaining spots will open to the community.
+                        Anyone who registered for whitelist can purchase now. The public round will start in:
                     </p>
 
                     <div className="flex gap-4 mb-6 justify-center">

@@ -118,7 +118,7 @@ const CountdownToSale: React.FC = () => {
     }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
-        const targetDate = new Date(Date.UTC(2025, 4, 15, 4, 0, 0)); // Note: month is 0-based, so 4 = May
+        const targetDate = new Date(Date.UTC(2025, 4, 15, 3, 0, 0)); // Note: month is 0-based, so 4 = May
 
         const timer = setInterval(() => {
             const now = new Date();

@@ -47,7 +47,7 @@ const tabOptions = {
 	Leaderboard: {
 		name: "Leaderboard",
 		tabBarLabel: "Leaderboard",
-		route: "/Stats",
+		route: "/Leaderboard",
 		activeIcon: require("@beratrax/core/src/assets/images/leaderboardactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg").default,
 	},
@@ -94,11 +94,13 @@ const RootLayout = () => {
 							<SafeAreaView style={{ flex: 1 }}>
 								<AppKit />
 								<View style={styles.container}>
-									<Stack
-										screenOptions={{
-											headerShown: false,
-										}}
-									/>
+									<View style={styles.contentContainer}>
+										<Stack
+											screenOptions={{
+												headerShown: false,
+											}}
+										/>
+									</View>
 									<BottomBar tabOptions={tabOptions} />
 								</View>
 							</SafeAreaView>
@@ -114,6 +116,12 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		position: "relative",
+	},
+	contentContainer: {
+		flex: 1,
+		paddingTop: 16,
+		paddingBottom: 16,
+		paddingHorizontal: 0, // No horizontal padding
 	},
 });
 

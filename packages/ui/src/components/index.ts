@@ -7,3 +7,4 @@ export * from "./ReferralLink";
 export * from "./Vaults";
 export * from "./TokenBalances";
 export * from "./Transactions/Transactions";
+export * from "./Leaderboard/Leaderboard";

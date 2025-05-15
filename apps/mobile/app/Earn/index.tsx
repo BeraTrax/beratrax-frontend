@@ -4,7 +4,7 @@ import { FarmView } from "@beratrax/ui";
 const Earn = () => {
 	return (
 		<ScrollView>
-			<View className="overflow-auto font-arame-mono bg-bgDark" id="dashboard">
+			<View className="overflow-auto font-arame-mono" id="dashboard">
 				<FarmView />
 			</View>
 		</ScrollView>

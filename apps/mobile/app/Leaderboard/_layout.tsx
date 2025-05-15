@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 export default function LeaderboardLayout() {
 	return (
-		<View className="flex-1 bg-bgSecondary">
+		<View className="flex-1">
 			<Leaderboard />
 		</View>
 	);

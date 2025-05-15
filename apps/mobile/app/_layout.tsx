@@ -91,16 +91,15 @@ const RootLayout = () => {
 				<WalletProvider walletConfig={mobileWalletConfig}>
 					<Provider store={store}>
 						<SafeAreaProvider>
-							<SafeAreaView style={{ flex: 1 }}>
+							<SafeAreaView style={styles.safeArea}>
 								<AppKit />
 								<View style={styles.container}>
-									<View style={styles.contentContainer}>
-										<Stack
-											screenOptions={{
-												headerShown: false,
-											}}
-										/>
-									</View>
+									<Stack
+										screenOptions={{
+											headerShown: false,
+											contentStyle: styles.stackContent,
+										}}
+									/>
 									<BottomBar tabOptions={tabOptions} />
 								</View>
 							</SafeAreaView>
@@ -113,15 +112,16 @@ const RootLayout = () => {
 };
 
 const styles = StyleSheet.create({
+	safeArea: {
+		flex: 1,
+		backgroundColor: "#151915",
+	},
 	container: {
 		flex: 1,
 		position: "relative",
 	},
-	contentContainer: {
-		flex: 1,
-		paddingTop: 16,
-		paddingBottom: 16,
-		paddingHorizontal: 0, // No horizontal padding
+	stackContent: {
+		backgroundColor: "#151915",
 	},
 });
 

@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import WalletProvider from "@beratrax/core/src/context/WalletProvider";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import store from "@beratrax/core/src/state";
@@ -47,7 +47,7 @@ const tabOptions = {
 	Leaderboard: {
 		name: "Leaderboard",
 		tabBarLabel: "Leaderboard",
-		route: "/Stats",
+		route: "/Leaderboard",
 		activeIcon: require("@beratrax/core/src/assets/images/leaderboardactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg").default,
 	},
@@ -91,12 +91,13 @@ const RootLayout = () => {
 				<WalletProvider walletConfig={mobileWalletConfig}>
 					<Provider store={store}>
 						<SafeAreaProvider>
-							<SafeAreaView style={{ flex: 1 }}>
+							<SafeAreaView className="flex-1 bg-bgSecondary">
 								<AppKit />
-								<View style={styles.container}>
+								<View className="flex-1 relative">
 									<Stack
 										screenOptions={{
 											headerShown: false,
+											contentStyle: { backgroundColor: "#151915" },
 										}}
 									/>
 									<BottomBar tabOptions={tabOptions} />
@@ -109,12 +110,5 @@ const RootLayout = () => {
 		</WagmiProvider>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		position: "relative",
-	},
-});
 
 export default RootLayout;

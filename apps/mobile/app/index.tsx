@@ -9,7 +9,7 @@ const Dashboard = () => {
 
 	return (
 		<ScrollView>
-			<View className="overflow-auto font-arame-mono bg-bgDark" id="dashboard">
+			<View className="overflow-auto font-arame-mono" id="dashboard">
 				<WalletAndEarnings connectWallet={() => {}} />
 				<View className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 					{currentWallet ? (

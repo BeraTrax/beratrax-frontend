@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import WalletProvider from "@beratrax/core/src/context/WalletProvider";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import store from "@beratrax/core/src/state";
@@ -91,13 +91,13 @@ const RootLayout = () => {
 				<WalletProvider walletConfig={mobileWalletConfig}>
 					<Provider store={store}>
 						<SafeAreaProvider>
-							<SafeAreaView style={styles.safeArea}>
+							<SafeAreaView className="flex-1 bg-bgSecondary">
 								<AppKit />
-								<View style={styles.container}>
+								<View className="flex-1 relative">
 									<Stack
 										screenOptions={{
 											headerShown: false,
-											contentStyle: styles.stackContent,
+											contentStyle: { backgroundColor: "#151915" },
 										}}
 									/>
 									<BottomBar tabOptions={tabOptions} />
@@ -110,19 +110,5 @@ const RootLayout = () => {
 		</WagmiProvider>
 	);
 };
-
-const styles = StyleSheet.create({
-	safeArea: {
-		flex: 1,
-		backgroundColor: "#151915",
-	},
-	container: {
-		flex: 1,
-		position: "relative",
-	},
-	stackContent: {
-		backgroundColor: "#151915",
-	},
-});
 
 export default RootLayout;

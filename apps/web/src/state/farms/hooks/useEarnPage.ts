@@ -116,7 +116,7 @@ const useEarnPage = () => {
                 comparator.push(priorityOrderCmp, newVaultCmp, hasDepositCmp, apyHighCmp);
                 break;
             default:
-                comparator.push(apyHighCmp, priorityOrderCmp, hasDepositCmp);
+                comparator.push(apyHighCmp, priorityOrderCmp, hasDepositCmp, newVaultCmp);
                 break;
         }
 

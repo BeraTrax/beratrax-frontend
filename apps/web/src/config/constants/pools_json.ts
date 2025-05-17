@@ -2,6 +2,7 @@ import { CHAIN_ID, FarmOriginPlatform } from "src/types/enums";
 import { Address, zeroAddress } from "viem";
 
 export interface PoolDef {
+    apyBasedEarnings?: boolean;
     synthetic?: boolean;
     isUpgradable: boolean;
     isDeprecated?: boolean;
@@ -756,6 +757,7 @@ const pools_json: PoolDef[] = [
     {
         id: 43,
         chainId: CHAIN_ID.BERACHAIN,
+        apyBasedEarnings: true,
         platform: "BeraPaw",
         token_type: "LP Token",
         name: "stLBGT",
@@ -995,6 +997,7 @@ const pools_json: PoolDef[] = [
     {
         id: 48,
         chainId: CHAIN_ID.BERACHAIN,
+        apyBasedEarnings: true,
         platform: "Bearn",
         token_type: "LP Token",
         name: "styBERA",
@@ -1040,6 +1043,7 @@ const pools_json: PoolDef[] = [
     {
         id: 49,
         chainId: CHAIN_ID.BERACHAIN,
+        apyBasedEarnings: true,
         platform: "Bearn",
         token_type: "LP Token",
         name: "styHONEY",

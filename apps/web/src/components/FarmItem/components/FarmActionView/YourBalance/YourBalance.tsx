@@ -99,7 +99,7 @@ const TokenEarning = ({
                                 }
                             })()}{" "}
                             {changeInAssetsValue > 0
-                                ? `( ${customCommify(Number(changeInAssetsValue), {
+                                ? `(+${customCommify(Number(changeInAssetsValue), {
                                       minimumFractionDigits: 2,
                                       maximumFractionDigits: 5,
                                   })} ${farm.name})`
@@ -118,7 +118,7 @@ const TokenEarning = ({
                             $
                             {customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                         </h3>
-                        {farm.id === 43 ? null : (
+                        {farm.apyBasedEarnings ? null : (
                             <div className="group relative">
                                 <div className="h-4 w-4 rounded-full bg-textSecondary/20 flex items-center justify-center cursor-help">
                                     <span className="text-textSecondary text-sm">?</span>
@@ -127,6 +127,7 @@ const TokenEarning = ({
                                     <div className="flex flex-col gap-1">
                                         <div className="flex items-center justify-center gap-2">
                                             <span className="text-green-400">
+                                                +
                                                 {customCommify(
                                                     Number(
                                                         toEth(
@@ -315,7 +316,8 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                 farm.originPlatform === FarmOriginPlatform.Steer ||
                 farm.originPlatform === FarmOriginPlatform.Kodiak ||
                 farm.originPlatform === FarmOriginPlatform.Burrbear ||
-                farm.originPlatform === FarmOriginPlatform.BeraPaw) &&
+                farm.originPlatform === FarmOriginPlatform.BeraPaw ||
+                farm.originPlatform === FarmOriginPlatform.Bearn) &&
             !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}

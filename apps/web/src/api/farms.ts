@@ -181,12 +181,17 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         // Concatenate the arrays
         const combinedTransactions = [...depositsWithType, ...withdrawsWithType];
 
+        // TODO: standardize functions for calculating earnings based on asset increase,
+        // exchange swap fee and apy based earnings instead of calculating for each platform separately
+
         const burrbearEarnings = await getEarningsForBurrbear(combinedTransactions, client, balances);
         const infraredEarnings = await getEarningsForInfrared(combinedTransactions, client, balances);
         const steerEarnings = await getEarningsForSteer(combinedTransactions, client, balances);
         const kodiakEarnings = await getEarningsForKodiak(combinedTransactions, client, balances);
-        const iberaEarnings = await calculateIBeraEarnings(combinedTransactions);
-        const berapawEarnings = await calculateBerapawEarnings(combinedTransactions);
+        const berapawEarnings = await getEarningsForBeraPaw(combinedTransactions, client, balances);
+        const bearnEarnings = await getEarningsForBearn(combinedTransactions, client, balances);
+        const iberaEarnings = await getIBeraEarnings(combinedTransactions);
+        const apyBasedEarnings = await getApyBasedEarnings(combinedTransactions);
         return [
             ...infraredEarnings,
             ...steerEarnings,
@@ -194,6 +199,8 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
             ...burrbearEarnings,
             iberaEarnings,
             ...berapawEarnings,
+            ...apyBasedEarnings,
+            ...bearnEarnings,
         ];
     } catch (err: any) {
         console.error(err);
@@ -746,7 +753,7 @@ const getEarningsForBurrbear = async (
     }
 };
 
-export const calculateIBeraEarnings = async (combinedTransactions: any): Promise<VaultEarnings> => {
+const getIBeraEarnings = async (combinedTransactions: any): Promise<VaultEarnings> => {
     try {
         const iberaPool = pools_json.find((pool) => pool.id === 42);
         if (!iberaPool) {
@@ -828,11 +835,175 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
     }
 };
 
-export const calculateBerapawEarnings = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+const getEarningsForBeraPaw = async (
+    combinedTransactions: any,
+    client: PublicClient,
+    balances: any
+): Promise<VaultEarnings[]> => {
     try {
-        const berapawPools = pools_json.filter(
-            (pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw && pool.secondary_platform === undefined
+        const infraredPools = pools_json
+            .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
+            .filter((pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw && pool.isAutoCompounded)
+            .map((pool) => ({
+                vault_addr: pool.vault_addr,
+                lp_addr: pool.lp_address,
+                chainId: pool.chainId,
+                farmId: pool.id,
+            }));
+
+        const earnings = await Promise.all(
+            infraredPools.map(async (pool) => {
+                const filteredTransactions = combinedTransactions.filter(
+                    (transaction: any) => pool.farmId.toString() === transaction.tokenId
+                );
+
+                // Sort the filtered transactions by blockTimestamp
+                const sortedTransactions = filteredTransactions.sort(
+                    (a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp)
+                );
+
+                // If no transactions, return zero earnings
+                if (sortedTransactions.length === 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                    };
+                }
+
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
+
+                // Get only the last transaction
+                const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+                const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
+
+                const finalPositionAssets = await calculateFinalPositionAssets({
+                    vault_addr: pool.vault_addr!,
+                    client,
+                    balances,
+                    chainId: pool.chainId,
+                });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
+
+                // If user has no balance after the last transaction, return zero earnings
+                if (changeInAssets <= 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
+                    };
+                }
+
+                return {
+                    tokenId: pool.farmId.toString(),
+                    earnings0: "0",
+                    token0: pool.lp_addr,
+                    changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
+                };
+            })
         );
+
+        return earnings;
+    } catch (err: any) {
+        console.error(err);
+        return [];
+    }
+};
+
+const getEarningsForBearn = async (
+    combinedTransactions: any,
+    client: PublicClient,
+    balances: any
+): Promise<VaultEarnings[]> => {
+    try {
+        const infraredPools = pools_json
+            .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
+            .filter((pool) => pool.originPlatform === FarmOriginPlatform.Bearn && pool.isAutoCompounded)
+            .map((pool) => ({
+                vault_addr: pool.vault_addr,
+                lp_addr: pool.lp_address,
+                chainId: pool.chainId,
+                farmId: pool.id,
+            }));
+
+        const earnings = await Promise.all(
+            infraredPools.map(async (pool) => {
+                const filteredTransactions = combinedTransactions.filter(
+                    (transaction: any) => pool.farmId.toString() === transaction.tokenId
+                );
+
+                // Sort the filtered transactions by blockTimestamp
+                const sortedTransactions = filteredTransactions.sort(
+                    (a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp)
+                );
+
+                // If no transactions, return zero earnings
+                if (sortedTransactions.length === 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                    };
+                }
+
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
+
+                // Get only the last transaction
+                const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+                const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
+
+                const finalPositionAssets = await calculateFinalPositionAssets({
+                    vault_addr: pool.vault_addr!,
+                    client,
+                    balances,
+                    chainId: pool.chainId,
+                });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
+
+                // If user has no balance after the last transaction, return zero earnings
+                if (changeInAssets <= 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
+                    };
+                }
+
+                return {
+                    tokenId: pool.farmId.toString(),
+                    earnings0: "0",
+                    token0: pool.lp_addr,
+                    changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
+                };
+            })
+        );
+
+        return earnings;
+    } catch (err: any) {
+        console.error(err);
+        return [];
+    }
+};
+
+const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+    try {
+        const berapawPools = pools_json.filter((pool) => pool.apyBasedEarnings);
 
         const earnings = await Promise.all(
             berapawPools.map(async (pool) => {

@@ -281,6 +281,17 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                     <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
                                 </tr>
                             )}
+                            {originPlatform === FarmOriginPlatform.Bearn && (
+                                <tr className="border-b border-gray-700">
+                                    <td className="p-4 text-textWhite font-medium">
+                                        <div className="flex items-center gap-2">
+                                            <img src="/bearn.png" alt="Bearn" className="w-5 h-5" />
+                                            Boints
+                                        </div>
+                                    </td>
+                                    <td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+                                </tr>
+                            )}
                             {originPlatform === FarmOriginPlatform.Infrared && (
                                 <tr className="border-b border-gray-700">
                                     <td className="p-4 text-textWhite font-medium">

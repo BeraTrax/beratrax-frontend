@@ -347,8 +347,6 @@ export const WalletAndStakingPoint: React.FC = () => {
                 <div className="h-[100vh] w-full bg-bgDark"></div>
             ) : (
                 <div className="p-5">
-                    {/* <TokenSale /> */}
-                    <CountdownToSale />
                     <div className="bg-bgDark">
                         {currentWallet ? (
                             <div className="flex items-center justify-between p-4">

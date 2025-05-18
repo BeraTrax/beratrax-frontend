@@ -854,7 +854,6 @@ const pools_json: PoolDef[] = [
         id: 45,
         chainId: CHAIN_ID.BERACHAIN,
         priorityOrder: 1,
-        isUpcoming: true,
         platform: "BeraTrax",
         token_type: "LP Token",
         name: "TRAX",
@@ -864,15 +863,14 @@ const pools_json: PoolDef[] = [
         source: "https://hub.berachain.com/pools/0x705fc16ba5a1eb67051934f2fb17eacae660f6c70002000000000000000000d5/details/",
         name1: "TRAX",
         description:
-            "This vault is built on BeraPaw's TRAX vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
+            "This vault is built on Beratrax's TRAX Staking Vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
         stableCoin: false,
         platform_alt: "BeraPaw logo",
         total_apy: 550,
         rewards_apy: 0,
         pair1: "TRAX",
-        token1: "0x6969696969696969696969696969696969696969",
-        token2: "0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe",
-        zapper_addr: "0x756a3C23De0b37a836369992B3F93358543Ce4C7",
+        token1: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8",
+        zapper_addr: "0x58bfBF62262b914AB587A4bD4e2946C46eD9145c",
         alt1: "TRAX logo",
         logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png",
         rewards1: "beratrax.png",
@@ -880,10 +878,10 @@ const pools_json: PoolDef[] = [
         isDeprecated: false,
         isUpgradable: false,
         isAutoCompounded: true,
-        lp_address: "0x705Fc16BA5A1EB67051934F2Fb17EacaE660F6c7", // Asset LP address
+        lp_address: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8", // Asset LP address
         decimals: 18,
-        vault_addr: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8", // Vault address
-        createdAt: 1746190811,
+        vault_addr: "0x4bcd2DdfE6169642240A669DC9E9E09cCce08d1d", // Vault address
+        createdAt: 1747593560,
         zap_symbol: "HONEY",
         zap_currencies: [
             {

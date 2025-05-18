@@ -317,7 +317,8 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
                 farm.originPlatform === FarmOriginPlatform.Kodiak ||
                 farm.originPlatform === FarmOriginPlatform.Burrbear ||
                 farm.originPlatform === FarmOriginPlatform.BeraPaw ||
-                farm.originPlatform === FarmOriginPlatform.Bearn) &&
+                farm.originPlatform === FarmOriginPlatform.Bearn ||
+                farm.originPlatform === FarmOriginPlatform.BeraTrax) &&
             !farm.isDeprecated ? (
                 <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
                     {renderEarningsSection()}

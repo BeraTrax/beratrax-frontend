@@ -1,13 +1,12 @@
 /* global __DEV__ */
 import { Platform } from "react-native";
-// import Clipboard from "@react-native-clipboard/clipboard";
+import * as Clipboard from "expo-clipboard";
 
-export const copyToClipboard = (text: string, cb: Function | null = null) => {
+export const copyToClipboard = async (text: string, cb: Function | null = null) => {
 	if (Platform.OS === "web") {
 		navigator.clipboard.writeText(text);
 	} else {
-		// Clipboard.setString(text);
-		console.log("copyToClipboard", text);
+		await Clipboard.setStringAsync(text);
 	}
 	setTimeout(() => {
 		console.log("copyToClipboard cb");

@@ -5,7 +5,7 @@ import { View, Text } from "react-native";
 import useAccountData from "@beratrax/core/src/state/account/useAccountData";
 import { CopyIcon } from "../icons/Copy";
 import { TwitterIcon } from "../icons/Twitter";
-import { Platform } from "react-native";
+import { Platform, Linking } from "react-native";
 
 interface IProps {}
 
@@ -28,7 +28,7 @@ export const ReferralLink: React.FC<IProps> = () => {
 	const shareOnTwitter = () => {
 		const text = "Beras, follow the trax to the #BeraTrax dapp! Use my referral link to one-click stake, and start earning BTX points!";
 		const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(referralLink || "")}`;
-		window.open(url, "_blank");
+		Linking.openURL(url);
 	};
 
 	if (currentWallet && referralLink)
@@ -55,7 +55,7 @@ export const ReferralLink: React.FC<IProps> = () => {
 							<View className="flex flex-row items-center">
 								<TwitterIcon
 									onPress={shareOnTwitter}
-									className={`icon-tabler-brand-x text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity ${copied ? "text-textPrimary" : ""}`}
+									className={`icon-tabler-brand-x text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity`}
 								/>
 								<CopyIcon
 									onPress={copy}

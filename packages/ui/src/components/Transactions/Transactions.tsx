@@ -270,7 +270,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 
 	return (
 		<>
-			<View className="rounded-2xl transition-all duration-100 ease-in-out px-4 py-6 my-1">
+			<View className="rounded-2xl transition-all duration-100 ease-in-out bg-bgDark px-4 py-6 my-1">
 				<Pressable className="flex flex-row items-center gap-4" onPress={() => setOpen(!open)}>
 					{/* Chevron Icon to open and close the transaction details */}
 					<View
@@ -430,7 +430,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 				}
 			}}
 		>
-			<Text className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem]">Transactions</Text>
+			<Text className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem] font-arame-mono">Transactions</Text>
 			<View className="flex-1 overflow-y-auto">
 				<View className="flex flex-col gap-[0.7rem]">
 					{transactions.map((item, i) => (

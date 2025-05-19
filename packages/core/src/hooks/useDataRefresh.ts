@@ -8,6 +8,7 @@ import { useFarmApys } from "../state/farms/hooks/useFarmApy";
 import useTokens from "../state/tokens/useTokens";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { AppState, Platform } from "react-native";
+import { useRefCodeLoaded } from "../state/account/useAccountData";
 
 export const useDataRefresh = () => {
 	const { reloadApys } = useFarmApys();
@@ -18,6 +19,7 @@ export const useDataRefresh = () => {
 	const dispatch = useAppDispatch();
 	const { isConnected } = useNetInfo();
 	const [appState, setAppState] = useState(AppState.currentState);
+	useRefCodeLoaded();
 
 	const isHidden = Platform.OS === "web" ? document.hidden : appState !== "active";
 

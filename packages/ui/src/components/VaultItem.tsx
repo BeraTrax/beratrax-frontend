@@ -1,17 +1,72 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState, useEffect } from "react";
 import { View, Text, Pressable, ActivityIndicator, Image } from "react-native";
-import { useTrax } from "@beratrax/core/src/hooks";
+import { useTokens, useTrax, useWallet } from "@beratrax/core/src/hooks";
+import { awaitTransaction, customCommify, formatCurrency, toEth, toFixedFloor } from "@beratrax/core/src/utils/common";
+import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
+import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
+import { useNavigate } from "react-router-dom";
+import { Address, encodeFunctionData, formatEther, getAddress } from "viem";
+import rewardVaultAbi from "@beratrax/core/src/assets/abis/rewardVaultAbi";
+import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@beratrax/core/src/api/notify";
+import { approveErc20 } from "@beratrax/core/src/api/token";
+import { Vault } from "@beratrax/core/src/types";
+import FarmRowChip from "./FarmItem/components/FarmRowChip/FarmRowChip";
+import { RoutesPaths } from "@beratrax/core/src/config/constants";
+import { useRouter } from "expo-router";
 
 interface VaultItemProps {
-	vault: any;
+	vault: Vault;
 	onPress?: () => void;
 }
 
 const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
+	const [isDepositing, setIsDepositing] = useState(false);
+	const [vaultBalance, setVaultBalance] = useState(BigInt(0));
+	const [rewards, setRewards] = useState(0n);
+	const [isClaiming, setIsClaiming] = useState(false);
+	// const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
+	const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
+	const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
+	const { data: txHistory } = useFarmTransactions(vault.id, 1);
+	const lastTransaction = useMemo(() => {
+		if (!txHistory) return null;
+		return txHistory[0];
+	}, [txHistory]);
+	const { balances, prices, decimals, reloadBalances } = useTokens();
+
+	const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
+	const currentVaultEarningsUsd = useMemo(() => {
+		if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+
+		return (
+			Number(
+				toEth(
+					BigInt(currentVaultEarnings?.earnings0 || 0n),
+					decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+				)
+			) *
+				prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
+			(currentVaultEarnings?.token1
+				? Number(
+						toEth(
+							BigInt(currentVaultEarnings?.earnings1 || 0n),
+							decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+						)
+					) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+				: 0)
+		);
+	}, [isVaultEarningsFirstLoad, vaultEarnings]);
+	const changeInAssets = currentVaultEarnings?.changeInAssets;
+	const changeInAssetsStr = changeInAssets === "0" ? "0" : changeInAssets?.toString();
+	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr || 0), decimals[vault.chainId][vault.lp_address as Address]));
+	const changeInAssetsValueUsd = changeInAssetsValue * (prices[vault.chainId][vault.lp_address] || 0);
+	const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
+
+	const router = useRouter();
 	const { getTraxApy } = useTrax();
-	const { apys } = vault || {};
-	const apy = apys?.apy;
 	const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
+	const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
+	const apy = apys?.apy + apys?.pointsApr;
 
 	const logo1Source = vault.logo1 ? { uri: vault.logo1 } : undefined;
 	const logo2Source = vault.logo2 ? { uri: vault.logo2 } : undefined;
@@ -19,14 +74,159 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 	const platformLogoSource = vault.platform_logo ? { uri: vault.platform_logo } : undefined;
 	const secondaryPlatformLogoSource = vault.secondary_platform_logo ? { uri: vault.secondary_platform_logo } : undefined;
 
-	const userBalance = vault.userBalance || vault.userVaultBalance || 0;
-	const priceOfSingleToken = vault.priceOfSingleToken || 1;
+	useEffect(() => {
+		const getVaultBalance = async () => {
+			try {
+				const client = await getClients(vault.chainId);
+				const vaultBalance =
+					BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
+					BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
+				if (!vault.rewardVault) return;
+				const rewards = (await client.public.readContract({
+					address: getAddress(vault.rewardVault!),
+					abi: rewardVaultAbi,
+					functionName: "earned",
+					args: [currentWallet!],
+				})) as bigint;
+				setRewards(rewards);
+				setVaultBalance(vaultBalance);
+			} catch (e) {
+				console.log(e);
+			}
+		};
+		getVaultBalance();
+	}, [isDepositing, isClaiming]);
 
-	const formattedUserValue = userBalance && priceOfSingleToken ? (userBalance * priceOfSingleToken).toFixed(2) : "0.00";
+	const claimRewards = async (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
+		let id: string | undefined = undefined;
+		try {
+			setIsClaiming(true);
+			id = notifyLoading({
+				title: `Claiming rewards...`,
+				message: `Claiming rewards...`,
+			});
+
+			const client = await getClients(vault.chainId);
+			const tx = await awaitTransaction(
+				client.wallet.sendTransaction({
+					to: vault.rewardVault!,
+					data: encodeFunctionData({
+						abi: rewardVaultAbi,
+						functionName: "getReward",
+						args: [currentWallet!],
+					}),
+				}),
+				client
+			);
+
+			await reloadBalances();
+			if (!tx.status) {
+				throw new Error(tx.error);
+			} else {
+				id && dismissNotify(id);
+				notifySuccess({
+					title: "Claimed successfully",
+					message: `Claimed rewards`,
+				});
+			}
+		} catch (e: any) {
+			console.log(e);
+			id && dismissNotify(id);
+			notifyError({
+				title: "Error",
+				message: e.message,
+			});
+		} finally {
+			setIsClaiming(false);
+		}
+	};
+
+	const deposit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		e.stopPropagation();
+		let id: string | undefined = undefined;
+		try {
+			setIsDepositing(true);
+			id = notifyLoading({
+				title: `Depositing to ${vault.name} reward vault...`,
+				message: `Depositing tokens to reward vault...`,
+			});
+
+			const client = await getClients(vault.chainId);
+			if (
+				!(
+					await approveErc20(
+						vault.vault_addr,
+						vault.rewardVault!,
+						vaultBalance,
+						currentWallet!,
+						vault.chainId,
+						getPublicClient,
+						getWalletClient
+					)
+				).status
+			)
+				throw new Error("Error approving vault!");
+
+			const tx = await awaitTransaction(
+				client.wallet.sendTransaction({
+					to: vault.rewardVault,
+					data: encodeFunctionData({
+						abi: rewardVaultAbi,
+						functionName: "stake",
+						args: [BigInt(vaultBalance)],
+					}),
+				}),
+				client
+			);
+			await reloadFarmData();
+			if (!tx.status) {
+				throw new Error(tx.error);
+			} else {
+				id && dismissNotify(id);
+				notifySuccess({
+					title: "Deposited successfully",
+					message: `Deposited to ${vault.name} reward vault`,
+				});
+			}
+		} catch (e: any) {
+			console.log(e);
+			id && dismissNotify(id);
+			notifyError({
+				title: "Error",
+				message: e.message,
+			});
+		} finally {
+			setIsDepositing(false);
+		}
+	};
+
+	const handleClick = (e: any) => {
+		// Check if router is initialized properly
+		if (router) {
+			try {
+				router.push({
+					pathname: "/Earn/[vaultAddr]",
+					params: { vaultAddr: vault.vault_addr },
+				});
+			} catch (error) {
+				// Fallback approach - using window.location for web context
+				window.location.href = `/Earn/${vault.vault_addr}`;
+			}
+		} else {
+			// If router is undefined, use direct navigation
+			window.location.href = `/Earn/${vault.vault_addr}`;
+		}
+	};
 
 	return (
 		<Pressable
-			onPress={onPress}
+			onPress={(e) => {
+				e.stopPropagation();
+				handleClick(e);
+			}}
 			className={`  
                   cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
                   relative transition-all duration-300 ease-in-out hover:translate-y-[-4px]
@@ -101,9 +301,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 				{/* Platform */}
 				<View className="flex-col gap-1">
 					<View className="flex flex-row items-center gap-2 mb-2 justify-end">
-						<View className="bg-textPrimary text-gradientSecondary relative p-[2px] px-2 rounded-lg text-sm font-bold">
-							<Text>{[vault?.platform, vault?.secondary_platform].filter(Boolean).join(" | ")}</Text>
-						</View>
+						<FarmRowChip text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")} color="invert" />
 
 						{/* Platform Logos */}
 						<View className="flex flex-row items-center">
@@ -140,68 +338,99 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 						</View>
 					</View>
 
-					{vault.vaultBalance > 0 && vault.deposit && (
+					{vaultBalance > 0 && deposit && (
 						<Pressable
 							className={`px-4 py-2 rounded-md flex items-center justify-center gap-2 ${
-								vault.isDepositing ? "bg-buttonDisabled" : "bg-buttonPrimary"
+								isDepositing ? "bg-buttonDisabled" : "bg-buttonPrimary"
 							}`}
 							onPress={(e) => {
-								e.stopPropagation();
-								vault.deposit && vault.deposit();
+								deposit;
 							}}
-							disabled={vault.isDepositing}
+							disabled={isDepositing}
 						>
-							{vault.isDepositing && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
-							<Text className="text-bgDark text-xs font-medium">{vault.isDepositing ? "Depositing..." : "Deposit to rewards vault"}</Text>
+							{isDepositing && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
+							<Text className="text-bgDark text-xs font-medium">{isDepositing ? "Depositing..." : "Deposit to rewards vault"}</Text>
 						</Pressable>
 					)}
 				</View>
 			</View>
 
-			<View className="flex flex-row justify-between">
-				{/* Your Stake section */}
-				<View className="flex-1 border-r border-r-bgPrimary">
-					<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">Your Stake</Text>
-					<Text className="text-textWhite text-lg font-league-spartan">${formattedUserValue}</Text>
+			<View className="flex flex-row justify-between gap-4">
+				{/* Earnings*/}
+				<View className="border-r border-bgPrimary pr-4 flex-1 basis-0">
+					<Text className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+						<Text className="flex items-center gap-2">Earnings</Text>
+					</Text>
+					{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+						<View className="w-full">
+							<Text className="text-green-500 text-lg font-league-spartan leading-5">
+								{`$${customCommify(totalEarningsUsd, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 5,
+								})}`}
+							</Text>
+							{lastTransaction?.date && typeof lastTransaction.date === "string" && (
+								<Text className="text-textSecondary text-sm">
+									In {Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24))}{" "}
+									{Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)) === 1 ? "day" : "days"}
+								</Text>
+							)}
+						</View>
+					) : (
+						<View className="w-full">
+							<View className="h-5 w-20 bg-gray-200 rounded animate-pulse mb-2" />
+							<View className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+						</View>
+					)}
 				</View>
 
 				{/* APY section */}
-				<View className={`flex-1 ml-4 ${estimateTrax && Number(estimateTrax) > 0 ? "border-r border-r-bgPrimary" : ""}`}>
+				<View className={`flex-1 basis-0 px-4 ${estimateTrax ? "border-r border-r-bgPrimary" : ""}`}>
 					<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">APY</Text>
 					<Text className="text-textWhite text-lg font-league-spartan">
-						{vault.isCurrentWeeksRewardsVault ? "??? %" : !apy ? "--" : apy < 0.01 ? `${apy.toPrecision(2)}%` : `${apy.toFixed(2)}%`}
+						{vault.isCurrentWeeksRewardsVault
+							? "??? %"
+							: toFixedFloor(apy || 0, 2) == 0
+								? "--"
+								: `${customCommify(apy || 0, { minimumFractionDigits: 0 })}%`}{" "}
 					</Text>
 				</View>
 
 				{/* BTX Points section */}
-				{estimateTrax && Number(estimateTrax) > 0 ? (
-					<View className="flex-1 ml-4">
+				{estimateTrax && (
+					<View className="flex-1 basis-0 pl-4">
 						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">BTX Points</Text>
 						<Text className="text-textWhite text-lg font-league-spartan">{(Number(estimateTrax) / 365.25).toFixed(2)}/day</Text>
 					</View>
-				) : null}
+				)}
+			</View>
+
+			<View className="flex justify-end items-end gap-3">
+				<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+					<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
+					<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
+				</View>
 			</View>
 
 			{/* Rewards section*/}
-			{vault.rewards > 0 && (
+			{rewards > 0 && (
 				<View className="mt-3 pt-3 border-t border-t-bgPrimary flex flex-row justify-between items-center">
 					<View>
 						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">Your Rewards</Text>
-						<Text className="text-textWhite text-lg font-league-spartan">{vault.formattedRewards || "0.00"} BGT</Text>
+						<Text className="text-textWhite text-lg font-league-spartan">{formatCurrency(formatEther(rewards))} BGT</Text>
 					</View>
 
 					<Pressable
 						className={`px-2 py-1 rounded-md flex items-center justify-center gap-2 ${
-							vault.isClaiming ? "bg-buttonDisabled" : "bg-buttonPrimary"
+							isClaiming ? "bg-buttonDisabled" : "bg-buttonPrimary"
 						}`}
 						onPress={(e) => {
-							e.stopPropagation();
-							vault.claimRewards && vault.claimRewards();
+							claimRewards;
 						}}
-						disabled={vault.isClaiming}
+						disabled={isClaiming}
 					>
-						{vault.isClaiming && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
-						<Text className="text-bgDark text-sm font-medium">{vault.isClaiming ? "Claiming..." : "Claim Rewards"}</Text>
+						{isClaiming && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
+						<Text className="text-bgDark text-sm font-medium">{isClaiming ? "Claiming..." : "Claim Rewards"}</Text>
 					</Pressable>
 				</View>
 			)}

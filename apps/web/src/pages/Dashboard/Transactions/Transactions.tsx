@@ -387,7 +387,9 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: n
 			<p className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem]">Transactions</p>
 			<div className="flex-1 overflow-y-auto">
 				<div className="flex flex-col gap-[0.7rem]">
-					{transactions?.map((item, i) => <Row tx={item} key={i} />)}
+					{transactions?.map((item, i) => (
+						<Row tx={item} key={i} />
+					))}
 					{isLoading && (
 						<div className="center">
 							<div

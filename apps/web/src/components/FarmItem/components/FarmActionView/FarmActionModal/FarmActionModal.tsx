@@ -125,6 +125,7 @@ const QuickDepositButtons = memo(
 );
 
 const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
+    const dispatch = useAppDispatch();
     const { disableZapWarning } = useAppSelector((state) => state.account);
     const [confirmDeposit, setConfirmDeposit] = useState<boolean>();
     const { farmDetails, vaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
@@ -142,6 +143,14 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     const farmData = farmDetails[farm.id];
     const { getClients } = useWallet();
     const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
+    
+    // Set default currency symbol to TRAX for farm id 45
+    useEffect(() => {
+        // Check if the farm id is 45 and set currency symbol to TRAX
+        if (farm.id === 45 && currencySymbol !== "TRAX") {
+            dispatch(setFarmDetailInputOptions({ currencySymbol: "TRAX" }));
+        }
+    }, []);
 
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(farm.id));
@@ -264,8 +273,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             handleConfirm();
         }
     };
-
-    const dispatch = useAppDispatch();
 
     const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
         dispatch(setFarmDetailInputOptions(opt));

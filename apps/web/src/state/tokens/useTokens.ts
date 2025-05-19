@@ -133,6 +133,12 @@ const useTokens = () => {
 
         const lpTokens: Token[] = lpAddresses.map(({ address, decimals }) => {
             const farm = farms.find((farm) => getAddress(farm.lp_address) === address)!;
+            
+            // Skip if it is a single token LP
+            if (!farm.token2) {
+                return null;
+            }
+            
             let obj: Token = {
                 address: address,
                 decimals: decimals,
@@ -146,7 +152,7 @@ const useTokens = () => {
                 networkId: defaultChainId,
             };
             return obj;
-        });
+        }).filter(Boolean) as Token[];
 
         // Native coins for each chain
         Object.entries(balances).map(([chainId, value]) => {

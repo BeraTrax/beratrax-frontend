@@ -143,14 +143,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
     const farmData = farmDetails[farm.id];
     const { getClients } = useWallet();
     const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
-    
-    // Set default currency symbol to TRAX for farm id 45
-    useEffect(() => {
-        // Check if the farm id is 45 and set currency symbol to TRAX
-        if (farm.id === 45 && currencySymbol !== "TRAX") {
-            dispatch(setFarmDetailInputOptions({ currencySymbol: "TRAX" }));
-        }
-    }, []);
 
     const currentVaultEarningsUsd = useMemo(() => {
         const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(farm.id));

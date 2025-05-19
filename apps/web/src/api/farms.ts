@@ -191,6 +191,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
         const berapawEarnings = await getEarningsForBeraPaw(combinedTransactions, client, balances);
         const bearnEarnings = await getEarningsForBearn(combinedTransactions, client, balances);
         const iberaEarnings = await getIBeraEarnings(combinedTransactions);
+        const beratraxEarnings = await getEarningsForBeraTrax(combinedTransactions, client, balances);
         const apyBasedEarnings = await getApyBasedEarnings(combinedTransactions);
         return [
             ...infraredEarnings,
@@ -201,6 +202,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
             ...berapawEarnings,
             ...apyBasedEarnings,
             ...bearnEarnings,
+            ...beratraxEarnings,
         ];
     } catch (err: any) {
         console.error(err);
@@ -936,6 +938,89 @@ const getEarningsForBearn = async (
 
         const earnings = await Promise.all(
             infraredPools.map(async (pool) => {
+                const filteredTransactions = combinedTransactions.filter(
+                    (transaction: any) => pool.farmId.toString() === transaction.tokenId
+                );
+
+                // Sort the filtered transactions by blockTimestamp
+                const sortedTransactions = filteredTransactions.sort(
+                    (a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp)
+                );
+
+                // If no transactions, return zero earnings
+                if (sortedTransactions.length === 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                    };
+                }
+
+                const lifetimeEarnings = await calculateLifetimeLpEarnings(
+                    sortedTransactions,
+                    pool.vault_addr,
+                    client,
+                    balances
+                );
+
+                // Get only the last transaction
+                const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+                const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
+
+                const finalPositionAssets = await calculateFinalPositionAssets({
+                    vault_addr: pool.vault_addr!,
+                    client,
+                    balances,
+                    chainId: pool.chainId,
+                });
+
+                const changeInAssets = finalPositionAssets - lastTransactionAssets;
+
+                // If user has no balance after the last transaction, return zero earnings
+                if (changeInAssets <= 0) {
+                    return {
+                        tokenId: pool.farmId.toString(),
+                        earnings0: "0",
+                        token0: pool.lp_addr,
+                        lifetimeEarnings: lifetimeEarnings.toString(),
+                    };
+                }
+
+                return {
+                    tokenId: pool.farmId.toString(),
+                    earnings0: "0",
+                    token0: pool.lp_addr,
+                    changeInAssets: changeInAssets.toString(),
+                    lifetimeEarnings: lifetimeEarnings.toString(),
+                };
+            })
+        );
+
+        return earnings;
+    } catch (err: any) {
+        console.error(err);
+        return [];
+    }
+};
+
+const getEarningsForBeraTrax = async (
+    combinedTransactions: any,
+    client: PublicClient,
+    balances: any
+): Promise<VaultEarnings[]> => {
+    try {
+        const beratraxPools = pools_json
+            .filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
+            .filter((pool) => pool.originPlatform === FarmOriginPlatform.BeraTrax)
+            .map((pool) => ({
+                vault_addr: pool.vault_addr,
+                lp_addr: pool.lp_address,
+                chainId: pool.chainId,
+                farmId: pool.id,
+            }));
+
+        const earnings = await Promise.all(
+            beratraxPools.map(async (pool) => {
                 const filteredTransactions = combinedTransactions.filter(
                     (transaction: any) => pool.farmId.toString() === transaction.tokenId
                 );

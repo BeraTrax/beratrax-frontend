@@ -259,8 +259,17 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
                                                 </>
                                             ) : (
                                                 <>
-                                                    <img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
-                                                    HONEY
+                                                    {farm.id === 45 ? (
+                                                        <>
+                                                            <img src={btxLogo} alt="BTX" className="w-5 h-5" />
+                                                            TRAX
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
+                                                            HONEY
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
                                         </div>

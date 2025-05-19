@@ -13,13 +13,13 @@ import { Vault } from "@beratrax/core/src/types";
 import FarmRowChip from "./FarmItem/components/FarmRowChip/FarmRowChip";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useRouter } from "expo-router";
+import { GestureResponderEvent } from "react-native";
 
 interface VaultItemProps {
 	vault: Vault;
-	onPress?: () => void;
 }
 
-const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
+const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const [isDepositing, setIsDepositing] = useState(false);
 	const [vaultBalance, setVaultBalance] = useState(BigInt(0));
 	const [rewards, setRewards] = useState(0n);
@@ -97,7 +97,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 		getVaultBalance();
 	}, [isDepositing, isClaiming]);
 
-	const claimRewards = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const claimRewards = async (e: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 		let id: string | undefined = undefined;
@@ -143,7 +143,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 		}
 	};
 
-	const deposit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const deposit = async (e: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 		let id: string | undefined = undefined;
@@ -224,7 +224,6 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 	return (
 		<Pressable
 			onPress={(e) => {
-				e.stopPropagation();
 				handleClick(e);
 			}}
 			className={`  
@@ -338,20 +337,20 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 						</View>
 					</View>
 
-					{vaultBalance > 0 && deposit && (
+					{/* {userVaultBalance > 0 && (
 						<Pressable
-							className={`px-4 py-2 rounded-md flex items-center justify-center gap-2 ${
-								isDepositing ? "bg-buttonDisabled" : "bg-buttonPrimary"
-							}`}
-							onPress={(e) => {
-								deposit;
-							}}
+							className={`px-4 py-2 rounded-md transition-all transform duration-200 flex items-center justify-center gap-2 min-w-[160px] ${
+								isDepositing
+									? "bg-buttonDisabled cursor-not-allowed"
+									: "bg-buttonPrimary hover:bg-buttonPrimaryLight hover:scale-105 active:scale-95"
+							} text-white`}
+							onPress={deposit}
 							disabled={isDepositing}
 						>
 							{isDepositing && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
-							<Text className="text-bgDark text-xs font-medium">{isDepositing ? "Depositing..." : "Deposit to rewards vault"}</Text>
+							<Text className="text-white font-arame-mono text-base">{isDepositing ? "Depositing..." : "Deposit to rewards vault"}</Text>
 						</Pressable>
-					)}
+					)} */}
 				</View>
 			</View>
 
@@ -378,16 +377,15 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 						</View>
 					) : (
 						<View className="w-full">
-							<View className="h-5 w-20 bg-gray-200 rounded animate-pulse mb-2" />
-							<View className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+							<View className="h-5 w-20 bg-white/30 rounded animate-pulse mb-2" />
 						</View>
 					)}
 				</View>
 
-				{/* APY section */}
-				<View className={`flex-1 basis-0 px-4 ${estimateTrax ? "border-r border-r-bgPrimary" : ""}`}>
+				{/* APY */}
+				<View className={`flex-1 basis-0 ml-4 ${estimateTrax ? "border-r border-r-bgPrimary" : ""}`}>
 					<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">APY</Text>
-					<Text className="text-textWhite text-lg font-league-spartan">
+					<Text className="text-textWhite text-lg font-league-spartan leading-5">
 						{vault.isCurrentWeeksRewardsVault
 							? "??? %"
 							: toFixedFloor(apy || 0, 2) == 0
@@ -398,13 +396,14 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 
 				{/* BTX Points section */}
 				{estimateTrax && (
-					<View className="flex-1 basis-0 pl-4">
+					<View className="flex-1 basis-0 ml-4">
 						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">BTX Points</Text>
 						<Text className="text-textWhite text-lg font-league-spartan">{(Number(estimateTrax) / 365.25).toFixed(2)}/day</Text>
 					</View>
 				)}
 			</View>
 
+			{/* Your Stake */}
 			<View className="flex justify-end items-end gap-3">
 				<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
 					<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
@@ -412,27 +411,37 @@ const VaultItem: FC<VaultItemProps> = ({ vault, onPress }) => {
 				</View>
 			</View>
 
-			{/* Rewards section*/}
-			{rewards > 0 && (
-				<View className="mt-3 pt-3 border-t border-t-bgPrimary flex flex-row justify-between items-center">
+			{rewards > 0n ? (
+				<View className={`flex flex-row justify-between items-end`}>
+					{/* Your Rewards */}
 					<View>
-						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">Your Rewards</Text>
-						<Text className="text-textWhite text-lg font-league-spartan">{formatCurrency(formatEther(rewards))} BGT</Text>
+						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
+							<Text>Your Rewards</Text>
+						</Text>
+						<View className="group relative">
+							<Text className="text-white text-lg font-league-spartan leading-5">{formatCurrency(formatEther(rewards))} BGT</Text>
+							<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-white">
+								{formatCurrency(formatEther(rewards), 18)} BGT
+							</Text>
+						</View>
 					</View>
 
-					<Pressable
-						className={`px-2 py-1 rounded-md flex items-center justify-center gap-2 ${
-							isClaiming ? "bg-buttonDisabled" : "bg-buttonPrimary"
-						}`}
-						onPress={(e) => {
-							claimRewards;
-						}}
-						disabled={isClaiming}
-					>
-						{isClaiming && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
-						<Text className="text-bgDark text-sm font-medium">{isClaiming ? "Claiming..." : "Claim Rewards"}</Text>
-					</Pressable>
+					{/* Claim Rewards */}
+					<View className="text-textSecondary text-xs ml-4 flex items-center justify-end">
+						<Pressable
+							className={`px-2 py-1 rounded-md transition-all transform duration-200 flex items-center justify-center gap-2    ${
+								isClaiming ? "bg-buttonDisabled cursor-not-allowed" : "bg-buttonPrimary hover:bg-buttonPrimaryLight active:scale-95"
+							} text-black`}
+							onPress={claimRewards}
+							disabled={isClaiming}
+						>
+							{isClaiming && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
+							<Text className="text-bgDark text-sm font-medium">{isClaiming ? "Claiming..." : "Claim Rewards"}</Text>
+						</Pressable>
+					</View>
 				</View>
+			) : (
+				<></>
 			)}
 		</Pressable>
 	);

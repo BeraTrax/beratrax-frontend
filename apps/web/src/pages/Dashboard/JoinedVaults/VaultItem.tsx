@@ -214,7 +214,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 		<div
 			onClick={() => {
 				if (vault.isDeprecated && vault.isUpgradable) return;
-				handleNavigation(`${RoutesPaths.Farms}/${vault.vault_addr}`);
+				navigate(`${RoutesPaths.Farms}/${vault.vault_addr}`);
 			}}
 			className={`
 							cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark

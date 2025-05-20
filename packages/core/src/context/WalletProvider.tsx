@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Address, createPublicClient, createWalletClient, Hex, http } from "viem";
+import { Address, createPublicClient, createWalletClient, EIP1193Provider, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
 import { requestEthForGas } from "./../api";
@@ -7,6 +7,13 @@ import { EstimateTxGasArgs, IClients } from "./../types";
 import { trackTransaction } from "./../utils/analytics";
 import type { Config } from "@wagmi/core";
 import { supportedChains } from "../config/baseWalletConfig";
+// import { CHAIN_ID } from "src/types/enums";
+import Web3Auth, { WEB3AUTH_NETWORK, LOGIN_PROVIDER, ChainNamespace } from "@web3auth/react-native-sdk";
+import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
+import * as WebBrowser from "expo-web-browser";
+import * as SecureStore from "expo-secure-store";
+import Constants, { ExecutionEnvironment } from "expo-constants";
+import * as Linking from "expo-linking";
 
 export interface IWalletContext {
 	currentWallet?: Address;
@@ -19,6 +26,7 @@ export interface IWalletContext {
 	getClients: (chainId: number) => Promise<IClients>;
 	estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
 	connector?: Connector;
+	login: () => Promise<void>;
 }
 
 export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
@@ -45,15 +53,130 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	const { disconnectAsync } = useDisconnect();
 	const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const [isReconnectingTimeout, setIsReconnectingTimeout] = useState(false);
+	// const [externalChainId, setExternalChainId] = useState(CHAIN_ID.BERACHAIN);
+	const [isConnecting, setIsConnecting] = useState(false);
+	const [isSocial, setIsSocial] = useState(false);
+	const [currentWallet, setCurrentWallet] = useState<Address | undefined>();
+	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
+	const [provider, setProvider] = useState<any>(null);
 
-	const isSocial = useMemo(() => {
-		return connector?.id === "web3auth";
-	}, [connector]);
+	// Initialize Web3Auth and check for existing session
+	useEffect(() => {
+		const initWeb3Auth = async () => {
+			const scheme = "com.beratrax.mobile";
+			const redirectUrl = `${scheme}://auth`;
+			const resolvedRedirectUrl =
+				Constants.executionEnvironment === ExecutionEnvironment.Standalone
+					? Linking.createURL("web3auth", {})
+					: Linking.createURL("web3auth", { scheme });
 
-	// Custom isConnecting state that handles timeouts for reconnecting
-	const isConnecting = useMemo(() => {
-		return wagmiIsConnecting || (wagmiIsReconnecting && !isReconnectingTimeout);
-	}, [wagmiIsConnecting, wagmiIsReconnecting, isReconnectingTimeout]);
+			const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
+
+			const chainConfig = {
+				chainNamespace: ChainNamespace.EIP155,
+				chainId: "0x" + (80094).toString(16),
+				rpcTarget: "https://rpc.berachain.com",
+				displayName: "Berachain",
+				tickerName: "Berachain",
+				ticker: "BERA",
+				blockExplorerUrl: "https://berascan.com",
+			};
+
+			const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
+				config: {
+					chainConfig,
+				},
+			});
+
+			const web3authInstance = new Web3Auth(WebBrowser, SecureStore, {
+				clientId,
+				network: WEB3AUTH_NETWORK.CYAN,
+				privateKeyProvider: ethereumPrivateKeyProvider,
+				redirectUrl,
+				enableLogging: true, // Enable logging for debugging
+			});
+
+			try {
+				await web3authInstance.init();
+				setWeb3auth(web3authInstance);
+
+				// Check if user is already logged in
+				if (web3authInstance.connected) {
+					setIsConnecting(true);
+					try {
+						const privateKey = await web3authInstance.provider?.request({
+							method: "eth_private_key",
+						});
+
+						if (typeof privateKey === "string") {
+							const cleanPrivateKey = privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
+							const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
+
+							const account = privateKeyToAccount(formattedPrivateKey);
+							setCurrentWallet(account.address);
+							setIsSocial(true);
+						}
+					} catch (error) {
+						console.error("Error restoring session:", error);
+						// If there's an error restoring the session, log out
+						await web3authInstance.logout();
+					} finally {
+						setIsConnecting(false);
+					}
+				}
+			} catch (error) {
+				console.error("Error initializing Web3Auth:", error);
+			}
+		};
+
+		initWeb3Auth();
+	}, []);
+
+	// Login function
+	const login = async () => {
+		if (!web3auth) {
+			console.error("Web3Auth not initialized");
+			return;
+		}
+
+		try {
+			setIsConnecting(true);
+			const web3authResponse = await web3auth.login({
+				redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+				mfaLevel: "default",
+				loginProvider: "google",
+			});
+
+			if (web3auth.connected) {
+				const privateKey = await web3auth.provider?.request({
+					method: "eth_private_key",
+				});
+
+				// Ensure private key is properly formatted
+				if (typeof privateKey === "string") {
+					// Remove '0x' prefix if present and ensure it's a valid hex string
+					const cleanPrivateKey = privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
+					const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
+
+					try {
+						const account = privateKeyToAccount(formattedPrivateKey);
+						setCurrentWallet(account.address);
+						setIsSocial(true);
+					} catch (error) {
+						console.error("Error creating account from private key:", error);
+						throw new Error("Invalid private key format");
+					}
+				} else {
+					throw new Error("Invalid private key received from Web3Auth");
+				}
+			}
+		} catch (error) {
+			console.error("Login error:", error);
+			throw error;
+		} finally {
+			setIsConnecting(false);
+		}
+	};
 
 	// Set a timeout for reconnecting to prevent infinite reconnection attempts
 	useEffect(() => {
@@ -201,16 +324,26 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 		};
 	};
 
+	// Update logout function to properly clear Web3Auth session
 	async function logout() {
-		await disconnectAsync();
-		// Clear timeout on logout
-		if (reconnectTimeoutRef.current) {
-			clearTimeout(reconnectTimeoutRef.current);
-			reconnectTimeoutRef.current = null;
+		try {
+			if (web3auth?.connected) {
+				await web3auth.logout();
+			}
+			await disconnectAsync();
+			// Clear timeout on logout
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			if (isWeb3AuthConnected?.()) await logoutWeb3Auth?.();
+			walletClients.current = {};
+			setIsReconnectingTimeout(false);
+			setCurrentWallet(undefined);
+			setIsSocial(false);
+		} catch (error) {
+			console.error("Error during logout:", error);
 		}
-		if (isWeb3AuthConnected?.()) await logoutWeb3Auth?.();
-		walletClients.current = {};
-		setIsReconnectingTimeout(false);
 	}
 
 	const getPkey = async (): Promise<Hex | undefined> => {
@@ -229,9 +362,9 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	return (
 		<WalletContext.Provider
 			value={{
-				currentWallet: "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
+				currentWallet,
 				isSocial,
-				isConnecting, // Use our custom isConnecting state
+				isConnecting,
 				connector,
 				logout,
 				getPkey,
@@ -239,6 +372,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 				getPublicClient,
 				getWalletClient,
 				getClients,
+				login,
 			}}
 		>
 			{children}
@@ -247,4 +381,3 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 };
 
 export default WalletProvider;
-

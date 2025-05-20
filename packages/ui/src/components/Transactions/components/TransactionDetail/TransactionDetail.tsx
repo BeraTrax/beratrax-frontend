@@ -1,5 +1,5 @@
 import React from "react";
-import { FaRegCircle } from "react-icons/fa";
+import { CircleOneIcon } from "@beratrax/ui/src/icons/CircleOne";
 import { MdOutlineCancel } from "react-icons/md";
 import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
@@ -79,7 +79,7 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 				) : status === TransactionStepStatus.FAILED ? (
 					<MdOutlineCancel style={{ color: "red" }} />
 				) : status === TransactionStepStatus.PENDING ? (
-					<FaRegCircle color="var(--new-color_secondary)" style={{ transform: "scale(0.8)" }} />
+					<CircleOneIcon color="var(--new-color_secondary)" style={{ transform: "scale(0.8)" }} />
 				) : (
 					<View
 						className={

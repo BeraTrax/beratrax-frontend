@@ -218,16 +218,19 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 	const [open, setOpen] = useState(false);
 	const [showTooltipModal, setShowTooltipModal] = useState(false);
 	const dispatch = useAppDispatch();
-	if (!farm || !tx) return null;
-	const { zapIn } = useZapIn(farm);
-	const { zapOut } = useZapOut(farm);
+	const { zapIn } = useZapIn(farm || ({} as any));
+	const { zapOut } = useZapOut(farm || ({} as any));
 	const chainId = useChainId();
-	const { type, amountInWei, token, vaultPrice, tokenPrice, steps, date, netAmount, vaultShares } = tx;
 
+	// Initialize showExtraInfo with a default value
 	const showExtraInfo = useMemo(() => {
-		if (vaultShares) return true;
-		return false;
-	}, [vaultShares]);
+		if (!tx || !tx.vaultShares) return false;
+		return true;
+	}, [tx]);
+
+	if (!farm || !tx) return null;
+
+	const { type, amountInWei, token, vaultPrice, tokenPrice, steps, date, netAmount, vaultShares } = tx;
 
 	let tokenAmount = 0;
 	if (type === "deposit") {
@@ -239,12 +242,12 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 			(tokenPrice || prices[farm.chainId][token]);
 	}
 
-	const status = useMemo(() => {
-		if (steps.every((step) => step.status === TransactionStepStatus.COMPLETED)) return TransactionStatus.SUCCESS;
-		if (steps.some((step) => step.status === TransactionStepStatus.FAILED)) return TransactionStatus.FAILED;
-		if (steps.some((step) => step.status === TransactionStepStatus.IN_PROGRESS)) return TransactionStatus.PENDING;
-		return TransactionStatus.INTERRUPTED;
-	}, [steps]);
+	// const status = useMemo(() => {
+	// 	if (steps.every((step) => step.status === TransactionStepStatus.COMPLETED)) return TransactionStatus.SUCCESS;
+	// 	if (steps.some((step) => step.status === TransactionStepStatus.FAILED)) return TransactionStatus.FAILED;
+	// 	if (steps.some((step) => step.status === TransactionStepStatus.IN_PROGRESS)) return TransactionStatus.PENDING;
+	// 	return TransactionStatus.INTERRUPTED;
+	// }, [steps]);
 
 	const retryTransaction = (e: any) => {
 		e.stopPropagation();

@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaKey } from "react-icons/fa";
-import { LiaPowerOffSolid } from "react-icons/lia";
-import { MdOutlineContentCopy, MdOutlineQrCode2 } from "react-icons/md";
 import { checkClaimBtx, claimBtx } from "@beratrax/core/src/api/account";
 import { notifyError } from "@beratrax/core/src/api/notify";
 import GreenLogo from "@beratrax/core/src/assets/images/greenLogo.png";
 import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
+import "react-native-get-random-values";
+import "@ethersproject/shims";
 // import { EarnTrax } from "web/src/components/modals/EarnTrax/EarnTrax";
 // import { ExportPrivateKey } from "web/src/components/modals/ExportPrivateKey/ExportPrivateKey";
 // import { ExportPublicKey } from "web/src/components/modals/ExportPublicKey/ExportPublicKey";
@@ -22,7 +21,19 @@ import { copyToClipboard } from "@beratrax/core/src/utils";
 import { trackLogin } from "@beratrax/core/src/utils/analytics";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
-import { View, Text, Button, Image, ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
+import {
+	View,
+	Text,
+	Button,
+	Image,
+	ImageSourcePropType,
+	Platform,
+	TouchableOpacity,
+	ScrollView,
+	Pressable,
+	Dimensions,
+	StyleSheet,
+} from "react-native";
 import { Link } from "./Link";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import { GradientText } from "./GradientText";
@@ -41,7 +52,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 		earnTraxTermsAgreed,
 		termsOfUseAgreed,
 	} = useAppSelector((state) => state.account);
-	const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
+	const { currentWallet, isConnecting, isSocial, getPublicClient, login } = useWallet();
 	const { disconnect } = useDisconnect();
 	const { switchChain } = useSwitchChain();
 	const { isConnected, connector } = useAccount();
@@ -175,7 +186,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 			setIsClaimingBtx(false);
 		}
 	};
-
+	
 	return (
 		<View className="bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
 			{/* Terms of Use Modal */}
@@ -201,7 +212,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 													href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
 													className="no-underline font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
 												>
-													{truncatedAddress}
+													<Text>{truncatedAddress}</Text>
 												</Link>
 												<TouchableOpacity onPress={copy}>
 													<Text className="h-6 text-white ml-4 cursor-pointer">
@@ -211,7 +222,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 												{/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
 												{showCopyFeedback && (
 													<View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
-														Address copied!
+														<Text className="text-white">Address copied!</Text>
 													</View>
 												)}
 											</View>
@@ -225,13 +236,14 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 								{/* Switch to Berachain */}
 								<View className="flex flex-row items-center gap-4">
 									{!isSocial && chainId !== CHAIN_ID.BERACHAIN && (
-										<Button
-											title="Switch to Berachain"
+										<Pressable
 											onPress={() => {
 												switchChain({ chainId: CHAIN_ID.BERACHAIN });
 											}}
-											// className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 cursor-pointer"
-										/>
+											className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 cursor-pointer"
+										>
+											<Text className="text-white font-medium font-league-spartan">Switch to Berachain</Text>
+										</Pressable>
 										//   <Text>Switch to Berachain</Text>
 										// </Button>
 									)}
@@ -242,17 +254,18 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
                     onClick={() => disconnect()}
                     className="w-8 h-8 text-textWhite cursor-pointer z-10"
                   /> */}
-									<PowerIcon onPress={() => disconnect()} size={42} strokeWidth={2} />
+									<PowerIcon onPress={() => disconnect()} size={42} strokeWidth={2} className="text-textWhite cursor-pointer z-10" />
 								</View>
 							</View>
 						) : (
 							// Connect Wallet Button
 							<View className="flex flex-row justify-end">
-								<Button
+								<Pressable
 									onPress={connectWallet}
-									title={isConnecting ? "Connecting..." : "Sign In/Up"}
-									// className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
-								/>
+									className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
+								>
+									<Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>
+								</Pressable>
 								{/* {isConnecting ? "Connecting..." : "Sign In/Up"}
                 </Button> */}
 							</View>

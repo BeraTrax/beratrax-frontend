@@ -7,8 +7,8 @@ config({ path: path.resolve(__dirname, "../../.env") });
 
 export default {
 	expo: {
-		name: "Beratrax",
-		slug: "Beratrax",
+		name: "mobile",
+		slug: "mobile",
 		version: "1.0.0",
 		orientation: "portrait",
 		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png",
@@ -35,6 +35,7 @@ export default {
 		},
 		plugins: [
 			"expo-router",
+			"expo-secure-store",
 			[
 				"expo-splash-screen",
 				{

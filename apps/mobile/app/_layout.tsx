@@ -1,5 +1,8 @@
 import "@walletconnect/react-native-compat";
 import "./../global.css";
+import "../globals";
+import "@ethersproject/shims";
+import "@expo/metro-runtime";
 /**
  * to keep the first import on top
  */
@@ -7,7 +10,7 @@ import { AppKit } from "@reown/appkit-wagmi-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 
-import { mobileWalletConfig } from "@/config/mobileWalletConfig";
+import { mobileWalletConfig, getWeb3AuthPrivateKey, isWeb3AuthConnected, logoutWeb3Auth } from "@/config/mobileWalletConfig";
 import { useFonts } from "expo-font";
 import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -88,7 +91,12 @@ const RootLayout = () => {
 	return (
 		<WagmiProvider config={mobileWalletConfig}>
 			<QueryClientProvider client={queryClient}>
-				<WalletProvider walletConfig={mobileWalletConfig}>
+				<WalletProvider
+					walletConfig={mobileWalletConfig}
+					getWeb3AuthPk={getWeb3AuthPrivateKey}
+					isWeb3AuthConnected={isWeb3AuthConnected}
+					logoutWeb3Auth={logoutWeb3Auth}
+				>
 					<Provider store={store}>
 						<SafeAreaProvider>
 							<SafeAreaView className="flex-1 bg-bgSecondary">

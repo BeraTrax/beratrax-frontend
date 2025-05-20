@@ -6,6 +6,7 @@ import { formatBalance } from "@beratrax/core/src/utils/common";
 import { FC, useEffect, useMemo } from "react";
 import { ModalLayout } from "ui/src/components/modals/ModalLayout/ModalLayout";
 import TransactionDetails from "@beratrax/ui/src/components/Transactions/components/TransactionDetail/TransactionDetail";
+import { Pressable, Text, View } from "react-native";
 
 interface DepositInfo {
 	amount: string;
@@ -55,57 +56,57 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 			wrapperClassName="w-full lg:w-[92%]"
 			style={{ borderColor: "var(--new-border_dark)" }}
 		>
-			<div className="text-textWhite flex flex-col gap-4">
-				<p className="text-xl font-bold align-middle uppercase">{getTransactionTitle()}</p>
-				<p className="text-textWhite mt-2 text-[16px] font-light leading-relaxed">{getTransactionDescription()}</p>
+			<View className="text-textWhite flex flex-col gap-4">
+				<Text className="text-xl font-bold align-middle uppercase">{getTransactionTitle()}</Text>
+				<Text className="text-textWhite mt-2 text-[16px] font-light leading-relaxed">{getTransactionDescription()}</Text>
 
-				<div className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
+				<View className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
 					<TransactionDetails transactionId={txId} open={true} farm={undefined} tx={undefined} />
 					{isLoading && (
-						<div className="center">
-							<div className="w-[18px] h-[18px] border-2 border-solid border-current border-b-transparent border-r-transparent rounded-full box-border animate-rotation" />
-						</div>
+						<View className="center">
+							<View className="w-[18px] h-[18px] border-2 border-solid border-current border-b-transparent border-r-transparent rounded-full box-border animate-rotation" />
+						</View>
 					)}
-				</div>
+				</View>
 
 				{success.length > 0 && (
 					<>
-						<div className="bg-green-800/30 border border-green-600 rounded-md p-4 mt-2">
+						<View className="bg-green-800/30 border border-green-600 rounded-md p-4 mt-2">
 							{success.map((notification, index) => (
-								<div key={index} className="mb-2 last:mb-0">
-									{notification.title && <p className="text-green-400 font-semibold mb-1">{notification.title}</p>}
-									<p className="text-green-400">{notification.message}</p>
-								</div>
+								<View key={index} className="mb-2 last:mb-0">
+									{notification.title && <Text className="text-green-400 font-semibold mb-1">{notification.title}</Text>}
+									<Text className="text-green-400">{notification.message}</Text>
+								</View>
 							))}
-						</div>{" "}
-						<button
+						</View>
+						<Pressable
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-							onClick={() => handleClose(true)}
+							onPress={() => handleClose(true)}
 						>
-							Go Back
-						</button>
+							<Text className="text-textBlack">Go Back</Text>
+						</Pressable>
 					</>
 				)}
 
 				{errors.length > 0 && (
 					<>
-						<div className="bg-red-800/30 border border-red-600 rounded-md p-4 mt-2">
+						<View className="bg-red-800/30 border border-red-600 rounded-md p-4 mt-2">
 							{errors.map((error, index) => (
-								<div key={index} className="mb-2 last:mb-0">
-									{error.title && <p className="text-red-400 font-semibold mb-1">{error.title}</p>}
-									<p className="text-red-400">{error.message}</p>
-								</div>
+								<View key={index} className="mb-2 last:mb-0">
+									{error.title && <Text className="text-red-400 font-semibold mb-1">{error.title}</Text>}
+									<Text className="text-red-400">{error.message}</Text>
+								</View>
 							))}
-						</div>
-						<button
+						</View>
+						<Pressable
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-							onClick={() => handleClose()}
+							onPress={() => handleClose()}
 						>
-							Close
-						</button>
+							<Text className="text-textBlack">Close</Text>
+						</Pressable>
 					</>
 				)}
-			</div>
+			</View>
 		</ModalLayout>
 	);
 };

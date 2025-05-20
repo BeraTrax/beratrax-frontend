@@ -5,7 +5,7 @@ import userguideimageone from "@beratrax/core/src/assets/images/userguideimageon
 import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
 import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
 import userguideimagetwo from "@beratrax/core/src/assets/images/userguideimagetwo.png";
-import { View, Text, Image, ScrollView, TouchableOpacity, ImageSourcePropType, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, ImageSourcePropType, Dimensions } from "react-native";
 import { Link } from "expo-router";
 import { DiamondFillIcon } from "../icons/DiamondFill";
 import { QuestionIcon } from "../icons/Question";
@@ -17,6 +17,7 @@ import { CircleOneIcon } from "../icons/CircleOne";
 import { CircleTwoIcon } from "../icons/CircleTwo";
 import { CircleThreeIcon } from "../icons/CircleThree";
 import { CircleFourIcon } from "../icons/CircleFour";
+import { ExternalLinkIcon } from "@beratrax/ui/src/icons/ExternalLInk";
 
 // Type the imported images explicitly as ImageSourcePropType
 const images = {
@@ -367,13 +368,15 @@ export const UserGuide = () => {
 				</>
 
 				<View className={"flex mt-4 mb-8"}>
-					<TouchableOpacity
-						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-7 py-5 rounded-lg cursor-pointer mb-1
-									transition-all duration-200 ease-in-out"
-						onPress={() => window.open("https://docs.beratrax.com/beratrax-beta/", "_blank")}
+					<Link
+						href="https://docs.beratrax.com/beratrax-beta/"
+						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-5 py-4 rounded-lg cursor-pointer mb-1
+									transition-all duration-200 ease-in-out text-xl font-league-spartan"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
-						<Text className={"text-white font-bold uppercase"}>FULL USER DOCS</Text>
-					</TouchableOpacity>
+						FULL USER DOCS <ExternalLinkIcon />
+					</Link>
 				</View>
 			</View>
 		</ScrollView>

@@ -68,8 +68,9 @@ export const VaultStatsTable = () => {
         <div className="bg-bgSecondary rounded-lg p-6 border border-borderDark text-textWhite">
             <h1 className="text-2xl mb-6 font-arame-mono uppercase">Vaults Stats</h1>
             <div className="overflow-x-auto">
+                <div className="max-h-[600px] overflow-y-auto">
                 <table className="w-full table-auto">
-                    <thead>
+                    <thead className="sticky top-0 z-10">
                         <tr className="text-textBlack text-left tracking-wide uppercase bg-bgPrimary border-b border-borderDark">
                             <th className="p-4 whitespace-nowrap min-w-max ">FARM ID</th>
                             <th className="p-4 whitespace-nowrap min-w-max ">TITLE</th>
@@ -203,6 +204,7 @@ export const VaultStatsTable = () => {
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
         </div>
     );

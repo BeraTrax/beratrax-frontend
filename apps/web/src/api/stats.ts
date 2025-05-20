@@ -17,9 +17,27 @@ interface UserStatsResponse {
     status: boolean;
 }
 
-interface VaultStatsResponse {
+interface AutoCompoundResult {
+    data: {
+        [farmId: number]: {
+            harvestSuccess: boolean;
+            earnSuccess: boolean;
+            harvestStatus: string;
+            earnStatus: string;
+            earnReturnData: string;
+            harvestReturnData: string;
+        }
+    }
+    lastModifiedBy: number;
+    lastFinishedAt: number;
+    status: number;
+    runTime: number;
+}
+
+export interface VaultStatsResponse {
     data: {
         vaults: VaultStats[];
+        autoCompound: AutoCompoundResult;
     };
     status: boolean;
 }
@@ -121,7 +139,7 @@ export const fetchCountActiveUsers = async () => {
 
 export const fetchVaultStats = async () => {
     const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults`);
-    return res.data.data.vaults;
+    return res.data.data;
 };
 
 export const fetchReferralDashboard = async () => {

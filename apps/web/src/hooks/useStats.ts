@@ -10,6 +10,7 @@ import {
     fetchTotalBtxPoints,
     fetchFacetUsersCount,
     fetchAccountConnectorsStats,
+    VaultStatsResponse,
 } from "src/api/stats";
 import useFarms from "../state/farms/hooks/useFarms";
 import useWallet from "./useWallet";
@@ -44,7 +45,7 @@ export const useStats = (forGalxe?: boolean) => {
         queryFn: () => fetchCountActiveUsers(),
     });
 
-    const { data: vaultStatsTemp } = useQuery({
+    const { data: vaultStatsTemp } = useQuery<VaultStatsResponse["data"]>({
         queryKey: ["stats/tvl/vaults"],
         queryFn: () => fetchVaultStats(),
     });
@@ -74,17 +75,44 @@ export const useStats = (forGalxe?: boolean) => {
         queryFn: () => fetchAccountConnectorsStats(),
     });
 
-    const vaultStats = useMemo(
-        () =>
-            vaultStatsTemp?.map((vault) => ({
+    const vaultStats = useMemo(() => {
+        if (!vaultStatsTemp) return [];
+    
+        return vaultStatsTemp.vaults.flatMap((vault) => {
+            const farm = farms.find((farm) => farm.vault_addr === vault.address);
+            if (!farm) return []; // Skips this vault
+            const autoCompoundFarmResult = vaultStatsTemp.autoCompound.data[farm?.id];
+            const autoCompoundResult = vaultStatsTemp.autoCompound;
+            const vaultStats = {
                 ...vault,
-                name: farms.find((farm) => farm.vault_addr === vault.address)?.name,
-                originPlatform: farms.find((farm) => farm.vault_addr === vault.address)?.originPlatform,
-                secondaryPlatform: farms.find((farm) => farm.vault_addr === vault.address)?.secondary_platform,
-                isDeprecated: farms.find((farm) => farm.vault_addr === vault.address)?.isDeprecated,
-            })),
-        [vaultStatsTemp, farms]
-    );
+                name: farm.name,
+                originPlatform: farm.originPlatform,
+                secondaryPlatform: farm.secondary_platform,
+                isDeprecated: farm.isDeprecated,
+                id: farm.id,
+            }
+            let autoCompoundStats = {};
+            //becasue not every vault has is auto compounded
+            if (autoCompoundResult && autoCompoundFarmResult) {
+                autoCompoundStats = {
+                    autoCompoundLastRunAt: autoCompoundResult.lastFinishedAt,
+                    autoCompoundStatus: autoCompoundResult.status,
+                    autoCompoundRunTime: autoCompoundResult.runTime,
+                    autoCompoundHarvestSuccess: autoCompoundFarmResult.harvestSuccess,
+                    autoCompoundHarvestStatus: autoCompoundFarmResult.harvestSuccess ? "-" : autoCompoundFarmResult.harvestStatus,
+                    autoCompoundHarvestReturnData: autoCompoundFarmResult.harvestSuccess ? '-' : autoCompoundFarmResult.harvestReturnData,
+                    autoCompoundEarnSuccess: autoCompoundFarmResult.earnSuccess,
+                    autoCompoundEarnStatus: autoCompoundFarmResult.earnSuccess ? "-" : autoCompoundFarmResult.earnStatus,
+                    autoCompoundEarnReturnData: autoCompoundFarmResult.earnSuccess ? '-' : autoCompoundFarmResult.earnReturnData,
+                }
+            }
+            return  {
+                ...vaultStats,
+                ...autoCompoundStats,
+            };
+        });
+    }, [vaultStatsTemp, farms]);
+    
 
     return {
         ...data?.data,

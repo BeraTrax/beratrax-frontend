@@ -9,6 +9,26 @@ import { customCommify } from "src/utils/common";
 type SortColumn = "depositedTvl" | "platform" | null;
 type SortDirection = "asc" | "desc";
 
+interface VaultStat {
+    _id: string;
+    id: number; //farm id
+    address: string;
+    name: string;
+    depositedTvl: number;
+    averageDeposit: number;
+    numberOfDeposits: number;
+    isDeprecated?: boolean;
+    originPlatform: string;
+    secondaryPlatform?: string;
+    autoCompoundLastRunAt?: string;
+    autoCompoundRunTime?: string | number;
+    autoCompoundHarvestSuccess?: boolean;
+    autoCompoundEarnSuccess?: boolean;
+    autoCompoundStatus?: string;
+    autoCompoundHarvestStatus?: string;
+    autoCompoundEarnStatus?: string;
+}
+
 export const VaultStatsTable = () => {
     const { vaultStats } = useStats();
     const { BLOCK_EXPLORER_URL } = useConstants(CHAIN_ID.BERACHAIN);
@@ -25,9 +45,9 @@ export const VaultStatsTable = () => {
     };
 
     const getSortedVaults = () => {
-        if (!vaultStats || !sortColumn) return vaultStats;
+        if (!vaultStats || !sortColumn) return vaultStats as VaultStat[];
 
-        return [...vaultStats].sort((a, b) => {
+        return ([...vaultStats] as VaultStat[]).sort((a, b) => {
             let comparison = 0;
 
             if (sortColumn === "depositedTvl") {
@@ -48,24 +68,29 @@ export const VaultStatsTable = () => {
         <div className="bg-bgSecondary rounded-lg p-6 border border-borderDark text-textWhite">
             <h1 className="text-2xl mb-6 font-arame-mono uppercase">Vaults Stats</h1>
             <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px]">
+                <table className="w-full table-auto">
                     <thead>
                         <tr className="text-textBlack text-left tracking-wide uppercase bg-bgPrimary border-b border-borderDark">
-                            <th className="p-4 w-[200px]">TITLE</th>
+                            <th className="p-4 whitespace-nowrap min-w-max ">FARM ID</th>
+                            <th className="p-4 whitespace-nowrap min-w-max ">TITLE</th>
                             <th
-                                className="p-4 cursor-pointer hover:text-textSecondary"
+                                className="p-4 whitespace-nowrap min-w-max cursor-pointer hover:text-textSecondary"
                                 onClick={() => handleSort("platform")}
                             >
                                 PLATFORM {sortColumn === "platform" && (sortDirection === "asc" ? "↑" : "↓")}
                             </th>
                             <th
-                                className="p-4 cursor-pointer hover:text-textSecondary"
+                                className="p-4 whitespace-nowrap min-w-max cursor-pointer hover:text-textSecondary"
                                 onClick={() => handleSort("depositedTvl")}
                             >
                                 DEPOSITED TVL {sortColumn === "depositedTvl" && (sortDirection === "asc" ? "↑" : "↓")}
                             </th>
-                            <th className="p-4">AVERAGE DEPOSITS</th>
-                            <th className="p-4">NO OF DEPOSITS</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">AVERAGE DEPOSITS</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">NO OF DEPOSITS</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">LAST RUN AT</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">RUN TIME</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">HARVEST STATUS</th>
+                            <th className="p-4 whitespace-nowrap min-w-max">EARN STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,6 +99,7 @@ export const VaultStatsTable = () => {
                                 .sort((a, b) => (a.isDeprecated ? 1 : b.isDeprecated ? -1 : 0))
                                 .map(
                                     ({
+                                        id,
                                         _id,
                                         address,
                                         name,
@@ -83,12 +109,19 @@ export const VaultStatsTable = () => {
                                         isDeprecated,
                                         originPlatform,
                                         secondaryPlatform,
+                                        autoCompoundLastRunAt,
+                                        autoCompoundRunTime,
+                                        autoCompoundHarvestSuccess,
+                                        autoCompoundEarnSuccess,
+                                        autoCompoundHarvestStatus,
+                                        autoCompoundEarnStatus,
                                     }) => (
                                         <tr
                                             key={_id}
                                             className="border-b border-borderDark hover:bg-bgDark transition-colors"
                                         >
-                                            <td className="p-4">
+                                            <td className="p-4 whitespace-nowrap min-w-max">{id}</td>
+                                            <td className="p-4 whitespace-nowrap min-w-max">
                                                 <div className="flex items-center gap-2 group relative">
                                                     <p>
                                                         {name}{" "}
@@ -113,36 +146,52 @@ export const VaultStatsTable = () => {
                                                     />
                                                 </div>
                                             </td>
-                                            <td className="p-4 ">
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
                                                 {[originPlatform, secondaryPlatform].filter(Boolean).join(" | ")}
                                             </td>
-                                            <td className="p-4 ">
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
                                                 {customCommify(depositedTvl, {
                                                     minimumFractionDigits: 0,
                                                     maximumFractionDigits: 2,
                                                     showDollarSign: true,
                                                 })}
                                             </td>
-                                            <td className="p-4 ">
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
                                                 {customCommify(averageDeposit, {
                                                     minimumFractionDigits: 0,
                                                     maximumFractionDigits: 2,
                                                     showDollarSign: true,
                                                 })}
                                             </td>
-                                            <td className="p-4 ">
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
                                                 {customCommify(numberOfDeposits, {
                                                     minimumFractionDigits: 0,
                                                     maximumFractionDigits: 0,
                                                     showDollarSign: false,
                                                 })}
                                             </td>
+                                            <td className="p-4 whitespace-nowrap min-w-max ">{autoCompoundLastRunAt ? new Date(autoCompoundLastRunAt).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '-'}</td>
+                                            <td className="p-4 whitespace-nowrap min-w-max ">{autoCompoundRunTime || '-'}</td>
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
+                                                {autoCompoundHarvestSuccess === undefined 
+                                                    ? '-' 
+                                                    : autoCompoundHarvestSuccess 
+                                                        ? 'Success' 
+                                                        : autoCompoundHarvestStatus || 'Failed'}
+                                            </td>
+                                            <td className="p-4 whitespace-nowrap min-w-max ">
+                                                {autoCompoundEarnSuccess === undefined 
+                                                    ? '-' 
+                                                    : autoCompoundEarnSuccess 
+                                                        ? 'Success' 
+                                                        : autoCompoundEarnStatus || 'Failed'}
+                                            </td>
                                         </tr>
                                     )
                                 )
                         ) : (
                             <tr>
-                                <td colSpan={4}>
+                                <td colSpan={8}>
                                     <EmptyTable />
                                 </td>
                             </tr>
@@ -150,7 +199,7 @@ export const VaultStatsTable = () => {
                     </tbody>
                     <tfoot>
                         <tr className="border-t border-borderDark">
-                            <td colSpan={4}></td>
+                            <td colSpan={8}></td>
                         </tr>
                     </tfoot>
                 </table>

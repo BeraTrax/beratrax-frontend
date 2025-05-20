@@ -1,33 +1,14 @@
 import { BsClipboardData } from "react-icons/bs";
 import { FiExternalLink } from "react-icons/fi";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import useConstants from "src/hooks/useConstants";
 import { useStats } from "src/hooks/useStats";
 import { CHAIN_ID } from "src/types/enums";
 import { customCommify } from "src/utils/common";
+import { VaultStat } from "src/api/stats";
 
 type SortColumn = "depositedTvl" | "platform" | "farmId" | "harvestStatus" | "earnStatus" | null;
 type SortDirection = "asc" | "desc";
-
-interface VaultStat {
-    _id: string;
-    id: number; //farm id
-    address: string;
-    name: string;
-    depositedTvl: number;
-    averageDeposit: number;
-    numberOfDeposits: number;
-    isDeprecated?: boolean;
-    originPlatform: string;
-    secondaryPlatform?: string;
-    autoCompoundLastRunAt?: string;
-    autoCompoundRunTime?: string | number;
-    autoCompoundHarvestSuccess?: boolean;
-    autoCompoundEarnSuccess?: boolean;
-    autoCompoundStatus?: string;
-    autoCompoundHarvestStatus?: string;
-    autoCompoundEarnStatus?: string;
-}
 
 export const VaultStatsTable = () => {
     const { vaultStats, refetchVaultStats, isRefetchingVaultStats } = useStats();
@@ -52,7 +33,7 @@ export const VaultStatsTable = () => {
         }
     };
 
-    const getSortedVaults = () => {
+    const sortedVaults =  useMemo(() => {
         if (!vaultStats || !sortColumn) return vaultStats as VaultStat[];
 
         return ([...vaultStats] as VaultStat[]).sort((a, b) => {
@@ -80,9 +61,16 @@ export const VaultStatsTable = () => {
 
             return sortDirection === "asc" ? comparison : -comparison;
         });
-    };
+    }, [vaultStats, sortColumn, sortDirection]);
 
-    const sortedVaults = getSortedVaults();
+    const lastRunAtAndRunTime = useMemo(() => {
+        const autoCompoundStats = vaultStats.find((vault) => vault.autoCompoundStatus);
+        if(!autoCompoundStats) return { lastRunAt: "-", runTime: "-" };
+        const lastRunAt = autoCompoundStats.autoCompoundLastRunAt;
+        const runTime = autoCompoundStats.autoCompoundRunTime;
+
+        return { lastRunAt, runTime };
+    }, [vaultStats]);
 
     return (
         <div className="bg-bgSecondary rounded-lg p-6 border border-borderDark text-textWhite">
@@ -112,11 +100,11 @@ export const VaultStatsTable = () => {
                         </svg>
                     </button>
                 </div>
-                <div className="flex gap-4 text-sm text-textSecondary">
+                <div className="flex gap-4 text-sm ">
                     <div>
                         <span className="font-bold text-base">Last Run At: </span>
-                        {sortedVaults?.[0]?.autoCompoundLastRunAt
-                            ? new Date(sortedVaults[0].autoCompoundLastRunAt).toLocaleString("en-US", {
+                        {lastRunAtAndRunTime.lastRunAt
+                            ? new Date(lastRunAtAndRunTime.lastRunAt).toLocaleString("en-US", {
                                   month: "short",
                                   day: "numeric",
                                   hour: "2-digit",
@@ -126,7 +114,7 @@ export const VaultStatsTable = () => {
                     </div>
                     <div>
                         <span className="font-bold text-base">Run Time: </span>
-                        {sortedVaults?.[0]?.autoCompoundRunTime || "-"}
+                        {lastRunAtAndRunTime.runTime || "-"} seconds
                     </div>
                 </div>
             </div>

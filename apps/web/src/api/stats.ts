@@ -17,6 +17,19 @@ interface UserStatsResponse {
     status: boolean;
 }
 
+
+interface ReferralDashboardResponse {
+    data: ReferralStats[];
+    status: boolean;
+}
+
+export interface ReferralStats {
+    address: string;
+    tvlFromReferrals: number;
+    referreredAddresses: string[];
+}
+
+
 export interface AutoCompoundResult {
     data: {
         [farmId: number]: {
@@ -33,27 +46,16 @@ export interface AutoCompoundResult {
     status: number;
     runTime: number;
 }
-
-export interface VaultStatsResponse {
-    data: {
-        vaults: VaultStats[];
-        autoCompound: AutoCompoundResult;
-    };
-    status: boolean;
+interface AutoCompoundProcessed  {
+    autoCompoundLastRunAt: string;
+    autoCompoundRunTime: string | number;
+    autoCompoundHarvestSuccess: boolean;
+    autoCompoundEarnSuccess: boolean;
+    autoCompoundStatus: string;
+    autoCompoundHarvestStatus: string;
+    autoCompoundEarnStatus: string;
 }
-
-interface ReferralDashboardResponse {
-    data: ReferralStats[];
-    status: boolean;
-}
-
-export interface ReferralStats {
-    address: string;
-    tvlFromReferrals: number;
-    referreredAddresses: string[];
-}
-
-export interface VaultStats {
+export interface BasicVaultStats {
     address: string;
     name?: string;
     averageDeposit: number;
@@ -61,6 +63,21 @@ export interface VaultStats {
     numberOfDeposits: number;
     _id: string;
 }
+
+export interface VaultStat extends AutoCompoundProcessed, BasicVaultStats {
+    id: number; //farm id
+    isDeprecated?: boolean;
+    originPlatform: string;
+    secondaryPlatform?: string;
+}
+export interface VaultStatsResponse {
+    data: {
+        vaults: BasicVaultStats[];
+        autoCompound: AutoCompoundResult;
+    };
+    status: boolean;
+}
+
 
 interface VaultsApyResponse {
     data: {

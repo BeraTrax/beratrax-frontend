@@ -11,9 +11,11 @@ import {
     fetchFacetUsersCount,
     fetchAccountConnectorsStats,
     VaultStatsResponse,
+    VaultStat,
 } from "src/api/stats";
 import useFarms from "../state/farms/hooks/useFarms";
 import useWallet from "./useWallet";
+
 
 export const useStats = (forGalxe?: boolean) => {
     const [page, setPage] = useState<number>(1);
@@ -83,7 +85,7 @@ export const useStats = (forGalxe?: boolean) => {
             if (!farm) return []; // Skips this vault
             const autoCompoundFarmResult = vaultStatsTemp.autoCompound.data[farm?.id];
             const autoCompoundResult = vaultStatsTemp.autoCompound;
-            const vaultStats = {
+            const vaultStatsRecord = {
                 ...vault,
                 name: farm.name,
                 originPlatform: farm.originPlatform,
@@ -107,9 +109,9 @@ export const useStats = (forGalxe?: boolean) => {
                 }
             }
             return  {
-                ...vaultStats,
+                ...vaultStatsRecord,
                 ...autoCompoundStats,
-            };
+            } as VaultStat;
         });
     }, [vaultStatsTemp, farms]);
     

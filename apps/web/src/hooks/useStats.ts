@@ -45,7 +45,7 @@ export const useStats = (forGalxe?: boolean) => {
         queryFn: () => fetchCountActiveUsers(),
     });
 
-    const { data: vaultStatsTemp } = useQuery<VaultStatsResponse["data"]>({
+    const { data: vaultStatsTemp, refetch: refetchVaultStats, isRefetching: isRefetchingVaultStats } = useQuery<VaultStatsResponse["data"]>({
         queryKey: ["stats/tvl/vaults"],
         queryFn: () => fetchVaultStats(),
     });
@@ -123,6 +123,8 @@ export const useStats = (forGalxe?: boolean) => {
         totalBtxPoints: totalBtxPoints?.totalBTXPoints[0].totalBTXPoints,
         facetUserCount,
         vaultStats,
+        refetchVaultStats,
+        isRefetchingVaultStats,
         setPage,
         sortBy,
         setSortBy,

@@ -17,7 +17,7 @@ interface UserStatsResponse {
     status: boolean;
 }
 
-interface AutoCompoundResult {
+export interface AutoCompoundResult {
     data: {
         [farmId: number]: {
             harvestSuccess: boolean;
@@ -53,7 +53,7 @@ export interface ReferralStats {
     referreredAddresses: string[];
 }
 
-interface VaultStats {
+export interface VaultStats {
     address: string;
     name?: string;
     averageDeposit: number;

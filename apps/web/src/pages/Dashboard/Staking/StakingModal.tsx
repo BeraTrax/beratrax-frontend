@@ -305,12 +305,12 @@ const StakingModal = ({ open, setOpen }: StakingModalProps) => {
 					{!isStakingLive
 						? "Voting Period Has Ended. Please wait for the next epoch"
 						: isVoting
-							? "Voting..."
-							: !userStake
-								? "You must stake BTX to be able to vote"
-								: !userCurrentVote
-									? `Vote with your ${Number(toEth(userStake)).toFixed(0)} BTX`
-									: "Vote"}
+						? "Voting..."
+						: !userStake
+						? "You must stake BTX to be able to vote"
+						: !userCurrentVote
+						? `Vote with your ${Number(toEth(userStake)).toFixed(0)} BTX`
+						: "Vote"}
 				</button>
 			</div>
 		</MobileModalContainer>

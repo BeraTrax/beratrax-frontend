@@ -40,35 +40,35 @@ const Vaults: React.FC = () => {
 
 	const publicClient = getPublicClient(CHAIN_ID.BERACHAIN);
 
-	useEffect(() => {
-		// Move the function definition outside of useEffect
-		if (!currentWallet || !vaults.length) return;
+	// useEffect(() => {
+	// 	// Move the function definition outside of useEffect
+	// 	if (!currentWallet || !vaults.length) return;
 
-		async function fetchRewardsData() {
-			try {
-				const filteredVaults = vaults.filter((vault) => {
-					if (!vault.rewardVault) return false;
-					const vaultBalance =
-						BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
-						BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
-					return vaultBalance > 0n;
-				});
-				setRewardsVaultsData(filteredVaults);
+	// 	async function fetchRewardsData() {
+	// 		try {
+	// 			const filteredVaults = vaults.filter((vault) => {
+	// 				if (!vault.rewardVault) return false;
+	// 				const vaultBalance =
+	// 					BigInt(balances[vault.chainId][vault.vault_addr].valueWei) -
+	// 					BigInt(balances[vault.chainId][vault.vault_addr].valueRewardVaultWei || 0);
+	// 				return vaultBalance > 0n;
+	// 			});
+	// 			setRewardsVaultsData(filteredVaults);
 
-				const contract = getContract({
-					address: addressesByChainId[CHAIN_ID.BERACHAIN].stakingAddress as Address,
-					abi: stakingAbi,
-					client: { public: publicClient },
-				});
-				const userInfo = (await contract.read.userInfo([currentWallet])) as any;
-				setUserBTXStake(userInfo[1]);
-			} catch (error) {
-				console.error("Error fetching rewards data:", error);
-			}
-		}
+	// 			const contract = getContract({
+	// 				address: addressesByChainId[CHAIN_ID.BERACHAIN].stakingAddress as Address,
+	// 				abi: stakingAbi,
+	// 				client: { public: publicClient },
+	// 			});
+	// 			const userInfo = (await contract.read.userInfo([currentWallet])) as any;
+	// 			setUserBTXStake(userInfo[1]);
+	// 		} catch (error) {
+	// 			console.error("Error fetching rewards data:", error);
+	// 		}
+	// 	}
 
-		fetchRewardsData();
-	}, [rewardsUpdateTrigger, vaults]);
+	// 	fetchRewardsData();
+	// }, [rewardsUpdateTrigger, vaults]);
 
 	if (isLoading || isConnecting) return <Skeleton w={"100%"} h={250} bRadius={20} inverted={false} />;
 
@@ -111,12 +111,12 @@ const Vaults: React.FC = () => {
 				<div className="flex flex-col gap-x-4 justify-end items-center lg:flex-row">
 					{deprecatedVaults.length > 0 && <VaultsMigrator />}
 					{upgradableVaults.length > 0 && <VaultsMigrator />}
-					{rewardsVaultsData.length > 0 && (
+					{/* {rewardsVaultsData.length > 0 && (
 						<DepositToRewardsVault
 							rewardsVaultsData={rewardsVaultsData}
 							onDepositComplete={() => setRewardsUpdateTrigger((prev) => prev + 1)}
 						/>
-					)}
+					)} */}
 				</div>
 			</div>
 			<div

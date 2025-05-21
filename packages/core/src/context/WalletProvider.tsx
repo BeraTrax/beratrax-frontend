@@ -14,6 +14,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Linking from "expo-linking";
+import { web3authClientId } from "../config/constants";
 
 export interface IWalletContext {
 	currentWallet?: Address;
@@ -70,7 +71,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 					? Linking.createURL("web3auth", {})
 					: Linking.createURL("web3auth", { scheme });
 
-			const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
+			const clientId = web3authClientId;
 
 			const chainConfig = {
 				chainNamespace: ChainNamespace.EIP155,

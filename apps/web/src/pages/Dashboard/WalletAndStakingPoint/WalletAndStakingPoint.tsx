@@ -23,7 +23,7 @@ import { copyToClipboard } from "@beratrax/core/src/utils";
 import { trackLogin } from "@beratrax/core/src/utils/analytics";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
-import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
+// import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 export const WalletAndStakingPoint: React.FC = () => {
 	const {
@@ -285,7 +285,7 @@ export const WalletAndStakingPoint: React.FC = () => {
 			)}
 
 			{/* Staking Modal */}
-			<StakingModal open={openStakingModal} setOpen={setOpenStakingModal} />
+			{/* <StakingModal open={openStakingModal} setOpen={setOpenStakingModal} /> */}
 
 			{/* Earn Trax Modal */}
 			{currentWallet && !earnTraxTermsAgreed && openEarnTraxModal && (

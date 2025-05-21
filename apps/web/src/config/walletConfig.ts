@@ -144,6 +144,7 @@ const createSocialWallet = (id: string, name: string, icon: string, loginProvide
 						loginParams: {
 							loginProvider,
 						},
+						// @ts-ignore
 					})(config),
 					...walletDetails,
 				};
@@ -157,17 +158,14 @@ const discordWallet = () => createSocialWallet("discord", "Discord", discordIcon
 const twitterWallet = () => createSocialWallet("twitter", "Twitter", twitterIcon, "twitter");
 const githubWallet = () => createSocialWallet("github", "Github", githubIcon, "github");
 
-export const webWalletConfig = getDefaultConfig({
+export const rainbowConfig = getDefaultConfig({
 	appName: "Beratrax",
 	projectId: walletConnectProjectId,
 	chains: supportedChains as [Chain, ...Chain[]],
-	transports: supportedChains.reduce(
-		(acc, curr) => {
-			acc[curr.id] = http(curr.rpcUrls?.alchemy?.http[0]);
-			return acc;
-		},
-		{} as { [key: number]: HttpTransport }
-	),
+	transports: supportedChains.reduce((acc, curr) => {
+		acc[curr.id] = http(curr.rpcUrls?.alchemy?.http[0]);
+		return acc;
+	}, {} as { [key: number]: HttpTransport }),
 	wallets: [
 		{
 			groupName: "Wallets",

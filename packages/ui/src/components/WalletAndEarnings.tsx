@@ -52,7 +52,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 		earnTraxTermsAgreed,
 		termsOfUseAgreed,
 	} = useAppSelector((state) => state.account);
-	const { currentWallet, isConnecting, isSocial, getPublicClient, login } = useWallet();
+	const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
 	const { disconnect } = useDisconnect();
 	const { switchChain } = useSwitchChain();
 	const { isConnected, connector } = useAccount();
@@ -186,7 +186,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 			setIsClaimingBtx(false);
 		}
 	};
-	
+
 	return (
 		<View className="bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
 			{/* Terms of Use Modal */}

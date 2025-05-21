@@ -1,5 +1,5 @@
 import { queryClient } from "@beratrax/core/src/config/reactQuery";
-import { WalletProvider } from "@beratrax/core/src/context";
+import WalletProvider from "@beratrax/web/src/context/WalletProvider";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +14,8 @@ import Body from "./Body";
 import WalletDisclaimer from "./components/WalletDisclaimer/WalletDisclaimer";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
-import { webWalletConfig, web3AuthInstance } from "./config/webWalletConfig";
+import { rainbowConfig } from "./config/walletConfig";
+import { WagmiProvider } from "wagmi";
 setHook("notifications", useNotifications);
 
 function App() {
@@ -31,31 +32,24 @@ function App() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<RainbowKitProvider
-				theme={darkTheme({
-					accentColor: "var( --new-color_primary)",
-					accentColorForeground: "white",
-				})}
-				showRecentTransactions={false}
-				appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
-			>
-				<WalletProvider
-					walletConfig={webWalletConfig}
-					getWeb3AuthPk={() => {
-						return web3AuthInstance.provider?.request({
-							method: "eth_private_key",
-						}) as Promise<string>;
-					}}
-					isWeb3AuthConnected={() => web3AuthInstance.connected}
-					logoutWeb3Auth={() => web3AuthInstance.logout()}
+			<WagmiProvider config={rainbowConfig}>
+				<RainbowKitProvider
+					theme={darkTheme({
+						accentColor: "var( --new-color_primary)",
+						accentColorForeground: "white",
+					})}
+					showRecentTransactions={false}
+					appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
 				>
-					<Router>
-						<Body />
-					</Router>
-					<ReactHooksWrapper />
-				</WalletProvider>
-				<ReactQueryDevtools />
-			</RainbowKitProvider>
+					<WalletProvider>
+						<Router>
+							<Body />
+						</Router>
+						<ReactHooksWrapper />
+					</WalletProvider>
+				</RainbowKitProvider>
+			</WagmiProvider>
+			<ReactQueryDevtools />
 		</QueryClientProvider>
 	);
 }

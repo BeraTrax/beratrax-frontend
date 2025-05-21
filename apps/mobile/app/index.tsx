@@ -2,7 +2,7 @@ import "../globals";
 import "@ethersproject/shims";
 import "@expo/metro-runtime";
 import "react-native-get-random-values";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { PointsEarnings, WalletAndEarnings, EmptyComponent, ReferralLink, Vaults, TokenBalances, Transactions } from "@beratrax/ui";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
@@ -25,7 +25,9 @@ const Dashboard = () => {
 							<Transactions />
 						</>
 					) : (
-						<EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>Sign in/up to view your dashboard.</EmptyComponent>
+						<EmptyComponent>
+							<Text>Sign in/up to view your dashboard.</Text>
+						</EmptyComponent>
 					)}
 				</View>
 			</View>

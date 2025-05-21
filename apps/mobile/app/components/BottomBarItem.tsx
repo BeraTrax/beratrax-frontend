@@ -18,9 +18,9 @@ const BottomBarItem = ({ isActive, Icon, label, onPress }: BottomBarItemProps) =
 
 	const content = (
 		<>
-			<Icon className={`w-6 h-6 mb-1 ${isActive ? "text-gradientPrimary" : "text-textSecondary"}`} />
+			<Icon className={`w-4 h-4 mb-1 ${isActive ? "text-gradientPrimary" : "text-textSecondary"}`} />
 			<Text
-				className={`flex justify-self-center align-self-center ${isActive ? "text-gradientPrimary" : "text-textSecondary"} text-sm uppercase`}
+				className={`flex justify-self-center align-self-center ${isActive ? "text-gradientPrimary" : "text-textSecondary"} text-xs uppercase`}
 			>
 				{label}
 			</Text>

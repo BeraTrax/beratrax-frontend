@@ -8,3 +8,6 @@ export * from "./Vaults";
 export * from "./TokenBalances";
 export * from "./Transactions/Transactions";
 export * from "./Leaderboard/Leaderboard";
+export * from "./UserGuide";
+export * from "./FarmItem/components/FarmActionView/FarmActionView";
+export * from "./FarmView/FarmView";

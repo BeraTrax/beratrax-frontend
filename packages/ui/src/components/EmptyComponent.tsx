@@ -12,7 +12,7 @@ interface IProps {
 export const EmptyComponent: FC<IProps> = ({ children, style = {}, link = "", linkText }) => {
 	return (
 		<View
-			className={`text-textWhite text-2xl font-medium text-center	grid place-content-center rounded-3xl border border-borderDark  relative overflow-hidden p-4 w-full bg-bgDark  `}
+			className={`font-arame-mono text-textWhite text-2xl font-medium text-center	grid place-content-center rounded-3xl border border-borderDark  relative overflow-hidden p-4 w-full bg-bgDark  `}
 			style={style}
 		>
 			<View>

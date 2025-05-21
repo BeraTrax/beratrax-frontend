@@ -121,6 +121,8 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	}, [currentWallet]);
 
 	useEffect(() => {
+		console.log("isConnected", isConnected);
+		console.log("currentWallet", currentWallet);
 		if (isConnected && currentWallet) {
 			trackLogin(currentWallet);
 			const checkClaimBtxApi = async () => {
@@ -319,7 +321,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 								</Svg>
 							</View>
 							<View className="flex flex-row items-center gap-x-2 justify-start">
-								<Text className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">TOTAL STAKED</Text>
+								<Text className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">TOTAL Earnings</Text>
 							</View>
 							<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
 								${formatCurrency(userEarnedAmountOnVaults)}

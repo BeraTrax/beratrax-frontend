@@ -17,7 +17,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
-import WalletProvider from "@beratrax/core/src/context/WalletProvider";
+import WalletProvider from "@beratrax/mobile/app/context/WalletProvider";
 import { View } from "react-native";
 import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";

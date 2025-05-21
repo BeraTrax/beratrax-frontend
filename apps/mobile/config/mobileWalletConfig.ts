@@ -24,21 +24,18 @@ const metadata = {
 
 const scheme = "com.beratrax.mobile";
 const redirectUrl = `${scheme}://auth`;
+
 const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
+
 const chainConfig = {
+	chainNamespace: ChainNamespace.EIP155,
 	chainId: "0x" + (80094).toString(16),
 	rpcTarget: "https://rpc.berachain.com",
 	displayName: "Berachain",
 	tickerName: "Berachain",
 	ticker: "BERA",
 	blockExplorerUrl: "https://berascan.com",
-	chainNamespace: ChainNamespace.EIP155,
 };
-
-const resolvedRedirectUrl =
-	Constants.executionEnvironment === ExecutionEnvironment.Standalone
-		? Linking.createURL("web3auth", {})
-		: Linking.createURL("web3auth", { scheme: scheme });
 
 const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
 	config: {
@@ -46,12 +43,12 @@ const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
 	},
 });
 
-// Initialize Web3Auth
 export const web3auth = new Web3Auth(WebBrowser, SecureStore, {
 	clientId,
-	redirectUrl,
 	network: WEB3AUTH_NETWORK.CYAN,
 	privateKeyProvider: ethereumPrivateKeyProvider,
+	redirectUrl,
+	enableLogging: true, // Enable logging for debugging
 });
 
 // Initialize Web3Auth and return a promise
@@ -101,6 +98,8 @@ export const logoutWeb3Auth = async (): Promise<void> => {
 const web3AuthConnector = Web3AuthConnector({
 	web3AuthInstance: web3auth,
 	loginParams: {
+		redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+		mfaLevel: "default",
 		loginProvider: "google", // Default provider - can be changed at login time
 	},
 });

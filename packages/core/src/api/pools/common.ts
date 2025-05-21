@@ -78,7 +78,6 @@ export const zapInBase: ZapInBaseFn = async ({
 			: token === zeroAddress
 				? "zapIn"
 				: "zapIn";
-
 		// eth zap
 		if (token === zeroAddress) {
 			// use weth address as tokenId, but in case of some farms (e.g: hop)
@@ -112,6 +111,7 @@ export const zapInBase: ZapInBaseFn = async ({
 			// notifyLoading(loadingMessages.zapping(), { id });
 			zapperTxn = await awaitTransaction(
 				client.wallet.sendTransaction({
+					account: currentWallet,
 					to: farm.zapper_addr,
 					value: amountInWei,
 					data: encodeFunctionData({

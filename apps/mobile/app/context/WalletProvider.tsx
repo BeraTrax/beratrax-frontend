@@ -1,20 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Address, createPublicClient, createWalletClient, EIP1193Provider, Hex, http } from "viem";
+import { Address, createPublicClient, createWalletClient, custom, EIP1193Provider, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { Connector, useAccount, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
-import { requestEthForGas } from "./../api";
-import { EstimateTxGasArgs, IClients } from "./../types";
-import { trackTransaction } from "./../utils/analytics";
+import { Connector, useAccount, useConnect, useDisconnect, useSwitchChain, useWalletClient } from "wagmi";
+import { requestEthForGas } from "@beratrax/core/src/api";
+import { EstimateTxGasArgs, IClients } from "@beratrax/core/src/types";
+import { trackTransaction } from "@beratrax/core/src/utils/analytics";
 import type { Config } from "@wagmi/core";
-import { supportedChains } from "../config/baseWalletConfig";
-// import { CHAIN_ID } from "src/types/enums";
-import Web3Auth, { WEB3AUTH_NETWORK, LOGIN_PROVIDER, ChainNamespace } from "@web3auth/react-native-sdk";
-import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import * as WebBrowser from "expo-web-browser";
-import * as SecureStore from "expo-secure-store";
-import Constants, { ExecutionEnvironment } from "expo-constants";
-import * as Linking from "expo-linking";
-import { web3authClientId } from "../config/constants";
+import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
+import Web3Auth from "@web3auth/react-native-sdk";
+import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
 
 export interface IWalletContext {
 	currentWallet?: Address;
@@ -27,7 +21,7 @@ export interface IWalletContext {
 	getClients: (chainId: number) => Promise<IClients>;
 	estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
 	connector?: Connector;
-	login: () => Promise<void>;
+	connectWallet: () => Promise<void>;
 }
 
 export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
@@ -49,56 +43,23 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	});
 
 	const { address, status, isConnecting: wagmiIsConnecting, isReconnecting: wagmiIsReconnecting, connector } = useAccount();
+	const { connectAsync } = useConnect();
 	const publicClients = useRef<Record<number, IClients["public"]>>({});
 	const walletClients = useRef<Record<number, IClients["wallet"]>>({});
 	const { disconnectAsync } = useDisconnect();
 	const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const [isReconnectingTimeout, setIsReconnectingTimeout] = useState(false);
-	// const [externalChainId, setExternalChainId] = useState(CHAIN_ID.BERACHAIN);
 	const [isConnecting, setIsConnecting] = useState(false);
 	const [isSocial, setIsSocial] = useState(false);
 	const [currentWallet, setCurrentWallet] = useState<Address | undefined>();
 	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-	const [provider, setProvider] = useState<any>(null);
+	const wagmiConnector = walletConfig.connectors[0];
 
 	// Initialize Web3Auth and check for existing session
 	useEffect(() => {
 		const initWeb3Auth = async () => {
-			const scheme = "com.beratrax.mobile";
-			const redirectUrl = `${scheme}://auth`;
-			const resolvedRedirectUrl =
-				Constants.executionEnvironment === ExecutionEnvironment.Standalone
-					? Linking.createURL("web3auth", {})
-					: Linking.createURL("web3auth", { scheme });
-
-			const clientId = web3authClientId;
-
-			const chainConfig = {
-				chainNamespace: ChainNamespace.EIP155,
-				chainId: "0x" + (80094).toString(16),
-				rpcTarget: "https://rpc.berachain.com",
-				displayName: "Berachain",
-				tickerName: "Berachain",
-				ticker: "BERA",
-				blockExplorerUrl: "https://berascan.com",
-			};
-
-			const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
-				config: {
-					chainConfig,
-				},
-			});
-
-			const web3authInstance = new Web3Auth(WebBrowser, SecureStore, {
-				clientId,
-				network: WEB3AUTH_NETWORK.CYAN,
-				privateKeyProvider: ethereumPrivateKeyProvider,
-				redirectUrl,
-				enableLogging: true, // Enable logging for debugging
-			});
-
 			try {
-				await web3authInstance.init();
+				await initWeb3AuthMobile();
 				setWeb3auth(web3authInstance);
 
 				// Check if user is already logged in
@@ -134,43 +95,16 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	}, []);
 
 	// Login function
-	const login = async () => {
-		if (!web3auth) {
-			console.error("Web3Auth not initialized");
-			return;
-		}
-
+	const connectWallet = async () => {
 		try {
+			console.log("connectWallet clicked");
 			setIsConnecting(true);
-			const web3authResponse = await web3auth.login({
-				redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
-				mfaLevel: "default",
-				loginProvider: "google",
+			const { accounts, chainId } = await connectAsync({
+				connector: wagmiConnector,
 			});
 
-			if (web3auth.connected) {
-				const privateKey = await web3auth.provider?.request({
-					method: "eth_private_key",
-				});
-
-				// Ensure private key is properly formatted
-				if (typeof privateKey === "string") {
-					// Remove '0x' prefix if present and ensure it's a valid hex string
-					const cleanPrivateKey = privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
-					const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
-
-					try {
-						const account = privateKeyToAccount(formattedPrivateKey);
-						setCurrentWallet(account.address);
-						setIsSocial(true);
-					} catch (error) {
-						console.error("Error creating account from private key:", error);
-						throw new Error("Invalid private key format");
-					}
-				} else {
-					throw new Error("Invalid private key received from Web3Auth");
-				}
-			}
+			setCurrentWallet(accounts[0]);
+			setIsSocial(true);
 		} catch (error) {
 			console.error("Login error:", error);
 			throw error;
@@ -237,72 +171,84 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	// If social return wallet client
 	const getWalletClient = useCallback(
 		async (chainId: number, _isSocial: boolean | null = isSocial): Promise<IClients["wallet"]> => {
-			if (walletClients.current[chainId]) return walletClients.current[chainId];
+			try {
+				if (walletClients.current[chainId]) return walletClients.current[chainId];
 
-			if (!address) throw new Error("provider not found");
+				if (!address) throw new Error("provider not found");
 
-			const chain = supportedChains.find((item) => item.id === chainId);
-			if (!chain) throw new Error("chain not found");
+				const chain = supportedChains.find((item) => item.id === chainId);
+				if (!chain) throw new Error("chain not found");
 
-			let client: IClients["wallet"];
-			if (isSocial) {
-				const pkey = await getPkey();
-				if (!pkey) throw new Error("Invalid wallet connector");
+				let client: IClients["wallet"];
+				if (isSocial) {
+					if (!web3auth || !web3auth.provider) {
+						throw new Error("Web3Auth not initialized");
+					}
 
-				client = createWalletClient({
-					account: privateKeyToAccount(pkey),
-					transport: http(chain.rpcUrls?.default?.http[0]),
-					chain,
-				});
-			} else {
-				// @ts-ignore
-				client = getWalletClientHook;
-				await switchChainAsyncHook({ chainId });
-			}
-
-			client = client.extend((client) => ({
-				async sendTransaction(args) {
-					const publicClient = getPublicClient(chainId);
-					const gas =
-						((await publicClient.estimateGas({
-							to: args.to,
-							data: args.data,
-							value: args.value,
-							account: address,
-						})) *
-							120n) /
-						100n; // increase gas by 20%
-					const gasPrice = ((await publicClient.getGasPrice()) * 120n) / 100n; // increase gas price by 20%
-					const gasLimit = gasPrice * gas;
-					const sponsored = await requestEthForGas({
-						chainId: chainId,
-						from: address,
-						to: args.to!,
-						data: args.data as any,
-						value: args.value,
-						ethAmountForGas: gasLimit,
+					const rawKey = await web3auth.provider.request({
+						method: "eth_private_key",
 					});
-					if (!sponsored.status && args.value) {
-						const userBalance = await publicClient.getBalance({ address });
-						if (userBalance >= args.value + gasLimit) {
-							// User has sufficient balance, no need to modify args.value
-						} else {
-							args.value = userBalance - gasLimit;
-							if (args.value <= 0n) {
-								throw new Error("Not enough funds to cover gas");
+					if (typeof rawKey !== "string") {
+						throw new Error("Failed to retrieve private key from Web3Auth");
+					}
+
+					client = createWalletClient({
+						transport: custom(web3auth.provider),
+						chain,
+					});
+				} else {
+					// @ts-ignore
+					client = getWalletClientHook;
+					await switchChainAsyncHook({ chainId });
+				}
+
+				client = client.extend((client) => ({
+					async sendTransaction(args) {
+						const publicClient = getPublicClient(chainId);
+						const gas =
+							((await publicClient.estimateGas({
+								to: args.to,
+								data: args.data,
+								value: args.value,
+								account: address,
+							})) *
+								120n) /
+							100n; // increase gas by 20%
+						const gasPrice = ((await publicClient.getGasPrice()) * 120n) / 100n; // increase gas price by 20%
+						const gasLimit = gasPrice * gas;
+						const sponsored = await requestEthForGas({
+							chainId: chainId,
+							from: address,
+							to: args.to!,
+							data: args.data as any,
+							value: args.value,
+							ethAmountForGas: gasLimit,
+						});
+						if (!sponsored.status && args.value) {
+							const userBalance = await publicClient.getBalance({ address });
+							if (userBalance >= args.value + gasLimit) {
+								// User has sufficient balance, no need to modify args.value
+							} else {
+								args.value = userBalance - gasLimit;
+								if (args.value <= 0n) {
+									throw new Error("Not enough funds to cover gas");
+								}
 							}
 						}
-					}
-					args.gasPrice = gasPrice;
-					args.gas = gas;
-					const tx = await client.sendTransaction(args);
-					trackTransaction(tx); // this to track the transaction for analytics
-					return tx;
-				},
-			}));
+						args.gasPrice = gasPrice;
+						args.gas = gas;
+						const tx = await client.sendTransaction(args);
+						trackTransaction(tx); // this to track the transaction for analytics
+						return tx;
+					},
+				}));
 
-			walletClients.current[chainId] = client;
-			return client;
+				walletClients.current[chainId] = client;
+				return client;
+			} catch (error) {
+				console.error("Error getting wallet client:", error);
+				throw error;
+			}
 		},
 		[address, isSocial, getWalletClientHook, switchChainAsyncHook]
 	);
@@ -356,9 +302,9 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 		}
 	};
 
-	useEffect(() => {
-		if (status === "disconnected") logout();
-	}, [status]);
+	// useEffect(() => {
+	// 	if (status === "disconnected") logout();
+	// }, [status]);
 
 	return (
 		<WalletContext.Provider
@@ -373,7 +319,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 				getPublicClient,
 				getWalletClient,
 				getClients,
-				login,
+				connectWallet,
 			}}
 		>
 			{children}

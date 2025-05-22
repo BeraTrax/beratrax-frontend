@@ -1,7 +1,5 @@
-import { createAppKit, defaultWagmiConfig } from "@reown/appkit-wagmi-react-native";
 import { Chain, createWalletClient, CustomTransport, http, JsonRpcAccount, LocalAccount, PublicClient, Transport } from "viem";
 import { chains } from "@beratrax/core/src/config/baseWalletConfig";
-import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Linking from "expo-linking";
 import Web3Auth, { WEB3AUTH_NETWORK, ChainNamespace } from "@web3auth/react-native-sdk";
 import * as WebBrowser from "expo-web-browser";
@@ -9,18 +7,6 @@ import * as SecureStore from "expo-secure-store";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthConnector } from "./web3authRnConnector";
 import { createConfig } from "wagmi";
-
-export const reownProjectId = process.env.EXPO_PUBLIC_REOWN_PROJECT_ID as string;
-const metadata = {
-	name: "Beratrax",
-	description: "Beratrax",
-	url: "https://beratrax.com",
-	icons: ["https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png"],
-	redirect: {
-		native: "beratrax://",
-		universal: "beratrax.com",
-	},
-};
 
 const scheme = "com.beratrax.mobile";
 const redirectUrl = `${scheme}://auth`;
@@ -114,23 +100,6 @@ export const mobileWalletConfig = createConfig({
 			[chain.id]: http(chain.rpcUrls.default.http[0]),
 		};
 	}, {}),
-});
-
-// Fallback config using reown if needed
-export const fallbackWalletConfig = defaultWagmiConfig({
-	chains: chains,
-	projectId: reownProjectId,
-	metadata,
-});
-
-export const appKit = createAppKit({
-	projectId: reownProjectId,
-	wagmiConfig: mobileWalletConfig,
-	defaultChain: chains[0],
-	enableAnalytics: true,
-	features: {
-		socials: ["x", "discord", "apple"],
-	},
 });
 
 export interface IClients {

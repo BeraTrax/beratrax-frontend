@@ -17,12 +17,6 @@ interface UserStatsResponse {
     status: boolean;
 }
 
-interface VaultStatsResponse {
-    data: {
-        vaults: VaultStats[];
-    };
-    status: boolean;
-}
 
 interface ReferralDashboardResponse {
     data: ReferralStats[];
@@ -35,7 +29,33 @@ export interface ReferralStats {
     referreredAddresses: string[];
 }
 
-interface VaultStats {
+
+export interface AutoCompoundResult {
+    data: {
+        [farmId: number]: {
+            harvestSuccess: boolean;
+            earnSuccess: boolean;
+            harvestStatus: string;
+            earnStatus: string;
+            earnReturnData: string;
+            harvestReturnData: string;
+        }
+    }
+    lastModifiedBy: number;
+    lastFinishedAt: number;
+    status: number;
+    runTime: number;
+}
+interface AutoCompoundProcessed  {
+    autoCompoundLastRunAt: string;
+    autoCompoundRunTime: string | number;
+    autoCompoundHarvestSuccess: boolean;
+    autoCompoundEarnSuccess: boolean;
+    autoCompoundStatus: string;
+    autoCompoundHarvestStatus: string;
+    autoCompoundEarnStatus: string;
+}
+export interface BasicVaultStats {
     address: string;
     name?: string;
     averageDeposit: number;
@@ -43,6 +63,21 @@ interface VaultStats {
     numberOfDeposits: number;
     _id: string;
 }
+
+export interface VaultStat extends AutoCompoundProcessed, BasicVaultStats {
+    id: number; //farm id
+    isDeprecated?: boolean;
+    originPlatform: string;
+    secondaryPlatform?: string;
+}
+export interface VaultStatsResponse {
+    data: {
+        vaults: BasicVaultStats[];
+        autoCompound: AutoCompoundResult;
+    };
+    status: boolean;
+}
+
 
 interface VaultsApyResponse {
     data: {
@@ -121,7 +156,7 @@ export const fetchCountActiveUsers = async () => {
 
 export const fetchVaultStats = async () => {
     const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults`);
-    return res.data.data.vaults;
+    return res.data.data;
 };
 
 export const fetchReferralDashboard = async () => {

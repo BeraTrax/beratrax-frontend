@@ -33,8 +33,8 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 		<ModalLayout onClose={handleClose} className={`${styles.container}`} style={{ zIndex: 20 }} wrapperClassName="lg:w-full">
 			<View className="w-full mb-4">
 				<View className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
-					<Text className="text-2xl font-bold text-center">Important Notice!</Text>
-					<Text className="text-base">
+					<Text className="text-2xl font-bold text-center text-textWhite">Important Notice!</Text>
+					<Text className="text-base text-textWhite">
 						You are choosing to trade your <Text className="font-bold">${inputToken}</Text> for a share in the{" "}
 						<Text className="font-bold">${outputToken}</Text>. You understand that after this transaction, you now hold{" "}
 						<Text className="font-bold">${outputToken}</Text>, and BeraTrax is increasing your position in{" "}
@@ -44,26 +44,29 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 					</Text>
 				</View>
 			</View>
-			<View className={`${styles.checkbox}`}>
+			<View className={`${styles.checkbox} flex-row items-center gap-3`}>
 				<Switch
 					value={doNotNotifyAgain}
 					onValueChange={() => setDoNotNotifyAgain((prev) => !prev)}
-					trackColor={{ false: "#767577", true: "#81b0ff" }}
-					thumbColor={doNotNotifyAgain ? "#f5dd4b" : "#f4f3f4"}
+					trackColor={{ false: "#767577", true: "#4CAF50" }}
+					thumbColor={doNotNotifyAgain ? "#ffffff" : "#f4f3f4"}
+					ios_backgroundColor="#767577"
 				/>
-				<Text style={{ color: "white" }}>Do not notify me again</Text>
+				<Text className="text-textWhite text-base">Do not notify me again</Text>
 			</View>
-			<View className={styles.buttonsContainer}>
+			<View className="flex flex-row justify-between items-center">
 				<Pressable
-					className="bg-bgPrimary p-4 rounded-xl w-24"
+					className="bg-bgPrimary p-4 rounded-xl text-textWhite"
 					onPress={() => {
 						handleClose();
 					}}
 				>
-					Cancel
+					<Text className="text-center text-textWhite font-bold">Cancel</Text>
 				</Pressable>
-				<Pressable className={`bg-bgPrimary p-4 rounded-xl w-24`} disabled={isLoading} onPress={handleUnderstand}>
-					{isLoading ? <LoaderIcon className={styles.loader} /> : "I understand"}
+				<Pressable className={`bg-bgPrimary p-4 rounded-xl  text-textWhite`} disabled={isLoading} onPress={handleUnderstand}>
+					<Text className="text-center text-textWhite font-bold">
+						{isLoading ? <LoaderIcon className={styles.loader} /> : "I understand"}
+					</Text>
 				</Pressable>
 			</View>
 		</ModalLayout>

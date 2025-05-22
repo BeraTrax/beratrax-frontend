@@ -57,7 +57,7 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 			style={{ borderColor: "var(--new-border_dark)" }}
 		>
 			<View className="text-textWhite flex flex-col gap-4">
-				<Text className="text-xl font-bold align-middle uppercase">{getTransactionTitle()}</Text>
+				<Text className="text-xl text-textWhite font-bold align-middle uppercase">{getTransactionTitle()}</Text>
 				<Text className="text-textWhite mt-2 text-[16px] font-light leading-relaxed">{getTransactionDescription()}</Text>
 
 				<View className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
@@ -102,7 +102,7 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
 							onPress={() => handleClose()}
 						>
-							<Text className="text-textBlack">Close</Text>
+							<Text className="text-textBlack text-center text-xl font-bold">Close</Text>
 						</Pressable>
 					</>
 				)}

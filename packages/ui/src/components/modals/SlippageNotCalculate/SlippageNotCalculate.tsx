@@ -19,21 +19,21 @@ export const SlippageNotCalculate: FC<IProps> = ({ handleClose, handleSubmit }) 
 				<Text className="text-center tablet:text-base mobile:text-sm text-xl text-textSecondary ">Do you still wish to continue?</Text>
 				<View className=" tablet:gap-2 mt-4 flex gap-4 w-full justify-evenly">
 					<Pressable
-						className=" bg-buttonPrimaryLight w-full py-3 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase"
+						className=" bg-buttonPrimaryLight w-full py-3 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-black transition-colors border hover:border-gradientPrimary group"
 						onPress={() => {
 							handleClose();
 						}}
 					>
-						<Text className="text-textBlack">Close</Text>
+						<Text className="text-textBlack font-bold text-center group-hover:text-white transition-colors">Close</Text>
 					</Pressable>
 					<Pressable
-						className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-3 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase"
+						className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-3 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-gradientPrimary hover:text-white transition-colors group"
 						onPress={() => {
 							handleSubmit();
 							handleClose();
 						}}
 					>
-						<Text className="text-textBlack">Continue</Text>
+						<Text className="text-textWhite font-bold text-center group-hover:text-black transition-colors">Continue</Text>
 					</Pressable>
 				</View>
 			</View>

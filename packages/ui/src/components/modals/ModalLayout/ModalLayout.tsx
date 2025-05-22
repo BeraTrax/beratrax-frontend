@@ -1,16 +1,15 @@
 import { FC, ReactNode } from "react";
+import { View, Pressable, Platform } from "react-native";
 import { useApp } from "@beratrax/core/src/hooks";
 import { twMerge } from "tailwind-merge";
-import styles from "./ModalLayout.module.css";
-import { View, TouchableWithoutFeedback, ViewStyle, GestureResponderEvent } from "react-native";
 
 interface IProps {
-	onClose: (event?: GestureResponderEvent) => void;
+	onClose: Function;
 	children: ReactNode;
-	className?: string;
-	style?: ViewStyle;
 	wrapperClassName?: string;
-	wrapperStyle?: ViewStyle;
+	wrapperStyle?: any;
+	style?: any;
+	className?: string;
 }
 
 export const ModalLayout: FC<IProps> = ({
@@ -20,19 +19,41 @@ export const ModalLayout: FC<IProps> = ({
 	className = "",
 	wrapperClassName = "lg:w-full",
 	wrapperStyle = {},
+	...rest
 }) => {
 	const { lightMode } = useApp();
+	const isWeb = Platform.OS === "web";
+
+	// Base classes
+	const backdropClasses = "fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black/60 backdrop-blur-sm";
+	const containerClasses = "min-h-[200px] w-[90%] max-w-[500px] bg-bgSecondary rounded-[20px] overflow-hidden relative";
+	const containerLightClasses = "bg-bgSecondary border border-new-border_dark";
+
+	// Platform specific classes
+	const backdropNativeClasses = "absolute inset-0 flex items-center justify-start pt-[40%]";
+	const containerWebClasses = "p-[35px] px-[50px]";
+	const containerNativeClasses = "p-5 self-center";
 
 	return (
-		// this twMerge will follow the rule of latter defined has the highest priority and overrides the previous class
-		<TouchableWithoutFeedback onPress={(e) => onClose(e)}>
-			<View className={`${styles.backdrop} ${twMerge("w-full lg:w-[92%]", wrapperClassName)}`} style={wrapperStyle}>
-				<TouchableWithoutFeedback onPress={(e: GestureResponderEvent) => e.stopPropagation()}>
-					<View className={`${styles.container} ${className}`} style={style}>
-						{children}
-					</View>
-				</TouchableWithoutFeedback>
+		<Pressable
+			className={twMerge(backdropClasses, isWeb ? "" : backdropNativeClasses, isWeb ? twMerge("", wrapperClassName) : "w-full")}
+			style={wrapperStyle}
+			onPress={(e) => onClose(e)}
+		>
+			<View
+				{...rest}
+				className={twMerge(
+					containerClasses,
+					isWeb ? containerWebClasses : containerNativeClasses,
+					lightMode ? containerLightClasses : "",
+					className
+				)}
+				style={style}
+				onStartShouldSetResponder={() => true}
+				onTouchEnd={(e) => e.stopPropagation()}
+			>
+				{children}
 			</View>
-		</TouchableWithoutFeedback>
+		</Pressable>
 	);
 };

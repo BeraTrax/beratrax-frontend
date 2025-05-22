@@ -16,23 +16,23 @@ export const SlippageWarning: FC<IProps> = ({ handleClose, handleSubmit, percent
 					className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}
 				>{`Slipage is higher than normal at ${percentage?.toFixed(2)}%.`}</Text>
 				<Text className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}>Are you sure you still want to continue?</Text>
-				<View className={" tablet:gap-2 mt-4 flex gap-4 w-full justify-evenly"}>
+				<View className={"tablet:gap-2 mt-4 flex flex-row gap-4 w-full justify-between"}>
 					<Pressable
-						className="bg-buttonPrimaryLight w-full py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase"
+						className="bg-buttonPrimaryLight flex-1 py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-white transition-colors group"
 						onPress={() => {
 							handleClose();
 						}}
 					>
-						<Text className="text-white">Close</Text>
+						<Text className="text-white text-center group-hover:text-buttonPrimaryLight transition-colors">Close</Text>
 					</Pressable>
 					<Pressable
-						className="bg-bgDark border border-red-500 text-red-500 w-full py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-red-500 hover:text-white transition-colors"
+						className="bg-bgDark border border-red-500 flex-1 py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-red-500 transition-colors group"
 						onPress={() => {
 							handleSubmit();
 							handleClose();
 						}}
 					>
-						<Text className="text-white">Continue</Text>
+						<Text className="text-red-500 text-center group-hover:text-white transition-colors">Continue</Text>
 					</Pressable>
 				</View>
 			</View>

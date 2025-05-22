@@ -16,12 +16,12 @@ export const ConfirmWithdraw: FC<IProps> = ({ handleClose, handleSubmit }) => {
 				</Text>
 				<View className={" tablet:gap-2 mt-4 flex gap-4 w-full justify-evenly"}>
 					<Pressable
-						className="bg-buttonPrimaryLight w-full py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase"
+						className="bg-buttonPrimaryLight w-full py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-black border border-green transition-colors group"
 						onPress={() => {
 							handleClose();
 						}}
 					>
-						<Text className="text-textBlack">Close</Text>
+						<Text className="text-textBlack font-bold text-center group-hover:text-white transition-colors">Close</Text>
 					</Pressable>
 					<Pressable
 						className="bg-bgDark border border-red-500 text-red-500 w-full py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-red-500 hover:text-white transition-colors"
@@ -30,7 +30,7 @@ export const ConfirmWithdraw: FC<IProps> = ({ handleClose, handleSubmit }) => {
 							handleClose();
 						}}
 					>
-						<Text className="text-textBlack">Continue</Text>
+						<Text className="text-textWhite font-bold text-center group-hover:text-white transition-colors">Continue</Text>
 					</Pressable>
 				</View>
 			</View>

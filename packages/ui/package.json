@@ -19,7 +19,7 @@
     "nativewind": "4.1.23",
     "react": "^18.2.0",
     "react-dom": "^19.1.0",
-    "react-native": "0.76.6",
+    "react-native": "0.76.9",
     "react-native-svg": "^15.11.2",
     "react-native-svg-transformer": "^1.5.0",
     "react-native-web": "^0.19.13",

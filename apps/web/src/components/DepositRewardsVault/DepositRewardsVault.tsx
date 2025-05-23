@@ -106,7 +106,7 @@ export const DepositToRewardsVault = ({ rewardsVaultsData, onDepositComplete }: 
 					? "bg-buttonDisabled cursor-not-allowed"
 					: "bg-buttonPrimary hover:bg-buttonPrimaryLight hover:scale-105 active:scale-95"
 			} text-black`}
-			onClick={depositToRewardsVault}
+			// onClick={depositToRewardsVault}
 			disabled={isDepositing}
 		>
 			{isDepositing && <CgSpinner className="animate-spin text-xl" />}

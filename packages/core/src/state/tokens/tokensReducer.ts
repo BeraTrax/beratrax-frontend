@@ -202,32 +202,32 @@ export const fetchBalances = createAsyncThunk(
 			);
 
 			// Aggregating rewards vault balances
-			const chainId = CHAIN_ID.BERACHAIN;
-			await Promise.all(
-				farms.map(async (vault) => {
-					if (!vault.rewardVault) return;
-					const balance = (await getContract({
-						address: vault.rewardVault,
-						abi: rewardVaultAbi,
-						client: {
-							public: getPublicClient(chainId),
-						},
-					}).read.balanceOf([account])) as bigint;
-					balances[chainId][vault.vault_addr] = {
-						valueWei: (BigInt(balances[chainId][vault.vault_addr]?.valueWei || "0") + BigInt(balance.toString())).toString(),
-						value: Number(balances[chainId][vault.vault_addr]?.value || 0) + Number(formatUnits(balance, 18)),
-						valueFormatted: formatCurrency(Number(balances[chainId][vault.vault_addr]?.value || 0) + Number(formatUnits(balance, 18))),
-						valueUsd:
-							Number(balances[chainId][vault.vault_addr]?.valueUsd || 0) +
-							Number(formatUnits(balance, 18)) * prices[chainId][vault.vault_addr],
-						valueUsdFormatted: formatCurrency(
-							Number(balances[chainId][vault.vault_addr]?.valueUsd || 0) +
-								Number(formatUnits(balance, 18)) * prices[chainId][vault.vault_addr]
-						),
-						valueRewardVaultWei: balance.toString(),
-					};
-				})
-			);
+			// const chainId = CHAIN_ID.BERACHAIN;
+			// await Promise.all(
+			// 	farms.map(async (vault) => {
+			// 		if (!vault.rewardVault) return;
+			// 		const balance = (await getContract({
+			// 			address: vault.rewardVault,
+			// 			abi: rewardVaultAbi,
+			// 			client: {
+			// 				public: getPublicClient(chainId),
+			// 			},
+			// 		}).read.balanceOf([account])) as bigint;
+			// 		balances[chainId][vault.vault_addr] = {
+			// 			valueWei: (BigInt(balances[chainId][vault.vault_addr]?.valueWei || "0") + BigInt(balance.toString())).toString(),
+			// 			value: Number(balances[chainId][vault.vault_addr]?.value || 0) + Number(formatUnits(balance, 18)),
+			// 			valueFormatted: formatCurrency(Number(balances[chainId][vault.vault_addr]?.value || 0) + Number(formatUnits(balance, 18))),
+			// 			valueUsd:
+			// 				Number(balances[chainId][vault.vault_addr]?.valueUsd || 0) +
+			// 				Number(formatUnits(balance, 18)) * prices[chainId][vault.vault_addr],
+			// 			valueUsdFormatted: formatCurrency(
+			// 				Number(balances[chainId][vault.vault_addr]?.valueUsd || 0) +
+			// 					Number(formatUnits(balance, 18)) * prices[chainId][vault.vault_addr]
+			// 			),
+			// 			valueRewardVaultWei: balance.toString(),
+			// 		};
+			// 	})
+			// );
 			thunkApi.dispatch(setAccount(account));
 			return balances;
 		} catch (error) {

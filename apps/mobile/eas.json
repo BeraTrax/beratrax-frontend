@@ -24,6 +24,17 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "track": "production",
+        "releaseStatus": "completed",
+        "serviceAccountKeyPath": "./path/to/service-account.json"
+      },
+      "ios": {
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "your-app-store-connect-app-id",
+        "appleTeamId": "your-apple-team-id"
+      }
+    }
   }
 }

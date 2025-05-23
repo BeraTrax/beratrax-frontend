@@ -290,13 +290,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 			// approve zap for non-native tokens
 			const vaultBalance =
 				BigInt(balances[farm.chainId][farm.vault_addr].valueWei) - BigInt(balances[farm.chainId][farm.vault_addr].valueRewardVaultWei || 0);
-			if (transactionType === FarmTransactionType.Withdraw && vaultBalance < amountInWei && farm.rewardVault) {
-				steps.push({
-					status: TransactionStepStatus.PENDING,
-					type: TransactionTypes.WITHDRAW_FROM_REWARD_VAULT,
-					amount: amountInWei.toString(),
-				} as WithdrawFromRewardVaultStep);
-			}
+			// if (transactionType === FarmTransactionType.Withdraw && vaultBalance < amountInWei && farm.rewardVault) {
+			// 	steps.push({
+			// 		status: TransactionStepStatus.PENDING,
+			// 		type: TransactionTypes.WITHDRAW_FROM_REWARD_VAULT,
+			// 		amount: amountInWei.toString(),
+			// 	} as WithdrawFromRewardVaultStep);
+			// }
 			if (transactionType === FarmTransactionType.Withdraw || currencySymbol !== "BERA") {
 				steps.push({
 					status: TransactionStepStatus.PENDING,
@@ -309,13 +309,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 				type: transactionType === FarmTransactionType.Deposit ? TransactionTypes.ZAP_IN : TransactionTypes.ZAP_OUT,
 				amount: amountInWei.toString(),
 			} as ZapInStep);
-			if (transactionType === FarmTransactionType.Deposit && farm.rewardVault) {
-				steps.push({
-					status: TransactionStepStatus.PENDING,
-					type: TransactionTypes.STAKE_INTO_REWARD_VAULT,
-					amount: amountInWei.toString(),
-				} as StakeIntoRewardVaultStep);
-			}
+			// if (transactionType === FarmTransactionType.Deposit && farm.rewardVault) {
+			// 	steps.push({
+			// 		status: TransactionStepStatus.PENDING,
+			// 		type: TransactionTypes.STAKE_INTO_REWARD_VAULT,
+			// 		amount: amountInWei.toString(),
+			// 	} as StakeIntoRewardVaultStep);
+			// }
 			const dbTx = await dispatch(
 				addTransactionDb({
 					from: currentWallet!,

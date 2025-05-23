@@ -256,7 +256,14 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
                     onClick={() => disconnect()}
                     className="w-8 h-8 text-textWhite cursor-pointer z-10"
                   /> */}
-									<PowerIcon onPress={() => disconnect()} size={42} strokeWidth={2} className="text-textWhite cursor-pointer z-10" />
+									<PowerIcon
+										onPress={() => {
+											disconnect();
+										}}
+										size={42}
+										strokeWidth={2}
+										className="text-textWhite cursor-pointer z-10"
+									/>
 								</View>
 							</View>
 						) : (

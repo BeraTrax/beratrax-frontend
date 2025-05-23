@@ -274,16 +274,14 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	// Update logout function to properly clear Web3Auth session
 	async function logout() {
 		try {
-			if (web3auth?.connected) {
-				await web3auth.logout();
-			}
+			// Use wagmi's disconnect which will call our connector's disconnect method
 			await disconnectAsync();
-			// Clear timeout on logout
+
+			// Clean up local state
 			if (reconnectTimeoutRef.current) {
 				clearTimeout(reconnectTimeoutRef.current);
 				reconnectTimeoutRef.current = null;
 			}
-			if (isWeb3AuthConnected?.()) await logoutWeb3Auth?.();
 			walletClients.current = {};
 			setIsReconnectingTimeout(false);
 			setCurrentWallet(undefined);
@@ -293,6 +291,21 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 		}
 	}
 
+	// Listen to wagmi status changes to clean up state on disconnect
+	useEffect(() => {
+		if (status === "disconnected") {
+			// Clean up local state when wagmi disconnects
+			if (reconnectTimeoutRef.current) {
+				clearTimeout(reconnectTimeoutRef.current);
+				reconnectTimeoutRef.current = null;
+			}
+			walletClients.current = {};
+			setIsReconnectingTimeout(false);
+			setCurrentWallet(undefined);
+			setIsSocial(false);
+		}
+	}, [status]);
+
 	const getPkey = async (): Promise<Hex | undefined> => {
 		try {
 			const pkey = await getWeb3AuthPk?.();
@@ -301,10 +314,6 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 			return;
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (status === "disconnected") logout();
-	// }, [status]);
 
 	return (
 		<WalletContext.Provider

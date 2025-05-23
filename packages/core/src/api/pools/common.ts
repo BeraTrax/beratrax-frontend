@@ -157,6 +157,7 @@ export const zapInBase: ZapInBaseFn = async ({
 
 			zapperTxn = await awaitTransaction(
 				client.wallet.sendTransaction({
+					account: currentWallet,
 					to: farm.zapper_addr,
 					data: encodeFunctionData({
 						abi: zapperAbi,
@@ -180,11 +181,11 @@ export const zapInBase: ZapInBaseFn = async ({
 			dismissNotify(id);
 
 			const vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
-			if (farm.rewardVault) {
-				await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.IN_PROGRESS);
-				await stakeIntoRewardVault(farm, vaultBalance, currentWallet, getClients, getPublicClient, getWalletClient);
-				await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.COMPLETED);
-			}
+			// if (farm.rewardVault) {
+			// 	await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.IN_PROGRESS);
+			// 	await stakeIntoRewardVault(farm, vaultBalance, currentWallet, getClients, getPublicClient, getWalletClient);
+			// 	await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.COMPLETED);
+			// }
 
 			// notifySuccess(successMessages.zapIn());
 			const successMessage = successMessages.zapIn();
@@ -292,28 +293,28 @@ export const zapOutBase: ZapOutBaseFn = async ({
 		const client = await getClients(farm.chainId);
 		let vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
 
-		if (vaultBalance < amountInWei) {
-			await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.IN_PROGRESS);
-			if (!farm.rewardVault) throw new Error("Reward vault not found");
-			const amountToWithdrawFromRewardVault = amountInWei - vaultBalance;
+		// if (vaultBalance < amountInWei) {
+		// 	await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.IN_PROGRESS);
+		// 	if (!farm.rewardVault) throw new Error("Reward vault not found");
+		// 	const amountToWithdrawFromRewardVault = amountInWei - vaultBalance;
 
-			const rewardVaultWithdrawStatus = await awaitTransaction(
-				client.wallet.sendTransaction({
-					to: farm.rewardVault,
-					data: encodeFunctionData({
-						abi: rewardVaultAbi,
-						functionName: "withdraw",
-						args: [amountToWithdrawFromRewardVault],
-					}),
-				}),
-				client
-			);
-			if (!rewardVaultWithdrawStatus.status) {
-				await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.FAILED);
-				throw new Error(rewardVaultWithdrawStatus.error);
-			}
-			await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.COMPLETED);
-		}
+		// 	const rewardVaultWithdrawStatus = await awaitTransaction(
+		// 		client.wallet.sendTransaction({
+		// 			to: farm.rewardVault,
+		// 			data: encodeFunctionData({
+		// 				abi: rewardVaultAbi,
+		// 				functionName: "withdraw",
+		// 				args: [amountToWithdrawFromRewardVault],
+		// 			}),
+		// 		}),
+		// 		client
+		// 	);
+		// 	if (!rewardVaultWithdrawStatus.status) {
+		// 		await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.FAILED);
+		// 		throw new Error(rewardVaultWithdrawStatus.error);
+		// 	}
+		// 	await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.COMPLETED);
+		// }
 
 		await TransactionsStep.approveZap(TransactionStepStatus.IN_PROGRESS);
 
@@ -346,6 +347,7 @@ export const zapOutBase: ZapOutBaseFn = async ({
 		if (token === zeroAddress) {
 			withdrawTxn = await awaitTransaction(
 				client.wallet.sendTransaction({
+					account: currentWallet,
 					to: farm.zapper_addr,
 					data: encodeFunctionData({
 						abi: zapperAbi,
@@ -361,6 +363,7 @@ export const zapOutBase: ZapOutBaseFn = async ({
 		} else {
 			withdrawTxn = await awaitTransaction(
 				client.wallet.sendTransaction({
+					account: currentWallet,
 					to: farm.zapper_addr,
 					data: encodeFunctionData({
 						abi: zapperAbi,
@@ -760,6 +763,7 @@ export const stakeIntoRewardVault = async (
 
 	const tx = await awaitTransaction(
 		client.wallet.sendTransaction({
+			account: currentWallet,
 			to: farm.rewardVault,
 			data: encodeFunctionData({
 				abi: rewardVaultAbi,

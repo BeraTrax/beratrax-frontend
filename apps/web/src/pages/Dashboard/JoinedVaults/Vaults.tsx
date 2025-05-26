@@ -82,7 +82,7 @@ const Vaults: React.FC = () => {
     const refresh = async () => {
         setIsRefreshing(true);
         try {
-            await dispatch(updatePoints(currentWallet!));
+            // await dispatch(updatePoints(currentWallet!));
             await reloadFarmData();
         } finally {
             setIsRefreshing(false);

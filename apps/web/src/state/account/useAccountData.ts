@@ -29,7 +29,7 @@ const useAccountData = () => {
         await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
         await reloadBalances();
         if (!currentWallet) return;
-        await dispatch(updatePoints(currentWallet));
+        // await dispatch(updatePoints(currentWallet));
     }, [currentWallet, referrerCode, refCodeLoaded, referralCodeFromUrl]);
 
     return {

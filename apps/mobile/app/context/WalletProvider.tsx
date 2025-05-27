@@ -318,7 +318,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	return (
 		<WalletContext.Provider
 			value={{
-				currentWallet: "0x7b9C421BBfBb859e65d0B5AD939d96E9ABDA5Aa2",
+				currentWallet,
 				isSocial,
 				isConnecting,
 				connector,

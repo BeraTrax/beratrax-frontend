@@ -23,6 +23,11 @@ import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import store from "@beratrax/core/src/state";
 import BottomBar from "./components/BottomBar";
+import { ReactHooksWrapper, setHook } from "react-hooks-outside";
+import { NotificationsProvider, useNotifications } from "reapop";
+
+// Set up the notifications hook for react-hooks-outside
+setHook("notifications", useNotifications);
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -89,33 +94,36 @@ const RootLayout = () => {
 	}
 
 	return (
-		<WagmiProvider config={mobileWalletConfig}>
-			<QueryClientProvider client={queryClient}>
-				<WalletProvider
-					walletConfig={mobileWalletConfig}
-					getWeb3AuthPk={getWeb3AuthPrivateKey}
-					isWeb3AuthConnected={isWeb3AuthConnected}
-					logoutWeb3Auth={logoutWeb3Auth}
-				>
-					<Provider store={store}>
-						<SafeAreaProvider>
-							<SafeAreaView className="flex-1 bg-bgSecondary">
-								<AppKit />
-								<View className="flex-1 relative">
-									<Stack
-										screenOptions={{
-											headerShown: false,
-											contentStyle: { backgroundColor: "#151915" },
-										}}
-									/>
-									<BottomBar tabOptions={tabOptions} />
-								</View>
-							</SafeAreaView>
-						</SafeAreaProvider>
-					</Provider>
-				</WalletProvider>
-			</QueryClientProvider>
-		</WagmiProvider>
+		<NotificationsProvider>
+			<WagmiProvider config={mobileWalletConfig}>
+				<QueryClientProvider client={queryClient}>
+					<WalletProvider
+						walletConfig={mobileWalletConfig}
+						getWeb3AuthPk={getWeb3AuthPrivateKey}
+						isWeb3AuthConnected={isWeb3AuthConnected}
+						logoutWeb3Auth={logoutWeb3Auth}
+					>
+						<Provider store={store}>
+							<SafeAreaProvider>
+								<SafeAreaView className="flex-1 bg-bgSecondary">
+									<AppKit />
+									<View className="flex-1 relative">
+										<Stack
+											screenOptions={{
+												headerShown: false,
+												contentStyle: { backgroundColor: "#151915" },
+											}}
+										/>
+										<BottomBar tabOptions={tabOptions} />
+									</View>
+								</SafeAreaView>
+							</SafeAreaProvider>
+						</Provider>
+						<ReactHooksWrapper />
+					</WalletProvider>
+				</QueryClientProvider>
+			</WagmiProvider>
+		</NotificationsProvider>
 	);
 };
 

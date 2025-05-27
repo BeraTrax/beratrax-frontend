@@ -1,12 +1,12 @@
-import { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import pools_json, { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useZapIn, useZapOut } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { deleteTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
-import { TransactionStatus, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
-import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
+import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
+import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import moment from "moment";
 import { FC, useMemo, useRef, useState } from "react";
@@ -21,12 +21,21 @@ import { ChevronUpIcon } from "../../icons/ChevronUp";
 import { ExternalLinkIcon } from "../../icons/ExternalLInk";
 import Colors from "@beratrax/typescript-config/Colors";
 
-export const Transactions = () => {
+interface TransactionProps {
+	farmId?: number;
+}
+
+export const Transactions: FC<TransactionProps> = ({ farmId }) => {
 	const [open, setOpen] = useState(false);
-	const allTransactions = useAppSelector((state) => state.transactions.transactions);
-	const transactions = useMemo(() => {
-		return allTransactions.slice(0, 3);
-	}, [allTransactions]);
+	const { data: transactions, isLoading } = useFarmTransactions(farmId, 3);
+
+	if (isLoading || !transactions) {
+		return (
+			<View className="center text-textWhite">
+				<Text className="text-textWhite">Loading transactions...</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View>
@@ -42,7 +51,7 @@ export const Transactions = () => {
 			<View className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
 				{transactions.length === 0 && <Text className="text-center text-textSecondary">No transactions yet</Text>}
 				{transactions.map((item, i) => (
-					<Row _id={item._id} key={i} />
+					<Row tx={item} key={i} />
 				))}
 			</View>
 			{open && <TransactionsModal setOpenModal={setOpen} />}
@@ -212,8 +221,8 @@ const TransactionDetailsContent: FC<{
 	);
 };
 
-const Row: FC<{ _id: string }> = ({ _id }) => {
-	const { tx, farm } = useTransaction(_id);
+const Row: FC<{ tx: Transaction }> = ({ tx }) => {
+	const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
 	const { prices, decimals } = useTokens();
 	const [open, setOpen] = useState(false);
 	const [showTooltipModal, setShowTooltipModal] = useState(false);
@@ -251,7 +260,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 
 	const retryTransaction = (e: any) => {
 		e.stopPropagation();
-		dispatch(deleteTransactionDb(_id));
+		dispatch(deleteTransactionDb(tx._id));
 		if (tx.type === "deposit") {
 			zapIn({
 				zapAmount: Number(toEth(BigInt(tx.amountInWei), decimals[farm.chainId][token])),
@@ -402,7 +411,7 @@ const Row: FC<{ _id: string }> = ({ _id }) => {
 					</View>
 				</Pressable>
 
-				{open && <TransactionDetails transactionId={_id} open={open} farm={undefined} tx={undefined} />}
+				{open && <TransactionDetails transactionId={tx._id} open={open} farm={undefined} tx={undefined} />}
 			</View>
 		</>
 	);

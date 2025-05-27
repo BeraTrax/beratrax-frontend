@@ -95,9 +95,9 @@ export const TokenBalances: FC<IProps> = () => {
 
 	const renderLpTokenCard = (token: Token & { network?: string; logo2?: string }, index: number) => {
 		return (
-			<TouchableOpacity key={index} className={tokenCardStyle} onPress={() => setSelectedToken(token)}>
+			<TouchableOpacity key={index} className={isWeb ? tokenCardStyle : mobileTokenCardStyle} onPress={() => setSelectedToken(token)}>
 				{/* LP Token Logos */}
-				<View className={"flex-row"}>
+				<View className={"flex flex-row"}>
 					<Image className="w-9 h-9 rounded-full" source={{ uri: token.logo }} />
 					{token.logo2 && <Image className="w-9 h-9 rounded-full -ml-3" source={{ uri: token.logo2 }} />}
 				</View>

@@ -1,4 +1,5 @@
 declare module "node-libs-react-native";
+declare module "react-hooks-outside";
 
 declare module "*.png" {
 	const value: ImageSourcePropType;

@@ -83,7 +83,7 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
 							onPress={() => handleClose(true)}
 						>
-							<Text className="text-textBlack">Go Back</Text>
+							<Text className="text-textBlack uppercase text-xl font-bold tracking-widest text-center">Go Back</Text>
 						</Pressable>
 					</>
 				)}

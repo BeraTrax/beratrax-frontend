@@ -45,71 +45,28 @@ interface FarmActionModalProps {
 }
 type QuickDepositType = "25" | "50" | "75" | "MAX" | "";
 
-const styles = `
-@keyframes vibrate {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.max-button-gradient {
-    background: linear-gradient(
-        90deg, 
-        var(--new-gradient-light) 0%,
-        var(--new-button-primary) 25%,
-        var(--new-button-primary-light) 50%,
-        var(--new-button-primary) 75%,
-        var(--new-gradient-light) 100%
-    );
-    background-size: 200% 100%;
-    animation: gradientShift 4s ease infinite;
-}
-
-.max-button-gradient:hover {
-    transform: scale(1.03);
-    transition: transform 0.2s ease;
-}
-`;
-
 const QuickDepositButtons = memo(
 	({ text, onClick, isSelected, extraText = "" }: { text: string; onClick: () => void; isSelected?: boolean; extraText?: string }) => {
 		const isMax = text === "MAX";
 
-		// Define a style for the MAX button that doesn't use shadow-lg class
-		const maxButtonStyle = {
-			transform: [{ scale: 1.05 }],
-		};
+		const buttonClasses = `px-5 py-2 rounded-2xl items-center justify-center ${
+			isMax ? "bg-lime-500" : isSelected ? "bg-gradientSecondary" : ""
+		}`;
+
+		const textClasses = `text-base font-light ${isMax ? "text-black" : "text-white"}`;
 
 		return (
-			<>
-				{/* <style>{styles}</style> */}
-				<Pressable onPress={onClick}>
-					<Text
-						className={`px-5 py-2 font-light rounded-2xl text-[16px] transition-all duration-200
-                        ${
-													isSelected
-														? "bg-gradientSecondary text-gradientPrimary"
-														: isMax
-															? "max-button-gradient text-textWhite hover:scale-105"
-															: "bg-bgDark text-textWhite"
-												}
-                    `}
-						style={isMax && !isSelected ? maxButtonStyle : undefined}
-					>
-						{text}
-						{isMax ? "" : extraText}
-					</Text>
-				</Pressable>
-			</>
+			<Pressable
+				onPress={() => {
+					onClick();
+				}}
+				className={buttonClasses}
+			>
+				<Text className={textClasses}>
+					{text}
+					{isMax ? "" : extraText}
+				</Text>
+			</Pressable>
 		);
 	}
 );

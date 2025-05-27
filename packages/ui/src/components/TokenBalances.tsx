@@ -10,9 +10,9 @@ import { zeroAddress } from "viem";
 import { useApp } from "@beratrax/core/src/hooks";
 
 const tokenCardStyle =
-	"relative group grid grid-cols-[max-content_1fr_max-content] items-center gap-4 py-6 px-4 rounded-3xl cursor-pointer bg-bgDark transition-all duration-300 hover:pr-14 font-league-spartan";
+	"relative group grid grid-cols-[max-content_1fr_max-content] items-center gap-4 py-4 px-4  rounded-3xl cursor-pointer bg-bgDark transition-all duration-300 hover:pr-14 font-league-spartan";
 
-const mobileTokenCardStyle = "flex-row items-center p-4 bg-bgDark rounded-3xl mb-4";
+const mobileTokenCardStyle = "flex-row items-center p-6 bg-bgDark rounded-3xl mb-4";
 
 const tokenCardHoverArrowStyles =
 	"absolute right-0 top-0 bottom-0 flex items-center justify-center w-10 rounded-r-3xl bg-bgPrimary text-textBlack font-bold text-2xl opacity-0 group-hover:opacity-100 transition-all duration-300";
@@ -147,17 +147,9 @@ export const TokenBalances: FC<IProps> = () => {
 	}
 
 	return (
-		<ScrollView className="flex-1 p-4">
+		<View className="flex-1 mb-5 mt-5">
 			<View className="mb-5">
-				<Text
-					className={
-						isWeb
-							? "font-arame-mono font-normal text-[16px] text-textWhite leading-4 uppercase mt-5"
-							: "font-arame-mono text-base text-textWhite uppercase"
-					}
-				>
-					Token Balances
-				</Text>
+				<Text className={"font-arame-mono text-base text-textWhite leading-4 uppercase mb-5 tracking-widest"}>Token Balances</Text>
 				{/* <Settings /> */}
 			</View>
 
@@ -185,19 +177,13 @@ export const TokenBalances: FC<IProps> = () => {
 			)}
 
 			{(UIState === UIStateEnum.SHOW_TOKENS_LP || UIState === UIStateEnum.SHOW_TOKENS) && filteredLpTokens.length > 0 && (
-				<View>
-					<Text
-						className={
-							isWeb
-								? "font-arame-mono font-normal text-[16px] text-textWhite leading-4 uppercase mt-5"
-								: "font-arame-mono text-base text-textWhite uppercase mt-5 mb-4"
-						}
-					>
+				<View className="mt-5">
+					<Text className={"font-arame-mono text-base text-textWhite leading-4 uppercase mb-5 tracking-widest"}>
 						Unstaked LP Token Balances
 					</Text>
 					<View className={isWeb ? containerClass : "w-full"}>{filteredLpTokens.map((token, i) => renderLpTokenCard(token, i))}</View>
 				</View>
 			)}
-		</ScrollView>
+		</View>
 	);
 };

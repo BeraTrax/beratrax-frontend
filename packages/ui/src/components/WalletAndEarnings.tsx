@@ -8,6 +8,7 @@ import "@ethersproject/shims";
 
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useVaults } from "@beratrax/core/src/hooks";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { sendBtxToXFollower, setAccountConnector } from "@beratrax/core/src/state/account/accountReducer";
@@ -34,8 +35,8 @@ import { Link } from "./Link";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import { GradientText } from "./GradientText";
 import { PowerIcon, CopyIcon, KeysIcon, QrcodeIcon } from "../icons";
-// import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
-// import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
+import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
+import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 interface WalletAndEarningsProps {
@@ -53,6 +54,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
 	const { disconnect } = useDisconnect();
 	const { switchChain } = useSwitchChain();
+	const { openConnectModal } = useConnectModal();
 	const { isConnected, connector } = useAccount();
 	const { reloadBalances } = useTokens();
 	const chainId = useChainId();
@@ -187,7 +189,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	};
 
 	return (
-		<View className="z-10 bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
+		<View className="z-[1] bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
 			{/* Terms of Use Modal */}
 			{openTermsOfUseModal !== null && currentWallet && openTermsOfUseModal
 				? null // <TermsOfUseModal setOpenModal={setOpenTermsOfUseModal} />
@@ -257,7 +259,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 									}}
 									size={42}
 									strokeWidth={2}
-									className="text-textWhite cursor-pointer z-10"
+									className="text-textWhite cursor-pointer z-[1]"
 								/>
 							</View>
 						</View>
@@ -265,7 +267,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 						// Connect Wallet Button
 						<View className="flex flex-row justify-end">
 							<Pressable
-								onPress={connectWallet}
+								onPress={() => (Platform.OS === "web" && openConnectModal ? openConnectModal() : connectWallet())}
 								className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
 							>
 								<Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>
@@ -276,24 +278,28 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 					)}
 				</View>
 
+				{/* export keys */}
 				{currentWallet && (
-					<View className="z-10 w-full flex flex-row justify-end gap-4 relative">
-						{/* export keys */}
+					<View className="z-[1] w-full flex flex-row justify-end gap-4 relative">
 						{isSocial && (
 							<View
-								className="flex flex-row gap-2 relative py-1.5 px-5 bg-gradientPrimary rounded-xl"
+								className="flex flex-row gap-2 group relative py-1.5 px-5 bg-gradientPrimary rounded-xl"
 								onTouchStart={() => setShowExportKeysTooltip(true)}
 								onTouchEnd={() => setShowExportKeysTooltip(false)}
 							>
 								<TouchableOpacity onPress={() => setOpenPrivateKeyModal(true)}>
-									<KeysIcon size={28} color="black" strokeWidth={1.5} />
+									<View className="flex flex-row items-center gap-1">
+										<KeysIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
+									</View>
 								</TouchableOpacity>
 
 								<TouchableOpacity onPress={() => setOpenQrCodeModal(true)}>
-									<QrcodeIcon size={28} color="black" strokeWidth={1.5} />
+									<View className="flex flex-row items-center gap-1">
+										<QrcodeIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
+									</View>
 								</TouchableOpacity>
 								{showExportKeysTooltip && (
-									<Text className="absolute left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
+									<Text className="absolute group-hover:opacity-100 opacity-0 left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
 										Export keys
 									</Text>
 								)}
@@ -353,8 +359,8 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 			{/* Successful Earn Trax Modal */}
 			{/* {congModel && <SuccessfulEarnTrax handleClose={() => setCongModel(false)} />} */}
 
-			{/* {openPrivateKeyModal ? <ExportPrivateKey setOpenModal={setOpenPrivateKeyModal} /> : null}
-			{openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null} */}
+			{openPrivateKeyModal ? <ExportPrivateKey setOpenModal={setOpenPrivateKeyModal} /> : null}
+			{openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null}
 		</View>
 	);
 };

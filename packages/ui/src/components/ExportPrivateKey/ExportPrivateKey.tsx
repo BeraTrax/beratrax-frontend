@@ -1,9 +1,8 @@
 import { useWallet } from "@beratrax/core/src/hooks";
 import { copyToClipboard } from "@beratrax/core/src/utils";
-import { FC, useState } from "react";
-import { CopyIcon, CheckCircleIcon } from "../../icons";
-import { View, Text, TouchableOpacity } from "react-native";
-import QRCode from "react-qr-code";
+import { FC, useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, TextInput, Switch } from "react-native";
+import { WarningIcon, CopyIcon, CheckCircleIcon } from "./../../icons";
 import { ModalLayout } from "../modals/ModalLayout/ModalLayout";
 
 interface IProps {
@@ -11,51 +10,68 @@ interface IProps {
 }
 
 export const ExportPrivateKey: FC<IProps> = ({ setOpenModal }) => {
+	const [confirm, setConfirm] = useState(false);
+	const [show, setShow] = useState(false);
 	const [copied, setCopied] = useState(false);
-	const { currentWallet } = useWallet();
+	const [privateKey, setPrivateKey] = useState("");
+	const { getPkey } = useWallet();
+
+	useEffect(() => {
+		if (!confirm) if (show) setShow(false);
+	}, [confirm]);
+
+	const handleShow = async () => {
+		const pKey = await getPkey();
+		setPrivateKey(pKey || "");
+		setShow((prev) => !prev);
+	};
 
 	const copy = () => {
 		setCopied(true);
-		copyToClipboard(currentWallet!, () => setCopied(false));
+		copyToClipboard(privateKey, () => setCopied(false));
 	};
 
 	return (
-		<ModalLayout
-			onClose={() => setOpenModal(false)}
-			className={"p-14 h-m-[330px] block text-center gap-7 tablet:w-[initial] tablet:flex tablet:items-center "}
-		>
-			<View className="tablet:text-left">
-				<View className="mb-5">
-					<Text className="font-arame-mono text-4xl font-bold mb-5 text-textWhite">Scan Me</Text>
+		<ModalLayout onClose={() => setOpenModal(false)}>
+			<View>
+				<View className="flex-row items-center gap-2 mb-4">
+					<WarningIcon color="red" size={40} />
+					<Text className="text-textPrimary text-2xl font-bold">Disclaimer</Text>
 				</View>
-				<Text className="font-arame-mono text-lg font-bold mb-0 text-textWhite">Wallet Address</Text>
-				<View className="flex-row justify-center items-center gap-2 mb-5">
-					<Text className="font-arame-mono text-textGrey  max-w-[377px] truncate">{`${currentWallet?.substring(0, 20)}...${currentWallet?.substring(
-						currentWallet.length - 3
-					)}`}</Text>
-					{copied ? (
-						<View className="cursor-pointer text-inherit">
-							<CheckCircleIcon color="var(--new-color_grey)" />
-						</View>
-					) : (
-						<TouchableOpacity onPress={copy} className="cursor-pointer text-inherit">
-							<CopyIcon color="var(--new-color_grey)" />
+
+				<Text className="text-base text-white mb-1">Exporting Private Key</Text>
+				<Text className="text-textSecondary max-w-[400px] mb-7">
+					This is for advanced users and can put their funds at risk if they export without knowing how to handle it
+				</Text>
+
+				<View className="flex-row items-center mb-4">
+					<Switch
+						value={confirm}
+						onValueChange={setConfirm}
+						thumbColor={`var(--new-gradient-light)`}
+						trackColor={{ false: `var(--new-gradient-dark)`, true: `var(--new-gradient-light)` }}
+					/>
+					<Text className="ml-2 text-white">I Understand</Text>
+				</View>
+
+				<View className="bg-bgPrimary w-full gap-4 rounded-xl px-4 py-3 my-3 relative flex-row items-center">
+					<TextInput
+						readOnly
+						value={show ? privateKey : "0xXXXXXXXXXXXXXXXXXXXXXXXXXXX"}
+						className="flex-grow min-w-0 text-sm font-bold text-white bg-transparent"
+						editable={false}
+					/>
+					{show && (
+						<TouchableOpacity onPress={copy} className="flex-shrink-0">
+							{copied ? <CheckCircleIcon /> : <CopyIcon />}
 						</TouchableOpacity>
 					)}
+					<TouchableOpacity disabled={!confirm} onPress={handleShow} className="flex-shrink-0">
+						<Text className=" font-bold">{show ? "HIDE" : "SHOW"}</Text>
+					</TouchableOpacity>
 				</View>
-				<Text className="font-arame-mono w-[250px] hidden md:block text-textWhite">
-					Sending cryptocurrency has never been easier. Simply scan this QR code to transfer your desired tokens to your Beratrax wallet.
-				</Text>
-			</View>
-			<View className="bg-bgPrimary w-fit h-fit text-center p-3 m-auto border-[12px] border-bgDark rounded-xl shadow-xl">
-				{/* {currentWallet && (
-					<QRCode
-						value={currentWallet}
-						size={200}
-						// bgColor={lightMode ? "var(--new-background_primary)" : "var(--new-background_secondary)"}
-						// fgColor={lightMode ? "var(--new-background_secondary)" : "var(--new-background_primary)"}
-					/>
-				)} */}
+
+				<Text className="text-sm text-textSecondary mt-2">Note: This feature is only for social wallets</Text>
 			</View>
 		</ModalLayout>
 	);

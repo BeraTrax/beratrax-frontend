@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { View, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform, TouchableWithoutFeedback } from "react-native";
 import { useApp } from "@beratrax/core/src/hooks";
 import { twMerge } from "tailwind-merge";
 
@@ -25,12 +25,12 @@ export const ModalLayout: FC<IProps> = ({
 	const isWeb = Platform.OS === "web";
 
 	// Base classes
-	const backdropClasses = "fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black/60 backdrop-blur-sm";
+	const backdropClasses = "fixed inset-0 z-[100] flex justify-center items-center w-full h-full bg-black/60 backdrop-blur-sm";
 	const containerClasses = "min-h-[200px] w-[90%] max-w-[500px] bg-bgSecondary rounded-[20px] overflow-hidden relative";
 	const containerLightClasses = "bg-bgSecondary border border-new-border_dark";
 
 	// Platform specific classes
-	const backdropNativeClasses = "absolute inset-0 flex items-center justify-start pt-[40%]";
+	const backdropNativeClasses = "z-20 absolute inset-0 flex items-center justify-start pt-[40%]";
 	const containerWebClasses = "p-[35px] px-[50px]";
 	const containerNativeClasses = "p-5 self-center";
 
@@ -40,20 +40,21 @@ export const ModalLayout: FC<IProps> = ({
 			style={wrapperStyle}
 			onPress={(e) => onClose(e)}
 		>
-			<View
-				{...rest}
-				className={twMerge(
-					containerClasses,
-					isWeb ? containerWebClasses : containerNativeClasses,
-					lightMode ? containerLightClasses : "",
-					className
-				)}
-				style={style}
-				onStartShouldSetResponder={() => true}
-				onTouchEnd={(e) => e.stopPropagation()}
-			>
-				{children}
-			</View>
+			<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+				<View
+					{...rest}
+					className={twMerge(
+						containerClasses,
+						isWeb ? containerWebClasses : containerNativeClasses,
+						lightMode ? containerLightClasses : "",
+						className
+					)}
+					style={style}
+					onStartShouldSetResponder={() => true}
+				>
+					{children}
+				</View>
+			</TouchableWithoutFeedback>
 		</Pressable>
 	);
 };

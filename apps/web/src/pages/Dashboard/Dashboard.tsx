@@ -23,20 +23,20 @@ function Dashboard() {
 	return (
 		// TODO: figure out why scroll is not working without overflow
 		<div className="overflow-auto font-arame-mono" id="dashboard">
-			<WalletAndStakingPoint />
+			{/* <WalletAndStakingPoint /> */}
 			<WalletAndEarnings connectWallet={() => {}} />
 			<div className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 				{currentWallet ? (
 					<>
-						<TraxReferralEarning />
+						{/* <TraxReferralEarning /> */}
 						<PointsEarnings />
-						<ReferralLinkOld />
+						{/* <ReferralLinkOld /> */}
 						<ReferralLink />
-						<Vaults />
+						{/* <Vaults /> */}
 						<VaultsShared />
-						<TokenBalances />
+						{/* <TokenBalances /> */}
 						<TokenBalancesShared />
-						<Transactions />
+						{/* <Transactions /> */}
 						<TransactionsShared />
 					</>
 				) : (

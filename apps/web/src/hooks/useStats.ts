@@ -16,7 +16,6 @@ import {
 import useFarms from "../state/farms/hooks/useFarms";
 import useWallet from "./useWallet";
 
-
 export const useStats = (forGalxe?: boolean) => {
     const [page, setPage] = useState<number>(1);
     // @ts-ignore
@@ -47,7 +46,11 @@ export const useStats = (forGalxe?: boolean) => {
         queryFn: () => fetchCountActiveUsers(),
     });
 
-    const { data: vaultStatsTemp, refetch: refetchVaultStats, isRefetching: isRefetchingVaultStats } = useQuery<VaultStatsResponse["data"]>({
+    const {
+        data: vaultStatsTemp,
+        refetch: refetchVaultStats,
+        isRefetching: isRefetchingVaultStats,
+    } = useQuery<VaultStatsResponse["data"]>({
         queryKey: ["stats/tvl/vaults"],
         queryFn: () => fetchVaultStats(),
     });
@@ -79,11 +82,11 @@ export const useStats = (forGalxe?: boolean) => {
 
     const vaultStats = useMemo(() => {
         if (!vaultStatsTemp) return [];
-    
+
         return vaultStatsTemp.vaults.flatMap((vault) => {
             const farm = farms.find((farm) => farm.vault_addr === vault.address);
             if (!farm) return []; // Skips this vault
-            const autoCompoundFarmResult = vaultStatsTemp.autoCompound.data[farm?.id];
+            const autoCompoundFarmResult = vaultStatsTemp.autoCompound?.data?.[farm?.id];
             const autoCompoundResult = vaultStatsTemp.autoCompound;
             const vaultStatsRecord = {
                 ...vault,
@@ -92,7 +95,7 @@ export const useStats = (forGalxe?: boolean) => {
                 secondaryPlatform: farm.secondary_platform,
                 isDeprecated: farm.isDeprecated,
                 id: farm.id,
-            }
+            };
             let autoCompoundStats = {};
             //becasue not every vault has is auto compounded
             if (autoCompoundResult && autoCompoundFarmResult) {
@@ -101,20 +104,27 @@ export const useStats = (forGalxe?: boolean) => {
                     autoCompoundStatus: autoCompoundResult.status,
                     autoCompoundRunTime: autoCompoundResult.runTime,
                     autoCompoundHarvestSuccess: autoCompoundFarmResult.harvestSuccess,
-                    autoCompoundHarvestStatus: autoCompoundFarmResult.harvestSuccess ? "-" : autoCompoundFarmResult.harvestStatus,
-                    autoCompoundHarvestReturnData: autoCompoundFarmResult.harvestSuccess ? '-' : autoCompoundFarmResult.harvestReturnData,
+                    autoCompoundHarvestStatus: autoCompoundFarmResult.harvestSuccess
+                        ? "-"
+                        : autoCompoundFarmResult.harvestStatus,
+                    autoCompoundHarvestReturnData: autoCompoundFarmResult.harvestSuccess
+                        ? "-"
+                        : autoCompoundFarmResult.harvestReturnData,
                     autoCompoundEarnSuccess: autoCompoundFarmResult.earnSuccess,
-                    autoCompoundEarnStatus: autoCompoundFarmResult.earnSuccess ? "-" : autoCompoundFarmResult.earnStatus,
-                    autoCompoundEarnReturnData: autoCompoundFarmResult.earnSuccess ? '-' : autoCompoundFarmResult.earnReturnData,
-                }
+                    autoCompoundEarnStatus: autoCompoundFarmResult.earnSuccess
+                        ? "-"
+                        : autoCompoundFarmResult.earnStatus,
+                    autoCompoundEarnReturnData: autoCompoundFarmResult.earnSuccess
+                        ? "-"
+                        : autoCompoundFarmResult.earnReturnData,
+                };
             }
-            return  {
+            return {
                 ...vaultStatsRecord,
                 ...autoCompoundStats,
             } as VaultStat;
         });
     }, [vaultStatsTemp, farms]);
-    
 
     return {
         ...data?.data,
@@ -141,3 +151,4 @@ export const useStats = (forGalxe?: boolean) => {
         error: error as unknown as string,
     };
 };
+

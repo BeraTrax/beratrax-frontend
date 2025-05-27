@@ -5,7 +5,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "start:mobile": "expo start --go --reset-cache --clear",
+    "start:mobile": "expo start --dev-client --reset-cache --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --tunnel",
     "build:ios": "expo build:ios",

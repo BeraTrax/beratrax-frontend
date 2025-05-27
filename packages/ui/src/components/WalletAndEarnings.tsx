@@ -5,11 +5,7 @@ import GreenLogo from "@beratrax/core/src/assets/images/greenLogo.png";
 import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
 import "react-native-get-random-values";
 import "@ethersproject/shims";
-// import { EarnTrax } from "web/src/components/modals/EarnTrax/EarnTrax";
-// import { ExportPrivateKey } from "web/src/components/modals/ExportPrivateKey/ExportPrivateKey";
-// import { ExportPublicKey } from "web/src/components/modals/ExportPublicKey/ExportPublicKey";
-// import SuccessfulEarnTrax from "web/src/components/modals/SuccessfulEarnTrax/SuccessfulEarnTrax";
-// import { TermsOfUseModal } from "web/src/components/modals/TermsOfUseModal/TermsOfUseModal";
+
 import { blockExplorersByChainId } from "@beratrax/core/src/config/constants/urls";
 import { useVaults } from "@beratrax/core/src/hooks";
 import { useWallet } from "@beratrax/core/src/hooks";
@@ -37,7 +33,9 @@ import {
 import { Link } from "./Link";
 import Svg, { Defs, RadialGradient, Stop, Circle } from "react-native-svg";
 import { GradientText } from "./GradientText";
-import { PowerIcon, CopyIcon } from "../icons";
+import { PowerIcon, CopyIcon, KeysIcon, QrcodeIcon } from "../icons";
+// import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
+// import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 interface WalletAndEarningsProps {
@@ -68,6 +66,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	const [openEarnTraxModal, setOpenEarnTraxModal] = useState(false);
 	const [congModel, setCongModel] = useState(false);
 	const [openTermsOfUseModal, setOpenTermsOfUseModal] = useState<boolean | null>(null);
+	const [showExportKeysTooltip, setShowExportKeysTooltip] = useState(false);
 
 	const [isClaimingBtx, setIsClaimingBtx] = useState(false);
 	const [hasClaimedBtx, setHasClaimedBtx] = useState(true);
@@ -121,8 +120,6 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	}, [currentWallet]);
 
 	useEffect(() => {
-		console.log("isConnected", isConnected);
-		console.log("currentWallet", currentWallet);
 		if (isConnected && currentWallet) {
 			trackLogin(currentWallet);
 			const checkClaimBtxApi = async () => {
@@ -190,162 +187,160 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	};
 
 	return (
-		<View className="bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
+		<View className="z-10 bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
 			{/* Terms of Use Modal */}
 			{openTermsOfUseModal !== null && currentWallet && openTermsOfUseModal
 				? null // <TermsOfUseModal setOpenModal={setOpenTermsOfUseModal} />
 				: null}
-			{openStakingModal ? (
-				<View className="h-[100vh] w-full bg-bgDark"></View>
-			) : (
-				<View className="p-5">
-					<View className="bg-bgDark">
-						{/* Wallet Connected */}
-						{currentWallet ? (
-							<View className="flex flex-row items-center justify-between p-4">
-								<View className="flex flex-col gap-y-4">
-									{/* Address */}
-									<View className="flex flex-row items-center relative">
-										<Image className="w-8 h-8 mr-2" source={GreenLogo as ImageSourcePropType} alt="Staking Icon" />
-										<View className="flex flex-col pl-2">
-											<View className="flex flex-row items-center">
-												<Link
-													target="_blank"
-													href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
-													className="no-underline font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
-												>
-													<Text>{truncatedAddress}</Text>
-												</Link>
-												<TouchableOpacity onPress={copy}>
-													<Text className="h-6 text-white ml-4 cursor-pointer">
-														<CopyIcon />
-													</Text>
-												</TouchableOpacity>
-												{/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
-												{showCopyFeedback && (
-													<View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
-														<Text className="text-white">Address copied!</Text>
-													</View>
-												)}
-											</View>
-											{/* Beraname */}
-											<GradientText className="text-xl uppercase font-arame-mono font-normal">
-												{ensName || referralCode ? `${ensName || referralCode}` : ""}
-											</GradientText>
+
+			<View className="p-5">
+				<View className="bg-bgDark">
+					{/* Wallet Connected */}
+					{currentWallet ? (
+						<View className="flex flex-row items-center justify-between p-4">
+							<View className="flex flex-col gap-y-4">
+								{/* Address */}
+								<View className="flex flex-row items-center relative">
+									<Image className="w-8 h-8 mr-2" source={GreenLogo as ImageSourcePropType} alt="Staking Icon" />
+									<View className="flex flex-col pl-2">
+										<View className="flex flex-row items-center">
+											<Link
+												target="_blank"
+												href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
+												className="no-underline font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
+											>
+												<Text>{truncatedAddress}</Text>
+											</Link>
+											<TouchableOpacity onPress={copy}>
+												<Text className="h-6 text-white ml-4 cursor-pointer">
+													<CopyIcon />
+												</Text>
+											</TouchableOpacity>
+											{/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
+											{showCopyFeedback && (
+												<View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
+													<Text className="text-white">Address copied!</Text>
+												</View>
+											)}
 										</View>
+										{/* Beraname */}
+										<GradientText className="text-xl uppercase font-arame-mono font-normal">
+											{ensName || referralCode ? `${ensName || referralCode}` : ""}
+										</GradientText>
 									</View>
 								</View>
-								{/* Switch to Berachain */}
-								<View className="flex flex-row items-center gap-4">
-									{!isSocial && chainId !== CHAIN_ID.BERACHAIN && (
-										<Pressable
-											onPress={() => {
-												switchChain({ chainId: CHAIN_ID.BERACHAIN });
-											}}
-											className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 cursor-pointer"
-										>
-											<Text className="text-white font-medium font-league-spartan">Switch to Berachain</Text>
-										</Pressable>
-										//   <Text>Switch to Berachain</Text>
-										// </Button>
-									)}
-									{/* Logout Button */}
+							</View>
+							{/* Switch to Berachain */}
+							<View className="flex flex-row items-center gap-4">
+								{!isSocial && chainId !== CHAIN_ID.BERACHAIN && (
+									<Pressable
+										onPress={() => {
+											switchChain({ chainId: CHAIN_ID.BERACHAIN });
+										}}
+										className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 cursor-pointer"
+									>
+										<Text className="text-white font-medium font-league-spartan">Switch to Berachain</Text>
+									</Pressable>
+									//   <Text>Switch to Berachain</Text>
+									// </Button>
+								)}
+								{/* Logout Button */}
 
-									{/* <Text className="h-6 text-white ml-4 cursor-pointer">⏼</Text> */}
-									{/* <LiaPowerOffSolid
+								{/* <Text className="h-6 text-white ml-4 cursor-pointer">⏼</Text> */}
+								{/* <LiaPowerOffSolid
                     onClick={() => disconnect()}
                     className="w-8 h-8 text-textWhite cursor-pointer z-10"
                   /> */}
-									<PowerIcon
-										onPress={() => {
-											disconnect();
-										}}
-										size={42}
-										strokeWidth={2}
-										className="text-textWhite cursor-pointer z-10"
-									/>
-								</View>
-							</View>
-						) : (
-							// Connect Wallet Button
-							<View className="flex flex-row justify-end">
-								<Pressable
-									onPress={connectWallet}
-									className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
-								>
-									<Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>
-								</Pressable>
-								{/* {isConnecting ? "Connecting..." : "Sign In/Up"}
-                </Button> */}
-							</View>
-						)}
-					</View>
-
-					{currentWallet && (
-						<View className="z-10 flex justify-self-end gap-4 relative">
-							{/* export keys */}
-							{isSocial && (
-								<View className="flex gap-4 relative group py-2.5 px-5 mt-4 h-auto bg-gradientPrimary rounded-xl shadow-[var(--rk-shadows-connectButton)]">
-									{/* <FaKey
-                    cursor="pointer"
-                    size={20}
-                    onClick={() => setOpenPrivateKeyModal(true)}
-                  /> */}
-									{/* <MdOutlineQrCode2
-                    cursor="pointer"
-                    size={23}
-                    onClick={() => setOpenQrCodeModal(true)}
-                  /> */}
-									<Text className="invisible group-hover:visible absolute left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
-										Export keys
-									</Text>
-									{/* {openPrivateKeyModal ? <ExportPrivateKey setOpenModal={setOpenPrivateKeyModal} /> : null}
-                  {openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null} */}
-								</View>
-							)}
-						</View>
-					)}
-
-					{/* Points for staking */}
-					{currentWallet && (
-						<View className="mt-20">
-							<View className="absolute w-[26rem] h-[26rem] bottom-[-10rem] right-[-8rem]">
-								<Svg height="100%" width="100%" viewBox="0 0 520 520">
-									<Defs>
-										<RadialGradient id="grad" cx="320" cy="320" rx="320" ry="320" fx="320" fy="320" gradientUnits="userSpaceOnUse">
-											<Stop offset="0" stopColor="#72B21F" stopOpacity="1" />
-											<Stop offset="0.3" stopColor="#72B21F" stopOpacity="0.95" />
-											<Stop offset="0.5" stopColor="#72B21F" stopOpacity="0.85" />
-											<Stop offset="0.65" stopColor="#72B21F" stopOpacity="0.7" />
-											<Stop offset="0.75" stopColor="#72B21F" stopOpacity="0.5" />
-											<Stop offset="0.85" stopColor="#72B21F" stopOpacity="0.3" />
-											<Stop offset="0.92" stopColor="#72B21F" stopOpacity="0.15" />
-											<Stop offset="0.97" stopColor="#72B21F" stopOpacity="0.05" />
-											<Stop offset="1" stopColor="#72B21F" stopOpacity="0" />
-										</RadialGradient>
-									</Defs>
-									<Circle cx="320" cy="320" r="320" fill="url(#grad)" />
-								</Svg>
-							</View>
-							<View className="flex flex-row items-center gap-x-2 justify-start">
-								<Text className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">TOTAL Earnings</Text>
-							</View>
-							<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
-								${formatCurrency(userEarnedAmountOnVaults)}
-							</Text>
-							<View className="pb-8">
-								<Image
-									className="w-72 h-72 absolute bottom-[-6rem] right-[-2rem]"
-									source={StakingLogo as ImageSourcePropType}
-									alt="Staking Icon"
-									resizeMode="contain"
+								<PowerIcon
+									onPress={() => {
+										disconnect();
+									}}
+									size={42}
+									strokeWidth={2}
+									className="text-textWhite cursor-pointer z-10"
 								/>
 							</View>
-							<View className="flex gap-x-4"></View>
+						</View>
+					) : (
+						// Connect Wallet Button
+						<View className="flex flex-row justify-end">
+							<Pressable
+								onPress={connectWallet}
+								className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
+							>
+								<Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>
+							</Pressable>
+							{/* {isConnecting ? "Connecting..." : "Sign In/Up"}
+                </Button> */}
 						</View>
 					)}
 				</View>
-			)}
+
+				{currentWallet && (
+					<View className="z-10 w-full flex flex-row justify-end gap-4 relative">
+						{/* export keys */}
+						{isSocial && (
+							<View
+								className="flex flex-row gap-2 relative py-1.5 px-5 bg-gradientPrimary rounded-xl"
+								onTouchStart={() => setShowExportKeysTooltip(true)}
+								onTouchEnd={() => setShowExportKeysTooltip(false)}
+							>
+								<TouchableOpacity onPress={() => setOpenPrivateKeyModal(true)}>
+									<KeysIcon size={28} color="black" strokeWidth={1.5} />
+								</TouchableOpacity>
+
+								<TouchableOpacity onPress={() => setOpenQrCodeModal(true)}>
+									<QrcodeIcon size={28} color="black" strokeWidth={1.5} />
+								</TouchableOpacity>
+								{showExportKeysTooltip && (
+									<Text className="absolute left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
+										Export keys
+									</Text>
+								)}
+							</View>
+						)}
+					</View>
+				)}
+
+				{/* Points for staking */}
+				{currentWallet && (
+					<View className="mt-20 relative">
+						<View className="absolute w-[26rem] h-[26rem] bottom-[-10rem] right-[-8rem]">
+							<Svg height="100%" width="100%" viewBox="0 0 520 520">
+								<Defs>
+									<RadialGradient id="grad" cx="320" cy="320" rx="320" ry="320" fx="320" fy="320" gradientUnits="userSpaceOnUse">
+										<Stop offset="0" stopColor="#72B21F" stopOpacity="1" />
+										<Stop offset="0.3" stopColor="#72B21F" stopOpacity="0.95" />
+										<Stop offset="0.5" stopColor="#72B21F" stopOpacity="0.85" />
+										<Stop offset="0.65" stopColor="#72B21F" stopOpacity="0.7" />
+										<Stop offset="0.75" stopColor="#72B21F" stopOpacity="0.5" />
+										<Stop offset="0.85" stopColor="#72B21F" stopOpacity="0.3" />
+										<Stop offset="0.92" stopColor="#72B21F" stopOpacity="0.15" />
+										<Stop offset="0.97" stopColor="#72B21F" stopOpacity="0.05" />
+										<Stop offset="1" stopColor="#72B21F" stopOpacity="0" />
+									</RadialGradient>
+								</Defs>
+								<Circle cx="320" cy="320" r="320" fill="url(#grad)" />
+							</Svg>
+						</View>
+						<View className="flex flex-row items-center gap-x-2 justify-start">
+							<Text className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">TOTAL Earnings</Text>
+						</View>
+						<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
+							${formatCurrency(userEarnedAmountOnVaults)}
+						</Text>
+						<View className="pb-8">
+							<Image
+								className="w-72 h-72 absolute bottom-[-6rem] right-[-2rem]"
+								source={StakingLogo as ImageSourcePropType}
+								alt="Staking Icon"
+								resizeMode="contain"
+							/>
+						</View>
+						<View className="flex gap-x-4"></View>
+					</View>
+				)}
+			</View>
 
 			{/* Staking Modal */}
 			{/* <StakingModal open={openStakingModal} setOpen={setOpenStakingModal} /> */}
@@ -357,6 +352,9 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 
 			{/* Successful Earn Trax Modal */}
 			{/* {congModel && <SuccessfulEarnTrax handleClose={() => setCongModel(false)} />} */}
+
+			{/* {openPrivateKeyModal ? <ExportPrivateKey setOpenModal={setOpenPrivateKeyModal} /> : null}
+			{openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null} */}
 		</View>
 	);
 };

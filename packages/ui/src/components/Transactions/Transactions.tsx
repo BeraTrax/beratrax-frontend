@@ -13,7 +13,7 @@ import { FC, useMemo, useRef, useState } from "react";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
 import { View, Text, Pressable, Linking, Modal, Platform } from "react-native";
-import { ModalLayout } from "../modals/ModalLayout";
+import { ModalLayout } from "../modals/ModalLayout/ModalLayout";
 import TransactionDetails from "../Transactions/components/TransactionDetail/TransactionDetail";
 import { InfoCircleIcon } from "../../icons/InfoCircle";
 import { ChevronDownIcon } from "../../icons/ChevronDown";
@@ -443,12 +443,12 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 						<View className="flex justify-center items-center">
 							<View
 								className="
-                                    w-[18px] h-[18px] 
-                                    border-2 border-solid 
-                                    border-current border-b-transparent border-r-transparent 
-                                    rounded-full 
-                                    box-border 
-                                    animate-rotation"
+									w-[18px] h-[18px] 
+									border-2 border-solid 
+									border-current border-b-transparent border-r-transparent 
+									rounded-full 
+									box-border 
+									animate-rotation"
 							/>
 						</View>
 					)}

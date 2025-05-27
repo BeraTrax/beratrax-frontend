@@ -3,9 +3,10 @@ interface Props {
     value: number | undefined;
     icon?: string;
     gradientClass?: string;
+    isLoading?: boolean;
 }
 
-export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass }) => {
+export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass, isLoading = false }) => {
     return (
         <div
             className={`relative overflow-hidden rounded-lg p-4 border border-borderDark ${
@@ -17,10 +18,16 @@ export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass
 
             <div className="relative z-10 flex flex-col justify-between gap-y-4 text-2xl">
                 <div className="flex items-center gap-2 text-textBlack text-lg font-semibold uppercase">
-                    {icon && <span >{icon}</span>}
+                    {icon && <span>{icon}</span>}
                     <p className="font-arame-mono">{heading}</p>
                 </div>
-                <p className="text-textWhite font-bold">{value?.toLocaleString("en-US")}</p>
+                {isLoading ? (
+                    <div className="animate-pulse">
+                        <div className="h-8 bg-textSecondary/30 rounded-md w-24"></div>
+                    </div>
+                ) : (
+                    <p className="text-textWhite font-bold">{value?.toLocaleString("en-US")}</p>
+                )}
             </div>
 
             {/* Decorative corner accent */}
@@ -28,3 +35,4 @@ export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass
         </div>
     );
 };
+

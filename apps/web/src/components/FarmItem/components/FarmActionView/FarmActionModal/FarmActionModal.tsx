@@ -125,6 +125,7 @@ const QuickDepositButtons = memo(
 );
 
 const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
+    const dispatch = useAppDispatch();
     const { disableZapWarning } = useAppSelector((state) => state.account);
     const [confirmDeposit, setConfirmDeposit] = useState<boolean>();
     const { farmDetails, vaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
@@ -264,8 +265,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
             handleConfirm();
         }
     };
-
-    const dispatch = useAppDispatch();
 
     const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
         dispatch(setFarmDetailInputOptions(opt));

@@ -8,6 +8,7 @@ import { View, Text, Image, TouchableOpacity, Platform, ScrollView } from "react
 import { Skeleton } from "./Skeleton/Skeleton";
 import { zeroAddress } from "viem";
 import { useApp } from "@beratrax/core/src/hooks";
+import { TransferToken } from "./modals/TransferToken/TransferToken";
 
 const tokenCardStyle =
 	"relative group grid grid-cols-[max-content_1fr_max-content] items-center gap-4 py-4 px-4  rounded-3xl cursor-pointer bg-bgDark transition-all duration-300 hover:pr-14 font-league-spartan";
@@ -184,6 +185,7 @@ export const TokenBalances: FC<IProps> = () => {
 					<View className={isWeb ? containerClass : "w-full"}>{filteredLpTokens.map((token, i) => renderLpTokenCard(token, i))}</View>
 				</View>
 			)}
+			{selectedToken ? <TransferToken token={selectedToken} handleClose={handleCloseModal} /> : null}
 		</View>
 	);
 };

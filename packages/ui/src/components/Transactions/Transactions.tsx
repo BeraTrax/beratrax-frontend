@@ -12,7 +12,7 @@ import moment from "moment";
 import { FC, useMemo, useRef, useState } from "react";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
-import { View, Text, Pressable, Linking, Modal, Platform } from "react-native";
+import { View, Text, Pressable, Linking, Modal, Platform, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { ModalLayout } from "../modals/ModalLayout/ModalLayout";
 import TransactionDetails from "../Transactions/components/TransactionDetail/TransactionDetail";
 import { InfoCircleIcon } from "../../icons/InfoCircle";
@@ -70,7 +70,7 @@ const TransactionDetailsContent: FC<{
 
 	const filteredReturnedAssets = useMemo(() => {
 		if (!returnedAssets) return [];
-		return returnedAssets.filter((asset) => Number(asset.amount) > 0);
+		return returnedAssets.filter((asset: any) => Number(asset.amount) > 0);
 	}, [returnedAssets]);
 
 	const showExtraInfo = useMemo(() => {
@@ -197,7 +197,7 @@ const TransactionDetailsContent: FC<{
 				{filteredReturnedAssets.length > 0 && (
 					<View className={`mt-${isMobile ? "3" : "2"}`}>
 						<Text className={`text-textSecondary ${isMobile ? "text-base mb-2" : "text-xs block mb-1"}`}>Returned:</Text>
-						{filteredReturnedAssets.map((asset, index) => (
+						{filteredReturnedAssets.map((asset: any, index: number) => (
 							<View key={index} className={`flex ${isMobile ? "flex-row" : ""} justify-between items-start ${assetItemClass}`}>
 								<Text className={`text-textSecondary ${labelClass}`}>
 									- {tokenNamesAndImages[asset.token as Address]?.name || "Unknown"}
@@ -422,34 +422,30 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 	const { fetchTransactions, isLoading, fetchedAll } = useTransactions();
 	const timeout = useRef<NodeJS.Timeout>();
 
+	const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		if (fetchedAll) return;
+		const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+		const paddingToBottom = 60;
+		const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+
+		if (isCloseToBottom && !isLoading) {
+			clearTimeout(timeout.current);
+			timeout.current = setTimeout(() => {
+				fetchTransactions();
+			}, 1000);
+		}
+	};
+
 	return (
-		<ModalLayout
-			onClose={() => setOpenModal(false)}
-			className="
-            max-w-[500px] w-[80vw] 
-            h-[80vh] 
-            flex flex-col"
-			wrapperClassName="lg:w-full"
-			onScroll={(e) => {
-				if (fetchedAll) return;
-				let ele = e.currentTarget;
-				let percent = (ele.scrollTop / (ele.scrollHeight - ele.clientHeight)) * 100;
-				if (percent === 100 && !isLoading) {
-					clearTimeout(timeout.current);
-					timeout.current = setTimeout(() => {
-						fetchTransactions();
-					}, 1000);
-				}
-			}}
-		>
+		<ModalLayout onClose={() => setOpenModal(false)} wrapperClassName="w-[90vw] max-w-[500px] h-[60vh] mx-4 my-8">
 			<Text className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem] font-arame-mono">Transactions</Text>
-			<View className="flex-1 overflow-y-auto">
-				<View className="flex flex-col gap-[0.7rem]">
+			<ScrollView className="flex-1" showsVerticalScrollIndicator={false} onScroll={handleScroll} scrollEventThrottle={400}>
+				<View className="flex flex-col gap-[0.7rem] pb-4">
 					{transactions.map((item, i) => (
-						<Row _id={item._id} key={i} />
+						<Row key={i} tx={item} />
 					))}
 					{isLoading && (
-						<View className="flex justify-center items-center">
+						<View className="flex justify-center items-center py-4">
 							<View
 								className="
 									w-[18px] h-[18px] 
@@ -462,7 +458,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 						</View>
 					)}
 				</View>
-			</View>
+			</ScrollView>
 		</ModalLayout>
 	);
 };

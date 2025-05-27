@@ -1,6 +1,6 @@
 import React from "react";
 import { CircleOneIcon } from "@beratrax/ui/src/icons/CircleOne";
-import { MdOutlineCancel } from "react-icons/md";
+import { CancelOutlineIcon } from "@beratrax/ui/src/icons/CancelOutline";
 import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
@@ -77,7 +77,7 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 				{status === TransactionStepStatus.COMPLETED ? (
 					<Image source={getImageSource()} alt="Check mark" className="w-6 h-5" />
 				) : status === TransactionStepStatus.FAILED ? (
-					<MdOutlineCancel style={{ color: "red" }} />
+					<CancelOutlineIcon color="red" />
 				) : status === TransactionStepStatus.PENDING ? (
 					<CircleOneIcon color="var(--new-color_secondary)" style={{ transform: "scale(0.8)" }} />
 				) : (

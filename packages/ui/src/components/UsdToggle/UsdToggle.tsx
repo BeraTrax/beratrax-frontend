@@ -1,27 +1,38 @@
-import { ReactComponent as CoinStack } from "@beratrax/core/src/assets/images/coinStack.svg";
+import { CoinIcon } from "../../icons/Coin";
 import { FC } from "react";
-import { FaDollarSign } from "react-icons/fa";
-import styles from "./UsdToggle.module.css";
+import { DollarIcon } from "../../icons/Dollar";
+import { Pressable, View } from "react-native";
 
 interface IProps {
-    showInUsd: boolean;
-    handleToggleShowInUsdc: () => void;
+	showInUsd: boolean;
+	handleToggleShowInUsdc: () => void;
 }
 
 export const UsdToggle: FC<IProps> = ({ showInUsd, handleToggleShowInUsdc }) => {
-    return (
-        <div className={"flex items-center justify-center"}>
-            <div
-                className={`${styles.lighttoggle} ${showInUsd && styles.lighttoggle_on}`}
-                onClick={handleToggleShowInUsdc}
-            >
-                <div className={`${styles.lighttoggle_switch_bg} ${showInUsd && styles.lighttoggle_switch_bg_on}`}>
-                    {showInUsd ? <CoinStack width={16} height={16} /> : <FaDollarSign size={16} />}
-                </div>
-                <div className={`${styles.lighttoggle_switch} ${showInUsd && styles.lighttoggle_switch_on}`}>
-                    {showInUsd ? <FaDollarSign size={16} /> : <CoinStack width={16} height={16} />}
-                </div>
-            </div>
-        </div>
-    );
+	return (
+		<View className="flex items-center justify-center">
+			<Pressable
+				className="flex flex-row items-center bg-gray-800 rounded-xl p-1 gap-1 hover:bg-gray-700 transition-all duration-200"
+				onPress={handleToggleShowInUsdc}
+			>
+				{/* Left side - Coin icon */}
+				<View
+					className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 ${
+						!showInUsd ? "bg-green-500/10 shadow-sm shadow-green-500/20" : "bg-transparent"
+					}`}
+				>
+					<CoinIcon size={20} color={showInUsd ? "#22c55e" : "#6b7280"} />
+				</View>
+
+				{/* Right side - Dollar icon */}
+				<View
+					className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 ${
+						showInUsd ? "bg-green-500/10 shadow-sm shadow-green-500/20" : "bg-transparent"
+					}`}
+				>
+					<DollarIcon size={20} color={!showInUsd ? "#22c55e" : "#6b7280"} />
+				</View>
+			</Pressable>
+		</View>
+	);
 };

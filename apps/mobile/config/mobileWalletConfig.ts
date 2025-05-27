@@ -35,6 +35,7 @@ export const web3auth = new Web3Auth(WebBrowser, SecureStore, {
 	privateKeyProvider: ethereumPrivateKeyProvider,
 	redirectUrl,
 	enableLogging: true, // Enable logging for debugging
+	sessionTime: 60 * 60, // 1 hour
 });
 
 // Initialize Web3Auth and return a promise

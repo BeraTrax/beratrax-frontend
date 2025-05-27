@@ -196,7 +196,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 				: null}
 
 			<View className="p-5">
-				<View className="bg-bgDark">
+				<View>
 					{/* Wallet Connected */}
 					{currentWallet ? (
 						<View className="flex flex-row items-center justify-between p-4">
@@ -310,7 +310,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 
 				{/* Points for staking */}
 				{currentWallet && (
-					<View className="mt-20 relative">
+					<View className="mt-20 relative z-[-1]">
 						<View className="absolute w-[26rem] h-[26rem] bottom-[-10rem] right-[-8rem]">
 							<Svg height="100%" width="100%" viewBox="0 0 520 520">
 								<Defs>

@@ -51,8 +51,9 @@ export const useStats = (forGalxe?: boolean) => {
         refetch: refetchVaultStats,
         isRefetching: isRefetchingVaultStats,
     } = useQuery<VaultStatsResponse["data"]>({
-        queryKey: ["stats/tvl/vaults"],
-        queryFn: () => fetchVaultStats(),
+        queryKey: ["stats/tvl/vaults", page],
+        //page and limit, hardcoded for now, need to change to dynamic
+        queryFn: () => fetchVaultStats(1, 1),   
     });
 
     // const { data: tvlBasicInfo } = useQuery({

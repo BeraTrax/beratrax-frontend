@@ -154,8 +154,8 @@ export const fetchCountActiveUsers = async () => {
     return res.data.data.activeUsers;
 };
 
-export const fetchVaultStats = async () => {
-    const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults`);
+export const fetchVaultStats = async (page: number = 1, limit: number = 20) => {
+    const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults?page=${page}&limit=${limit}`);
     return res.data.data;
 };
 

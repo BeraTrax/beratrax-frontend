@@ -10,6 +10,20 @@ const Colors = {
 	gradientLight: "#A0FF3B",
 	gradientDark: "#283817",
 	textSecondary: "#878B82",
+	textPrimary: "#72B21F",
+	textGrey: "#878B82",
+	bgPrimary: "#72B21F",
+	bgSecondary: "#151915",
+	bgDark: "#020907",
+	borderDark: "#323D27",
+	borderLight: "#90BB62",
+	buttonPrimary: "#72B21F",
+	buttonPrimaryLight: "#A0FF3B",
+
+	// Rgba versions for opacity
+	bgPrimaryOpacity10: "rgba(114, 178, 31, 0.1)",
+	bgPrimaryOpacity20: "rgba(114, 178, 31, 0.2)",
+	borderLightOpacity20: "rgba(144, 187, 98, 0.2)",
 };
 
 export default Colors;

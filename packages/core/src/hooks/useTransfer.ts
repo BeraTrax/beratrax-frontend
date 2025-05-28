@@ -33,6 +33,7 @@ const useTransfer = () => {
 		}
 		const response = await awaitTransaction(
 			client.wallet.sendTransaction({
+				account: currentWallet,
 				to,
 				value: amount,
 			}),
@@ -65,7 +66,7 @@ const useTransfer = () => {
 		if (max) {
 			amount = await contract.read.balanceOf([currentWallet]);
 		}
-		const response = await awaitTransaction(contract.write.transfer([to, amount]), client);
+		const response = await awaitTransaction(contract.write.transfer([to, amount], { account: currentWallet }), client);
 		return response;
 	};
 

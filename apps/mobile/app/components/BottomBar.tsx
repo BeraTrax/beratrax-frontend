@@ -48,7 +48,7 @@ const BottomBar = ({ tabOptions }: BottomBarProps) => {
 	};
 
 	return (
-		<View className="p-0 border-0 bg-bgDark w-full flex flex-row justify-around rounded-t-[20px] overflow-hidden absolute bottom-0 p-0">
+		<View className="p-0 border-0 bg-bgDark w-full flex flex-row justify-around rounded-t-[20px] overflow-hidden absolute bottom-0">
 			{tabsArray.map((tab) => {
 				const isActive = pathname === tab.route;
 

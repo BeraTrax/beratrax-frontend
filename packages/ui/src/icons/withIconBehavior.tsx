@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Vibration, Platform } from "react-native";
+import { TouchableOpacity, Vibration, Platform } from "react-native";
 import Svg, { SvgProps } from "react-native-svg";
 
 export interface IconProps extends SvgProps {
@@ -28,12 +28,14 @@ export const withIconBehavior = (SvgContent: React.FC<SvgProps>) => {
 		const stroke = props.stroke || color;
 
 		const handlePress = () => {
-			// Provide haptic feedback on supported platforms
-			if (Platform.OS !== "web") {
-				Vibration.vibrate(10); // Short vibration (10ms)
+			try {
+				if (Platform.OS !== "web" && Platform.OS === "ios") {
+					Vibration.vibrate(10);
+				}
+			} catch (error) {
+				console.warn("Vibration failed:", error);
 			}
 
-			// Call the provided onPress handler
 			if (onPress) {
 				onPress();
 			}
@@ -61,22 +63,19 @@ export const withIconBehavior = (SvgContent: React.FC<SvgProps>) => {
 			return SvgComponent;
 		}
 
-		// Otherwise wrap it in a Pressable for touch feedback
 		return (
-			<Pressable
+			<TouchableOpacity
 				onPress={handlePress}
-				style={({ pressed }) => [
-					{
-						opacity: pressed ? activeOpacity : 1,
-						backgroundColor: pressed && feedbackColor ? feedbackColor : "transparent",
-						borderRadius: size / 2,
-					},
-				]}
+				activeOpacity={activeOpacity}
+				style={{
+					backgroundColor: feedbackColor || "transparent",
+					borderRadius: size / 2,
+				}}
 				accessibilityRole="button"
 				accessibilityLabel={props.accessibilityLabel || "Icon button"}
 			>
 				{SvgComponent}
-			</Pressable>
+			</TouchableOpacity>
 		);
 	};
 

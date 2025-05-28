@@ -16,6 +16,7 @@ export interface IWalletContext {
 	getPkey: () => Promise<string | undefined>;
 	isSocial: boolean;
 	isConnecting: boolean;
+	isSponsored: boolean;
 	getPublicClient: (chainId: number) => IClients["public"];
 	getWalletClient: (chainId: number) => Promise<IClients["wallet"]>;
 	getClients: (chainId: number) => Promise<IClients>;
@@ -44,6 +45,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 
 	const { address, status, isConnecting: wagmiIsConnecting, isReconnecting: wagmiIsReconnecting, connector } = useAccount();
 	const { connectAsync } = useConnect();
+	const [isSponsored] = useState(true);
 	const publicClients = useRef<Record<number, IClients["public"]>>({});
 	const walletClients = useRef<Record<number, IClients["wallet"]>>({});
 	const { disconnectAsync } = useDisconnect();
@@ -321,6 +323,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 				currentWallet,
 				isSocial,
 				isConnecting,
+				isSponsored,
 				connector,
 				logout,
 				getPkey,

@@ -51,6 +51,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 		earnTraxTermsAgreed,
 		termsOfUseAgreed,
 	} = useAppSelector((state) => state.account);
+	const { earningsUsd, isVaultEarningsFirstLoad } = useAppSelector((state) => state.farms);
 	const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
 	const { disconnect } = useDisconnect();
 	const { switchChain } = useSwitchChain();
@@ -332,9 +333,13 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 						<View className="flex flex-row items-center gap-x-2 justify-start">
 							<Text className="font-arame-mono text-lg font-normal text-textWhite relative uppercase">TOTAL Earnings</Text>
 						</View>
-						<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">
-							${formatCurrency(userEarnedAmountOnVaults)}
-						</Text>
+						{isVaultEarningsFirstLoad || earningsUsd === null || earningsUsd === undefined ? (
+							<View className="flex items-start h-[3.75rem] mt-4">
+								<View className="h-12 w-32 bg-white/30 rounded-md animate-pulse"></View>
+							</View>
+						) : (
+							<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">${formatCurrency(earningsUsd)}</Text>
+						)}
 						<View className="pb-8">
 							<Image
 								className="w-72 h-72 absolute bottom-[-6rem] right-[-2rem]"

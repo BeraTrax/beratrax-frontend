@@ -90,6 +90,7 @@ export const approveErc20 = async (
 		const walletClient = await getWalletClient(chainId);
 		return await awaitTransaction(
 			walletClient.sendTransaction({
+				account: currentWallet,
 				to: contractAddress,
 				data: encodeFunctionData({
 					abi: erc20Abi,

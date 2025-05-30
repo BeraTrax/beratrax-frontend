@@ -12,12 +12,16 @@ import {
     fetchAccountConnectorsStats,
     VaultStatsResponse,
     VaultStat,
+    AutoCompoundResult,
 } from "src/api/stats";
 import useFarms from "../state/farms/hooks/useFarms";
 import useWallet from "./useWallet";
 
 export const useStats = (forGalxe?: boolean) => {
     const [page, setPage] = useState<number>(1);
+    const [vaultStatsPage, setVaultStatsPage] = useState<number>(1);
+    const [vaultStatsLimit, setVaultStatsLimit] = useState<number>(20);
+    const [onlyAutoCompound, setOnlyAutoCompound] = useState<boolean>(false);
     // @ts-ignore
     const [sortBy, setSortBy] = useState<UsersTableColumns>(UsersTableColumns.TraxEarned);
     const [order, setOrder] = useState<"" | "-">("-");
@@ -51,9 +55,8 @@ export const useStats = (forGalxe?: boolean) => {
         refetch: refetchVaultStats,
         isRefetching: isRefetchingVaultStats,
     } = useQuery<VaultStatsResponse["data"]>({
-        queryKey: ["stats/tvl/vaults", page],
-        //page and limit, hardcoded for now, need to change to dynamic
-        queryFn: () => fetchVaultStats(1, 1),   
+        queryKey: ["stats/tvl/vaults", vaultStatsPage, vaultStatsLimit, onlyAutoCompound],
+        queryFn: () => fetchVaultStats(vaultStatsPage, vaultStatsLimit, onlyAutoCompound),
     });
 
     // const { data: tvlBasicInfo } = useQuery({
@@ -87,8 +90,8 @@ export const useStats = (forGalxe?: boolean) => {
         return vaultStatsTemp.vaults.flatMap((vault) => {
             const farm = farms.find((farm) => farm.vault_addr === vault.address);
             if (!farm) return []; // Skips this vault
-            const autoCompoundFarmResult = vaultStatsTemp.autoCompound?.data?.[farm?.id];
-            const autoCompoundResult = vaultStatsTemp.autoCompound;
+            const autoCompoundResult = vaultStatsTemp.autoCompound?.[0];
+            const autoCompoundFarmResult = autoCompoundResult?.data?.[farm?.id];
             const vaultStatsRecord = {
                 ...vault,
                 name: farm.name,
@@ -98,7 +101,7 @@ export const useStats = (forGalxe?: boolean) => {
                 id: farm.id,
             };
             let autoCompoundStats = {};
-            //becasue not every vault has is auto compounded
+            //because not every vault has is auto compounded
             if (autoCompoundResult && autoCompoundFarmResult) {
                 autoCompoundStats = {
                     autoCompoundLastRunAt: autoCompoundResult.lastFinishedAt,
@@ -136,6 +139,10 @@ export const useStats = (forGalxe?: boolean) => {
         totalBtxPoints: totalBtxPoints?.totalBTXPoints[0].totalBTXPoints,
         facetUserCount,
         vaultStats,
+        vaultStatsPage,
+        setVaultStatsPage,
+        vaultStatsLimit,
+        setVaultStatsLimit,
         refetchVaultStats,
         isRefetchingVaultStats,
         setPage,

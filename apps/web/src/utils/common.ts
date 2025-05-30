@@ -449,3 +449,20 @@ export const isVaultNew = (createdAt: number) => {
     return now - createdAt < VAULT_NEW_DURATION;
 };
 
+export const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+};
+
+
+export const getColorClass = (percentage: number) => {
+    if (percentage >= 85) return "bg-green-500";
+    if (percentage >= 60) return "bg-yellow-500";
+    return "bg-red-800";
+};
+

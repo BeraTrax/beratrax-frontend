@@ -40,10 +40,10 @@ export interface AutoCompoundResult {
             earnReturnData: string;
             harvestReturnData: string;
         }
-    }
-    lastModifiedBy: number;
-    lastFinishedAt: number;
-    status: number;
+    };
+    lastModifiedBy: string;
+    lastFinishedAt: string;
+    status: string;
     runTime: number;
 }
 interface AutoCompoundProcessed  {
@@ -73,7 +73,7 @@ export interface VaultStat extends AutoCompoundProcessed, BasicVaultStats {
 export interface VaultStatsResponse {
     data: {
         vaults: BasicVaultStats[];
-        autoCompound: AutoCompoundResult;
+        autoCompound: AutoCompoundResult[];
     };
     status: boolean;
 }
@@ -154,8 +154,8 @@ export const fetchCountActiveUsers = async () => {
     return res.data.data.activeUsers;
 };
 
-export const fetchVaultStats = async (page: number = 1, limit: number = 20) => {
-    const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults?page=${page}&limit=${limit}`);
+export const fetchVaultStats = async (page: number = 1, limit: number = 20, onlyAutoCompound: boolean = false) => {
+    const res = await backendApi.get<VaultStatsResponse>(`stats/tvl/vaults?page=${page}&limit=${limit}&onlyAutoCompound=${onlyAutoCompound}`);
     return res.data.data;
 };
 

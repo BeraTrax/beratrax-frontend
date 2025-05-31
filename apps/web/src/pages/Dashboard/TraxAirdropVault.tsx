@@ -57,6 +57,7 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
 
 export const TraxAirdropVault = () => {
     const dispatch = useAppDispatch();
+    const { reloadBalances } = useTokens();
     const { getClients, currentWallet } = useWallet();
     const { prices } = useTokens();
     const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -101,6 +102,7 @@ export const TraxAirdropVault = () => {
             });
 
             await dispatch(fetchAirdropData({ address: currentWallet!, getClients })).unwrap();
+            await reloadBalances();
         } catch (error: any) {
             console.error(error);
             id && dismissNotify(id);

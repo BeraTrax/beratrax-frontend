@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import stakingAbi from "src/assets/abis/stakingAbi";
 import { DepositToRewardsVault } from "src/components/DepositRewardsVault/DepositRewardsVault";
@@ -10,13 +10,13 @@ import { addressesByChainId } from "src/config/constants/contracts";
 import { PoolDef } from "src/config/constants/pools_json";
 import { useVaults } from "src/hooks/useVaults";
 import useWallet from "src/hooks/useWallet";
-import { useAppDispatch } from "src/state";
-import { updatePoints } from "src/state/account/accountReducer";
+import { useAppDispatch, useAppSelector } from "src/state";
 import useFarmDetails from "src/state/farms/hooks/useFarmDetails";
 import useTokens from "src/state/tokens/useTokens";
 import { CHAIN_ID } from "src/types/enums";
 import { Address, getContract } from "viem";
 import VaultItem from "./VaultItem";
+import { TraxAirdropVault } from "../TraxAirdropVault";
 
 const Vaults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -40,6 +40,11 @@ const Vaults: React.FC = () => {
     const [rewardsVaultsData, setRewardsVaultsData] = useState<PoolDef[]>([]);
     const [rewardsUpdateTrigger, setRewardsUpdateTrigger] = useState(0);
     const [userBTXStake, setUserBTXStake] = useState(0n);
+
+    // Get airdrop state to check if user has staked TRAX
+    const airdropState = useAppSelector((state) => state.account.airdrop);
+    const hasStakedTrax = Boolean(airdropState?.stakeInfo && airdropState.stakeInfo > 0n);
+    const hasUserBTXStake = userBTXStake > 0n;
 
     const publicClient = getPublicClient(CHAIN_ID.BERACHAIN);
 
@@ -130,13 +135,22 @@ const Vaults: React.FC = () => {
             </div>
             <div
                 className="w-full flex flex-wrap gap-4"
-                style={!isLoading && (vaults.length > 0 || userBTXStake > 0n) ? undefined : { display: "block" }}
+                style={
+                    !isLoading && (vaults.length > 0 || hasUserBTXStake || hasStakedTrax)
+                        ? undefined
+                        : { display: "block" }
+                }
             >
                 {!isLoading ? (
-                    vaults.length > 0 ? (
-                        vaults
-                            .filter((vault) => !vault.isUpcoming)
-                            .map((vault) => <VaultItem vault={vault} key={vault.id} />)
+                    vaults.length > 0 || hasStakedTrax ? (
+                        <React.Fragment>
+                            {hasStakedTrax && <TraxAirdropVault />}
+                            {vaults
+                                .filter((vault) => !vault.isUpcoming)
+                                .map((vault) => (
+                                    <VaultItem vault={vault} key={vault.id} />
+                                ))}
+                        </React.Fragment>
                     ) : (
                         <EmptyComponent style={{ paddingTop: 50, paddingBottom: 50 }}>
                             <div className="flex flex-col justify-center mb-4">

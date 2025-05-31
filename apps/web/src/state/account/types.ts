@@ -1,4 +1,5 @@
 import { UserVVL } from "src/types";
+import { Address } from "viem";
 
 export interface StateInterface {
     /** Code of person whose link used to come on site  */
@@ -25,6 +26,19 @@ export interface StateInterface {
     xFollower?: boolean;
     disableZapWarning?: boolean;
     error?: string | null;
+
+    // Airdrop-related state
+    airdrop?: {
+        isClaimed: boolean;
+        isInitialLoading: boolean;
+        claimData: { account: Address; signature: Address; amount: string } | null;
+        stakeInfo: bigint;
+        pendingRewards: bigint;
+        isLoading: boolean;
+        isWithdrawLoading: boolean;
+        isClaimRewardsLoading: boolean;
+        isStakeLoading: boolean;
+    };
 }
 
 export interface AccountResponse {

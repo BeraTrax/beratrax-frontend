@@ -32,8 +32,8 @@ export interface StateInterface {
         isClaimed: boolean;
         isInitialLoading: boolean;
         claimData: { account: Address; signature: Address; amount: string } | null;
-        stakeInfo: bigint;
-        pendingRewards: bigint;
+        stakeInfo: string;
+        pendingRewards: string;
         isLoading: boolean;
         isWithdrawLoading: boolean;
         isClaimRewardsLoading: boolean;

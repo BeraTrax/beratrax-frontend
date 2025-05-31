@@ -93,6 +93,10 @@ export const disableZapWarning = async (address: string, value: boolean) => {
 };
 
 export const getAirdropClaim = async (address: string) => {
+    return {
+        status: true,
+        data: null,
+    };
     const response = await backendApi.get<{
         status: boolean;
         data: { account: Address; signature: Address; amount: string };

@@ -134,7 +134,7 @@ export const AirdropClaim = () => {
             id && dismissNotify(id);
             notifyError({
                 title: "Error",
-                message: error.message || "Failed to claim TRAX tokens",
+                message: error.message || "Failed to claim due to Berachain RPC issue. Please try again later",
             });
         } finally {
             setShowWarningModal(false);
@@ -163,7 +163,7 @@ export const AirdropClaim = () => {
             id && dismissNotify(id);
             notifyError({
                 title: "Error",
-                message: error.message || "Failed to stake TRAX tokens",
+                message: error.message || "Failed to claim due to Berachain RPC issue. Please try again later",
             });
         }
     };

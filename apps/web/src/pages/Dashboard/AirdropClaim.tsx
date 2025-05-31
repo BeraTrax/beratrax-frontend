@@ -326,7 +326,7 @@ export const AirdropClaim = () => {
                             "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)",
                     }}
                 >
-                    <h2 className="font-league-spartan font-bold text-3xl mb-6">TRAX Airdrop</h2>
+                    <h2 className="font-league-spartan font-bold text-3xl mb-6">TRAX Season 1 & 2 Airdrops</h2>
 
                     {!isClaimed && (
                         <div className="mb-6 p-4 bg-bgPrimary/50 backdrop-blur-sm rounded-2xl border border-borderDark">
@@ -416,7 +416,7 @@ export const AirdropClaim = () => {
                                                 : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
                                         }`}
                                 >
-                                    {isLoading ? "Processing..." : "Claim TRAX"}
+                                    {isLoading ? "Processing..." : "Claim TRAX without staking"}
                                 </button>
 
                                 <span className="text-textWhite/80 font-league-spartan">OR</span>
@@ -431,14 +431,14 @@ export const AirdropClaim = () => {
                                                 : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
                                         }`}
                                 >
-                                    {isStakeLoading ? "Processing..." : "Stake for 5X Rewards"}
+                                    {isStakeLoading ? "Processing..." : "Claim and stake for 2000% APY"}
                                 </button>
                             </div>
 
                             <div className="p-4 bg-bgPrimary/50 backdrop-blur-sm rounded-2xl border border-borderDark">
                                 <div className="flex items-start gap-3">
                                     <IoInformationCircle className="text-xl text-textWhite/80 mt-1" />
-                                    <p className="font-arame-mono text-sm text-textWhite/80">
+                                    <p className="font-league-spartan text-sm text-textWhite/80">
                                         Choose between claiming your TRAX tokens immediately or staking to earn 2000%
                                         APR and multiply your rewards by upto 5X. You can only stake once at the time of
                                         claim.

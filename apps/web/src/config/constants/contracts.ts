@@ -90,7 +90,7 @@ const berachainAddresses: Addresses = {
     beraAddress: "0x6969696969696969696969696969696969696969",
     btxAddress: "0xAE24e5B7E669E87D88c5CD02Bcbb7DeF001A2612",
     stakingAddress: "0xD278E826eB2c5B85D85989aB842fa9788DD4bDaF",
-    airdropAddress: "0x6c3F91Cc064cdc746d79103AD1718d0854b777BA",
+    airdropAddress: "0x7d6cffa350E6725bA8BF3bcC876d9211DD071FBd",
 };
 
 export const addressesByChainId: { [key: number]: Addresses } = {

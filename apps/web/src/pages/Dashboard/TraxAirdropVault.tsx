@@ -65,8 +65,11 @@ export const TraxAirdropVault = () => {
     const airdropState = useSelector((state: RootState) => state.account.airdrop);
 
     const {
-        stakeInfo = 0n,
-        pendingRewards = 0n,
+        isClaimed = false,
+        isInitialLoading = true,
+        claimData = null,
+        stakeInfo = "0",
+        pendingRewards = "0",
         isWithdrawLoading = false,
         isClaimRewardsLoading = false,
     } = airdropState || {};
@@ -76,10 +79,10 @@ export const TraxAirdropVault = () => {
     const traxPrice = prices[CHAIN_ID.BERACHAIN]?.[TRAX_TOKEN_ADDRESS] || 0;
 
     // Calculate USD values
-    const stakeAmountFormatted = formatEther(stakeInfo);
-    const rewardsAmountFormatted = formatEther(pendingRewards);
+    const stakeAmountFormatted = formatEther(BigInt(stakeInfo || "0"));
+    const pendingRewardsFormatted = formatEther(BigInt(pendingRewards || "0"));
     const stakeUsdValue = Number(stakeAmountFormatted) * traxPrice;
-    const rewardsUsdValue = Number(rewardsAmountFormatted) * traxPrice;
+    const rewardsUsdValue = Number(pendingRewardsFormatted) * traxPrice;
 
     const handleWithdraw = async () => {
         let id: string | undefined = undefined;
@@ -89,7 +92,7 @@ export const TraxAirdropVault = () => {
                 message: "Processing your withdrawal transaction...",
             });
 
-            await dispatch(withdrawAirdrop({ amount: stakeInfo, getClients })).unwrap();
+            await dispatch(withdrawAirdrop({ amount: BigInt(stakeInfo || "0"), getClients })).unwrap();
 
             id && dismissNotify(id);
             notifySuccess({
@@ -197,14 +200,14 @@ export const TraxAirdropVault = () => {
                         </p>
                         <p className="text-textWhite/60 text-sm">
                             +
-                            {customCommify(rewardsAmountFormatted, {
+                            {customCommify(pendingRewardsFormatted, {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 4,
                                 showDollarSign: false,
                             })}{" "}
                             TRAX
                         </p>
-                        {/* {pendingRewards > 0n && (
+                        {/* {BigInt(pendingRewards || "0") > 0n && (
                             <button
                                 onClick={handleClaimRewards}
                                 disabled={isClaimRewardsLoading || !currentWallet}
@@ -264,7 +267,7 @@ export const TraxAirdropVault = () => {
                             (
                             {customCommify(stakeAmountFormatted, {
                                 minimumFractionDigits: 0,
-                                maximumFractionDigits: 2,
+                                maximumFractionDigits: 0,
                                 showDollarSign: false,
                             })}{" "}
                             TRAX)

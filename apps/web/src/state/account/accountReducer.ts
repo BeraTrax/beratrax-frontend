@@ -26,8 +26,8 @@ const initialState: StateInterface = {
         isClaimed: false,
         isInitialLoading: true,
         claimData: null,
-        stakeInfo: 0n,
-        pendingRewards: 0n,
+        stakeInfo: "0",
+        pendingRewards: "0",
         isLoading: false,
         isWithdrawLoading: false,
         isClaimRewardsLoading: false,
@@ -285,8 +285,8 @@ export const fetchAirdropData = createAsyncThunk(
 
             return {
                 claimData: airdropClaimData,
-                stakeInfo: amount[0],
-                pendingRewards,
+                stakeInfo: amount[0].toString(),
+                pendingRewards: pendingRewards.toString(),
                 isClaimed: claimed,
             };
         } catch (error) {
@@ -421,8 +421,8 @@ const accountSlice = createSlice({
                     isClaimed: false,
                     isInitialLoading: true,
                     claimData: null,
-                    stakeInfo: 0n,
-                    pendingRewards: 0n,
+                    stakeInfo: "0",
+                    pendingRewards: "0",
                     isLoading: false,
                     isWithdrawLoading: false,
                     isClaimRewardsLoading: false,
@@ -464,8 +464,8 @@ const accountSlice = createSlice({
                     isClaimed: false,
                     isInitialLoading: true,
                     claimData: null,
-                    stakeInfo: 0n,
-                    pendingRewards: 0n,
+                    stakeInfo: "0",
+                    pendingRewards: "0",
                     isLoading: false,
                     isWithdrawLoading: false,
                     isClaimRewardsLoading: false,

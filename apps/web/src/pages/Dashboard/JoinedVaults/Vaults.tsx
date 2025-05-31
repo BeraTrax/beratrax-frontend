@@ -43,7 +43,7 @@ const Vaults: React.FC = () => {
 
     // Get airdrop state to check if user has staked TRAX
     const airdropState = useAppSelector((state) => state.account.airdrop);
-    const hasStakedTrax = Boolean(airdropState?.stakeInfo && airdropState.stakeInfo > 0n);
+    const hasStakedTrax = Boolean(airdropState?.stakeInfo && BigInt(airdropState.stakeInfo) > 0n);
     const hasUserBTXStake = userBTXStake > 0n;
 
     const publicClient = getPublicClient(CHAIN_ID.BERACHAIN);

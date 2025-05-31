@@ -9,6 +9,7 @@ import { RootState, useAppDispatch } from "src/state";
 import { fetchAirdropData, claimAirdrop } from "src/state/account/accountReducer";
 import { useState } from "react";
 import useWallet from "src/hooks/useWallet";
+import useTokens from "src/state/tokens/useTokens";
 
 const top20 = [
     "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
@@ -79,6 +80,7 @@ const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningMo
 
 export const AirdropClaim = () => {
     const dispatch = useAppDispatch();
+    const { reloadBalances } = useTokens();
     const { getClients, currentWallet } = useWallet();
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [warningType, setWarningType] = useState<"claim" | "stake">("claim");
@@ -120,6 +122,7 @@ export const AirdropClaim = () => {
             });
 
             await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
+            await reloadBalances();
 
             id && dismissNotify(id);
             notifySuccess({

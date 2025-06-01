@@ -47,14 +47,15 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                     <p className="font-arame-mono font-normal text-base leading-4">
                         TOTAL POINTS FROM <br /> STAKING
                     </p>
-                    <p className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
-                        {customCommify(stakingPoints, {
+                    <p className="font-league-spartan font-bold text-textWhite text-xl leading-[3.75rem]">
+                        Next season coming very soon
+                        {/* {customCommify(stakingPoints, {
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 2,
                             showDollarSign: false,
-                        })}
+                        })} */}
                     </p>
-                    {boosts && boosts.includes(Boosts.NFT) && (
+                    {/* {boosts && boosts.includes(Boosts.NFT) && (
                         <p
                             className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
                         bg-clip-text text-transparent font-extrabold text-lg
@@ -100,46 +101,6 @@ export const TraxReferralEarning: React.FC<Props> = () => {
                         hover:scale-105 transition-transform duration-200"
                         >
                             x2 Multiplier - INTRACT CAMPAIGN 🚀
-                        </p>
-                    )}
-                    {/* {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_BRONZE) && (
-                        <p
-                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
-                        bg-clip-text text-transparent font-extrabold text-lg
-                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
-                        hover:scale-105 transition-transform duration-200"
-                        >
-                            x1.5 Multiplier - BRIDGE JUMPER 🚀
-                        </p>
-                    )}
-                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_SILVER) && (
-                        <p
-                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
-                        bg-clip-text text-transparent font-extrabold text-lg
-                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
-                        hover:scale-105 transition-transform duration-200"
-                        >
-                            x2 Multiplier - BRIDGE JUMPER 🚀
-                        </p>
-                    )}
-                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_GOLD) && (
-                        <p
-                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
-                        bg-clip-text text-transparent font-extrabold text-lg
-                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
-                        hover:scale-105 transition-transform duration-200"
-                        >
-                            x2.5 Multiplier - BRIDGE JUMPER 🚀
-                        </p>
-                    )}
-                    {boosts && boosts.includes(Boosts.BRIDGE_JUMPER_PLATINUM) && (
-                        <p
-                            className="animate-pulse bg-gradient-to-r from-yellow-400 via-orange-500 to-teal-400 
-                        bg-clip-text text-transparent font-extrabold text-lg
-                        drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
-                        hover:scale-105 transition-transform duration-200"
-                        >
-                            x3 Multiplier - BRIDGE JUMPER 🚀
                         </p>
                     )} */}
                 </div>

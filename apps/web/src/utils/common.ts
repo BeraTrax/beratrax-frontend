@@ -459,8 +459,10 @@ export const formatDate = (dateString: string) => {
     });
 };
 
-
-export const getColorClass = (percentage: number) => {
+export const getColorClass = (percentage: number, hasBlockchainErrors: boolean = false) => {
+    if (hasBlockchainErrors) {
+        return "bg-orange-500";
+    }
     if (percentage >= 85) return "bg-green-500";
     if (percentage >= 60) return "bg-yellow-500";
     return "bg-red-800";

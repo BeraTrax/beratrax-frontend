@@ -23,12 +23,12 @@ export const UptimeStats = ({
 
     return (
         <div className="bg-bgDark rounded-xl p-5 border border-[#323d27] mt-6">
-            <h3 className="text-white font-medium mb-4">Uptime Stats</h3>
+            <h4 className="text-white font-medium mb-7">Uptime Stats</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Cumulative Auto Compound Uptime */}
-                <div className="bg-bgDark rounded-lg p-4 border border-[#2A342A]">
+                <div className="bg-bgDark rounded-lg p-4 border border-borderDark">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-[#878B82]">Cumulative Auto Compound Uptime</span>
+                        <span className="text-textSecondary">Cumulative Auto Compound Uptime</span>
                         <span className="text-white font-bold">{overallCombinedUptime.toFixed(2)}%</span>
                     </div>
                     <div className="w-full h-3 bg-[#2D2F30] rounded-full overflow-hidden">
@@ -40,9 +40,9 @@ export const UptimeStats = ({
                 </div>
 
                 {/* Harvest Uptime */}
-                <div className="bg-bgDark rounded-lg p-4 border border-[#2A342A]">
+                <div className="bg-bgDark rounded-lg p-4 border border-borderDark">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-[#878B82]">Harvest Uptime</span>
+                        <span className="text-textSecondary">Harvest Uptime</span>
                         <span className="text-white font-bold">{overallHarvestUptime.toFixed(2)}%</span>
                     </div>
                     <div className="w-full h-3 bg-[#2D2F30] rounded-full overflow-hidden">
@@ -54,9 +54,9 @@ export const UptimeStats = ({
                 </div>
 
                 {/* Earn Uptime */}
-                <div className="bg-[#151818] rounded-lg p-4 border border-[#2A342A]">
+                <div className="bg-bgDark rounded-lg p-4 border border-borderDark">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-[#878B82]">Earn Uptime</span>
+                        <span className="text-textSecondary">Earn Uptime</span>
                         <span className="text-white font-bold">{overallEarnUptime.toFixed(2)}%</span>
                     </div>
                     <div className="w-full h-3 bg-[#2D2F30] rounded-full overflow-hidden">

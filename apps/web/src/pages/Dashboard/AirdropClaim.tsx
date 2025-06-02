@@ -40,7 +40,7 @@ interface WarningModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    type: "claim" | "stake";
+    type: "claim" | "stake" | "burn";
     isLoading: boolean;
 }
 
@@ -49,6 +49,12 @@ const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningMo
 
     const getModalContent = () => {
         switch (type) {
+            case "burn":
+                return {
+                    title: "🗑️ Burn Your TRAX Tokens!",
+                    message: "Don't want your airdrop? Burn it and we'll match you!",
+                    buttonText: "Trashhhhhh it!",
+                };
             case "claim":
                 return {
                     title: "Important Notice!",
@@ -84,7 +90,9 @@ const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningMo
                         Cancel
                     </button>
                     <button
-                        className="bg-bgPrimary p-4 rounded-xl w-32 font-league-spartan text-textWhite"
+                        className={`p-4 rounded-xl w-32 font-league-spartan text-textWhite ${
+                            type === "burn" ? "bg-red-600 hover:bg-red-700" : "bg-bgPrimary"
+                        }`}
                         disabled={isLoading}
                         onClick={onConfirm}
                     >
@@ -102,7 +110,7 @@ export const AirdropClaim = () => {
     const { getClients, currentWallet } = useWallet();
     const { transfer } = useTransfer();
     const [showWarningModal, setShowWarningModal] = useState(false);
-    const [warningType, setWarningType] = useState<"claim" | "stake">("claim");
+    const [warningType, setWarningType] = useState<"claim" | "stake" | "burn">("claim");
     const [isBurnLoading, setIsBurnLoading] = useState(false);
 
     // Constants
@@ -241,7 +249,7 @@ export const AirdropClaim = () => {
         }
     };
 
-    const showWarning = (type: "claim" | "stake") => {
+    const showWarning = (type: "claim" | "stake" | "burn") => {
         setWarningType(type);
         setShowWarningModal(true);
     };
@@ -318,9 +326,10 @@ export const AirdropClaim = () => {
                             </div>
 
                             {/* Trash It button - centered and special */}
-                            <div className="flex justify-center" onClick={handleBurn}>
-                                <div className="relative cursor-pointer">
+                            <div className="flex justify-center">
+                                <div className="relative">
                                     <button
+                                        onClick={() => showWarning("burn")}
                                         disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
                                         className={`group relative overflow-hidden py-3 px-6 rounded-xl font-league-spartan font-bold text-base border-2 transition-all duration-300
                                             ${
@@ -348,10 +357,10 @@ export const AirdropClaim = () => {
                                 <IoInformationCircle className="text-xl text-textWhite/80 mt-1" />
                                 <p className="font-league-spartan text-sm text-textWhite/80">
                                     You can either claim your TRAX tokens now, stake them to earn 2000% APR for 3
-                                    months, or permanently burn them for fun! 🔥 Staking is non-locking, so you can
-                                    withdraw at any time. However, if you choose to claim your tokens now, you WILL NOT
-                                    be able to stake them in this vault again. Burning tokens is permanent and cannot be
-                                    undone!
+                                    months, or if you don’t want your airdrop? burn it and we’ll match you 🔥. Staking
+                                    is non-locking, so you can withdraw at any time. However, if you choose to claim
+                                    your tokens now, you WILL NOT be able to stake them in this vault again. Burning
+                                    tokens is permanent and cannot be undone!
                                 </p>
                             </div>
                         </div>
@@ -362,9 +371,11 @@ export const AirdropClaim = () => {
             <WarningModal
                 isOpen={showWarningModal}
                 onClose={() => setShowWarningModal(false)}
-                onConfirm={warningType === "claim" ? handleClaim : handleStake}
+                onConfirm={warningType === "claim" ? handleClaim : warningType === "stake" ? handleStake : handleBurn}
                 type={warningType}
-                isLoading={warningType === "claim" ? isLoading : isStakeLoading}
+                isLoading={
+                    warningType === "claim" ? isLoading : warningType === "stake" ? isStakeLoading : isBurnLoading
+                }
             />
         </div>
     );

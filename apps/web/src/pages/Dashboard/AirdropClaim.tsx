@@ -10,6 +10,8 @@ import { fetchAirdropData, claimAirdrop } from "src/state/account/accountReducer
 import { useState } from "react";
 import useWallet from "src/hooks/useWallet";
 import useTokens from "src/state/tokens/useTokens";
+import useTransfer from "src/hooks/useTransfer";
+import { CHAIN_ID } from "src/types/enums";
 
 const top20 = [
     "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
@@ -38,24 +40,46 @@ interface WarningModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    type: "claim" | "stake";
+    type: "claim" | "stake" | "burn";
     isLoading: boolean;
 }
 
 const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningModalProps) => {
     if (!isOpen) return null;
 
+    const getModalContent = () => {
+        switch (type) {
+            case "burn":
+                return {
+                    title: "🗑️ Burn Your TRAX Tokens!",
+                    message: "Don't want your airdrop? Burn it and we'll match you!",
+                    buttonText: "Trashhhhhh it!",
+                };
+            case "claim":
+                return {
+                    title: "Important Notice!",
+                    message:
+                        "You are choosing to claim your TRAX tokens. You understand that after this transaction, you will receive your TRAX tokens immediately. You recognize that you won't be able to stake these tokens later in the 2000% APR pool.",
+                    buttonText: "I understand",
+                };
+            default:
+                return {
+                    title: "Important Notice!",
+                    message: "You are choosing to stake your TRAX tokens.",
+                    buttonText: "I understand",
+                };
+        }
+    };
+
+    const content = getModalContent();
+
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
             <div className="bg-bgSecondary rounded-3xl p-6 max-w-lg w-full mx-4 border border-borderDark">
                 <div className="w-full mb-4">
                     <div className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
-                        <p className="text-2xl font-bold text-center text-textWhite">Important Notice!</p>
-                        <p className="text-base text-textWhite">
-                            You are choosing to claim your TRAX tokens. You understand that after this transaction, you
-                            will receive your TRAX tokens immediately. You recognize that you won't be able to stake
-                            these tokens later in the 2000% APR pool.
-                        </p>
+                        <p className="text-2xl font-bold text-center text-textWhite">{content.title}</p>
+                        <p className="text-base text-textWhite">{content.message}</p>
                     </div>
                 </div>
                 <div className="flex justify-end gap-4">
@@ -66,11 +90,13 @@ const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningMo
                         Cancel
                     </button>
                     <button
-                        className="bg-bgPrimary p-4 rounded-xl w-32 font-league-spartan text-textWhite"
+                        className={`p-4 rounded-xl w-32 font-league-spartan text-textWhite ${
+                            type === "burn" ? "bg-red-600 hover:bg-red-700" : "bg-bgPrimary"
+                        }`}
                         disabled={isLoading}
                         onClick={onConfirm}
                     >
-                        {isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : "I understand"}
+                        {isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : content.buttonText}
                     </button>
                 </div>
             </div>
@@ -82,8 +108,14 @@ export const AirdropClaim = () => {
     const dispatch = useAppDispatch();
     const { reloadBalances } = useTokens();
     const { getClients, currentWallet } = useWallet();
+    const { transfer } = useTransfer();
     const [showWarningModal, setShowWarningModal] = useState(false);
-    const [warningType, setWarningType] = useState<"claim" | "stake">("claim");
+    const [warningType, setWarningType] = useState<"claim" | "stake" | "burn">("claim");
+    const [isBurnLoading, setIsBurnLoading] = useState(false);
+
+    // Constants
+    const TRAX_TOKEN_ADDRESS = "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8";
+    const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
     // Get airdrop state from Redux
     const airdropState = useSelector((state: RootState) => state.account.airdrop);
@@ -168,7 +200,56 @@ export const AirdropClaim = () => {
         }
     };
 
-    const showWarning = (type: "claim" | "stake") => {
+    const handleBurn = async () => {
+        if (!claimData) return;
+
+        let id: string | undefined = undefined;
+        setIsBurnLoading(true);
+        try {
+            id = notifyLoading({
+                title: "🔥 Burning TRAX...",
+                message: "Step 1/2: Claiming your TRAX tokens...",
+            });
+
+            // First claim the tokens
+            await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
+
+            // Update notification
+            id && dismissNotify(id);
+            id = notifyLoading({
+                title: "🔥 Burning TRAX...",
+                message: "Step 2/2: Sending tokens to the void... 🗑️",
+            });
+
+            // Then burn them by sending to dead address
+            await transfer({
+                tokenAddress: TRAX_TOKEN_ADDRESS,
+                to: DEAD_ADDRESS,
+                amount: BigInt(claimData.amount),
+                chainId: CHAIN_ID.BERACHAIN,
+            });
+
+            await reloadBalances();
+
+            id && dismissNotify(id);
+            notifySuccess({
+                title: "🔥 Tokens Burned Successfully!",
+                message: "Your TRAX tokens have been permanently destroyed! They're gone forever! 🗑️💸",
+            });
+        } catch (error: any) {
+            console.error(error);
+            id && dismissNotify(id);
+            notifyError({
+                title: "Error",
+                message: error.message || "Failed to burn tokens. Please try again later",
+            });
+        } finally {
+            setIsBurnLoading(false);
+            setShowWarningModal(false);
+        }
+    };
+
+    const showWarning = (type: "claim" | "stake" | "burn") => {
         setWarningType(type);
         setShowWarningModal(true);
     };
@@ -212,44 +293,74 @@ export const AirdropClaim = () => {
                     </p>
 
                     <div className="space-y-6">
-                        <div className="flex items-center justify-center gap-4">
-                            <button
-                                onClick={() => showWarning("claim")}
-                                disabled={isLoading || isStakeLoading || !currentWallet}
-                                className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-medium text-base
-                                    ${
-                                        isLoading || isStakeLoading || !currentWallet
-                                            ? "bg-buttonDisabled cursor-not-allowed"
-                                            : "bg-gray-600 hover:bg-gray-500 text-textWhite"
-                                    }`}
-                            >
-                                {isLoading ? "Processing..." : "Claim TRAX without staking"}
-                            </button>
+                        <div className="flex flex-col gap-4">
+                            {/* Main claim/stake buttons */}
+                            <div className="flex items-center justify-center gap-4">
+                                <button
+                                    onClick={() => showWarning("claim")}
+                                    disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
+                                    className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-medium text-base
+                                        ${
+                                            isLoading || isStakeLoading || isBurnLoading || !currentWallet
+                                                ? "bg-buttonDisabled cursor-not-allowed"
+                                                : "bg-gray-600 hover:bg-gray-500 text-textWhite"
+                                        }`}
+                                >
+                                    {isLoading ? "Processing..." : "Claim TRAX without staking"}
+                                </button>
 
-                            <span className="text-textWhite/80 font-league-spartan">OR</span>
+                                <span className="text-textWhite/80 font-league-spartan">OR</span>
 
-                            <button
-                                onClick={handleStake}
-                                disabled={isLoading || isStakeLoading || !currentWallet}
-                                className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-bold text-lg
-                                    ${
-                                        isLoading || isStakeLoading || !currentWallet
-                                            ? "bg-buttonDisabled cursor-not-allowed"
-                                            : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
-                                    }`}
-                            >
-                                {isStakeLoading ? "Processing..." : "Claim and stake for 2000% APY"}
-                            </button>
+                                <button
+                                    onClick={handleStake}
+                                    disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
+                                    className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-bold text-lg
+                                        ${
+                                            isLoading || isStakeLoading || isBurnLoading || !currentWallet
+                                                ? "bg-buttonDisabled cursor-not-allowed"
+                                                : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
+                                        }`}
+                                >
+                                    {isStakeLoading ? "Processing..." : "Claim and stake for 2000% APY"}
+                                </button>
+                            </div>
+
+                            {/* Trash It button - centered and special */}
+                            <div className="flex justify-center">
+                                <div className="relative">
+                                    <button
+                                        onClick={() => showWarning("burn")}
+                                        disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
+                                        className={`group relative overflow-hidden py-3 px-6 rounded-xl font-league-spartan font-bold text-base border-2 transition-all duration-300
+                                            ${
+                                                isLoading || isStakeLoading || isBurnLoading || !currentWallet
+                                                    ? "bg-buttonDisabled border-gray-600 cursor-not-allowed"
+                                                    : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500 hover:border-red-400 text-white hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
+                                            }`}
+                                    >
+                                        <span className="relative z-10 flex items-center gap-2">
+                                            <img src="trash.gif" alt="trash" className="w-6 h-6" />
+                                            {isBurnLoading ? "Burning..." : "Trash"}
+                                            <span className="text-xl">🔥</span>
+                                        </span>
+                                        {/* Animated background effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                                    </button>
+                                    {/* Sparkle effects */}
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 rounded-xl opacity-0 group-hover:opacity-30 blur transition-all duration-300"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="p-4 bg-bgPrimary/50 backdrop-blur-sm rounded-2xl border border-borderDark">
                             <div className="flex items-start gap-3">
                                 <IoInformationCircle className="text-xl text-textWhite/80 mt-1" />
                                 <p className="font-league-spartan text-sm text-textWhite/80">
-                                    You can either claim your TRAX tokens now or stake them to earn 2000% APR for 3
-                                    months. Staking is non-locking, so you can withdraw at any time. However, if you
-                                    choose to claim your tokens now, you WILL NOT be able to stake them in this vault
-                                    again.
+                                    You can either claim your TRAX tokens now, stake them to earn 2000% APR for 3
+                                    months, or if you don’t want your airdrop? burn it and we’ll match you 🔥. Staking
+                                    is non-locking, so you can withdraw at any time. However, if you choose to claim
+                                    your tokens now, you WILL NOT be able to stake them in this vault again. Burning
+                                    tokens is permanent and cannot be undone!
                                 </p>
                             </div>
                         </div>
@@ -260,9 +371,11 @@ export const AirdropClaim = () => {
             <WarningModal
                 isOpen={showWarningModal}
                 onClose={() => setShowWarningModal(false)}
-                onConfirm={warningType === "claim" ? handleClaim : handleStake}
+                onConfirm={warningType === "claim" ? handleClaim : warningType === "stake" ? handleStake : handleBurn}
                 type={warningType}
-                isLoading={warningType === "claim" ? isLoading : isStakeLoading}
+                isLoading={
+                    warningType === "claim" ? isLoading : warningType === "stake" ? isStakeLoading : isBurnLoading
+                }
             />
         </div>
     );

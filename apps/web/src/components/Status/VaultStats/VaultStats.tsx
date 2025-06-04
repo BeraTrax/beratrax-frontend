@@ -1,145 +1,219 @@
 import { useMemo } from "react";
 import { AutoCompoundResult } from "src/api/stats";
 
+type ConsecutiveGroup = {
+    type: "success" | "failure";
+    count: number;
+    percentage: number;
+};
+
+type VaultPattern = {
+    vaultId: string;
+    harvestPattern: ConsecutiveGroup[];
+    earnPattern: ConsecutiveGroup[];
+    totalRuns: number;
+    overallHarvestSuccess: number;
+    overallEarnSuccess: number;
+};
+
 export const VaultStats = ({ runs }: { runs: AutoCompoundResult[] }): React.JSX.Element => {
     const vaultStats = useMemo(() => {
-        const vaultMap = new Map();
+        const vaultMap = new Map<string, { harvestResults: boolean[]; earnResults: boolean[] }>();
+
+        // Collect results for each vault in chronological order
         runs.forEach((run: AutoCompoundResult) => {
             const vaults = Object.entries(run.data);
             vaults.forEach(([vaultId, vaultData]: [string, any]) => {
                 if (!vaultMap.has(vaultId)) {
                     vaultMap.set(vaultId, {
-                        vaultId,
-                        harvestSucceeded: 0,
-                        harvestFailed: 0,
-                        earnSucceeded: 0,
-                        earnFailed: 0,
-                        totalRuns: 0,
-                        harvestSuccessHeight: 0,
-                        harvestFailedHeight: 0,
-                        earnSuccessHeight: 0,
-                        earnFailedHeight: 0,
-                        harvestSuccessRate: 0,
-                        earnSuccessRate: 0
+                        harvestResults: [],
+                        earnResults: [],
                     });
                 }
-                const vault = vaultMap.get(vaultId);
-                vault.totalRuns++;
-                if (vaultData.harvestSuccess) vault.harvestSucceeded++;
-                else vault.harvestFailed++;
-                if (vaultData.earnSuccess) vault.earnSucceeded++;
-                else vault.earnFailed++;
+                const vault = vaultMap.get(vaultId)!;
+                vault.harvestResults.push(vaultData.harvestSuccess);
+                vault.earnResults.push(vaultData.earnSuccess);
             });
         });
 
-        // Precompute bar heights and success rates for each vault
-        vaultMap.forEach((vault) => {
-            const maxHeight = Math.max(vault.totalRuns, 1);
-            vault.harvestSuccessHeight = (vault.harvestSucceeded / maxHeight) * 100;
-            vault.harvestFailedHeight = (vault.harvestFailed / maxHeight) * 100;
-            vault.earnSuccessHeight = (vault.earnSucceeded / maxHeight) * 100;
-            vault.earnFailedHeight = (vault.earnFailed / maxHeight) * 100;
-            vault.harvestSuccessRate = vault.totalRuns > 0 ? (vault.harvestSucceeded / vault.totalRuns) * 100 : 0;
-            vault.earnSuccessRate = vault.totalRuns > 0 ? (vault.earnSucceeded / vault.totalRuns) * 100 : 0;
+        // Process each vault to create consecutive groupings
+        const processedVaults: VaultPattern[] = [];
+
+        vaultMap.forEach((vaultData, vaultId) => {
+            const processResults = (results: boolean[]): ConsecutiveGroup[] => {
+                if (results.length === 0) return [];
+
+                const groups: ConsecutiveGroup[] = [];
+                let currentType: "success" | "failure" = results[0] ? "success" : "failure";
+                let currentCount = 1;
+
+                for (let i = 1; i < results.length; i++) {
+                    const isSuccess = results[i];
+                    const type: "success" | "failure" = isSuccess ? "success" : "failure";
+
+                    if (type === currentType) {
+                        currentCount++;
+                    } else {
+                        groups.push({
+                            type: currentType,
+                            count: currentCount,
+                            percentage: (currentCount / results.length) * 100,
+                        });
+                        currentType = type;
+                        currentCount = 1;
+                    }
+                }
+
+                // Add the last group
+                groups.push({
+                    type: currentType,
+                    count: currentCount,
+                    percentage: (currentCount / results.length) * 100,
+                });
+
+                return groups;
+            };
+
+            const harvestPattern = processResults(vaultData.harvestResults);
+            const earnPattern = processResults(vaultData.earnResults);
+
+            processedVaults.push({
+                vaultId,
+                harvestPattern,
+                earnPattern,
+                totalRuns: vaultData.harvestResults.length,
+                overallHarvestSuccess: vaultData.harvestResults.filter((r) => r).length,
+                overallEarnSuccess: vaultData.earnResults.filter((r) => r).length,
+            });
         });
 
-        return Array.from(vaultMap.values()).sort((a, b) => parseInt(a.vaultId) - parseInt(b.vaultId));
+        return processedVaults.sort((a, b) => parseInt(a.vaultId) - parseInt(b.vaultId));
     }, [runs]);
 
     if (vaultStats.length === 0) {
         return <div className="w-full text-center text-textSecondary py-8">No vault data available</div>;
     }
 
+    const getPatternColor = (type: "success" | "failure") => {
+        return type === "success" ? "bg-green-500" : "bg-red-500";
+    };
+
     return (
         <div className="bg-bgDark rounded-lg p-4 border border-borderDark mt-8">
             <div className="flex justify-between items-center mb-4">
-                <h4 className="text-white font-medium">Individual Vault Performance</h4>
+                <h4 className="text-white font-medium">Individual Vault Performance Patterns</h4>
                 <div className="text-xs text-textSecondary">{vaultStats.length} vaults total</div>
             </div>
 
             <div className="mb-4 flex flex-wrap gap-4 text-xs">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-sm" />
-                    <span className="text-textSecondary">Harvest Success</span>
+                    <span className="text-textSecondary">Success Streaks</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-800 rounded-sm" />
-                    <span className="text-textSecondary">Harvest Failed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded-sm" />
-                    <span className="text-textSecondary">Earn Success</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-slate-500 rounded-sm" />
-                    <span className="text-textSecondary">Earn Failed</span>
+                    <div className="w-3 h-3 bg-red-500 rounded-sm" />
+                    <span className="text-textSecondary">Failure Streaks</span>
                 </div>
             </div>
 
-            {/* Scrollable container for vault bar graphs */}
-            <div className="overflow-x-auto">
-                <div className="flex gap-2 min-w-max pb-4">
-                    {vaultStats.map((vault) => (
-                        <div key={vault.vaultId} className="flex flex-col items-center relative group mr-5">
-                            <div className="flex gap-1 mb-2 h-32 w-full cursor-pointer">
-                                <div className="w-6 bg-bgDark rounded-sm relative overflow-hidden flex flex-col-reverse">
-                                    {vault.harvestSucceeded > 0 && (
+            <div className="space-y-4">
+                {vaultStats.map((vault) => (
+                    <div key={vault.vaultId} className="relative group">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="text-sm font-medium text-white min-w-[80px]">Vault {vault.vaultId}</div>
+                            <div className="text-xs text-textSecondary">{vault.totalRuns} runs total</div>
+                        </div>
+
+                        <div className="space-y-2">
+                            {/* Harvest Pattern */}
+                            <div className="flex items-center gap-3">
+                                <div className="text-xs text-textSecondary min-w-[60px]">Harvest</div>
+                                <div className="flex-1 h-6 bg-bgDark rounded-sm overflow-hidden flex border border-borderDark">
+                                    {vault.harvestPattern.map((group, index) => (
                                         <div
-                                            className="bg-green-500 w-full"
-                                            style={{ height: `${vault.harvestSuccessHeight}%` }}
+                                            key={index}
+                                            className={`${getPatternColor(
+                                                group.type
+                                            )} h-full transition-opacity hover:opacity-80`}
+                                            style={{ width: `${group.percentage}%` }}
+                                            title={`${group.type === "success" ? "Success" : "Failure"} streak: ${
+                                                group.count
+                                            } runs (${group.percentage.toFixed(1)}%)`}
                                         />
-                                    )}
-                                    {vault.harvestFailed > 0 && (
-                                        <div
-                                            className="bg-red-800 w-full"
-                                            style={{ height: `${vault.harvestFailedHeight}%` }}
-                                        />
-                                    )}
+                                    ))}
                                 </div>
-                                <div className="w-6 bg-bgDark rounded-sm relative overflow-hidden flex flex-col-reverse">
-                                    {vault.earnSucceeded > 0 && (
-                                        <div
-                                            className="bg-blue-500 w-full"
-                                            style={{ height: `${vault.earnSuccessHeight}%` }}
-                                        />
-                                    )}
-                                    {vault.earnFailed > 0 && (
-                                        <div
-                                            className="bg-slate-500 w-full"
-                                            style={{ height: `${vault.earnFailedHeight}%` }}
-                                        />
-                                    )}
+                                <div className="text-xs text-textSecondary min-w-[50px]">
+                                    {((vault.overallHarvestSuccess / vault.totalRuns) * 100).toFixed(1)}%
                                 </div>
                             </div>
-                            <div className="text-xs text-textSecondary text-center">Vault {vault.vaultId}</div>
 
-                            {/* Tooltip */}
-                            <div className="absolute top-full left-0 transform -translate-x-1/2 -translate-y-[95%] mt-2 hidden group-hover:block bg-[#151818] text-white text-xs p-3 rounded-md min-w-[200px] shadow-lg border border-[#3A3A3A] z-10 cursor-pointer">
-                                <div className="font-bold mb-2">Vault {vault.vaultId}</div>
-                                <div className="space-y-1">
-                                    <div className="text-green-400">
-                                        Harvest Success: {vault.harvestSucceeded}/{vault.totalRuns} (
-                                        {vault.harvestSuccessRate.toFixed(1)}%)
-                                    </div>
-                                    <div className="text-red-400">
-                                        Harvest Failed: {vault.harvestFailed}/{vault.totalRuns}
-                                    </div>
-                                    <div className="text-blue-400">
-                                        Earn Success: {vault.earnSucceeded}/{vault.totalRuns} (
-                                        {vault.earnSuccessRate.toFixed(1)}%)
-                                    </div>
-                                    <div className="text-orange-400">
-                                        Earn Failed: {vault.earnFailed}/{vault.totalRuns}
-                                    </div>
-                                    <div className="text-textSecondary mt-2 pt-2 border-t border-borderDark">
-                                        Total Runs: {vault.totalRuns}
-                                    </div>
+                            {/* Earn Pattern */}
+                            <div className="flex items-center gap-3">
+                                <div className="text-xs text-textSecondary min-w-[60px]">Earn</div>
+                                <div className="flex-1 h-6 bg-bgDark rounded-sm overflow-hidden flex border border-borderDark">
+                                    {vault.earnPattern.map((group, index) => (
+                                        <div
+                                            key={index}
+                                            className={`${getPatternColor(
+                                                group.type
+                                            )} h-full transition-opacity hover:opacity-80`}
+                                            style={{ width: `${group.percentage}%` }}
+                                            title={`${group.type === "success" ? "Success" : "Failure"} streak: ${
+                                                group.count
+                                            } runs (${group.percentage.toFixed(1)}%)`}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="text-xs text-textSecondary min-w-[50px]">
+                                    {((vault.overallEarnSuccess / vault.totalRuns) * 100).toFixed(1)}%
                                 </div>
                             </div>
                         </div>
-                    ))}
-                </div>
+
+                        {/* Enhanced Tooltip */}
+                        <div className="absolute left-0 top-full mt-2 hidden group-hover:block bg-[#151818] text-white text-xs p-4 rounded-md min-w-[300px] shadow-lg border border-[#3A3A3A] z-10">
+                            <div className="font-bold mb-3">Vault {vault.vaultId} Pattern Analysis</div>
+
+                            <div className="space-y-3">
+                                <div>
+                                    <div className="text-green-400 font-medium mb-1">Harvest Pattern:</div>
+                                    {vault.harvestPattern.map((group, index) => (
+                                        <div key={index} className="text-xs ml-2">
+                                            {group.type === "success" ? "✅" : "❌"} {group.count} consecutive{" "}
+                                            {group.type === "success" ? "successes" : "failures"} (
+                                            {group.percentage.toFixed(1)}%)
+                                        </div>
+                                    ))}
+                                    <div className="text-xs text-textSecondary mt-1">
+                                        Overall: {vault.overallHarvestSuccess}/{vault.totalRuns} (
+                                        {((vault.overallHarvestSuccess / vault.totalRuns) * 100).toFixed(1)}%)
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="text-blue-400 font-medium mb-1">Earn Pattern:</div>
+                                    {vault.earnPattern.map((group, index) => (
+                                        <div key={index} className="text-xs ml-2">
+                                            {group.type === "success" ? "✅" : "❌"} {group.count} consecutive{" "}
+                                            {group.type === "success" ? "successes" : "failures"} (
+                                            {group.percentage.toFixed(1)}%)
+                                        </div>
+                                    ))}
+                                    <div className="text-xs text-textSecondary mt-1">
+                                        Overall: {vault.overallEarnSuccess}/{vault.totalRuns} (
+                                        {((vault.overallEarnSuccess / vault.totalRuns) * 100).toFixed(1)}%)
+                                    </div>
+                                </div>
+
+                                <div className="text-textSecondary text-xs mt-3 pt-2 border-t border-borderDark">
+                                    Total Runs: {vault.totalRuns}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
+

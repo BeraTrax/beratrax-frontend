@@ -120,21 +120,21 @@ export const Status = (): React.JSX.Element => {
                 percentage: combinedSuccessPercentage,
                 succeeded: harvestSucceeded + earnSucceeded,
                 failed: totalFailed,
-                colorClass: getColorClass(combinedSuccessPercentage, hasBlockchainErrors),
+                colorClass: getColorClass(harvestSucceeded + earnSucceeded),
                 tooltip: combinedTooltip,
             },
             harvest: {
                 percentage: harvestSuccessPercentage,
                 succeeded: harvestSucceeded,
                 failed: totalVaults - harvestSucceeded,
-                colorClass: getColorClass(harvestSuccessPercentage, harvestHasBlockchainErrors),
+                colorClass: getColorClass(harvestSucceeded),
                 tooltip: harvestTooltip,
             },
             earn: {
                 percentage: earnSuccessPercentage,
                 succeeded: earnSucceeded,
                 failed: totalVaults - earnSucceeded,
-                colorClass: getColorClass(earnSuccessPercentage, earnHasBlockchainErrors),
+                colorClass: getColorClass(earnSucceeded),
                 tooltip: earnTooltip,
             },
             lastFinishedAt: run.lastFinishedAt,
@@ -156,19 +156,11 @@ export const Status = (): React.JSX.Element => {
                         <div className="flex flex-wrap gap-4 text-sm">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 bg-green-500 rounded-sm" />
-                                <span className="text-textWhite">85-100% uptime</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-yellow-500 rounded-sm" />
-                                <span className="text-textWhite">60-84% uptime</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-orange-500 rounded-sm" />
-                                <span className="text-textWhite">Blockchain errors</span>
+                                <span className="text-textWhite">Success</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 bg-red-800 rounded-sm" />
-                                <span className="text-textWhite">Below 60% uptime</span>
+                                <span className="text-textWhite">Failed</span>
                             </div>
                         </div>
                     </div>

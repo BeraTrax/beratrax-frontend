@@ -69,12 +69,12 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
                                 <img
                                     alt={farm?.platform_alt}
                                     className="w-4 rounded-full border border-bgDark"
-                                    src={`/${farm?.platform_logo}`}
+                                    src={farm?.platform_logo}
                                 />
                                 {farm.secondary_platform && (
                                     <img
                                         className="w-4 rounded-full border border-bgDark"
-                                        src={`/${farm?.secondary_platform_logo}`}
+                                        src={farm?.secondary_platform_logo}
                                     />
                                 )}
                             </div>

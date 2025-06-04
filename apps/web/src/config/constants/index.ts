@@ -17,6 +17,7 @@ export const RoutesPaths = {
     Leaderboard: "/leaderboard",
     DeprecatedVaults: "/deprecated-vaults",
     BurrBearAdmin: "/admin/burrbear",
+    Status: "/status",
 };
 export const VAULT_NEW_DURATION = 5 * 24 * 60 * 60; // 7 days
 export const SNAPSHOT_SPACE_ID = "contrax.eth";

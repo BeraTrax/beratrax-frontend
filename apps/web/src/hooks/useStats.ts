@@ -82,6 +82,7 @@ export const useStats = (forGalxe?: boolean) => {
     const { data: accountConnectorsStats } = useQuery({
         queryKey: ["stats/account-connectors"],
         queryFn: () => fetchAccountConnectorsStats(),
+        enabled: window.location.pathname === "/stats",
     });
 
     const vaultStats = useMemo(() => {

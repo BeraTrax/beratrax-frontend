@@ -74,9 +74,8 @@ export const tenderlyRpcs: { [key: string]: string } = {
 };
 
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =
-    "https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-bera/prod/gn";
+    "https://api.subgraph.ormilabs.com/api/public/803c8c8c-be12-4188-8523-b9853e23051d/subgraphs/steer-protocol-bera/prod/gn";
 export const KODIAK_EARNINGS_GRAPH_URL =
     "https://api.goldsky.com/api/public/project_clpx84oel0al201r78jsl0r3i/subgraphs/kodiak-v3-berachain-mainnet/latest/gn";
 export const BURRBEAR_EARNINGS_GRAPH_URL =
     "https://api.goldsky.com/api/public/project_cluukfpdrw61a01xag6yihcuy/subgraphs/berachain/prod/gn";
-

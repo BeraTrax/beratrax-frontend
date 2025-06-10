@@ -97,7 +97,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	}, []);
 
 	// Login function
-	const connectWallet = async () => {
+	const connectWallet = useCallback(async () => {
 		try {
 			console.log("connectWallet clicked");
 			setIsConnecting(true);
@@ -113,7 +113,7 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 		} finally {
 			setIsConnecting(false);
 		}
-	};
+	}, [connectAsync, wagmiConnector]);
 
 	// Set a timeout for reconnecting to prevent infinite reconnection attempts
 	useEffect(() => {
@@ -317,26 +317,38 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 		}
 	};
 
-	return (
-		<WalletContext.Provider
-			value={{
-				currentWallet,
-				isSocial,
-				isConnecting,
-				isSponsored,
-				connector,
-				logout,
-				getPkey,
-				estimateTxGas,
-				getPublicClient,
-				getWalletClient,
-				getClients,
-				connectWallet,
-			}}
-		>
-			{children}
-		</WalletContext.Provider>
+	const contextValue = useMemo(
+		() => ({
+			currentWallet,
+			isSocial,
+			isConnecting,
+			isSponsored,
+			connector,
+			logout,
+			getPkey,
+			estimateTxGas,
+			getPublicClient,
+			getWalletClient,
+			getClients,
+			connectWallet,
+		}),
+		[
+			currentWallet,
+			isSocial,
+			isConnecting,
+			isSponsored,
+			connector,
+			logout,
+			getPkey,
+			estimateTxGas,
+			getPublicClient,
+			getWalletClient,
+			getClients,
+			connectWallet,
+		]
 	);
+
+	return <WalletContext.Provider value={contextValue}>{children}</WalletContext.Provider>;
 };
 
 export default WalletProvider;

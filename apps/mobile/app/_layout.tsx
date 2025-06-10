@@ -25,6 +25,7 @@ import store from "@beratrax/core/src/state";
 import BottomBar from "./components/BottomBar";
 import { ReactHooksWrapper, setHook } from "react-hooks-outside";
 import { NotificationsProvider, useNotifications } from "reapop";
+import { useDataRefresh } from "@beratrax/core/src/hooks";
 
 // Set up the notifications hook for react-hooks-outside
 setHook("notifications", useNotifications);
@@ -76,6 +77,27 @@ const tabOptions = {
 	},
 };
 
+// Create a new component that uses useDataRefresh
+const AppContent = () => {
+	useDataRefresh();
+	return (
+		<SafeAreaProvider>
+			<SafeAreaView className="flex-1 bg-bgSecondary">
+				<AppKit />
+				<View className="flex-1 relative">
+					<Stack
+						screenOptions={{
+							headerShown: false,
+							contentStyle: { backgroundColor: "#151915" },
+						}}
+					/>
+					<BottomBar tabOptions={tabOptions} />
+				</View>
+			</SafeAreaView>
+		</SafeAreaProvider>
+	);
+};
+
 const RootLayout = () => {
 	// const router = useRouter();
 	const [loaded] = useFonts({
@@ -104,22 +126,9 @@ const RootLayout = () => {
 						logoutWeb3Auth={logoutWeb3Auth}
 					>
 						<Provider store={store}>
-							<SafeAreaProvider>
-								<SafeAreaView className="flex-1 bg-bgSecondary">
-									<AppKit />
-									<View className="flex-1 relative">
-										<Stack
-											screenOptions={{
-												headerShown: false,
-												contentStyle: { backgroundColor: "#151915" },
-											}}
-										/>
-										<BottomBar tabOptions={tabOptions} />
-									</View>
-								</SafeAreaView>
-							</SafeAreaProvider>
+							<AppContent />
+							<ReactHooksWrapper />
 						</Provider>
-						<ReactHooksWrapper />
 					</WalletProvider>
 				</QueryClientProvider>
 			</WagmiProvider>

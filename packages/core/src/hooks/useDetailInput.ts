@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { PoolDef } from "./../config/constants/pools_json";
 import store, { useAppDispatch, useAppSelector } from "./../state";
 import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "./../state/farms/farmsReducer";
@@ -21,9 +21,9 @@ export const useDetailInput = (farm: PoolDef) => {
 	const { transactionType: type, currencySymbol, showInUsd } = useAppSelector((state) => state.farms.farmDetailInputOptions);
 	const dispatch = useAppDispatch();
 
-	const setShowInUsd = (val: boolean) => {
+	const setShowInUsd = useCallback((val: boolean) => {
 		dispatch(setFarmDetailInputOptions({ showInUsd: val }));
-	};
+	}, []);
 
 	const { prices } = useTokens();
 	const { isLoading: isZapping, zapInAsync, slippageZapIn } = useZapIn(farm);
@@ -117,9 +117,9 @@ export const useDetailInput = (farm: PoolDef) => {
 		setToggleAmount(limitDecimals(amt.toString(), 5));
 	}, [amount, showInUsd, depositable, withdrawable]);
 
-	const handleToggleShowInUsdc = () => {
+	const handleToggleShowInUsdc = useCallback(() => {
 		setShowInUsd(!showInUsd);
-	};
+	}, [showInUsd]);
 
 	const handleInput: React.ChangeEventHandler<HTMLInputElement> = (e) => {
 		setAmount(e.target.value);

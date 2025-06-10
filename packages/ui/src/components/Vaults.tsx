@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator, ScrollView } from "react-native";
 import stakingAbi from "@beratrax/core/src/assets/abis/stakingAbi";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
@@ -94,7 +94,7 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 		fetchRewardsData();
 	}, [rewardsUpdateTrigger, vaults, currentWallet, publicClient, balances]);
 
-	const refresh = async () => {
+	const refresh = useCallback(async () => {
 		setIsRefreshing(true);
 		try {
 			if (currentWallet) {
@@ -108,7 +108,12 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 		} finally {
 			setIsRefreshing(false);
 		}
-	};
+	}, []);
+
+	const refreshButtonContent = useMemo(
+		() => (isRefreshing ? <ActivityIndicator size="small" color="#FFFFFF" /> : <ReloadIcon />),
+		[isRefreshing]
+	);
 
 	if (isLoading || isConnecting) {
 		return (
@@ -128,7 +133,7 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 				<View className="flex flex-row items-center gap-2">
 					<Text className="font-arame-mono text-base text-textWhite uppercase mt-5 mb-4">Staked Vaults</Text>
 					<Pressable onPress={refresh} disabled={isRefreshing} className="mt-1">
-						{isRefreshing ? <ActivityIndicator size="small" color="#FFFFFF" /> : <ReloadIcon />}
+						{refreshButtonContent}
 					</Pressable>
 				</View>
 			</View>

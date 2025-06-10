@@ -49,23 +49,111 @@ const QuickDepositButtons = memo(
 	({ text, onClick, isSelected, extraText = "" }: { text: string; onClick: () => void; isSelected?: boolean; extraText?: string }) => {
 		const isMax = text === "MAX";
 
-		const buttonClasses = `px-5 py-2 rounded-2xl items-center justify-center ${
-			isMax ? "bg-lime-500" : isSelected ? "bg-gradientSecondary" : ""
-		}`;
+		const buttonClasses = useMemo(
+			() => `px-5 py-2 rounded-2xl items-center justify-center ${isMax ? "bg-lime-500" : isSelected ? "bg-gradientSecondary" : ""}`,
+			[isMax, isSelected]
+		);
 
-		const textClasses = `text-base font-light ${isMax ? "text-black" : "text-white"}`;
+		const textClasses = useMemo(() => `text-base font-light ${isMax ? "text-black" : "text-white"}`, []);
 
-		return (
-			<Pressable
-				onPress={() => {
-					onClick();
-				}}
-				className={buttonClasses}
-			>
+		const handlePress = useCallback(() => {
+			onClick();
+		}, []);
+
+		const ButtonText = useMemo(
+			() => (
 				<Text className={textClasses}>
 					{text}
 					{isMax ? "" : extraText}
 				</Text>
+			),
+			[]
+		);
+
+		return (
+			<Pressable onPress={handlePress} className={buttonClasses}>
+				{ButtonText}
+			</Pressable>
+		);
+	}
+);
+
+const closeButtonStyle = {
+	position: "absolute",
+	top: 0,
+	right: 0,
+	padding: 10,
+	zIndex: 10,
+} as const;
+
+const ExchangeButton = memo(({ onPress }: { onPress: () => void }) => {
+	const ExchangeIcon = useMemo(
+		() => (
+			<View className="cursor-pointer">
+				<SvgImage source={Exchange} height={30} width={30} />
+			</View>
+		),
+		[]
+	);
+
+	return (
+		<Pressable onPress={onPress}>
+			{ExchangeIcon}
+		</Pressable>
+	);
+});
+
+const DepositButton = memo(
+	({
+		onPress,
+		disabled,
+		amount,
+		maxBalance,
+		fetchingSlippage,
+		isLoadingTransaction,
+		currentWallet,
+		transactionType,
+	}: {
+		onPress: () => void;
+		disabled: boolean;
+		amount: string;
+		maxBalance: string;
+		fetchingSlippage: boolean;
+		isLoadingTransaction: boolean;
+		currentWallet: `0x${string}` | undefined;
+		transactionType: FarmTransactionType;
+	}) => {
+		const buttonText = useMemo(() => {
+			if (!currentWallet) return "Please Login";
+			if (parseFloat(amount) > 0) {
+				if (parseFloat(amount) > parseFloat(maxBalance)) return "Insufficent Balance";
+				if (fetchingSlippage) return "Simulating...";
+				if (isLoadingTransaction) return "Loading...";
+				return transactionType === FarmTransactionType.Deposit ? "Deposit" : "Withdraw";
+			}
+			return "Enter Amount";
+		}, [currentWallet, amount, maxBalance, fetchingSlippage, isLoadingTransaction, transactionType]);
+
+		const buttonClasses = useMemo(
+			() =>
+				`lg:max-w-64 mt-4 uppercase ${
+					disabled ? "bg-buttonDisabled cursor-not-allowed" : "bg-buttonPrimaryLight"
+				} text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`,
+			[disabled]
+		);
+
+		const ButtonText = useMemo(
+			() => (
+				<Text disabled={disabled} className={buttonClasses}>
+					{buttonText}
+				</Text>
+			),
+			[disabled, buttonClasses, buttonText]
+		);
+
+		return (
+			<Pressable onPress={onPress}>
+				{ButtonText}
 			</Pressable>
 		);
 	}
@@ -89,6 +177,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 	const farmData = farmDetails[farm.id];
 	const { getClients } = useWallet();
 	const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
+	const dispatch = useAppDispatch();
+	const router = useRouter();
+
 	const {
 		amount,
 		toggleAmount,
@@ -108,7 +199,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		slippage,
 		isLoadingTransaction,
 	} = useDetailInput(farm);
-	const router = useRouter();
 
 	const noOrMaxInputValue = useMemo(() => {
 		if (parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || parseFloat(amount) > parseFloat(maxBalance)) return true;
@@ -149,7 +239,67 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		return false;
 	}, [farm, transactionType]);
 
-	const handleToggleModal = () => {
+	const handleConfirm = useCallback(() => {
+		setConfirmDeposit(true);
+		(async () => {
+			const amount = getTokenAmount();
+			let amountInWei = toWei(
+				amount,
+				decimals[farm.chainId][transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress]
+			);
+
+			let steps: TransactionStep[] = [];
+
+			// approve zap for non-native tokens
+			const vaultBalance =
+				BigInt(balances[farm.chainId][farm.vault_addr].valueWei) - BigInt(balances[farm.chainId][farm.vault_addr].valueRewardVaultWei || 0);
+			if (transactionType === FarmTransactionType.Withdraw || currencySymbol !== "BERA") {
+				steps.push({
+					status: TransactionStepStatus.PENDING,
+					type: TransactionTypes.APPROVE_ZAP,
+					amount: amountInWei.toString(),
+				} as ApproveZapStep);
+			}
+			steps.push({
+				status: TransactionStepStatus.PENDING,
+				type: transactionType === FarmTransactionType.Deposit ? TransactionTypes.ZAP_IN : TransactionTypes.ZAP_OUT,
+				amount: amountInWei.toString(),
+			} as ZapInStep);
+			const dbTx = await dispatch(
+				addTransactionDb({
+					from: currentWallet!,
+					amountInWei: amountInWei.toString(),
+					date: new Date().toString(),
+					type: transactionType === FarmTransactionType.Deposit ? "deposit" : "withdraw",
+					farmId: farm.id,
+					max: !!max,
+					token: transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress,
+					steps,
+				})
+			);
+			const id = dbTx.payload._id;
+			setTxId(id);
+			await handleSubmit({ txId: id });
+			await dispatch(updatePoints(currentWallet!));
+		})();
+	}, [
+		getTokenAmount,
+		decimals,
+		farm.chainId,
+		transactionType,
+		depositable,
+		withdrawable,
+		balances,
+		farm.vault_addr,
+		currencySymbol,
+		dispatch,
+		currentWallet,
+		max,
+		farm.id,
+		handleSubmit,
+	]);
+
+	const handleToggleModal = useCallback(() => {
 		if (slippage && slippage > 2) {
 			setShowSlippageModal(true);
 		} else if (slippage === undefined) {
@@ -159,10 +309,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		} else {
 			handleConfirm();
 		}
-	};
+	}, [slippage, shownOneTimeZappingModal, transactionType]);
 
 	const quickDepositList: QuickDepositType[] = ["25", "50", "75", "MAX"];
-	const dispatch = useAppDispatch();
 
 	const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
 		dispatch(setFarmDetailInputOptions(opt));
@@ -233,80 +382,18 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		handleInput(mockEvent);
 	};
 
-	const handleConfirm = () => {
-		setConfirmDeposit(true);
-		(async () => {
-			const amount = getTokenAmount();
-			let amountInWei = toWei(
-				amount,
-				decimals[farm.chainId][transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress]
-			);
+	const handleClose = useCallback(() => {
+		setOpen(false);
+	}, []);
 
-			let steps: TransactionStep[] = [];
-
-			// approve zap for non-native tokens
-			const vaultBalance =
-				BigInt(balances[farm.chainId][farm.vault_addr].valueWei) - BigInt(balances[farm.chainId][farm.vault_addr].valueRewardVaultWei || 0);
-			// if (transactionType === FarmTransactionType.Withdraw && vaultBalance < amountInWei && farm.rewardVault) {
-			// 	steps.push({
-			// 		status: TransactionStepStatus.PENDING,
-			// 		type: TransactionTypes.WITHDRAW_FROM_REWARD_VAULT,
-			// 		amount: amountInWei.toString(),
-			// 	} as WithdrawFromRewardVaultStep);
-			// }
-			if (transactionType === FarmTransactionType.Withdraw || currencySymbol !== "BERA") {
-				steps.push({
-					status: TransactionStepStatus.PENDING,
-					type: TransactionTypes.APPROVE_ZAP,
-					amount: amountInWei.toString(),
-				} as ApproveZapStep);
-			}
-			steps.push({
-				status: TransactionStepStatus.PENDING,
-				type: transactionType === FarmTransactionType.Deposit ? TransactionTypes.ZAP_IN : TransactionTypes.ZAP_OUT,
-				amount: amountInWei.toString(),
-			} as ZapInStep);
-			// if (transactionType === FarmTransactionType.Deposit && farm.rewardVault) {
-			// 	steps.push({
-			// 		status: TransactionStepStatus.PENDING,
-			// 		type: TransactionTypes.STAKE_INTO_REWARD_VAULT,
-			// 		amount: amountInWei.toString(),
-			// 	} as StakeIntoRewardVaultStep);
-			// }
-			const dbTx = await dispatch(
-				addTransactionDb({
-					from: currentWallet!,
-					amountInWei: amountInWei.toString(),
-					date: new Date().toString(),
-					type: transactionType === FarmTransactionType.Deposit ? "deposit" : "withdraw",
-					farmId: farm.id,
-					max: !!max,
-					token: transactionType === FarmTransactionType.Deposit ? depositable!.tokenAddress : withdrawable!.tokenAddress,
-					steps,
-				})
-			);
-			const id = dbTx.payload._id;
-			setTxId(id);
-			await handleSubmit({ txId: id });
-			await dispatch(updatePoints(currentWallet!));
-		})();
-	};
+	const CloseIcon = useMemo(() => <SvgImage source={Closemodalicon} height={32} width={32} />, []);
 
 	return (
 		<MobileModalContainer open={open}>
 			<View className="px-4 py-3 pb-24 bg-bgDark">
 				<View className="h-10 w-full relative">
-					<Pressable
-						onPress={() => setOpen(false)}
-						style={{
-							position: "absolute",
-							top: 0,
-							right: 0,
-							padding: 10,
-							zIndex: 10,
-						}}
-					>
-						<SvgImage source={Closemodalicon} height={32} width={32} />
+					<Pressable onPress={handleClose} style={closeButtonStyle}>
+						{CloseIcon}
 					</Pressable>
 				</View>
 				<View className="flex flex-col items-center gap-3 mx-2 text-textWhite text-center">
@@ -364,11 +451,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 								{amount ? noExponents(amount) : "0"}
 							</Text>
 						)}
-						<Pressable onPress={handleToggleShowInUsdc}>
-							<View className="cursor-pointer">
-								<SvgImage source={Exchange} height={30} width={30} />
-							</View>
-						</Pressable>
+						<ExchangeButton onPress={handleToggleShowInUsdc} />
 						<Text className={`text-[18px] leading-[20px] break-words ${noOrMaxInputValue ? "text-textSecondary" : "text-textWhite"}`}>
 							{!showInUsd ? "$" : ""}
 							{toggleAmount ? noExponents(toggleAmount) : "0"}
@@ -424,30 +507,16 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 								<Text className="text-textWhite">No Deposit & Withdraw fees!</Text>
 							</View>
 						)}
-						<Pressable onPress={handleToggleModal}>
-							<Text
-								disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
-								className={`lg:max-w-64 mt-4 uppercase ${
-									noOrMaxInputValue || isLoadingTransaction || fetchingSlippage
-										? "bg-buttonDisabled cursor-not-allowed"
-										: "bg-buttonPrimaryLight"
-								} text-textBlack w-full py-5 px-4 text-xl font-bold tracsking-widest rounded-[40px]`}
-							>
-								{!currentWallet
-									? "Please Login"
-									: parseFloat(amount) > 0
-										? parseFloat(amount) > parseFloat(maxBalance)
-											? "Insufficent Balance"
-											: fetchingSlippage
-												? "Simulating..."
-												: isLoadingTransaction
-													? "Loading..."
-													: transactionType === FarmTransactionType.Deposit
-														? "Deposit"
-														: "Withdraw"
-										: "Enter Amount"}
-							</Text>
-						</Pressable>
+						<DepositButton
+							onPress={handleToggleModal}
+							disabled={noOrMaxInputValue || isLoadingTransaction || fetchingSlippage}
+							amount={amount}
+							maxBalance={maxBalance}
+							fetchingSlippage={fetchingSlippage}
+							isLoadingTransaction={isLoadingTransaction}
+							currentWallet={currentWallet}
+							transactionType={transactionType}
+						/>
 					</View>
 				</View>
 			</View>

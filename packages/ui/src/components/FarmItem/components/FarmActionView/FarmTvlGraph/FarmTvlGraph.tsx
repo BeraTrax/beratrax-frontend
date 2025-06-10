@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, memo, useCallback } from "react";
 import { TVLHistory } from "@beratrax/core/src/api/stats";
 import { useSpecificVaultTvl } from "@beratrax/core/src/hooks/useVaults";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
@@ -24,7 +24,7 @@ const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, Victo
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
 
-const GraphFilter = ({ text, onClick, isSelected }: { text: string; onClick?: () => void; isSelected?: boolean }) => {
+const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick?: () => void; isSelected?: boolean }) => {
 	return (
 		<Pressable onPress={onClick}>
 			<Text
@@ -36,7 +36,7 @@ const GraphFilter = ({ text, onClick, isSelected }: { text: string; onClick?: ()
 			</Text>
 		</Pressable>
 	);
-};
+});
 
 const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	const date = new Date(timestamp * 1000);
@@ -61,12 +61,29 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
 	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("week");
 
-	const graphFiltersList: { text: string; type: GraphFilterType }[] = [
-		{ text: "1H", type: "hour" },
-		{ text: "1D", type: "day" },
-		{ text: "1W", type: "week" },
-		{ text: "1M", type: "month" },
-	];
+	const graphFiltersList = useMemo(
+		() => [
+			{ text: "1H", type: "hour" as const },
+			{ text: "1D", type: "day" as const },
+			{ text: "1W", type: "week" as const },
+			{ text: "1M", type: "month" as const },
+		],
+		[]
+	);
+
+	const handleFilterClick = useCallback((type: GraphFilterType) => {
+		setGraphFilter(type);
+	}, []);
+
+	const filterCallbacks = useMemo(() => {
+		return graphFiltersList.reduce(
+			(acc, filter) => {
+				acc[filter.type] = () => handleFilterClick(filter.type);
+				return acc;
+			},
+			{} as Record<GraphFilterType, () => void>
+		);
+	}, [graphFiltersList, handleFilterClick]);
 
 	const downsampleData = (data: TVLHistory[], filter: GraphFilterType) => {
 		if (!data || data.length === 0) return [];
@@ -273,12 +290,7 @@ const FarmTvlGraph = ({ farm }: { farm: PoolDef }) => {
 			</View>
 			<View className="flex flex-row justify-around sm:justify-center sm:gap-4">
 				{graphFiltersList.map((filter, index) => (
-					<GraphFilter
-						key={index}
-						text={filter.text}
-						isSelected={graphFilter === filter.type}
-						onClick={() => setGraphFilter(filter.type)}
-					/>
+					<GraphFilter key={index} text={filter.text} isSelected={graphFilter === filter.type} onClick={filterCallbacks[filter.type]} />
 				))}
 			</View>
 			<View className="text-center my-4">

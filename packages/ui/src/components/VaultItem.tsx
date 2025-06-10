@@ -1,19 +1,16 @@
-import { FC, useMemo, useState, useEffect } from "react";
-import { View, Text, Pressable, ActivityIndicator, Image } from "react-native";
+import { FC, useMemo, useState, useEffect, useCallback } from "react";
+import { View, Text, Pressable, ActivityIndicator, Image, Platform, GestureResponderEvent } from "react-native";
 import { useTokens, useTrax, useWallet } from "@beratrax/core/src/hooks";
 import { awaitTransaction, customCommify, formatCurrency, toEth, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
-import { useNavigate } from "react-router-dom";
 import { Address, encodeFunctionData, formatEther, getAddress } from "viem";
 import rewardVaultAbi from "@beratrax/core/src/assets/abis/rewardVaultAbi";
 import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@beratrax/core/src/api/notify";
 import { approveErc20 } from "@beratrax/core/src/api/token";
 import { Vault } from "@beratrax/core/src/types";
 import FarmRowChip from "./FarmItem/components/FarmRowChip/FarmRowChip";
-import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useRouter } from "expo-router";
-import { GestureResponderEvent } from "react-native";
 
 interface VaultItemProps {
 	vault: Vault;
@@ -221,123 +218,112 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 		}
 	};
 
-	return (
-		<Pressable
-			onPress={(e) => {
-				handleClick(e);
-			}}
-			className={`  
-                  cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
-                  relative transition-all duration-300 ease-in-out hover:translate-y-[-4px]
-                  min-w-[calc(25%-12px)]
-                  max-[2000px]:min-w-[calc(33.33%-10.66px)]
-                  max-[1300px]:min-w-[calc(50%-8px)]
-                  max-[768px]:min-w-full  
-        `}
-			style={{
-				background: !vault.isCurrentWeeksRewardsVault
-					? "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)"
-					: undefined,
-			}}
-		>
-			{vault.isCurrentWeeksRewardsVault && (
-				<View
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						borderRadius: 24,
-						opacity: 0.4,
-						backgroundColor: "rgba(114, 178, 31, 0.4)",
-					}}
-				/>
-			)}
+	const handlePress = useCallback((e: GestureResponderEvent) => {
+		handleClick(e);
+	}, []);
 
-			<View className="flex flex-row justify-between align-top gap-2">
-				<View className="flex flex-col gap-2 font-league-spartan text-lg">
-					<View className="flex flex-row items-center relative">
-						{logo1Source && <Image source={logo1Source} style={{ width: 36, height: 36, borderRadius: 18 }} resizeMode="contain" />}
 
-						{logo2Source && (
-							<Image
-								source={logo2Source}
-								style={{
-									width: 36,
-									height: 36,
-									borderRadius: 18,
-									marginLeft: -12,
-								}}
-								resizeMode="contain"
-							/>
-						)}
+	const pressableChildren = useMemo(
+		() => (
+			<>
+				{vault.isCurrentWeeksRewardsVault && (
+					<View
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							borderRadius: 24,
+							opacity: 0.4,
+							backgroundColor: "rgba(114, 178, 31, 0.4)",
+						}}
+					/>
+				)}
 
-						{logo3Source && (
-							<Image
-								source={logo3Source}
-								style={{
-									width: 36,
-									height: 36,
-									borderRadius: 18,
-									marginLeft: -12,
-								}}
-								resizeMode="contain"
-							/>
-						)}
-					</View>
+				<View className="flex flex-row justify-between align-top gap-2">
+					<View className="flex flex-col gap-2 font-league-spartan text-lg">
+						<View className="flex flex-row items-center relative">
+							{logo1Source && <Image source={logo1Source} style={{ width: 36, height: 36, borderRadius: 18 }} resizeMode="contain" />}
 
-					<View className="flex flex-row items-center gap-2">
-						<Text className="text-lg text-textWhite">{vault.name}</Text>
-						{vault.isCurrentWeeksRewardsVault && (
-							<View className="bg-bgPrimary px-2 py-1 rounded-md">
-								<Text className="text-xs text-bgDark">Current Week</Text>
-							</View>
-						)}
-					</View>
-				</View>
-
-				{/* Platform */}
-				<View className="flex-col gap-1">
-					<View className="flex flex-row items-center gap-2 mb-2 justify-end">
-						<FarmRowChip text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")} color="invert" />
-
-						{/* Platform Logos */}
-						<View className="flex flex-row items-center">
-							{platformLogoSource && (
+							{logo2Source && (
 								<Image
-									source={platformLogoSource}
+									source={logo2Source}
 									style={{
-										width: 16,
-										height: 16,
-										borderRadius: 8,
-										borderWidth: 1,
-										borderColor: "#181818",
-										backgroundColor: "#ffffff",
+										width: 36,
+										height: 36,
+										borderRadius: 18,
+										marginLeft: -12,
 									}}
 									resizeMode="contain"
 								/>
 							)}
 
-							{secondaryPlatformLogoSource && (
+							{logo3Source && (
 								<Image
-									source={secondaryPlatformLogoSource}
+									source={logo3Source}
 									style={{
-										width: 16,
-										height: 16,
-										borderRadius: 8,
-										borderWidth: 1,
-										borderColor: "#181818",
-										marginLeft: 4,
-										backgroundColor: "#ffffff",
+										width: 36,
+										height: 36,
+										borderRadius: 18,
+										marginLeft: -12,
 									}}
 									resizeMode="contain"
 								/>
 							)}
 						</View>
+
+						<View className="flex flex-row items-center gap-2">
+							<Text className="text-lg text-textWhite">{vault.name}</Text>
+							{vault.isCurrentWeeksRewardsVault && (
+								<View className="bg-bgPrimary px-2 py-1 rounded-md">
+									<Text className="text-xs text-bgDark">Current Week</Text>
+								</View>
+							)}
+						</View>
 					</View>
 
-					{/* {userVaultBalance > 0 && (
+					{/* Platform */}
+					<View className="flex-col gap-1">
+						<View className="flex flex-row items-center gap-2 mb-2 justify-end">
+							<FarmRowChip text={[vault?.originPlatform, vault?.secondary_platform].filter(Boolean).join(" | ")} color="invert" />
+
+							{/* Platform Logos */}
+							<View className="flex flex-row items-center">
+								{platformLogoSource && (
+									<Image
+										source={platformLogoSource}
+										style={{
+											width: 16,
+											height: 16,
+											borderRadius: 8,
+											borderWidth: 1,
+											borderColor: "#181818",
+											backgroundColor: "#ffffff",
+										}}
+										resizeMode="contain"
+									/>
+								)}
+
+								{secondaryPlatformLogoSource && (
+									<Image
+										source={secondaryPlatformLogoSource}
+										style={{
+											width: 16,
+											height: 16,
+											borderRadius: 8,
+											borderWidth: 1,
+											borderColor: "#181818",
+											marginLeft: 4,
+											backgroundColor: "#ffffff",
+										}}
+										resizeMode="contain"
+									/>
+								)}
+							</View>
+						</View>
+
+						{/* {userVaultBalance > 0 && (
 						<Pressable
 							className={`px-4 py-2 rounded-md transition-all transform duration-200 flex items-center justify-center gap-2 min-w-[160px] ${
 								isDepositing
@@ -351,84 +337,84 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 							<Text className="text-white font-arame-mono text-base">{isDepositing ? "Depositing..." : "Deposit to rewards vault"}</Text>
 						</Pressable>
 					)} */}
+					</View>
 				</View>
-			</View>
 
-			<View className="flex flex-row justify-between gap-4">
-				{/* Earnings*/}
-				<View className="border-r border-bgPrimary pr-4 flex-1 basis-0">
-					<Text className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
-						<Text className="flex items-center gap-2">Earnings</Text>
-					</Text>
-					{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
-						<View className="w-full">
-							<Text className="text-green-500 text-lg font-league-spartan leading-5">
-								{`$${customCommify(totalEarningsUsd, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 5,
-								})}`}
-							</Text>
-							{lastTransaction?.date && typeof lastTransaction.date === "string" && (
-								<Text className="text-textSecondary text-sm">
-									In {Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24))}{" "}
-									{Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)) === 1 ? "day" : "days"}
+				<View className="flex flex-row justify-between gap-4">
+					{/* Earnings*/}
+					<View className="border-r border-bgPrimary pr-4 flex-1 basis-0">
+						<Text className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
+							<Text className="flex items-center gap-2">Earnings</Text>
+						</Text>
+						{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+							<View className="w-full">
+								<Text className="text-green-500 text-lg font-league-spartan leading-5">
+									{`$${customCommify(totalEarningsUsd, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 5,
+									})}`}
 								</Text>
-							)}
-						</View>
-					) : (
-						<View className="w-full">
-							<View className="h-5 w-20 bg-white/30 rounded animate-pulse mb-2" />
+								{lastTransaction?.date && typeof lastTransaction.date === "string" && (
+									<Text className="text-textSecondary text-sm">
+										In {Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24))}{" "}
+										{Math.floor((Date.now() - new Date(lastTransaction.date).getTime()) / (1000 * 60 * 60 * 24)) === 1 ? "day" : "days"}
+									</Text>
+								)}
+							</View>
+						) : (
+							<View className="w-full">
+								<View className="h-5 w-20 bg-white/30 rounded animate-pulse mb-2" />
+							</View>
+						)}
+					</View>
+
+					{/* APY */}
+					<View className={`flex-1 basis-0 ml-4 ${estimateTrax ? "border-r border-r-bgPrimary" : ""}`}>
+						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">APY</Text>
+						<Text className="text-textWhite text-lg font-league-spartan leading-5">
+							{vault.isCurrentWeeksRewardsVault
+								? "??? %"
+								: toFixedFloor(apy || 0, 2) == 0
+									? "--"
+									: `${customCommify(apy || 0, { minimumFractionDigits: 0 })}%`}{" "}
+						</Text>
+					</View>
+
+					{/* BTX Points section */}
+					{estimateTrax && (
+						<View className="flex-1 basis-0 ml-4">
+							<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">BTX Points</Text>
+							<Text className="text-textWhite text-lg font-league-spartan">{(Number(estimateTrax) / 365.25).toFixed(2)}/day</Text>
 						</View>
 					)}
 				</View>
 
-				{/* APY */}
-				<View className={`flex-1 basis-0 ml-4 ${estimateTrax ? "border-r border-r-bgPrimary" : ""}`}>
-					<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">APY</Text>
-					<Text className="text-textWhite text-lg font-league-spartan leading-5">
-						{vault.isCurrentWeeksRewardsVault
-							? "??? %"
-							: toFixedFloor(apy || 0, 2) == 0
-								? "--"
-								: `${customCommify(apy || 0, { minimumFractionDigits: 0 })}%`}{" "}
-					</Text>
-				</View>
-
-				{/* BTX Points section */}
-				{estimateTrax && (
-					<View className="flex-1 basis-0 ml-4">
-						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">BTX Points</Text>
-						<Text className="text-textWhite text-lg font-league-spartan">{(Number(estimateTrax) / 365.25).toFixed(2)}/day</Text>
+				{/* Your Stake */}
+				<View className="flex justify-end items-end gap-3">
+					<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+						<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
+						<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
 					</View>
-				)}
-			</View>
-
-			{/* Your Stake */}
-			<View className="flex justify-end items-end gap-3">
-				<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
-					<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
-					<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
 				</View>
-			</View>
 
-			{rewards > 0n ? (
-				<View className={`flex flex-row justify-between items-end`}>
-					{/* Your Rewards */}
-					<View>
-						<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
-							<Text>Your Rewards</Text>
-						</Text>
-						<View className="group relative">
-							<Text className="text-white text-lg font-league-spartan leading-5">{formatCurrency(formatEther(rewards))} BGT</Text>
-							<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-white">
-								{formatCurrency(formatEther(rewards), 18)} BGT
+				{rewards > 0n ? (
+					<View className={`flex flex-row justify-between items-end`}>
+						{/* Your Rewards */}
+						<View>
+							<Text className="uppercase font-arame-mono mb-2 text-textPrimary text-lg">
+								<Text>Your Rewards</Text>
 							</Text>
+							<View className="group relative">
+								<Text className="text-white text-lg font-league-spartan leading-5">{formatCurrency(formatEther(rewards))} BGT</Text>
+								<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-white">
+									{formatCurrency(formatEther(rewards), 18)} BGT
+								</Text>
+							</View>
 						</View>
-					</View>
 
-					{/* Claim Rewards */}
-					<View className="text-textSecondary text-xs ml-4 flex items-center justify-end">
-						<Pressable
+						{/* Claim Rewards */}
+						<View className="text-textSecondary text-xs ml-4 flex items-center justify-end">
+							{/* <Pressable
 							className={`px-2 py-1 rounded-md transition-all transform duration-200 flex items-center justify-center gap-2    ${
 								isClaiming ? "bg-buttonDisabled cursor-not-allowed" : "bg-buttonPrimary hover:bg-buttonPrimaryLight active:scale-95"
 							} text-black`}
@@ -437,12 +423,32 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 						>
 							{isClaiming && <ActivityIndicator size="small" color="#000000" style={{ marginRight: 4 }} />}
 							<Text className="text-bgDark text-sm font-medium">{isClaiming ? "Claiming..." : "Claim Rewards"}</Text>
-						</Pressable>
+						</Pressable> */}
+						</View>
 					</View>
-				</View>
-			) : (
-				<></>
-			)}
+				) : (
+					<></>
+				)}
+			</>
+		),
+		[]
+	);
+
+	return (
+		<Pressable
+			onPress={handlePress}
+			// Need to add these classes to the pressable, currently not added as they are causing re-renders:
+			// transition-all duration-300 ease-in-out hover:translate-y-[-4px]
+			className={`
+		              cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
+									relative
+									min-w-[calc(25%-12px)]
+                  max-[2000px]:min-w-[calc(33.33%-10.66px)]
+                  max-[1300px]:min-w-[calc(50%-8px)]
+                  max-[768px]:min-w-full
+		    `}
+		>
+			{pressableChildren}
 		</Pressable>
 	);
 };

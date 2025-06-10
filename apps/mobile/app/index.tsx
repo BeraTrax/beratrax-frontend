@@ -3,13 +3,19 @@ import "@ethersproject/shims";
 import "@expo/metro-runtime";
 import "react-native-get-random-values";
 import { ScrollView, View, Text } from "react-native";
-import { PointsEarnings, WalletAndEarnings, EmptyComponent, ReferralLink, Vaults, TokenBalances, Transactions } from "@beratrax/ui";
-import { useDataRefresh } from "@beratrax/core/src/hooks";
+import { lazy, Suspense } from "react";
+import { WalletAndEarnings, EmptyComponent } from "@beratrax/ui";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
+
+// Lazy load components
+const PointsEarnings = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.PointsEarnings })));
+const ReferralLink = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.ReferralLink })));
+const Vaults = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.Vaults })));
+const TokenBalances = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.TokenBalances })));
+const Transactions = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.Transactions })));
 
 const Dashboard = () => {
 	const { currentWallet, connectWallet } = useWallet();
-	useDataRefresh();
 
 	return (
 		<ScrollView>
@@ -18,11 +24,21 @@ const Dashboard = () => {
 				<View className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 					{currentWallet ? (
 						<>
-							<PointsEarnings />
-							<ReferralLink />
-							<Vaults />
-							<TokenBalances />
-							<Transactions />
+							<Suspense fallback={<Text>Loading...</Text>}>
+								<PointsEarnings />
+							</Suspense>
+							<Suspense fallback={<Text>Loading...</Text>}>
+								<ReferralLink />
+							</Suspense>
+							<Suspense fallback={<Text>Loading...</Text>}>
+								<Vaults />
+							</Suspense>
+							<Suspense fallback={<Text>Loading...</Text>}>
+								<TokenBalances />
+							</Suspense>
+							<Suspense fallback={<Text>Loading...</Text>}>
+								<Transactions />
+							</Suspense>
 						</>
 					) : (
 						<EmptyComponent>

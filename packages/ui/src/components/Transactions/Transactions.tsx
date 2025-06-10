@@ -9,10 +9,21 @@ import useTransactions from "@beratrax/core/src/state/transactions/useTransactio
 import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import moment from "moment";
-import { FC, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState, useCallback, memo } from "react";
 import { Address, formatUnits } from "viem";
 import { useChainId } from "wagmi";
-import { View, Text, Pressable, Linking, Modal, Platform, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+	View,
+	Text,
+	Pressable,
+	Linking,
+	Modal,
+	Platform,
+	ScrollView,
+	NativeSyntheticEvent,
+	NativeScrollEvent,
+	GestureResponderEvent,
+} from "react-native";
 import { ModalLayout } from "../modals/ModalLayout/ModalLayout";
 import TransactionDetails from "../Transactions/components/TransactionDetail/TransactionDetail";
 import { InfoCircleIcon } from "../../icons/InfoCircle";
@@ -20,6 +31,7 @@ import { ChevronDownIcon } from "../../icons/ChevronDown";
 import { ChevronUpIcon } from "../../icons/ChevronUp";
 import { ExternalLinkIcon } from "../../icons/ExternalLInk";
 import Colors from "@beratrax/typescript-config/Colors";
+import { BlurView } from "expo-blur";
 
 interface TransactionProps {
 	farmId?: number;
@@ -28,6 +40,24 @@ interface TransactionProps {
 export const Transactions: FC<TransactionProps> = ({ farmId }) => {
 	const [open, setOpen] = useState(false);
 	const { data: transactions, isLoading } = useFarmTransactions(farmId, 3);
+
+	const SeeAllButton = memo(({ onPress }: { onPress: () => void }) => {
+		const buttonContent = useMemo(
+			() => (
+				<Pressable onPress={onPress} className="flex flex-row items-center">
+					<Text className="font-arame-mono font-normal text-base text-textPrimary leading-4 uppercase">See all</Text>
+					<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
+				</Pressable>
+			),
+			[onPress]
+		);
+
+		return buttonContent;
+	});
+
+	const handleSeeAllPress = useCallback(() => {
+		setOpen(true);
+	}, []);
 
 	if (isLoading || !transactions) {
 		return (
@@ -41,12 +71,7 @@ export const Transactions: FC<TransactionProps> = ({ farmId }) => {
 		<View>
 			<View className="flex flex-row justify-between items-center gap-2.5 mt-4">
 				<Text className="font-arame-mono font-normal text-base text-textWhite leading-4 uppercase">Last Transactions</Text>
-				{transactions.length !== 0 && (
-					<Pressable onPress={() => setOpen(true)} className="flex flex-row items-center">
-						<Text className="font-arame-mono font-normal text-base text-textPrimary leading-4 uppercase">See all</Text>
-						<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
-					</Pressable>
-				)}
+				{transactions.length !== 0 && <SeeAllButton onPress={handleSeeAllPress} />}
 			</View>
 			<View className="mt-[1.2rem] flex flex-col gap-[0.7rem]">
 				{transactions.length === 0 && <Text className="text-center text-textSecondary">No transactions yet</Text>}
@@ -221,11 +246,271 @@ const TransactionDetailsContent: FC<{
 	);
 };
 
+interface TransactionRowProps {
+	open: boolean;
+	setOpen: (value: boolean) => void;
+	farm: any;
+	tx: Transaction;
+	type: string;
+	date: string;
+	netAmount: string | undefined;
+	amountInWei: string;
+	token: Address;
+	decimals: any;
+	prices: any;
+	tokenAmount: number;
+	showExtraInfo: boolean;
+	tokenPrice: number | undefined;
+	vaultPrice: number | undefined;
+	vault_addr: string;
+	chainId: number;
+	retryTransaction: (e: any) => void;
+	isMobile: boolean;
+}
+
+const TransactionRow = memo(
+	({
+		open,
+		setOpen,
+		farm,
+		tx,
+		type,
+		date,
+		netAmount,
+		amountInWei,
+		token,
+		decimals,
+		prices,
+		tokenAmount,
+		showExtraInfo,
+		tokenPrice,
+		vaultPrice,
+		vault_addr,
+		chainId,
+		retryTransaction,
+		isMobile,
+	}: TransactionRowProps) => {
+		const [showTooltipModal, setShowTooltipModal] = useState(false);
+
+		// Memoize event handlers
+		const handleModalClose = useCallback(() => {
+			setShowTooltipModal(false);
+		}, []);
+
+		const handleModalPress = useCallback((e: GestureResponderEvent) => {
+			e.stopPropagation();
+		}, []);
+
+		const handleInfoPress = useCallback(
+			(e: GestureResponderEvent) => {
+				e.stopPropagation();
+				if (isMobile) {
+					setShowTooltipModal(true);
+				}
+			},
+			[isMobile]
+		);
+
+		const infoIcon = useMemo(() => <InfoCircleIcon />, []);
+
+		const tooltipContent = useMemo(() => {
+			if (!isMobile) {
+				return (
+					<View className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+						<View className="flex flex-col justify-end gap-2">
+							<TransactionDetailsContent tx={tx} farm={farm} prices={prices} decimals={decimals} isMobile={false} />
+						</View>
+					</View>
+				);
+			}
+			return null;
+		}, [isMobile, tx, farm, prices, decimals]);
+
+		// Memoize the close button component
+		const closeButton = useMemo(
+			() => (
+				<Pressable className="mt-6 py-4 bg-buttonPrimary rounded-lg" onPress={handleModalClose}>
+					<Text className="text-center text-white font-medium">Close</Text>
+				</Pressable>
+			),
+			[handleModalClose]
+		);
+
+		// Memoize the transaction details content
+		const transactionDetails = useMemo(
+			() => <TransactionDetailsContent tx={tx} farm={farm} prices={prices} decimals={decimals} isMobile={true} />,
+			[tx, farm, prices, decimals]
+		);
+
+		// Memoize the modal inner content
+		const modalInnerContent = useMemo(
+			() => (
+				<Pressable className="bg-[#1A1A1A] rounded-t-xl p-6" onPress={handleModalPress}>
+					<View className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />
+					{transactionDetails}
+					{closeButton}
+				</Pressable>
+			),
+			[handleModalPress, transactionDetails, closeButton]
+		);
+
+		// Memoize the modal content
+		const modalContent = useMemo(
+			() => (
+				<Modal visible={showTooltipModal} transparent={true} animationType="slide" onRequestClose={handleModalClose}>
+					<BlurView intensity={50} tint="dark" className="flex-1 justify-end" experimentalBlurMethod="dimezisBlurView">
+						<Pressable className="flex-1 justify-end" onPress={handleModalClose}>
+							{modalInnerContent}
+						</Pressable>
+					</BlurView>
+				</Modal>
+			),
+			[showTooltipModal, handleModalClose, modalInnerContent]
+		);
+
+		// Memoize the info button content
+		const infoButtonContent = useMemo(
+			() => (
+				<Pressable onPress={handleInfoPress}>
+					{infoIcon}
+					{tooltipContent}
+				</Pressable>
+			),
+			[handleInfoPress, infoIcon, tooltipContent]
+		);
+
+		// Memoize the extra info section
+		const extraInfoSection = useMemo(
+			() =>
+				showExtraInfo && (
+					<View className="group relative pb-1">
+						{infoButtonContent}
+						{modalContent}
+					</View>
+				),
+			[showExtraInfo, infoButtonContent, modalContent]
+		);
+
+		// Memoize the retry button
+		const retryButton = useMemo(
+			() =>
+				tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
+					<Pressable
+						testID="retry-transaction"
+						className="border border-red-500 rounded-md 
+							px-1 py-0.5 bg-transparent 
+							flex flex-row items-center gap-0.5 
+							text-red-500 text-[0.8rem]"
+						onPress={retryTransaction}
+					>
+						<Text className="text-red-500 text-xs">Retry</Text>
+					</Pressable>
+				),
+			[tx.steps, retryTransaction]
+		);
+
+		// Memoize the price and balance section
+		const priceAndBalance = useMemo(
+			() => (
+				<View className="flex-shrink-0 flex flex-col items-end">
+					<Text className="font-league-spartan font-medium text-lg leading-5 text-textWhite">
+						$
+						{(
+							Number(
+								formatUnits(BigInt(type === "withdraw" ? netAmount || amountInWei : netAmount || amountInWei), decimals[chainId][token])
+							) *
+							(type === "withdraw"
+								? showExtraInfo
+									? tokenPrice || prices[chainId][token]
+									: vaultPrice || prices[chainId][vault_addr]
+								: (tokenPrice || prices[chainId][token])!)
+						).toLocaleString()}
+					</Text>
+					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">
+						{netAmount ? Number(formatUnits(BigInt(netAmount), decimals[chainId][token])).toLocaleString() : tokenAmount.toLocaleString()}{" "}
+						{tokenNamesAndImages[token].name}
+					</Text>
+				</View>
+			),
+			[
+				type,
+				netAmount,
+				amountInWei,
+				decimals,
+				chainId,
+				token,
+				showExtraInfo,
+				tokenPrice,
+				prices,
+				vaultPrice,
+				vault_addr,
+				tokenAmount,
+				tokenNamesAndImages,
+			]
+		);
+
+		// Memoize the chevron icon
+		const chevronIcon = useMemo(
+			() => (
+				<View
+					className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex justify-center items-center ${
+						open ? "bg-gradientSecondary" : "bg-bgSecondary"
+					}`}
+				>
+					{open ? (
+						<ChevronUpIcon stroke={Colors.gradientLight} strokeWidth={3} />
+					) : (
+						<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
+					)}
+				</View>
+			),
+			[open]
+		);
+
+		// Memoize the vault name and type section
+		const vaultNameAndType = useMemo(
+			() => (
+				<View className="flex-grow flex flex-col">
+					<View className="flex flex-row items-center gap-1.5">
+						<Text className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-green-400" : "text-red-400"}`}>
+							{farm.name}
+						</Text>
+						<Text
+							className={`text-xs px-1.5 py-0.5 rounded ${
+								type === "deposit" ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"
+							}`}
+						>
+							{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
+						</Text>
+						{retryButton}
+						{extraInfoSection}
+					</View>
+					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">{moment(date).fromNow()}</Text>
+				</View>
+			),
+			[type, farm.name, retryButton, extraInfoSection, date]
+		);
+
+		// Memoize the entire row content
+		const rowContent = useMemo(
+			() => (
+				<Pressable testID="transaction-row" className="flex flex-row items-center gap-4" onPress={() => setOpen(!open)}>
+					{chevronIcon}
+					{vaultNameAndType}
+					{priceAndBalance}
+				</Pressable>
+			),
+			[open, setOpen, chevronIcon, vaultNameAndType, priceAndBalance]
+		);
+
+		return rowContent;
+	}
+);
+
 const Row: FC<{ tx: Transaction }> = ({ tx }) => {
 	const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
 	const { prices, decimals } = useTokens();
 	const [open, setOpen] = useState(false);
-	const [showTooltipModal, setShowTooltipModal] = useState(false);
 	const dispatch = useAppDispatch();
 	const { zapIn } = useZapIn(farm || ({} as any));
 	const { zapOut } = useZapOut(farm || ({} as any));
@@ -239,7 +524,7 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
 
 	if (!farm || !tx) return null;
 
-	const { type, amountInWei, token, vaultPrice, tokenPrice, steps, date, netAmount, vaultShares } = tx;
+	const { type, amountInWei, token, vaultPrice, tokenPrice, steps, date, netAmount } = tx;
 
 	let tokenAmount = 0;
 	if (type === "deposit") {
@@ -251,14 +536,7 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
 			(tokenPrice || prices[farm.chainId][token]);
 	}
 
-	// const status = useMemo(() => {
-	// 	if (steps.every((step) => step.status === TransactionStepStatus.COMPLETED)) return TransactionStatus.SUCCESS;
-	// 	if (steps.some((step) => step.status === TransactionStepStatus.FAILED)) return TransactionStatus.FAILED;
-	// 	if (steps.some((step) => step.status === TransactionStepStatus.IN_PROGRESS)) return TransactionStatus.PENDING;
-	// 	return TransactionStatus.INTERRUPTED;
-	// }, [steps]);
-
-	const retryTransaction = (e: any) => {
+	const retryTransaction = useCallback((e: any) => {
 		e.stopPropagation();
 		dispatch(deleteTransactionDb(tx._id));
 		if (tx.type === "deposit") {
@@ -276,141 +554,34 @@ const Row: FC<{ tx: Transaction }> = ({ tx }) => {
 				txId: tx._id,
 			});
 		}
-	};
+	}, []);
 
-	const isMobile = Platform.OS === "android" || Platform.OS === "ios";
+	const isMobile = useMemo(() => Platform.OS === "android" || Platform.OS === "ios", []);
 
 	return (
 		<>
 			<View className="rounded-2xl transition-all duration-100 ease-in-out bg-bgDark px-4 py-6 my-1">
-				<Pressable className="flex flex-row items-center gap-4" onPress={() => setOpen(!open)}>
-					{/* Chevron Icon to open and close the transaction details */}
-					<View
-						className={`flex-shrink-0 relative w-12 h-12 rounded-lg flex justify-center items-center ${
-							open ? "bg-gradientSecondary" : "bg-bgSecondary"
-						}`}
-					>
-						{open ? (
-							<ChevronUpIcon stroke={Colors.gradientLight} strokeWidth={3} />
-						) : (
-							<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
-						)}
-					</View>
-
-					{/* Vault Name and Retry Button */}
-					<View className="flex-grow flex flex-col">
-						<View className="flex flex-row items-center gap-1.5">
-							<Text
-								className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-green-400" : "text-red-400"}`}
-							>
-								{farm.name}
-							</Text>
-							<Text
-								className={`text-xs px-1.5 py-0.5 rounded ${
-									type === "deposit" ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"
-								}`}
-							>
-								{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
-							</Text>
-							{tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
-								<Pressable
-									className="border border-red-500 rounded-md 
-                                            px-1 py-0.5 bg-transparent 
-                                            flex flex-row items-center gap-0.5 
-                                            text-red-500 text-[0.8rem]"
-									onPress={retryTransaction}
-								>
-									<Text className="text-red-500 text-xs">Retry</Text>
-								</Pressable>
-							)}
-							{/* Tooltip for transaction details */}
-							{showExtraInfo && (
-								<View className="group relative pb-1">
-									<Pressable
-										onPress={(e) => {
-											e.stopPropagation();
-											if (isMobile) {
-												setShowTooltipModal(true);
-											}
-										}}
-									>
-										<InfoCircleIcon />
-										{!isMobile && (
-											<View className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-												<View className="flex flex-col justify-end gap-2">
-													<TransactionDetailsContent tx={tx} farm={farm} prices={prices} decimals={decimals} isMobile={false} />
-												</View>
-											</View>
-										)}
-									</Pressable>
-
-									{/* Mobile modal tooltip */}
-									<Modal
-										visible={showTooltipModal}
-										transparent={true}
-										animationType="slide"
-										onRequestClose={() => setShowTooltipModal(false)}
-									>
-										<Pressable className="flex-1 bg-black/50 justify-end" onPress={() => setShowTooltipModal(false)}>
-											<Pressable className="bg-[#1A1A1A] rounded-t-xl p-6" onPress={(e) => e.stopPropagation()}>
-												<View className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />
-
-												<TransactionDetailsContent tx={tx} farm={farm} prices={prices} decimals={decimals} isMobile={true} />
-
-												<Pressable className="mt-6 py-4 bg-buttonPrimary rounded-lg" onPress={() => setShowTooltipModal(false)}>
-													<Text className="text-center text-white font-medium">Close</Text>
-												</Pressable>
-											</Pressable>
-										</Pressable>
-									</Modal>
-								</View>
-							)}
-
-							{!tx.steps.some((item) => item.status === TransactionStepStatus.FAILED) && (
-								<View className="group relative pl-1 pb-1">
-									<Pressable
-										onPress={(e) => {
-											e.stopPropagation();
-											if (tx.steps[tx.steps.length - 1].txHash) {
-												Linking.openURL(`${blockExplorersByChainId[chainId]}/tx/${tx.steps[tx.steps.length - 1].txHash}`);
-											}
-										}}
-									>
-										<ExternalLinkIcon />
-									</Pressable>
-								</View>
-							)}
-						</View>
-						<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">{moment(date).fromNow()}</Text>
-					</View>
-
-					{/* Price and Balance */}
-					<View className="flex-shrink-0 flex flex-col items-end">
-						<Text className="font-league-spartan font-medium text-lg leading-5 text-textWhite">
-							$
-							{(
-								Number(
-									formatUnits(
-										BigInt(type === "withdraw" ? netAmount || amountInWei : netAmount || amountInWei),
-										decimals[farm.chainId][token]
-									)
-								) *
-								(type === "withdraw"
-									? showExtraInfo
-										? tokenPrice || prices[farm.chainId][token]
-										: vaultPrice || prices[farm.chainId][farm.vault_addr]
-									: (tokenPrice || prices[farm.chainId][token])!)
-							).toLocaleString()}
-						</Text>
-						<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">
-							{netAmount
-								? Number(formatUnits(BigInt(netAmount), decimals[farm.chainId][token])).toLocaleString()
-								: tokenAmount.toLocaleString()}{" "}
-							{tokenNamesAndImages[token].name}
-						</Text>
-					</View>
-				</Pressable>
-
+				<TransactionRow
+					open={open}
+					setOpen={setOpen}
+					farm={farm}
+					tx={tx}
+					type={type}
+					date={date}
+					netAmount={netAmount}
+					amountInWei={amountInWei}
+					token={token}
+					decimals={decimals}
+					prices={prices}
+					tokenAmount={tokenAmount}
+					showExtraInfo={showExtraInfo}
+					tokenPrice={tokenPrice}
+					vaultPrice={vaultPrice}
+					vault_addr={farm.vault_addr}
+					chainId={chainId}
+					retryTransaction={retryTransaction}
+					isMobile={isMobile}
+				/>
 				{open && <TransactionDetails transactionId={tx._id} open={open} farm={undefined} tx={undefined} />}
 			</View>
 		</>
@@ -448,11 +619,11 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 						<View className="flex justify-center items-center py-4">
 							<View
 								className="
-									w-[18px] h-[18px] 
-									border-2 border-solid 
-									border-current border-b-transparent border-r-transparent 
-									rounded-full 
-									box-border 
+									w-[18px] h-[18px]
+									border-2 border-solid
+									border-current border-b-transparent border-r-transparent
+									rounded-full
+									box-border
 									animate-rotation"
 							/>
 						</View>

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { View, Dimensions, ScrollView, Animated, Platform, ViewStyle } from "react-native";
+import React from "react";
+import { View, Dimensions, ScrollView, Platform, ViewStyle } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 interface MobileModalContainerProps {
@@ -18,15 +18,6 @@ const MobileModalContainer = ({
 	maxHeight = "90%",
 }: MobileModalContainerProps) => {
 	const { height } = Dimensions.get("window");
-	const slideAnim = useRef(new Animated.Value(height)).current;
-
-	useEffect(() => {
-		Animated.timing(slideAnim, {
-			toValue: open ? 0 : height,
-			duration: 300,
-			useNativeDriver: true,
-		}).start();
-	}, [open, slideAnim, height]);
 
 	if (open === false) {
 		return null;
@@ -41,10 +32,7 @@ const MobileModalContainer = ({
 	};
 
 	return (
-		<Animated.View
-			className={twMerge(`${positionClass} w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)}
-			style={{ height, transform: [{ translateY: slideAnim }] }}
-		>
+		<View className={twMerge(`${positionClass} w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>
 			<View className="flex-1 justify-end">
 				<View
 					className={twMerge(`w-full bg-[#1A1A1A] rounded-t-[40px] border-t-2 border-t-[#333333] overflow-hidden`, className)}
@@ -60,7 +48,7 @@ const MobileModalContainer = ({
 					</ScrollView>
 				</View>
 			</View>
-		</Animated.View>
+		</View>
 	);
 };
 

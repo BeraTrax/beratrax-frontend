@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import useTokens from "../state/tokens/useTokens";
 import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "./../api/notify";
 import { errorMessages, loadingMessages, successMessages } from "./../config/constants/notifyMessages";
@@ -55,9 +55,9 @@ export const useTransferToken = (token: Token, handleClose: Function) => {
 		setAmount(showInUsd ? token.usdBalance : token.balance);
 	};
 
-	const handleToggleShowInUsdc = () => {
+	const handleToggleShowInUsdc = useCallback(() => {
 		toggleShowInUsd((prev) => !prev);
-	};
+	}, [toggleShowInUsd]);
 
 	useEffect(() => {
 		if (max) handleMaxClick();

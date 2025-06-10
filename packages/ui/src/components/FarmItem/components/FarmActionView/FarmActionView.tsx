@@ -11,7 +11,7 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "expo-router";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
@@ -21,6 +21,25 @@ import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
 import { View, Text, Pressable, ScrollView, Platform } from "react-native";
+
+const ActionButton = memo(
+	({
+		onPress,
+		text,
+		className,
+		disabled,
+	}: {
+		onPress: () => void;
+		text: string;
+		className: string;
+		testID?: string;
+		disabled?: boolean;
+	}) => (
+		<Pressable className="flex-1" onPress={onPress} disabled={disabled}>
+			<Text className={className}>{text}</Text>
+		</Pressable>
+	)
+);
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const dispatch = useAppDispatch();
@@ -61,10 +80,13 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 		})();
 	}, [totalSupplies]);
 
-	const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
-		dispatch(setFarmDetailInputOptions(opt));
-		setOpenDepositModal(true);
-	};
+	const setFarmOptions = useCallback(
+		(opt: Partial<FarmDetailInputOptions>) => {
+			dispatch(setFarmDetailInputOptions(opt));
+			setOpenDepositModal(true);
+		},
+		[dispatch]
+	);
 
 	const handleGoBack = () => {
 		if (Platform.OS === "web") {
@@ -75,6 +97,28 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 			router.back();
 		}
 	};
+
+	const handleDepositPress = useCallback(() => {
+		if (!currentWallet) {
+			openConnectModal && openConnectModal();
+		} else if (!IS_LEGACY) {
+			setFarmOptions({ transactionType: FarmTransactionType.Deposit });
+		}
+	}, [currentWallet, openConnectModal, setFarmOptions]);
+
+	const handleWithdrawPress = useCallback(() => {
+		if (!IS_LEGACY) {
+			setFarmOptions({
+				transactionType: FarmTransactionType.Withdraw,
+			});
+		}
+	}, [setFarmOptions]);
+
+	const depositButtonText = useMemo(() => {
+		return !currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit;
+	}, [currentWallet]);
+
+	const withdrawButtonText = useMemo(() => FarmTransactionType.Withdraw, []);
 
 	return (
 		<>
@@ -115,34 +159,19 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 									<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
 								) : (
 									<>
-										<Pressable
-											className="flex-1"
-											onPress={() => {
-												!currentWallet
-													? openConnectModal && openConnectModal()
-													: !IS_LEGACY && setFarmOptions({ transactionType: FarmTransactionType.Deposit });
-											}}
-										>
-											<Text className="bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center">
-												{!currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit}
-											</Text>
-										</Pressable>
+										<ActionButton
+											onPress={handleDepositPress}
+											text={depositButtonText}
+											className="bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+										/>
 
 										{Number(withdrawable?.amount || "0") > 0 && (
-											<Pressable
-												className="flex-1"
+											<ActionButton
+												onPress={handleWithdrawPress}
+												text={withdrawButtonText}
+												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
 												disabled={!currentWallet}
-												onPress={() => {
-													!IS_LEGACY &&
-														setFarmOptions({
-															transactionType: FarmTransactionType.Withdraw,
-														});
-												}}
-											>
-												<Text className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center">
-													{FarmTransactionType.Withdraw}
-												</Text>
-											</Pressable>
+											/>
 										)}
 									</>
 								)}

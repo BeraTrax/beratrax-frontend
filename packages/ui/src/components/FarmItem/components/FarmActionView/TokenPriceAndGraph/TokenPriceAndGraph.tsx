@@ -5,7 +5,7 @@ import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import FarmLpGraph from "ui/src/components/FarmItem/components/FarmActionView/FarmLpGraph/FarmLpGraph";
 import FarmRowChip from "ui/src/components/FarmItem/components/FarmRowChip/FarmRowChip";
 import { View, Text, Image, Pressable } from "react-native";
-import { useState } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import FarmEarningsGraph from "../FarmEarningsGraph/FarmEarningsGraph";
 import FarmTvlGraph from "../FarmTvlGraph/FarmTvlGraph";
 import FarmApyGraph from "../FarmApyGraph/FarmApyGraph";
@@ -25,16 +25,56 @@ const PriceLoadingSkeleton = () => {
 
 type TabType = "price" | "tvl" | "apy" | "earnings";
 
+const MemoizedText = memo(({ text, color }: { text: string; color: string }) => <Text style={{ color }}>{text}</Text>);
+
+const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: string; isActive: boolean; onPress: () => void }) => {
+	const buttonStyle = useMemo(
+		() => ({
+			borderRadius: 7,
+			paddingVertical: 7,
+			paddingHorizontal: 14,
+			fontWeight: "500",
+			color: isActive ? "#FFFFFF" : "#878b82",
+		}),
+		[isActive]
+	);
+
+	const textColor = isActive ? "#FFFFFF" : "#878b82";
+
+	return (
+		<Pressable onPress={onPress} style={buttonStyle}>
+			<MemoizedText text={label} color={textColor} />
+		</Pressable>
+	);
+});
+
 export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const { lp, isLpPriceLoading } = useLp(farm.id);
 	const [activeTab, setActiveTab] = useState<TabType>("earnings");
 
-	const tabs = [
-		{ id: "earnings" as TabType, label: "Earnings" },
-		{ id: "price" as TabType, label: "Price" },
-		{ id: "tvl" as TabType, label: "TVL" },
-		{ id: "apy" as TabType, label: farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR" },
-	];
+	const handleTabPress = useCallback((tabId: TabType) => {
+		setActiveTab(tabId);
+	}, []);
+
+	const tabHandlers = useMemo(
+		() => ({
+			earnings: () => handleTabPress("earnings"),
+			price: () => handleTabPress("price"),
+			tvl: () => handleTabPress("tvl"),
+			apy: () => handleTabPress("apy"),
+		}),
+		[handleTabPress]
+	);
+
+	const tabs = useMemo(
+		() => [
+			{ id: "earnings" as TabType, label: "Earnings" },
+			{ id: "price" as TabType, label: "Price" },
+			{ id: "tvl" as TabType, label: "TVL" },
+			{ id: "apy" as TabType, label: farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR" },
+		],
+		[farm.isAutoCompounded]
+	);
 
 	return (
 		<View className="relative">
@@ -85,15 +125,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 			</View>
 			<View className="flex flex-row gap-4 mt-6 mb-4">
 				{tabs.map((tab) => (
-					<Pressable
-						key={tab.id}
-						onPress={() => setActiveTab(tab.id)}
-						className={`px-4 py-2 rounded-lg font-medium transition-all ${
-							activeTab === tab.id ? "bg-gradientSecondary text-textWhite" : "text-textSecondary hover:text-textWhite"
-						}`}
-					>
-						<Text className="text-textWhite">{tab.label}</Text>
-					</Pressable>
+					<TabButton key={tab.id} id={tab.id} label={tab.label} isActive={activeTab === tab.id} onPress={tabHandlers[tab.id]} />
 				))}
 			</View>
 

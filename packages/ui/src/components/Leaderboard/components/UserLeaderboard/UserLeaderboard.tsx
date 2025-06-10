@@ -4,7 +4,7 @@ import leaderboardtablepetalyellow from "@beratrax/core/src/assets/images/leader
 import { useConstants, useStats } from "@beratrax/core/src/hooks";
 import { CHAIN_ID, UsersTableColumns } from "@beratrax/core/src/types/enums";
 import { customCommify } from "@beratrax/core/src/utils/common";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState, memo, useCallback } from "react";
 import { Link } from "expo-router";
 import { View, Image, Text, Pressable, TextInput, Platform, ScrollView } from "react-native";
 import { ChevronDownIcon } from "../../../../icons/ChevronDown";
@@ -44,6 +44,26 @@ const SkeletonRow = () => {
 		</View>
 	);
 };
+
+const AddressDisplay = memo(({ address, explorerUrl }: { address: string; explorerUrl: string }) => {
+	return (
+		<View className="text-lg flex flex-row items-center gap-x-2">
+			<Image source={{ uri: selectRandomPetal() }} alt="petal" className="w-5 h-5" />
+			<View className="flex flex-row items-center gap-7 sm:gap-2 group relative">
+				<Text className="text-white">{`${address?.substring(0, 4)}...${address?.substring(address.length - 3)}`}</Text>
+				{Platform.OS === "web" ? (
+					<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-textWhite">
+						{address}
+					</Text>
+				) : (
+					<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+						<Text className="text-xs text-textSecondary">View on Explorer</Text>
+					</Link>
+				)}
+			</View>
+		</View>
+	);
+});
 
 export const UserLeaderboardTable: FC = () => {
 	const {
@@ -124,7 +144,7 @@ export const UserLeaderboardTable: FC = () => {
 							const isCurrentUser = userPosition?.address.toLowerCase() === userTVL.address.toLowerCase();
 							return (
 								<View key={userTVL.id} className="mb-2">
-									<StatsTableRow index={userTVL.leaderboardRanking} isCurrentUser={isCurrentUser} {...userTVL} />
+									<StatsTableRow isCurrentUser={isCurrentUser} {...userTVL} />
 								</View>
 							);
 						})
@@ -194,154 +214,177 @@ const EmptyTable = () => {
 	);
 };
 
-const StatsTableRow = ({ isCurrentUser, ...props }: { isCurrentUser?: boolean } & Record<any, any>) => {
-	const { BLOCK_EXPLORER_URL } = useConstants(CHAIN_ID.BERACHAIN);
-	const [open, setOpen] = useState(false);
+const StatsTableRow = memo(
+	({ isCurrentUser, ...props }: { isCurrentUser?: boolean } & Record<any, any>) => {
+		const { BLOCK_EXPLORER_URL } = useConstants(CHAIN_ID.BERACHAIN);
+		const [open, setOpen] = useState(false);
 
-	const {
-		address,
-		earnedTrax,
-		earnedTraxByReferral,
-		earnedTraxTestnet,
-		earnedTraxByReferralTestnet,
-		tvl,
-		accountInfo,
-		index,
-		referralCount,
-	} = props;
+		const {
+			address,
+			earnedTrax,
+			earnedTraxByReferral,
+			earnedTraxTestnet,
+			earnedTraxByReferralTestnet,
+			tvl,
+			accountInfo,
+			index,
+			referralCount,
+		} = props;
 
-	const explorerUrl = `${BLOCK_EXPLORER_URL}/address/${address}`;
+		const explorerUrl = useMemo(() => `${BLOCK_EXPLORER_URL}/address/${address}`, [BLOCK_EXPLORER_URL, address]);
 
-	return (
-		<View className={`relative rounded-2xl ${isCurrentUser ? "animate-pulse-slow" : ""}`}>
-			{isCurrentUser && (
-				<LinearGradient
-					colors={["#72b21f", "#283817"]}
-					start={{ x: 0, y: 0 }}
-					end={{ x: 1, y: 0 }}
-					style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, borderRadius: 16 }}
-				/>
-			)}
-			<View className={`rounded-2xl px-4 ${isCurrentUser ? "bg-transparent" : "bg-bgDark"}`}>
-				<Pressable
-					className={`${open && !isCurrentUser && "border-b border-bgSecondary"} py-6 flex flex-row justify-between items-center`}
-					onPress={() => setOpen(!open)}
-				>
-					{/* NUMBERING AND ADDRESS */}
-					<View className="flex flex-row justify-between gap-4 cursor-pointer">
-						{/* address and external link icon */}
-						<View className="flex flex-row items-center gap-2 group relative">
-							<Text className="mx-2 sm:mx-3 text-white text-xs sm:text-sm">{index}</Text>
-							<Image source={{ uri: selectRandomPetal() }} alt="petal" className="w-5 h-5" />
-							<Text className="text-white text-sm ml-1" style={{ maxWidth: 150, flexShrink: 1, overflow: "hidden" }}>
-								{accountInfo?.referralCode
-									? accountInfo.referralCode.startsWith("0x")
-										? `${accountInfo.referralCode.substring(0, 4)}...${accountInfo.referralCode.substring(
-												accountInfo.referralCode.length - 3
-											)}`
-										: accountInfo.referralCode
-									: `${address?.substring(0, 4)}...${address?.substring(address.length - 3)}`}
-							</Text>
-							{Platform.OS === "web" ? (
-								<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-xs sm:text-sm text-textWhite">
-									{address}
-								</Text>
-							) : null}
+		const handlePress = useCallback(() => {
+			setOpen((prev) => !prev);
+		}, []);
 
-							<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
-								<ExternalLinkIcon />
-							</Link>
-						</View>
-					</View>
-
-					{/* Points and Chevron Icon */}
-					<View className="flex flex-row justify-center items-center gap-x-2">
-						<Text className="text-white text-xs sm:text-sm" style={{ maxWidth: 120, flexShrink: 1, overflow: "hidden" }}>
-							{Number(earnedTrax + earnedTraxByReferral).toLocaleString("en-us")}
-						</Text>
-						<View
-							className={`flex-shrink-0 relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex justify-center items-center ${
-								open ? "bg-gradientSecondary" : "bg-bgSecondary"
-							}`}
+		const rowContent = useMemo(
+			() => (
+				<View className={`relative rounded-2xl ${isCurrentUser ? "animate-pulse-slow" : ""}`}>
+					{isCurrentUser && (
+						<LinearGradient
+							colors={["#72b21f", "#283817"]}
+							start={{ x: 0, y: 0 }}
+							end={{ x: 1, y: 0 }}
+							style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, borderRadius: 16 }}
+						/>
+					)}
+					<View className={`rounded-2xl px-4 ${isCurrentUser ? "bg-transparent" : "bg-bgDark"}`}>
+						<Pressable
+							className={`${open && !isCurrentUser && "border-b border-bgSecondary"} py-6 flex flex-row justify-between items-center`}
+							onPress={handlePress}
 						>
-							{open ? (
-								<ChevronUpIcon stroke={Colors.gradientLight} strokeWidth={3} />
-							) : (
-								<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
-							)}
-						</View>
-					</View>
-				</Pressable>
+							<View className="flex flex-row justify-between gap-4 cursor-pointer">
+								<View className="flex flex-row items-center gap-2 group relative">
+									<Text className="mx-2 sm:mx-3 text-white text-xs sm:text-sm">{index}</Text>
+									<Image source={{ uri: selectRandomPetal() }} alt="petal" className="w-5 h-5" />
+									<Text className="text-white text-sm ml-1" style={{ maxWidth: 150, flexShrink: 1, overflow: "hidden" }}>
+										{accountInfo?.referralCode
+											? accountInfo.referralCode.startsWith("0x")
+												? `${accountInfo.referralCode.substring(0, 4)}...${accountInfo.referralCode.substring(
+														accountInfo.referralCode.length - 3
+													)}`
+												: accountInfo.referralCode
+											: `${address?.substring(0, 4)}...${address?.substring(address.length - 3)}`}
+									</Text>
+									{Platform.OS === "web" ? (
+										<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-xs sm:text-sm text-textWhite">
+											{address}
+										</Text>
+									) : null}
 
-				{/* row details dropdown */}
-				<View className="overflow-hidden transition-all duration-300 ease-in-out">
-					<View className={`transform ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"} transition-all duration-300 ease-in-out`}>
-						<View className={`p-6 rounded-lg ${isCurrentUser ? "bg-black/30" : "bg-black"}`}>
-							{/* Grid layout */}
-							<View className="grid grid-cols-2 md:grid-cols-5 gap-4">
-								{/* Wallet Address */}
-								<View className="mb-2 sm:mb-0">
-									<Text className="text-xs uppercase text-gray-400">Wallet Address</Text>
-									{address ? (
-										<View className="text-lg flex flex-row items-center gap-x-2">
-											<Image source={{ uri: selectRandomPetal() }} alt="petal" className="w-5 h-5" />
-											<View className="flex flex-row items-center gap-7 sm:gap-2 group relative">
-												<Text className="text-white">{`${address?.substring(0, 4)}...${address?.substring(address.length - 3)}`}</Text>
-												{Platform.OS === "web" ? (
-													<Text className="invisible group-hover:visible absolute left-0 top-full z-10 bg-bgDark p-2 rounded-md border border-borderDark text-sm text-textWhite">
-														{address}
-													</Text>
-												) : (
-													<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
-														<Text className="text-xs text-textSecondary">View on Explorer</Text>
-													</Link>
-												)}
-											</View>
-										</View>
+									<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+										<ExternalLinkIcon />
+									</Link>
+								</View>
+							</View>
+
+							<View className="flex flex-row justify-center items-center gap-x-2">
+								<Text className="text-white text-xs sm:text-sm" style={{ maxWidth: 120, flexShrink: 1, overflow: "hidden" }}>
+									{Number(earnedTrax + earnedTraxByReferral).toLocaleString("en-us")}
+								</Text>
+								<View
+									className={`flex-shrink-0 relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex justify-center items-center ${
+										open ? "bg-gradientSecondary" : "bg-bgSecondary"
+									}`}
+								>
+									{open ? (
+										<ChevronUpIcon stroke={Colors.gradientLight} strokeWidth={3} />
 									) : (
-										<Text className="text-white mt-1">-</Text>
+										<ChevronDownIcon stroke={Colors.gradientLight} strokeWidth={3} />
 									)}
 								</View>
+							</View>
+						</Pressable>
 
-								{/* Staking Points */}
-								<View className="mb-2 sm:mb-0">
-									<Text className="text-xs uppercase text-gray-400">Staking Points</Text>
-									<Text className="text-sm sm:text-lg font-medium text-white mt-1">
-										{customCommify(earnedTrax, {
-											minimumFractionDigits: 0,
-											maximumFractionDigits: 2,
-											showDollarSign: false,
-										})}
-									</Text>
-								</View>
+						{/* row details dropdown */}
+						<View className="overflow-hidden transition-all duration-300 ease-in-out">
+							<View
+								className={`transform ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"} transition-all duration-300 ease-in-out`}
+							>
+								<View className={`p-6 rounded-lg ${isCurrentUser ? "bg-black/30" : "bg-black"}`}>
+									{/* Grid layout */}
+									<View className="grid grid-cols-2 md:grid-cols-5 gap-4">
+										{/* Wallet Address */}
+										<View className="mb-2 sm:mb-0">
+											<Text className="text-xs uppercase text-gray-400">Wallet Address</Text>
+											{address ? (
+												<AddressDisplay address={address} explorerUrl={explorerUrl} />
+											) : (
+												<Text className="text-white mt-1">-</Text>
+											)}
+										</View>
 
-								{/* Referral Points */}
-								<View className="mb-2 sm:mb-0">
-									<Text className="text-xs uppercase text-gray-400">Referral Points</Text>
-									<Text className="text-sm sm:text-lg text-white mt-1">{Number(earnedTraxByReferral).toLocaleString("en-us")}</Text>
-								</View>
+										{/* Staking Points */}
+										<View className="mb-2 sm:mb-0">
+											<Text className="text-xs uppercase text-gray-400">Staking Points</Text>
+											<Text className="text-sm sm:text-lg font-medium text-white mt-1">
+												{customCommify(earnedTrax, {
+													minimumFractionDigits: 0,
+													maximumFractionDigits: 2,
+													showDollarSign: false,
+												})}
+											</Text>
+										</View>
 
-								{/* Testnet Points */}
-								<View className="mb-2 sm:mb-0">
-									<Text className="text-xs uppercase text-gray-400">Testnet Points</Text>
-									<Text className="text-sm sm:text-lg text-white mt-1">
-										{Number(earnedTraxByReferralTestnet + earnedTraxTestnet).toLocaleString("en-us")}
-									</Text>
-								</View>
+										{/* Referral Points */}
+										<View className="mb-2 sm:mb-0">
+											<Text className="text-xs uppercase text-gray-400">Referral Points</Text>
+											<Text className="text-sm sm:text-lg text-white mt-1">{Number(earnedTraxByReferral).toLocaleString("en-us")}</Text>
+										</View>
 
-								{/* # of Referrals */}
-								<View>
-									<Text className="text-xs uppercase text-gray-400"># of Referrals</Text>
-									<Text className="text-sm sm:text-lg text-white mt-1">{referralCount}</Text>
+										{/* Testnet Points */}
+										<View className="mb-2 sm:mb-0">
+											<Text className="text-xs uppercase text-gray-400">Testnet Points</Text>
+											<Text className="text-sm sm:text-lg text-white mt-1">
+												{Number(earnedTraxByReferralTestnet + earnedTraxTestnet).toLocaleString("en-us")}
+											</Text>
+										</View>
+
+										{/* # of Referrals */}
+										<View>
+											<Text className="text-xs uppercase text-gray-400"># of Referrals</Text>
+											<Text className="text-sm sm:text-lg text-white mt-1">{referralCount}</Text>
+										</View>
+									</View>
 								</View>
 							</View>
 						</View>
 					</View>
 				</View>
-			</View>
-		</View>
-	);
-};
+			),
+			[
+				isCurrentUser,
+				open,
+				handlePress,
+				index,
+				accountInfo,
+				address,
+				explorerUrl,
+				earnedTrax,
+				earnedTraxByReferral,
+				earnedTraxTestnet,
+				earnedTraxByReferralTestnet,
+				referralCount,
+			]
+		);
+
+		return rowContent;
+	},
+	(prevProps, nextProps) => {
+		// Custom comparison function for memo
+		return (
+			prevProps.isCurrentUser === nextProps.isCurrentUser &&
+			prevProps.address === nextProps.address &&
+			prevProps.earnedTrax === nextProps.earnedTrax &&
+			prevProps.earnedTraxByReferral === nextProps.earnedTraxByReferral &&
+			prevProps.earnedTraxTestnet === nextProps.earnedTraxTestnet &&
+			prevProps.earnedTraxByReferralTestnet === nextProps.earnedTraxByReferralTestnet &&
+			prevProps.index === nextProps.index &&
+			prevProps.referralCount === nextProps.referralCount &&
+			JSON.stringify(prevProps.accountInfo) === JSON.stringify(nextProps.accountInfo)
+		);
+	}
+);
 
 const UserPositionRow = ({ userPosition }: { userPosition: any }) => {
 	const { BLOCK_EXPLORER_URL } = useConstants(CHAIN_ID.BERACHAIN);

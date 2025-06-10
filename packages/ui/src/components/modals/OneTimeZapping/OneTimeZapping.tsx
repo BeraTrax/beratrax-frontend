@@ -63,7 +63,11 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 				>
 					<Text className="text-center text-textWhite font-bold">Cancel</Text>
 				</Pressable>
-				<Pressable className={`bg-bgPrimary p-4 rounded-xl  text-textWhite`} disabled={isLoading} onPress={handleUnderstand}>
+				<Pressable
+					className={`bg-bgPrimary p-4 rounded-xl  text-textWhite`}
+					disabled={isLoading}
+					onPress={handleUnderstand}
+				>
 					<Text className="text-center text-textWhite font-bold">
 						{isLoading ? <LoaderIcon className={styles.loader} /> : "I understand"}
 					</Text>

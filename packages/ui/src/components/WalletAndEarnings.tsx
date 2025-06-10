@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, memo } from "react";
 import { checkClaimBtx, claimBtx } from "@beratrax/core/src/api/account";
 import { notifyError } from "@beratrax/core/src/api/notify";
 import GreenLogo from "@beratrax/core/src/assets/images/greenLogo.png";
@@ -42,6 +42,60 @@ import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
 interface WalletAndEarningsProps {
 	connectWallet: () => void;
 }
+
+const ExportPrivateKeyButton = memo(({ onPress }: { onPress: () => void }) => (
+	<TouchableOpacity onPress={onPress}>
+		<View className="flex flex-row items-center gap-1">
+			<KeysIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
+		</View>
+	</TouchableOpacity>
+));
+
+const ExportQrCodeButton = memo(({ onPress }: { onPress: () => void }) => (
+	<TouchableOpacity onPress={onPress}>
+		<View className="flex flex-row items-center gap-1">
+			<QrcodeIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
+		</View>
+	</TouchableOpacity>
+));
+
+const ExportKeysSection = memo(
+	({
+		isSocial,
+		showExportKeysTooltip,
+		handleShowExportKeysTooltip,
+		handleHideExportKeysTooltip,
+		handleOpenPrivateKeyModal,
+		handleOpenQrCodeModal,
+	}: {
+		isSocial: boolean;
+		showExportKeysTooltip: boolean;
+		handleShowExportKeysTooltip: () => void;
+		handleHideExportKeysTooltip: () => void;
+		handleOpenPrivateKeyModal: () => void;
+		handleOpenQrCodeModal: () => void;
+	}) => {
+		if (!isSocial) return null;
+
+		return (
+			<View className="z-[1] w-full flex flex-row justify-end gap-4 relative">
+				<Pressable
+					className="flex flex-row gap-2 group relative py-1.5 px-5 bg-gradientPrimary rounded-xl"
+					onPressIn={handleShowExportKeysTooltip}
+					onPressOut={handleHideExportKeysTooltip}
+				>
+					<ExportPrivateKeyButton onPress={handleOpenPrivateKeyModal} />
+					<ExportQrCodeButton onPress={handleOpenQrCodeModal} />
+					{showExportKeysTooltip && (
+						<Text className="absolute group-hover:opacity-100 opacity-0 left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
+							Export keys
+						</Text>
+					)}
+				</Pressable>
+			</View>
+		);
+	}
+);
 
 export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWallet }) => {
 	const {
@@ -189,6 +243,25 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 		}
 	};
 
+	const handleConnect = useCallback(() => {
+		if (Platform.OS === "web" && openConnectModal) {
+			openConnectModal();
+		} else {
+			connectWallet();
+		}
+	}, [Platform.OS, openConnectModal, connectWallet]);
+
+	const connectButtonText = useMemo(
+		() => <Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>,
+		[isConnecting]
+	);
+
+	// Memoize the handlers to prevent recreation on each render
+	const handleShowExportKeysTooltip = useCallback(() => setShowExportKeysTooltip(true), []);
+	const handleHideExportKeysTooltip = useCallback(() => setShowExportKeysTooltip(false), []);
+	const handleOpenPrivateKeyModal = useCallback(() => setOpenPrivateKeyModal(true), []);
+	const handleOpenQrCodeModal = useCallback(() => setOpenQrCodeModal(true), []);
+
 	return (
 		<View className="z-[1] bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
 			{/* Terms of Use Modal */}
@@ -219,7 +292,6 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 													<CopyIcon />
 												</Text>
 											</TouchableOpacity>
-											{/* <MdOutlineContentCopy onClick={copy} className="h-6 text-white ml-4 cursor-pointer" /> */}
 											{showCopyFeedback && (
 												<View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
 													<Text className="text-white">Address copied!</Text>
@@ -244,16 +316,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 									>
 										<Text className="text-white font-medium font-league-spartan">Switch to Berachain</Text>
 									</Pressable>
-									//   <Text>Switch to Berachain</Text>
-									// </Button>
 								)}
-								{/* Logout Button */}
-
-								{/* <Text className="h-6 text-white ml-4 cursor-pointer">⏼</Text> */}
-								{/* <LiaPowerOffSolid
-                    onClick={() => disconnect()}
-                    className="w-8 h-8 text-textWhite cursor-pointer z-10"
-                  /> */}
 								<PowerIcon
 									onPress={() => {
 										disconnect();
@@ -268,45 +331,25 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 						// Connect Wallet Button
 						<View className="flex flex-row justify-end">
 							<Pressable
-								onPress={() => (Platform.OS === "web" && openConnectModal ? openConnectModal() : connectWallet())}
+								onPress={handleConnect}
 								className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
 							>
-								<Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>
+								{connectButtonText}
 							</Pressable>
-							{/* {isConnecting ? "Connecting..." : "Sign In/Up"}
-                </Button> */}
 						</View>
 					)}
 				</View>
 
 				{/* export keys */}
 				{currentWallet && (
-					<View className="z-[1] w-full flex flex-row justify-end gap-4 relative">
-						{isSocial && (
-							<View
-								className="flex flex-row gap-2 group relative py-1.5 px-5 bg-gradientPrimary rounded-xl"
-								onTouchStart={() => setShowExportKeysTooltip(true)}
-								onTouchEnd={() => setShowExportKeysTooltip(false)}
-							>
-								<TouchableOpacity onPress={() => setOpenPrivateKeyModal(true)}>
-									<View className="flex flex-row items-center gap-1">
-										<KeysIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
-									</View>
-								</TouchableOpacity>
-
-								<TouchableOpacity onPress={() => setOpenQrCodeModal(true)}>
-									<View className="flex flex-row items-center gap-1">
-										<QrcodeIcon size={28} color="black" strokeWidth={1.5} className="w-7 h-7" />
-									</View>
-								</TouchableOpacity>
-								{showExportKeysTooltip && (
-									<Text className="absolute group-hover:opacity-100 opacity-0 left-0 top-full bg-bgDark p-2 rounded-md border border-borderDark text-xs text-textWhite">
-										Export keys
-									</Text>
-								)}
-							</View>
-						)}
-					</View>
+					<ExportKeysSection
+						isSocial={isSocial}
+						showExportKeysTooltip={showExportKeysTooltip}
+						handleShowExportKeysTooltip={handleShowExportKeysTooltip}
+						handleHideExportKeysTooltip={handleHideExportKeysTooltip}
+						handleOpenPrivateKeyModal={handleOpenPrivateKeyModal}
+						handleOpenQrCodeModal={handleOpenQrCodeModal}
+					/>
 				)}
 
 				{/* Points for staking */}

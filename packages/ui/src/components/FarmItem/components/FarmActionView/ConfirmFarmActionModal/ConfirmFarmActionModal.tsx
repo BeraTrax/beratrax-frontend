@@ -3,7 +3,7 @@ import { useNotification } from "@beratrax/core/src/state/notification/useNotifi
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { formatBalance } from "@beratrax/core/src/utils/common";
-import { FC, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo, useCallback } from "react";
 import { ModalLayout } from "ui/src/components/modals/ModalLayout/ModalLayout";
 import TransactionDetails from "@beratrax/ui/src/components/Transactions/components/TransactionDetail/TransactionDetail";
 import { Pressable, Text, View } from "react-native";
@@ -26,6 +26,21 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 	const { isLoading, reset } = useTransactions();
 	const { errors, success, clearAllNotifications } = useNotification();
 	const amount = useMemo(() => formatBalance(depositInfo?.amount ?? "0", { maximumFractionDigits: 3 }), []);
+
+	const handleGoBack = useCallback(() => {
+		handleClose(true);
+	}, []);
+
+	const handleCloseModal = useCallback(() => {
+		handleClose();
+	}, []);
+
+	const goBackText = useMemo(
+		() => <Text className="text-textBlack uppercase text-xl font-bold tracking-widest text-center">Go Back</Text>,
+		[]
+	);
+
+	const closeText = useMemo(() => <Text className="text-textBlack text-center text-xl font-bold">Close</Text>, []);
 
 	const getTransactionTitle = () => {
 		if (!depositInfo) return "";
@@ -81,9 +96,9 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 						</View>
 						<Pressable
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-							onPress={() => handleClose(true)}
+							onPress={handleGoBack}
 						>
-							<Text className="text-textBlack uppercase text-xl font-bold tracking-widest text-center">Go Back</Text>
+							{goBackText}
 						</Pressable>
 					</>
 				)}
@@ -100,9 +115,9 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 						</View>
 						<Pressable
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
-							onPress={() => handleClose()}
+							onPress={handleCloseModal}
 						>
-							<Text className="text-textBlack text-center text-xl font-bold">Close</Text>
+							{closeText}
 						</Pressable>
 					</>
 				)}

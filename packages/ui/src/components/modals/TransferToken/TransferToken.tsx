@@ -1,7 +1,7 @@
 import { useTransferToken } from "@beratrax/core/src/hooks";
 import { Token } from "@beratrax/core/src/types";
 import { noExponents } from "@beratrax/core/src/utils/common";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useCallback, memo } from "react";
 import { ModalLayout } from "ui/src/components/modals/ModalLayout/ModalLayout";
 import { UsdToggle } from "../../UsdToggle/UsdToggle";
 import { Text, View, TextInput, Pressable, TouchableOpacity } from "react-native";
@@ -11,6 +11,26 @@ interface IProps {
 	token: Token;
 	handleClose: Function;
 }
+
+interface TransferButtonProps {
+	hasInsufficientBalance: boolean;
+	isLoading: boolean;
+	amount: string;
+	receiverAddress: string;
+	onPress: () => void;
+}
+
+const TransferButton = memo(({ hasInsufficientBalance, isLoading, amount, receiverAddress, onPress }: TransferButtonProps) => (
+	<Pressable
+		className={`py-4 px-8 mt-8 w-full rounded-full items-center justify-center ${
+			hasInsufficientBalance ? "bg-buttonDisabled" : "bg-buttonPrimaryLight"
+		}`}
+		onPress={onPress}
+		disabled={isLoading || Number(amount) <= 0 || !receiverAddress || hasInsufficientBalance}
+	>
+		<Text className="text-textBlack text-base font-bold text-center">{hasInsufficientBalance ? "Insufficient Fund" : "Transfer"}</Text>
+	</Pressable>
+));
 
 export const TransferToken: FC<IProps> = ({ token, handleClose }) => {
 	const {
@@ -30,6 +50,11 @@ export const TransferToken: FC<IProps> = ({ token, handleClose }) => {
 		() => (showInUsd ? Number(amount) > Number(token.usdBalance) : Number(amount) > Number(token.balance)),
 		[token.balance, showInUsd, token.usdBalance, amount]
 	);
+
+	const onPress = useCallback(() => {
+		const mockEvent = { preventDefault: () => {} } as any;
+		handleSubmit(mockEvent);
+	}, []);
 
 	return (
 		<ModalLayout onClose={handleClose} wrapperClassName="w-full">
@@ -76,20 +101,13 @@ export const TransferToken: FC<IProps> = ({ token, handleClose }) => {
 					</View>
 				</View>
 
-				<Pressable
-					className={`py-4 px-8 mt-8 w-full rounded-full items-center justify-center ${
-						hasInsufficientBalance ? "bg-buttonDisabled" : "bg-buttonPrimaryLight"
-					}`}
-					onPress={() => {
-						const mockEvent = { preventDefault: () => {} } as any;
-						handleSubmit(mockEvent);
-					}}
-					disabled={isLoading || Number(amount) <= 0 || !receiverAddress || hasInsufficientBalance}
-				>
-					<Text className="text-textBlack text-base font-bold text-center">
-						{hasInsufficientBalance ? "Insufficient Fund" : "Transfer"}
-					</Text>
-				</Pressable>
+				<TransferButton
+					hasInsufficientBalance={hasInsufficientBalance}
+					isLoading={isLoading}
+					amount={amount}
+					receiverAddress={receiverAddress}
+					onPress={onPress}
+				/>
 			</View>
 		</ModalLayout>
 	);

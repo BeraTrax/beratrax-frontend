@@ -9,6 +9,9 @@ export type Web3AuthConnectorOptions = {
 		loginProvider: string;
 		redirectUrl?: string;
 		mfaLevel?: "default" | "optional" | "mandatory" | "none";
+		extraLoginOptions?: {
+			login_hint?: string;
+		};
 	};
 };
 

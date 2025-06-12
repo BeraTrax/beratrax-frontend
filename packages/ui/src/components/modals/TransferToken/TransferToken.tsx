@@ -57,7 +57,7 @@ export const TransferToken: FC<IProps> = ({ token, handleClose }) => {
 	}, []);
 
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-full">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
 			<View className="w-full flex flex-col justify-center items-center">
 				<Text className="text-base text-center text-textWhite mb-4 font-medium">Transfer {token.name}</Text>
 

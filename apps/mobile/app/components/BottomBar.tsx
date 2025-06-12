@@ -44,7 +44,7 @@ const BottomBar = ({ tabOptions }: BottomBarProps) => {
 	const handleNavigation = (route: string, target?: string) => {
 		// Similar to the web version's handleNavigation
 		if (target === "noop") return;
-		router.push(route);
+		router.replace(route);
 	};
 
 	return (

@@ -96,11 +96,7 @@ const ExchangeButton = memo(({ onPress }: { onPress: () => void }) => {
 		[]
 	);
 
-	return (
-		<Pressable onPress={onPress}>
-			{ExchangeIcon}
-		</Pressable>
-	);
+	return <Pressable onPress={onPress}>{ExchangeIcon}</Pressable>;
 });
 
 const DepositButton = memo(
@@ -151,11 +147,7 @@ const DepositButton = memo(
 			[disabled, buttonClasses, buttonText]
 		);
 
-		return (
-			<Pressable onPress={onPress}>
-				{ButtonText}
-			</Pressable>
-		);
+		return <Pressable onPress={onPress}>{ButtonText}</Pressable>;
 	}
 );
 

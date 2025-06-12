@@ -19,7 +19,7 @@ export function FarmView() {
 	const renderHeader = useCallback(
 		() => (
 			<>
-				<BackButton onClick={() => router.back()} />
+				<BackButton onClick={() => router.replace("/")} />
 
 				{/* Heading */}
 				<View className="mt-4">

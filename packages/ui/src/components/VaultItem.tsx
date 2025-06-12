@@ -11,6 +11,8 @@ import { approveErc20 } from "@beratrax/core/src/api/token";
 import { Vault } from "@beratrax/core/src/types";
 import FarmRowChip from "./FarmItem/components/FarmRowChip/FarmRowChip";
 import { useRouter } from "expo-router";
+import { useAppDispatch } from "@beratrax/core/src";
+import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
 
 interface VaultItemProps {
 	vault: Vault;
@@ -24,6 +26,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	// const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
 	const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
 	const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
+	const dispatch = useAppDispatch();
 	const { data: txHistory } = useFarmTransactions(vault.id, 1);
 	const lastTransaction = useMemo(() => {
 		if (!txHistory) return null;
@@ -202,9 +205,10 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 
 	const handleClick = (e: any) => {
 		// Check if router is initialized properly
+		dispatch(setLastVisitedPage("/"));
 		if (router) {
 			try {
-				router.push({
+				router.replace({
 					pathname: "/Earn/[vaultAddr]",
 					params: { vaultAddr: vault.vault_addr },
 				});
@@ -221,7 +225,6 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const handlePress = useCallback((e: GestureResponderEvent) => {
 		handleClick(e);
 	}, []);
-
 
 	const pressableChildren = useMemo(
 		() => (
@@ -431,7 +434,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 				)}
 			</>
 		),
-		[]
+		[earningsUsd]
 	);
 
 	return (

@@ -30,7 +30,7 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 	};
 
 	return (
-		<ModalLayout onClose={handleClose} className={`${styles.container}`} style={{ zIndex: 20 }} wrapperClassName="lg:w-full">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
 			<View className="w-full mb-4">
 				<View className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
 					<Text className="text-2xl font-bold text-center text-textWhite">Important Notice!</Text>

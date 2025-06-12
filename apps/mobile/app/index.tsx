@@ -6,6 +6,7 @@ import { ScrollView, View, Text } from "react-native";
 import { lazy, Suspense } from "react";
 import { WalletAndEarnings, EmptyComponent } from "@beratrax/ui";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
+import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 
 // Lazy load components
 const PointsEarnings = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.PointsEarnings })));
@@ -20,7 +21,9 @@ const Dashboard = () => {
 	return (
 		<ScrollView>
 			<View className="overflow-auto font-arame-mono" id="dashboard">
-				<WalletAndEarnings connectWallet={connectWallet} />
+				<WalletAndEarnings
+					connectWallet={connectWallet as (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER], email?: string) => Promise<void>}
+				/>
 				<View className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 					{currentWallet ? (
 						<>

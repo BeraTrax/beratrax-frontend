@@ -23,7 +23,7 @@ export const ExportPublicKey: FC<IProps> = ({ setOpenModal }) => {
 	return (
 		<ModalLayout
 			onClose={() => setOpenModal(false)}
-			className={"p-14 h-m-[330px] block text-center gap-7 tablet:w-[initial] tablet:flex tablet:items-center "}
+			wrapperClassName="w-[400px]"
 		>
 			<View className="tablet:text-left">
 				<View className="mb-5">

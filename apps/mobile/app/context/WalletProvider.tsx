@@ -7,8 +7,12 @@ import { EstimateTxGasArgs, IClients } from "@beratrax/core/src/types";
 import { trackTransaction } from "@beratrax/core/src/utils/analytics";
 import type { Config } from "@wagmi/core";
 import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
-import Web3Auth from "@web3auth/react-native-sdk";
-import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
+import Web3Auth, { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
+import {
+	initWeb3Auth as initWeb3AuthMobile,
+	web3auth as web3authInstance,
+	createMobileWalletConfig,
+} from "@beratrax/mobile/config/mobileWalletConfig";
 
 export interface IWalletContext {
 	currentWallet?: Address;
@@ -22,7 +26,7 @@ export interface IWalletContext {
 	getClients: (chainId: number) => Promise<IClients>;
 	estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
 	connector?: Connector;
-	connectWallet: () => Promise<void>;
+	connectWallet: (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER]) => Promise<void>;
 }
 
 export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
@@ -35,7 +39,14 @@ interface IProps {
 	logoutWeb3Auth?: () => Promise<void>;
 }
 
-const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthPk, isWeb3AuthConnected, logoutWeb3Auth }) => {
+const WalletProvider: React.FC<IProps> = ({
+	children,
+	walletConfig: initialWalletConfig,
+	getWeb3AuthPk,
+	isWeb3AuthConnected,
+	logoutWeb3Auth,
+}) => {
+	const [walletConfig, setWalletConfig] = useState<Config>(initialWalletConfig);
 	const { data: getWalletClientHook } = useWalletClient({
 		config: walletConfig,
 	});
@@ -97,23 +108,31 @@ const WalletProvider: React.FC<IProps> = ({ children, walletConfig, getWeb3AuthP
 	}, []);
 
 	// Login function
-	const connectWallet = useCallback(async () => {
-		try {
-			console.log("connectWallet clicked");
-			setIsConnecting(true);
-			const { accounts, chainId } = await connectAsync({
-				connector: wagmiConnector,
-			});
+	const connectWallet = useCallback(
+		async (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER], email?: string) => {
+			try {
+				console.log("connectWallet clicked");
+				setIsConnecting(true);
 
-			setCurrentWallet(accounts[0]);
-			setIsSocial(true);
-		} catch (error) {
-			console.error("Login error:", error);
-			throw error;
-		} finally {
-			setIsConnecting(false);
-		}
-	}, [connectAsync, wagmiConnector]);
+				// Create new config with the selected provider
+				const newConfig = createMobileWalletConfig(email, provider);
+				setWalletConfig(newConfig);
+
+				const { accounts } = await connectAsync({
+					connector: newConfig.connectors[0],
+				});
+
+				setCurrentWallet(accounts[0]);
+				setIsSocial(true);
+			} catch (error) {
+				console.error("Login error:", error);
+				throw error;
+			} finally {
+				setIsConnecting(false);
+			}
+		},
+		[connectAsync]
+	);
 
 	// Set a timeout for reconnecting to prevent infinite reconnection attempts
 	useEffect(() => {

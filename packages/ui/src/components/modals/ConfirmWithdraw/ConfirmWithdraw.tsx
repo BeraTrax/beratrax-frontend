@@ -8,7 +8,7 @@ interface IProps {
 }
 export const ConfirmWithdraw: FC<IProps> = ({ handleClose, handleSubmit }) => {
 	return (
-		<ModalLayout onClose={handleClose} style={{ borderColor: "var(--new-border_dark)" }} wrapperClassName="w-full lg:w-[92%]">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
 			<View className={"text-center tablet:w-full flex flex-col items-center justify-center width-[50%]"}>
 				<Text className="text-textWhite text-2xl font-bold pb-4">Confirm Withdraw</Text>
 				<Text className={"text-center tablet:text-base mobile:text-sm text-xl text-textWhite"}>

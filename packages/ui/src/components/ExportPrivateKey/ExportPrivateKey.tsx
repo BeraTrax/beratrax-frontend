@@ -32,7 +32,7 @@ export const ExportPrivateKey: FC<IProps> = ({ setOpenModal }) => {
 	};
 
 	return (
-		<ModalLayout onClose={() => setOpenModal(false)}>
+		<ModalLayout onClose={() => setOpenModal(false)} wrapperClassName="w-[400px]">
 			<View>
 				<View className="flex-row items-center gap-2 mb-4">
 					<WarningIcon color="red" size={40} />

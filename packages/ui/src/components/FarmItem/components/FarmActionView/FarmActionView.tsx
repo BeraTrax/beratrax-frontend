@@ -43,6 +43,7 @@ const ActionButton = memo(
 
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const dispatch = useAppDispatch();
+	const { lastVisitedPage } = useAppSelector((state) => state.account);
 	const { currentWallet, isConnecting } = useWallet();
 	const { openConnectModal } = useConnectModal();
 	const { apy: farmApys } = useFarmApy(farm);
@@ -94,7 +95,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 			window.history.back();
 		} else {
 			// Use router.back() on mobile
-			router.back();
+			router.replace(lastVisitedPage || "/Earn");
 		}
 	};
 

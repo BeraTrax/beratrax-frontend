@@ -45,7 +45,7 @@ export const SlippageNotCalculate: FC<IProps> = ({ handleClose, handleSubmit }) 
 	}, [handleSubmit, handleClose]);
 
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-full lg:w-[92%]">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
 			<View className="tablet:w-full flex flex-col gap-4 items-center justify-center width-[540px]">
 				<Image src={errorIcon} alt="error" className="mt-4 mb-2 tablet:mt-1" />
 				<Text className="text-center tablet:text-base mobile:text-sm text-xl text-textSecondary ">

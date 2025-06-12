@@ -222,6 +222,9 @@ const accountSlice = createSlice({
 		reset: (state: StateInterface) => {
 			return { ...initialState, referrerCode: state.referrerCode, refCodeLoaded: state.refCodeLoaded };
 		},
+		setLastVisitedPage: (state: StateInterface, action: { payload: string }) => {
+			state.lastVisitedPage = action.payload;
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(getReferralEarning.fulfilled, (state, action) => {
@@ -248,6 +251,6 @@ const accountSlice = createSlice({
 	},
 });
 
-export const { updateAccountField, reset } = accountSlice.actions;
+export const { updateAccountField, reset, setLastVisitedPage } = accountSlice.actions;
 
 export default accountSlice.reducer;

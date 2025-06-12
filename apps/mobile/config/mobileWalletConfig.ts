@@ -1,7 +1,7 @@
 import { Chain, createWalletClient, CustomTransport, http, JsonRpcAccount, LocalAccount, PublicClient, Transport } from "viem";
 import { chains } from "@beratrax/core/src/config/baseWalletConfig";
 import * as Linking from "expo-linking";
-import Web3Auth, { WEB3AUTH_NETWORK, ChainNamespace } from "@web3auth/react-native-sdk";
+import Web3Auth, { WEB3AUTH_NETWORK, ChainNamespace, LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
@@ -80,28 +80,42 @@ export const logoutWeb3Auth = async (): Promise<void> => {
 };
 
 // Create the connector for Wagmi
-// Note that Web3AuthConnector returns a createConnector result,
-// so we don't need to pass it to another createConnector function
-const web3AuthConnector = Web3AuthConnector({
-	web3AuthInstance: web3auth,
-	loginParams: {
-		redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
-		mfaLevel: "default",
-		loginProvider: "google", // Default provider - can be changed at login time
-	},
-});
+const createWeb3AuthConnector = (
+	email?: string,
+	provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER] = LOGIN_PROVIDER.GOOGLE
+) => {
+	return Web3AuthConnector({
+		web3AuthInstance: web3auth,
+		loginParams: {
+			redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+			mfaLevel: "default",
+			loginProvider: provider,
+			extraLoginOptions: {
+				login_hint: email,
+			},
+		},
+	});
+};
 
 // Create Wagmi config with Web3Auth connector
-export const mobileWalletConfig = createConfig({
-	chains,
-	connectors: [web3AuthConnector],
-	transports: chains.reduce<Record<number, Transport>>((acc, chain) => {
-		return {
-			...acc,
-			[chain.id]: http(chain.rpcUrls.default.http[0]),
-		};
-	}, {}),
-});
+export const createMobileWalletConfig = (
+	email?: string,
+	provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER] = LOGIN_PROVIDER.GOOGLE
+) => {
+	return createConfig({
+		chains,
+		connectors: [createWeb3AuthConnector(email, provider)],
+		transports: chains.reduce<Record<number, Transport>>((acc, chain) => {
+			return {
+				...acc,
+				[chain.id]: http(chain.rpcUrls.default.http[0]),
+			};
+		}, {}),
+	});
+};
+
+// Export the default config for initial setup
+export const mobileWalletConfig = createMobileWalletConfig();
 
 export interface IClients {
 	wallet: ReturnType<typeof createWalletClient<CustomTransport | Transport, Chain, JsonRpcAccount | LocalAccount, undefined>>;

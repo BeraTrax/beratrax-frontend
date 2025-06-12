@@ -37,10 +37,12 @@ import { GradientText } from "./GradientText";
 import { PowerIcon, CopyIcon, KeysIcon, QrcodeIcon } from "../icons";
 import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
 import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
+import { LoginModal } from "@beratrax/mobile/components/LoginModal";
+import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 interface WalletAndEarningsProps {
-	connectWallet: () => void;
+	connectWallet?: (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER], email?: string) => Promise<void>;
 }
 
 const ExportPrivateKeyButton = memo(({ onPress }: { onPress: () => void }) => (
@@ -124,6 +126,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 	const [congModel, setCongModel] = useState(false);
 	const [openTermsOfUseModal, setOpenTermsOfUseModal] = useState<boolean | null>(null);
 	const [showExportKeysTooltip, setShowExportKeysTooltip] = useState(false);
+	const [showLoginModal, setShowLoginModal] = useState(false);
 
 	const [isClaimingBtx, setIsClaimingBtx] = useState(false);
 	const [hasClaimedBtx, setHasClaimedBtx] = useState(true);
@@ -247,9 +250,9 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 		if (Platform.OS === "web" && openConnectModal) {
 			openConnectModal();
 		} else {
-			connectWallet();
+			setShowLoginModal(true);
 		}
-	}, [Platform.OS, openConnectModal, connectWallet]);
+	}, [Platform.OS, openConnectModal]);
 
 	const connectButtonText = useMemo(
 		() => <Text className="text-white font-medium font-league-spartan">{isConnecting ? "Connecting..." : "Sign In/Up"}</Text>,
@@ -409,6 +412,9 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 
 			{openPrivateKeyModal ? <ExportPrivateKey setOpenModal={setOpenPrivateKeyModal} /> : null}
 			{openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null}
+
+			{/* Login Modal */}
+			{connectWallet && <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />}
 		</View>
 	);
 };

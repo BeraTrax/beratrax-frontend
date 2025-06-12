@@ -25,6 +25,7 @@ export interface StateInterface {
 	xFollower?: boolean;
 	disableZapWarning?: boolean;
 	error?: string | null;
+	lastVisitedPage?: string;
 }
 
 export interface AccountResponse {

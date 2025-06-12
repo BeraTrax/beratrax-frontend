@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { View, TouchableWithoutFeedback, StyleSheet, Modal } from "react-native";
 import { BlurView } from "expo-blur";
 import { twMerge } from "tailwind-merge";
@@ -10,6 +10,25 @@ interface IProps {
 }
 
 export const ModalLayout: FC<IProps> = ({ onClose, children, wrapperClassName = "w-full" }) => {
+	const [isVisible, setIsVisible] = useState(false);
+
+	useEffect(() => {
+		// Small delay to ensure previous modal is fully unmounted
+		const timer = setTimeout(() => {
+			setIsVisible(true);
+		}, 50);
+
+		return () => {
+			clearTimeout(timer);
+			setIsVisible(false);
+		};
+	}, []);
+
+	const handleClose = () => {
+		setIsVisible(false);
+		onClose();
+	};
+
 	const containerClass = twMerge("shadow-lg text-white", wrapperClassName);
 
 	const containerStyle = {
@@ -21,8 +40,8 @@ export const ModalLayout: FC<IProps> = ({ onClose, children, wrapperClassName = 
 	};
 
 	return (
-		<Modal transparent visible animationType="fade" onRequestClose={() => onClose()}>
-			<TouchableWithoutFeedback onPress={() => onClose()}>
+		<Modal transparent visible={isVisible} onRequestClose={handleClose}>
+			<TouchableWithoutFeedback onPress={handleClose}>
 				<BlurView
 					intensity={30}
 					tint="dark"

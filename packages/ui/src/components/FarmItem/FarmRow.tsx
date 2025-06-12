@@ -1,7 +1,6 @@
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
-import { useApp, useTrax } from "@beratrax/core/src/hooks";
-import React, { useEffect, useMemo, useState } from "react";
-import { Image, View, Pressable, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, View, Text, TouchableOpacity } from "react-native";
 import { InfoIcon } from "ui/src/icons/Infoicon";
 import { useRouter, Link } from "expo-router";
 // import { Tooltip } from "react-tooltip";
@@ -13,6 +12,7 @@ import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";
+import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
 
 interface Props {
 	farm: PoolDef;
@@ -20,8 +20,7 @@ interface Props {
 	setOpenedFarm: Function;
 }
 
-const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
-	const { lightMode } = useApp();
+const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 	const [dropDown, setDropDown] = useState(false);
 	const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 	const { farmDetails, isLoading: isFarmLoading } = useFarmDetails();
@@ -29,23 +28,15 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 	const isLoading = isFarmLoading || isApyLoading;
 	const key = uuid();
 	const key2 = uuid();
-	const key3 = uuid();
-	const key4 = uuid();
 	const dispatch = useAppDispatch();
-	const { getTraxApy } = useTrax();
 	const showVaultsWithFunds = useAppSelector((state) => state.settings.showVaultsWithFunds);
-	const estimateTrax = useMemo(() => getTraxApy(farm.vault_addr), [getTraxApy, farm]);
-	// const navigate = useNavigate();
 	const router = useRouter();
-	const handleNavigation = (route: string, target?: string) => {
-		if (target) window.open(route, target);
-		else router.push(route);
-	};
 	const handleClick = (e: any) => {
 		// Check if router is initialized properly
+		dispatch(setLastVisitedPage("/Earn"));
 		if (router) {
 			try {
-				router.push({
+				router.replace({
 					pathname: "/Earn/[vaultAddr]",
 					params: { vaultAddr: farm.vault_addr },
 				});
@@ -64,7 +55,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 		// if(!dropDown && openedFarm === farm?.id) setOpenedFarm(undefined)
 	}, [openedFarm, dropDown, farm?.id]);
 
-	if (isLoading) return <FarmRowSkeleton farm={farm} lightMode={lightMode} />;
+	if (isLoading) return <FarmRowSkeleton farm={farm} />;
 
 	if (showVaultsWithFunds && parseFloat(farmData?.withdrawableAmounts[0].amountDollar || "0") < 0.01) return null;
 
@@ -77,8 +68,8 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 
 	return (
 		<View className={isHighlighted ? `relative p-[2px] rounded-3xl ${styles.gradientAnimation}` : `relative rounded-3xl bg-bgDark`}>
-			<Pressable
-				onPress={(e) => {
+			<TouchableOpacity
+				onPress={(e: any) => {
 					if (!farm.isUpcoming) {
 						e.preventDefault?.();
 						handleClick(e);
@@ -215,18 +206,16 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 					{/* This is your dropdown, if any */}
 					{dropDown && <DropDownView farm={farm} />}
 				</View>
-			</Pressable>
+			</TouchableOpacity>
 		</View>
 	);
 };
 
 export default React.memo(FarmRow);
 
-const FarmRowSkeleton = ({ farm, lightMode }: { farm: PoolDef; lightMode: boolean }) => {
+const FarmRowSkeleton = ({ farm }: { farm: PoolDef }) => {
 	const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 	const key = uuid();
-	const { farmDetails, isLoading: isFarmLoading } = useFarmDetails();
-	const farmData = farmDetails[farm.id];
 
 	return (
 		<View>

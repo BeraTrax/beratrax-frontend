@@ -10,7 +10,7 @@ export default function OnChainKitProvider(props: { children: ReactNode }) {
         apiKey={import.meta.env.REACT_APP_ONCHAINKIT_API_KEY}
         projectId={import.meta.env.REACT_APP_CDP_PROJECT_ID}
         chain={berachain}
-        address={address}
+        // address={address}
     >
         {props.children}
     </OnchainKitProvider>

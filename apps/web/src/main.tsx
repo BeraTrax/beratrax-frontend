@@ -39,14 +39,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
                 <NotificationsProvider>
-                    <OnChainKitProvider>
                     <AppProvider>
                         <App />
                     </AppProvider>
-                    </OnChainKitProvider>
                     <Notifications />
                 </NotificationsProvider>
             </PersistGate>
         </Provider>
     </React.StrictMode>
 );
+

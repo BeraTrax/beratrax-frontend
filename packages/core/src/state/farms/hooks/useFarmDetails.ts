@@ -8,7 +8,8 @@ import useFarms from "./useFarms";
 
 const useFarmDetails = () => {
 	const { farms } = useFarms();
-	const { balances, isBalancesFetched, isBalancesLoading, decimals, totalSupplies } = useTokens();
+	const { balances, isBalancesFetched, isBalancesLoading, decimals, totalSupplies, isDecimalsFetched, isTotalSuppliesFetched } =
+		useTokens();
 	const { prices, isPricesFetched, isPricesLoading } = useTokens();
 	const {
 		isLoading,
@@ -26,7 +27,7 @@ const useFarmDetails = () => {
 	const dispatch = useAppDispatch();
 
 	const reloadFarmData = useCallback(async () => {
-		if (isBalancesFetched && isPricesFetched && currentWallet) {
+		if (isBalancesFetched && isPricesFetched && isDecimalsFetched && isTotalSuppliesFetched && currentWallet) {
 			await dispatch(updateFarmDetails({ farms, totalSupplies, currentWallet, balances, prices, decimals, getPublicClient }));
 			await dispatch(
 				updateEarnings({
@@ -40,7 +41,19 @@ const useFarmDetails = () => {
 				})
 			);
 		}
-	}, [farms, dispatch, currentWallet, balances, prices, decimals, isBalancesFetched, isPricesFetched, totalSupplies]);
+	}, [
+		farms,
+		dispatch,
+		currentWallet,
+		balances,
+		prices,
+		decimals,
+		isBalancesFetched,
+		isPricesFetched,
+		isDecimalsFetched,
+		isTotalSuppliesFetched,
+		totalSupplies,
+	]);
 
 	const reloadVaultEarnings = useCallback(async () => {
 		if (currentWallet) {

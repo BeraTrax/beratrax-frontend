@@ -1,21 +1,20 @@
 import axios from "axios";
 import { createPublicClient, getContract, http, PublicClient } from "viem";
 import { berachain } from "viem/chains";
-import vaultAbi from "./../assets/abis/vault.json";
+import vaultAbi from "@beratrax/core/src/assets/abis/vault.json";
 import {
 	EARNINGS_GRAPH_URL,
 	STEER_PROTOCOL_EARNINGS_GRAPH_URL,
 	KODIAK_EARNINGS_GRAPH_URL,
 	BURRBEAR_EARNINGS_GRAPH_URL,
-} from "./../config/constants";
-import pools_json from "./../config/constants/pools_json";
-import store from "./../state";
-import { VaultEarnings } from "./../state/farms/types";
-import { CHAIN_ID, FarmOriginPlatform } from "./../types/enums";
-import { toEth, toWei } from "./../utils/common";
-import { getPricesByTime } from "./token";
+} from "@beratrax/core/src/config/constants";
+import pools_json, { activePoolIdsOfAllPlatforms } from "@beratrax/core/src/config/constants/pools_json";
+import store from "@beratrax/core/src/state";
+import { VaultEarnings } from "@beratrax/core/src/state/farms/types";
+import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
+import { toEth, toWei } from "@beratrax/core/src/utils/common";
+import { getPricesByTime } from "@beratrax/core/src/api/token";
 import { getApyByTime } from "@beratrax/core/src/api/stats";
-
 interface Response {
 	deposit: string;
 	vaultAddress: string;
@@ -81,30 +80,21 @@ export const getEarnings = async (userAddress: string) => {
 	}
 };
 
-const fetchAllTransactions = async (query: string, variables: any) => {
-	let allResults: any[] = [];
-	let hasMore = true;
+// @notice: for now, it is only possible to fetch 1000 transactions at a time
+// no support for next page
+const fetchAllTransactions = async (query: string, variables = {}) => {
 	let skip = 0;
 	const pageSize = 1000;
 
-	while (hasMore) {
-		const response = await axios.post(EARNINGS_GRAPH_URL, {
-			query,
-			variables: {
-				...variables,
-				first: pageSize,
-				skip,
-			},
-		});
-
-		const results = response.data.data[query.includes("deposits") ? "deposits" : "withdraws"];
-		allResults = [...allResults, ...results];
-
-		hasMore = results.length === pageSize;
-		skip += pageSize;
-	}
-
-	return allResults;
+	const response = await axios.post(EARNINGS_GRAPH_URL, {
+		query,
+		variables: {
+			...variables,
+			first: pageSize,
+			skip,
+		},
+	});
+	return response.data.data as Record<keyof typeof FarmOriginPlatform | "iBERA", Record<string, any>[]>;
 };
 
 export const getEarningsForPlatforms = async (userAddress: string) => {
@@ -113,78 +103,21 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 			chain: berachain,
 			transport: http(),
 		});
+		const earningsSubgraphQuery = prepareSubgraphQuery(activePoolIdsOfAllPlatforms);
 
-		const state = store.getState();
-		const balances = state.tokens.balances;
+		const balances = store.getState().tokens.balances;
 
-		const depositsQuery = `
-        query GetUserDeposits($first: Int!, $skip: Int!) {
-          deposits(
-            first: $first
-            skip: $skip
-            where: { from: "${userAddress.toLowerCase()}" }
-            orderBy: blockTimestamp
-            orderDirection: desc
-          ) {
-            id
-            tokenId
-            tokenName
-            platformName
-            from
-            value
-            shares
-            userBalance
-            blockTimestamp
-            blockNumber
-            userAssetBalance
-          }
-        }`;
+		const transactionsByPlatform = await fetchAllTransactions(earningsSubgraphQuery, { userAddress: userAddress.toLowerCase() });
 
-		const withdrawsQuery = `
-        query GetUserWithdraws($first: Int!, $skip: Int!) {
-          withdraws(
-            first: $first
-            skip: $skip
-            where: { from: "${userAddress.toLowerCase()}" }
-            orderBy: blockTimestamp
-            orderDirection: desc
-          ) {
-            id
-            tokenId
-            tokenName
-            platformName
-            from
-            value
-            shares
-            userBalance
-            blockTimestamp
-            blockNumber
-            userAssetBalance
-          }
-        }`;
+		const [infraredEarnings, steerEarnings, kodiakEarnings, burrbearEarnings, iberaEarnings, berapawEarnings] = await Promise.all([
+			getEarningsForInfrared(transactionsByPlatform.Infrared, client, balances),
+			getEarningsForSteer(transactionsByPlatform.Steer, client, balances),
+			getEarningsForKodiak([...transactionsByPlatform.Kodiak, ...transactionsByPlatform.BeraPaw], client, balances),
+			getEarningsForBurrbear(transactionsByPlatform.Burrbear, client, balances),
+			calculateIBeraEarnings(transactionsByPlatform.iBERA),
+			calculateBerapawEarnings(transactionsByPlatform.BeraPaw),
+		]);
 
-		const [deposits, withdraws] = await Promise.all([fetchAllTransactions(depositsQuery, {}), fetchAllTransactions(withdrawsQuery, {})]);
-
-		// Add type field to each deposit and withdrawal object
-		const depositsWithType = deposits.map((deposit: any) => ({
-			...deposit,
-			type: "deposit",
-		}));
-
-		const withdrawsWithType = withdraws.map((withdraw: any) => ({
-			...withdraw,
-			type: "withdraw",
-		}));
-
-		// Concatenate the arrays
-		const combinedTransactions = [...depositsWithType, ...withdrawsWithType];
-
-		const burrbearEarnings = await getEarningsForBurrbear(combinedTransactions, client, balances);
-		const infraredEarnings = await getEarningsForInfrared(combinedTransactions, client, balances);
-		const steerEarnings = await getEarningsForSteer(combinedTransactions, client, balances);
-		const kodiakEarnings = await getEarningsForKodiak(combinedTransactions, client, balances);
-		const iberaEarnings = await calculateIBeraEarnings(combinedTransactions);
-		const berapawEarnings = await calculateBerapawEarnings(combinedTransactions);
 		return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings, iberaEarnings, ...berapawEarnings];
 	} catch (err: any) {
 		console.error(err);
@@ -192,12 +125,11 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 	}
 };
 
-const getEarningsForInfrared = async (combinedTransactions: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+const getEarningsForInfrared = async (infraredPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
+		const infraredPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Infrared];
 		const infraredPools = pools_json
-			.filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
-			.filter((pool) => pool.originPlatform === FarmOriginPlatform.Infrared)
-			.filter((pool) => pool.id !== 42)
+			.filter((pool) => infraredPoolIds.includes(pool.id))
 			.map((pool) => ({
 				vault_addr: pool.vault_addr,
 				lp_addr: pool.lp_address,
@@ -205,15 +137,31 @@ const getEarningsForInfrared = async (combinedTransactions: any, client: PublicC
 				farmId: pool.id,
 			}));
 
+		let filteredTransactions: any[] = [];
+		let remainings = infraredPoolsTxs;
+
 		const earnings = await Promise.all(
 			infraredPools.map(async (pool) => {
-				const filteredTransactions = combinedTransactions.filter((transaction: any) => pool.farmId.toString() === transaction.tokenId);
+				const picked = [];
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
 
-				// Sort the filtered transactions by blockTimestamp
-				const sortedTransactions = filteredTransactions.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+				remainings = filteredTransactions;
+				filteredTransactions = [];
 
 				// If no transactions, return zero earnings
-				if (sortedTransactions.length === 0) {
+				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
 						earnings0: "0",
@@ -221,18 +169,11 @@ const getEarningsForInfrared = async (combinedTransactions: any, client: PublicC
 					};
 				}
 
-				const lifetimeEarnings = await calculateLifetimeLpEarnings(sortedTransactions, pool.vault_addr, client, balances);
+				const { lifetimeEarnings, finalPositionAssets } = await calculateLifetimeLpEarnings(picked, pool.vault_addr, client, balances);
 
 				// Get only the last transaction
-				const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+				const lastTransaction = picked[picked.length - 1];
 				const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
-
-				const finalPositionAssets = await calculateFinalPositionAssets({
-					vault_addr: pool.vault_addr!,
-					client,
-					balances,
-					chainId: pool.chainId,
-				});
 
 				const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
@@ -263,11 +204,12 @@ const getEarningsForInfrared = async (combinedTransactions: any, client: PublicC
 	}
 };
 
-const getEarningsForSteer = async (combinedTransactions: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
+		const steerPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Steer];
+
 		const steerPools = pools_json
-			.filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
-			.filter((pool) => pool.originPlatform === FarmOriginPlatform.Steer)
+			.filter((pool) => steerPoolIds.includes(pool.id))
 			.map((pool) => {
 				// Extract vault address from source field (last part of URL)
 				const underlyingVault = pool.source.split("/").pop()?.toLowerCase() || "";
@@ -281,19 +223,34 @@ const getEarningsForSteer = async (combinedTransactions: any, client: PublicClie
 				};
 			});
 
+		let filteredTransactions: any[] = [];
+		let remainings = steerPoolsTxs;
+
 		const earnings = await Promise.all(
 			steerPools.map(async (pool) => {
+				const picked = [];
 				let token0 = "";
 				let token1 = "";
-				const filteredTransactions = combinedTransactions.filter((transaction: any) => {
-					return pool.farmId.toString() === transaction.tokenId;
-				});
 
-				// Sort the filtered transactions by blockTimestamp
-				const sortedTransactions = filteredTransactions.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
+
+				remainings = filteredTransactions;
+				filteredTransactions = [];
 
 				// If no transactions, return zero earnings
-				if (sortedTransactions.length === 0) {
+				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
 						earnings0: "0",
@@ -304,7 +261,7 @@ const getEarningsForSteer = async (combinedTransactions: any, client: PublicClie
 				}
 
 				// Get only the last transaction
-				const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+				const lastTransaction = picked[picked.length - 1];
 
 				// Get the fee data at the time of the last transaction
 				const lastFeeQuery = `
@@ -407,16 +364,18 @@ const getEarningsForSteer = async (combinedTransactions: any, client: PublicClie
 	}
 };
 
-const getEarningsForKodiak = async (combinedTransactions: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
+		// Although no need to check for berapaw, since initially kodiak pools have the berapaw ids.
+		// see file://pools_json.js → GetActivePoolIdsOfAllPlatforms()
+		const kodiakPoolsIds = [
+			...activePoolIdsOfAllPlatforms[FarmOriginPlatform.Kodiak],
+			// ...activePoolIdsOfAllPlatforms[FarmOriginPlatform.BeraPaw],
+		];
+
 		const kodiakPools = pools_json
-			.filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
-			.filter(
-				(pool) =>
-					(pool.originPlatform === FarmOriginPlatform.Kodiak || pool.originPlatform === FarmOriginPlatform.BeraPaw) &&
-					pool.id !== 43 &&
-					pool.id !== 44
-			)
+			.filter((pool) => kodiakPoolsIds.includes(pool.id))
+			.filter((pool) => pool.id !== 43 && pool.id !== 44)
 			.map((pool) => {
 				const underlyingVault = pool.source.match(/pools\/([^/?]+)/)?.[1];
 				if (!underlyingVault) {
@@ -431,16 +390,33 @@ const getEarningsForKodiak = async (combinedTransactions: any, client: PublicCli
 					underlyingVault,
 				};
 			});
+		let filteredTransactions: any[] = [];
+		let remainings = kodiakAndBerapawTxs;
 
 		const earnings = await Promise.all(
 			kodiakPools.map(async (pool) => {
-				const filteredTransactions = combinedTransactions.filter((transaction: any) => pool.farmId.toString() === transaction.tokenId);
+				const picked = [];
 
-				// Sort the filtered transactions by blockTimestamp
-				const sortedTransactions = filteredTransactions.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
 
+				remainings = filteredTransactions;
+				filteredTransactions = [];
+
+				// @dev: no need for filteration, since these transactions are already sorted by blockTimestamp in the subgraph query
 				// If no transactions, return zero earnings
-				if (sortedTransactions.length === 0) {
+				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
 						earnings0: "0",
@@ -448,18 +424,11 @@ const getEarningsForKodiak = async (combinedTransactions: any, client: PublicCli
 					};
 				}
 
-				const lifetimeEarnings = await calculateLifetimeLpEarnings(sortedTransactions, pool.vault_addr, client, balances);
+				const { lifetimeEarnings, finalPositionAssets } = await calculateLifetimeLpEarnings(picked, pool.vault_addr, client, balances);
 
 				// Get only the last transaction
-				const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+				const lastTransaction = picked[picked.length - 1];
 				const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
-
-				const finalPositionAssets = await calculateFinalPositionAssets({
-					vault_addr: pool.vault_addr!,
-					client,
-					balances,
-					chainId: pool.chainId,
-				});
 
 				const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
@@ -545,11 +514,11 @@ const getEarningsForKodiak = async (combinedTransactions: any, client: PublicCli
 	}
 };
 
-const getEarningsForBurrbear = async (combinedTransactions: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
+		const burrbearPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Burrbear];
 		const burrbearPools = pools_json
-			.filter((pool) => !pool.isUpcoming && !pool.isDeprecated)
-			.filter((pool) => pool.originPlatform === FarmOriginPlatform.Burrbear)
+			.filter((pool) => burrbearPoolIds.includes(pool.id))
 			.map((pool) => {
 				const underlyingVault = pool.source.match(/pool\/([^/?#]+)/)?.[1] || "";
 
@@ -562,15 +531,29 @@ const getEarningsForBurrbear = async (combinedTransactions: any, client: PublicC
 				};
 			});
 
+		let filteredTransactions: any[] = [];
+		let remainings = burrbearPoolsTxs;
+
 		const earnings = await Promise.all(
 			burrbearPools.map(async (pool) => {
-				const filteredTransactions = combinedTransactions.filter((transaction: any) => pool.farmId.toString() === transaction.tokenId);
+				const picked = [];
 
-				// Sort the filtered transactions by blockTimestamp
-				const sortedTransactions = filteredTransactions.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
 
 				// If no transactions, return zero earnings
-				if (sortedTransactions.length === 0) {
+				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
 						earnings0: "0",
@@ -578,18 +561,11 @@ const getEarningsForBurrbear = async (combinedTransactions: any, client: PublicC
 					};
 				}
 
-				const lifetimeEarnings = await calculateLifetimeLpEarnings(sortedTransactions, pool.vault_addr, client, balances);
+				const { lifetimeEarnings, finalPositionAssets } = await calculateLifetimeLpEarnings(picked, pool.vault_addr, client, balances);
 
 				// Get only the last transaction
-				const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
+				const lastTransaction = picked[picked.length - 1];
 				const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
-
-				const finalPositionAssets = await calculateFinalPositionAssets({
-					vault_addr: pool.vault_addr!,
-					client,
-					balances,
-					chainId: pool.chainId,
-				});
 
 				const changeInAssets = finalPositionAssets - lastTransactionAssets;
 
@@ -685,7 +661,7 @@ const getEarningsForBurrbear = async (combinedTransactions: any, client: PublicC
 	}
 };
 
-export const calculateIBeraEarnings = async (combinedTransactions: any): Promise<VaultEarnings> => {
+const calculateIBeraEarnings = async (iberaPool42: any): Promise<VaultEarnings> => {
 	try {
 		const iberaPool = pools_json.find((pool) => pool.id === 42);
 		if (!iberaPool) {
@@ -698,11 +674,7 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
 			};
 		}
 
-		const filtered = combinedTransactions
-			.filter((tx: any) => tx.tokenId === "42")
-			.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
-
-		if (filtered.length === 0) {
+		if (iberaPool42.length === 0) {
 			return {
 				tokenId: "42",
 				earnings0: "0",
@@ -715,7 +687,7 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 
 		// Batch all timestamps for APY fetch
-		const timestamps = filtered.map((tx: any) => ({
+		const timestamps = iberaPool42.map((tx: any) => ({
 			address: iberaPool.vault_addr,
 			timestamp: Number(tx.blockTimestamp),
 			chainId: iberaPool.chainId,
@@ -726,9 +698,9 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
 		let totalEarnings = BigInt(0);
 		let lastEarnings = BigInt(0);
 
-		for (let i = 0; i < filtered.length; i++) {
-			const tx = filtered[i];
-			const nextTx = filtered[i + 1];
+		for (let i = 0; i < iberaPool42.length; i++) {
+			const tx = iberaPool42[i];
+			const nextTx = iberaPool42[i + 1];
 			const start = Number(tx.blockTimestamp);
 			const end = nextTx ? Number(nextTx.blockTimestamp) : currentTimestamp;
 			const timePeriod = end - start;
@@ -744,7 +716,7 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
 			const earnings = (userBalance * BigInt(apyPercent) * BigInt(Math.floor(timeInYears * 1e18))) / BigInt(1e36);
 
 			totalEarnings += earnings;
-			if (i === filtered.length - 1) {
+			if (i === iberaPool42.length - 1) {
 				lastEarnings = earnings;
 			}
 		}
@@ -767,19 +739,37 @@ export const calculateIBeraEarnings = async (combinedTransactions: any): Promise
 	}
 };
 
-export const calculateBerapawEarnings = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+const calculateBerapawEarnings = async (berapawPoolsTxs: any): Promise<VaultEarnings[]> => {
 	try {
 		const berapawPools = pools_json.filter(
 			(pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw && pool.secondary_platform === undefined
 		);
 
+		let filteredTransactions: any[] = [];
+		let remainings = berapawPoolsTxs;
+
 		const earnings = await Promise.all(
 			berapawPools.map(async (pool) => {
-				const filtered = combinedTransactions
-					.filter((tx: any) => tx.tokenId === pool.id.toString())
-					.sort((a: any, b: any) => Number(a.blockTimestamp) - Number(b.blockTimestamp));
+				const picked = [];
 
-				if (filtered.length === 0) {
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.id.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
+
+				remainings = filteredTransactions;
+				filteredTransactions = [];
+
+				if (picked.length === 0) {
 					return {
 						tokenId: pool.id.toString(),
 						earnings0: "0",
@@ -792,7 +782,7 @@ export const calculateBerapawEarnings = async (combinedTransactions: any): Promi
 				const currentTimestamp = Math.floor(Date.now() / 1000);
 
 				// Batch all timestamps for APY fetch
-				const timestamps = filtered.map((tx: any) => ({
+				const timestamps = picked.map((tx: any) => ({
 					address: pool.vault_addr,
 					timestamp: Number(tx.blockTimestamp),
 					chainId: pool.chainId,
@@ -802,9 +792,9 @@ export const calculateBerapawEarnings = async (combinedTransactions: any): Promi
 				let totalEarnings = BigInt(0);
 				let lastEarnings = BigInt(0);
 
-				for (let i = 0; i < filtered.length; i++) {
-					const tx = filtered[i];
-					const nextTx = filtered[i + 1];
+				for (let i = 0; i < picked.length; i++) {
+					const tx = picked[i];
+					const nextTx = picked[i + 1];
 					const start = Number(tx.blockTimestamp);
 					const end = nextTx ? Number(nextTx.blockTimestamp) : currentTimestamp;
 					const timePeriod = end - start;
@@ -820,7 +810,7 @@ export const calculateBerapawEarnings = async (combinedTransactions: any): Promi
 					const earnings = (userBalance * BigInt(apyPercent) * BigInt(Math.floor(timeInYears * 1e18))) / BigInt(1e36);
 
 					totalEarnings += earnings;
-					if (i === filtered.length - 1) {
+					if (i === picked.length - 1) {
 						lastEarnings = earnings;
 					}
 				}
@@ -845,8 +835,8 @@ const calculateLifetimeLpEarnings = async (
 	vault_addr: string,
 	client: PublicClient,
 	balances: any
-): Promise<bigint> => {
-	if (!transactions || transactions.length === 0) return BigInt(0);
+): Promise<{ lifetimeEarnings: bigint; finalPositionAssets: bigint }> => {
+	if (!transactions || transactions.length === 0) return { lifetimeEarnings: BigInt(0), finalPositionAssets: BigInt(0) };
 
 	let totalDeposited = BigInt(0);
 	let totalWithdrawn = BigInt(0);
@@ -874,5 +864,57 @@ const calculateLifetimeLpEarnings = async (
 
 	const lifetimeEarnings = totalWithdrawn + positionValue - totalDeposited;
 
-	return lifetimeEarnings;
+	return { lifetimeEarnings, finalPositionAssets: positionValue };
+};
+
+const prepareSubgraphQuery = (tokenIdsGrouped: any) => {
+	// Initialize the query string
+	let query = `
+	query GetUserTransactions($userAddress: Bytes!, $first: Int, $skip: Int) {
+		iBERA: transactions(
+			where: {from: $userAddress, tokenId: 42}
+			orderBy: blockTimestamp
+			orderDirection: asc
+		) {
+			type
+			id
+			tokenId
+			tokenName
+			platformName
+			from
+			value
+			shares
+			userBalance
+			blockTimestamp
+			blockNumber
+			userAssetBalance
+		}`;
+
+	// Iterate through each project's tokenIds and generate corresponding GraphQL queries
+	Object.keys(tokenIdsGrouped).forEach((platformName) => {
+		query += `
+			${platformName}: transactions(
+					first: $first
+					skip: $skip
+					where: {from: $userAddress, platformName: "${platformName}"}
+					orderBy: blockTimestamp
+					orderDirection: asc
+			) {
+					type
+					id
+					tokenId
+					tokenName
+					platformName
+					from
+					value
+					shares
+					userBalance
+					blockTimestamp
+					blockNumber
+					userAssetBalance
+			}\n`;
+	});
+	query += `}`;
+
+	return query;
 };

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Address, erc20Abi, getAddress, getContract } from "viem";
+import { Abi, Address, erc20Abi, getAddress, getContract } from "viem";
 import { RootState } from "..";
 import { getPricesOfLpByTimestamp } from "../tokens/tokensReducer";
 import { getEarnings, getEarningsForPlatforms } from "./../../api/farms";
@@ -70,70 +70,140 @@ export const updateEarnings = createAsyncThunk(
 	"farms/updateEarnings",
 	async ({ currentWallet, farms, decimals, prices, balances, totalSupplies, getPublicClient }: FetchEarningsAction, thunkApi) => {
 		try {
-			await sleep(6000);
 			const earnHistory = await getEarnings(currentWallet);
-			if (!earnHistory) {
-				// throw new Error("No data");
-				return thunkApi.rejectWithValue("");
-			}
+
+			if (!earnHistory) return thunkApi.rejectWithValue("");
+			if (!farms || farms.length === 0) return { calculatedEarnings: {}, currentWallet };
 
 			const calculatedEarnings: Earnings = {};
-			const balancesPromises: Promise<bigint>[] = [];
 			const withdrawableLpAmount: { [farmId: number]: string } = {};
-			farms.forEach((farm) => {
-				balancesPromises.push(
-					getContract({
-						address: farm.vault_addr as Address,
-						abi: VaultAbi.abi,
-						client: {
-							public: getPublicClient(farm.chainId),
-						},
-					}).read.totalAssets() as Promise<bigint>
-				);
 
-				balancesPromises.push(
-					getContract({
-						address: farm.lp_address as Address,
-						abi: erc20Abi,
-						client: {
-							public: getPublicClient(farm.chainId),
+			// --- Refactor using multicall ---
+			// Assuming all farms in the 'farms' array are for the same chain,
+			// or getPublicClient handles the context appropriately.
+			// If farms can be on different chains, grouping by chainId and making separate multicalls is needed.
+			const representativeChainId = farms[0].chainId; // Use chainId from the first farm for the client
+			const publicClient = getPublicClient(representativeChainId);
+
+			const multicallContracts = farms.flatMap(
+				(farm) =>
+					[
+						{
+							address: farm.vault_addr,
+							abi: VaultAbi.abi as Abi, // This will now use the 'as const' typed ABI
+							functionName: "totalAssets",
 						},
-					}).read.balanceOf([farm.vault_addr as Address]) as Promise<bigint>
-				);
+						{
+							address: farm.lp_address,
+							abi: erc20Abi as Abi, // erc20Abi from viem is already correctly typed
+							functionName: "balanceOf",
+							args: [farm.vault_addr],
+						},
+					] as const
+			); // Added 'as const' here too for the array of contract calls, ensuring readonly properties
+
+			console.log(`Preparing multicall for ${farms.length} farms, total ${multicallContracts.length} calls reduced to 1 call`);
+			const multicallResults = await publicClient.multicall({
+				contracts: multicallContracts, // This should now satisfy the type checker
+				allowFailure: true, // Important: allows individual calls to fail without failing the whole batch
 			});
-			const vaultBalancesResponse = await Promise.all(balancesPromises);
-			for (let i = 0; i < vaultBalancesResponse.length; i += 2) {
-				const balance = vaultBalancesResponse[i];
-				const lpTokenBalance = vaultBalancesResponse[i + 1];
 
-				let expectedLpAmount = balance * BigInt(balances[farms[i / 2].chainId][farms[i / 2].vault_addr].valueWei);
+			// Process multicall results
+			for (let i = 0; i < farms.length; i++) {
+				const farm = farms[i];
+				const totalAssetsResult = multicallResults[i * 2];
+				const balanceOfVaultResult = multicallResults[i * 2 + 1];
 
-				if (totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr]?.supplyWei !== "0")
-					expectedLpAmount = expectedLpAmount / BigInt(totalSupplies[farms[i / 2].chainId][farms[i / 2].vault_addr]?.supplyWei);
-				if (lpTokenBalance < expectedLpAmount) {
-					const withdrawableAmount = expectedLpAmount - lpTokenBalance;
-					const balanceAfterWithdraw = lpTokenBalance + withdrawableAmount;
-					const actualWithdrawDiff = balanceAfterWithdraw - lpTokenBalance;
-					if (actualWithdrawDiff < withdrawableAmount) {
-						expectedLpAmount = lpTokenBalance + actualWithdrawDiff;
+				if (totalAssetsResult.status === "success" && balanceOfVaultResult.status === "success") {
+					const balance = totalAssetsResult.result as bigint; // totalAssets
+					const lpTokenBalance = balanceOfVaultResult.result as bigint; // balanceOf vault in LP token
+
+					let expectedLpAmount = balance * BigInt(balances[farm.chainId][farm.vault_addr].valueWei);
+
+					const totalSupplyWei = totalSupplies[farm.chainId][farm.vault_addr]?.supplyWei;
+					if (totalSupplyWei && totalSupplyWei !== "0") {
+						expectedLpAmount = expectedLpAmount / BigInt(totalSupplyWei);
+					} else if (totalSupplyWei === "0") {
+						// Handle division by zero if supplyWei is "0"
+						// This case might imply that expectedLpAmount should be 0 or handled differently
+						// For now, let's assume if supply is 0, expectedLpAmount remains as calculated before division,
+						// or set it to 0 if that makes more sense in your logic.
+						// This depends on the exact meaning of totalSupplies and its use.
+						// If totalAssets is non-zero but totalSupply is zero, it's an odd state.
+						// Let's assume for now if supply is 0, expectedLpAmount is effectively the 'balance' itself
+						// if valueWei represents a 1:1 share, or it might mean 0 if no shares exist.
+						// The original code implies division, so if supplyWei is "0", this needs careful thought.
+						// For safety, if totalSupplyWei is "0", let's avoid division by zero.
+						// If balance is also 0, expectedLpAmount is 0. If balance > 0 but supply is 0,
+						// this is an edge case. Let's assume expectedLpAmount is 0 if supply is 0 and balance > 0.
+						if (balance > 0n && totalSupplyWei === "0") {
+							expectedLpAmount = 0n; // Or handle as per your business logic for this edge case
+						} else if (balance === 0n) {
+							expectedLpAmount = 0n;
+						}
+						// If balance > 0 and totalSupplyWei is undefined or not "0", the division happens above.
 					}
+
+					if (lpTokenBalance < expectedLpAmount) {
+						const withdrawableAmount = expectedLpAmount - lpTokenBalance;
+						// The following logic seems to adjust expectedLpAmount based on a potential withdrawal.
+						// This part of your original logic is preserved:
+						const balanceAfterWithdraw = lpTokenBalance + withdrawableAmount;
+						const actualWithdrawDiff = balanceAfterWithdraw - lpTokenBalance;
+						if (actualWithdrawDiff < withdrawableAmount) {
+							expectedLpAmount = lpTokenBalance + actualWithdrawDiff;
+						}
+					}
+					withdrawableLpAmount[farm.id] = expectedLpAmount.toString();
+				} else {
+					console.error(`Failed to fetch data for farm ${farm.id} (Vault: ${farm.vault_addr}).`);
+					if (totalAssetsResult.status === "failure") {
+						console.error(` - totalAssets call failed:`, totalAssetsResult.error);
+					}
+					if (balanceOfVaultResult.status === "failure") {
+						console.error(` - balanceOf(vault) call failed:`, balanceOfVaultResult.error);
+					}
+					// Decide how to handle this farm: skip, set earnings to 0, etc.
+					// For now, if data is missing, withdrawableLpAmount won't be set,
+					// and thus this farm might not appear in calculatedEarnings or have 0.
+					withdrawableLpAmount[farm.id] = "0"; // Default to 0 if calls failed
 				}
-				withdrawableLpAmount[farms[i / 2].id] = expectedLpAmount.toString();
 			}
+			// --- End of multicall refactor ---
+
 			earnHistory.forEach((item) => {
 				const farm = farms.find((farm) => farm.id === Number(item.tokenId));
 				if (farm) {
-					const earnedTokens = BigInt(item.withdraw) + BigInt(withdrawableLpAmount[farm.id]) - BigInt(item.deposit);
-					calculatedEarnings[farm.id] =
-						Number(toEth(earnedTokens, decimals[farm.chainId][farm.lp_address])) * prices[farm.chainId][farm.lp_address]!;
-					if (calculatedEarnings[farm.id] < 0.0001) calculatedEarnings[farm.id] = 0;
+					const farmWithdrawableLp = withdrawableLpAmount[farm.id];
+					if (farmWithdrawableLp === undefined) {
+						// This case should ideally be handled above by defaulting to "0" or skipping.
+						console.warn(`Withdrawable LP amount not found for farm ${farm.id}, skipping earnings calculation.`);
+						calculatedEarnings[farm.id] = 0;
+						return;
+					}
+
+					const earnedTokens = BigInt(item.withdraw) + BigInt(farmWithdrawableLp) - BigInt(item.deposit);
+					const farmDecimals = decimals[farm.chainId]?.[farm.lp_address];
+					const farmPrice = prices[farm.chainId]?.[farm.lp_address];
+
+					if (farmDecimals !== undefined && farmPrice !== undefined) {
+						calculatedEarnings[farm.id] = Number(toEth(earnedTokens, farmDecimals)) * farmPrice;
+						if (calculatedEarnings[farm.id] < 0.0001) {
+							calculatedEarnings[farm.id] = 0;
+						}
+					} else {
+						console.warn(`Decimals or price not found for farm ${farm.id} (LP: ${farm.lp_address}), setting earnings to 0.`);
+						calculatedEarnings[farm.id] = 0;
+					}
 				}
 			});
 
+			// Existing dispatch
 			thunkApi.dispatch(getPricesOfLpByTimestamp({ farms, lpData: earnHistory }));
+
 			return { calculatedEarnings, currentWallet };
 		} catch (error) {
-			console.error(error);
+			console.error("Error in updateEarnings thunk:", error);
 			return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch earnings");
 		}
 	}

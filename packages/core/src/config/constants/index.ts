@@ -23,13 +23,13 @@ const getEnvVar = (key: string): string | undefined => {
 	return process.env[envKey];
 };
 
-export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1";
+export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1/";
 export const EARNINGS_GRAPH_URL =
-	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/18.0.0/gn";
+	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/19.0.0/gn";
 export const EARNINGS_GRAPH_URL_BASE =
 	"https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =
-	"https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-bera/prod/gn";
+	"https://api.subgraph.ormilabs.com/api/public/803c8c8c-be12-4188-8523-b9853e23051d/subgraphs/steer-protocol-bera/prod/gn";
 export const KODIAK_EARNINGS_GRAPH_URL =
 	"https://api.goldsky.com/api/public/project_clpx84oel0al201r78jsl0r3i/subgraphs/kodiak-v3-berachain-mainnet/latest/gn";
 export const BURRBEAR_EARNINGS_GRAPH_URL =

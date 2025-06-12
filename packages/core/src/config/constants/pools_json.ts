@@ -2422,6 +2422,44 @@ export const tokenImages = pools_json.reduce(
 	[] as { name: string; logo: string }[]
 );
 
+// All BeraPaw pools are considered to be Kodiak pools
+const getActivePoolIdsOfAllPlatforms = () => {
+	const platformPools: Record<FarmOriginPlatform, number[]> = {
+		[FarmOriginPlatform.BeraPaw]: [],
+		[FarmOriginPlatform.Kodiak]: [],
+		[FarmOriginPlatform.Steer]: [],
+		[FarmOriginPlatform.Infrared]: [],
+		[FarmOriginPlatform.Burrbear]: [],
+		[FarmOriginPlatform.Gamma]: [],
+		[FarmOriginPlatform.Core]: [],
+		[FarmOriginPlatform.Arbera]: [],
+		[FarmOriginPlatform.Beradrome]: [],
+		[FarmOriginPlatform.Bearn]: [],
+		[FarmOriginPlatform.BeraTrax]: [],
+		[FarmOriginPlatform.Hop]: [],
+		[FarmOriginPlatform.SwapFish]: [],
+		[FarmOriginPlatform.Clipper]: [],
+		[FarmOriginPlatform.Yeet]: [],
+		[FarmOriginPlatform.Bex]: [],
+		[FarmOriginPlatform.Wasabee]: [],
+	};
+	//the BeraPaw pools are considered to be Kodiak pools and also have the entries in the BeraPaw object.
+	pools_json.forEach(({ id, originPlatform, secondary_platform, isUpcoming, isDeprecated }) => {
+		if (isUpcoming || isDeprecated || id === 42) return;
+		if (originPlatform === FarmOriginPlatform.BeraPaw && secondary_platform === undefined) {
+			platformPools[FarmOriginPlatform.Kodiak].push(id);
+		}
+		if (FarmOriginPlatform.BeraPaw === originPlatform && secondary_platform === undefined) {
+			platformPools[FarmOriginPlatform.BeraPaw].push(id);
+		} else {
+			platformPools[originPlatform].push(id);
+		}
+	});
+	return platformPools;
+};
+
+export const activePoolIdsOfAllPlatforms = getActivePoolIdsOfAllPlatforms();
+
 export const tokenNamesAndImages = pools_json.reduce(
 	(acc, curr) => {
 		if (curr.isUpcoming) return acc;

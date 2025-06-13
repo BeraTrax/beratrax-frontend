@@ -80,7 +80,8 @@ const pools_json: PoolDef[] = [
         originPlatform: FarmOriginPlatform.Kodiak,
         platform: "Kodiak",
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x337ef1eb6c8bbed571170fc2b468608ab9e2aac8?farm=0x9d65da133391b2c055509d049c835a821d84e922&chain=berachain_mainnet",
         name1: "LBGT",
         name2: "wBERA",
@@ -133,7 +134,8 @@ const pools_json: PoolDef[] = [
         originPlatform: FarmOriginPlatform.Kodiak,
         platform: "Kodiak",
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x7fd165b73775884a38aa8f2b384a53a3ca7400e6?farm=0x34852c863d266100f573d4d1fd1d0cfe20602da0&chain=berachain_mainnet",
         name1: "rUSD",
         name2: "HONEY",
@@ -186,7 +188,8 @@ const pools_json: PoolDef[] = [
         originPlatform: FarmOriginPlatform.Kodiak,
         platform: "Kodiak",
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x4a254b11810b8ebb63c5468e438fc561cb1bb1da?farm=0x45325df4a6a6ebd268f4693474aaaa1f3f0ce8ca&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "HONEY",
@@ -239,7 +242,8 @@ const pools_json: PoolDef[] = [
         platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0xf06ea29fcf4765200742d29e685973a1870eac98?farm=0xeec2ad7bb37374229860265e644f4e2693b23fdd&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "wBTC",
@@ -293,7 +297,8 @@ const pools_json: PoolDef[] = [
         platform: "Kodiak",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x9659dc8c1565e0bd82627267e3b4eed1a377ebe6?farm=0xfb657cd154e661ddf3e229529d92545640b19292&chain=berachain_mainnet",
         name1: "wETH",
         name2: "wBERA",
@@ -346,7 +351,8 @@ const pools_json: PoolDef[] = [
         originPlatform: FarmOriginPlatform.Kodiak,
         platform: "Kodiak",
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x564f011d557aad1ca09bfc956eb8a17c35d490e0?farm=0x3be1be98efaca8c1eb786cbf38234c84b5052eeb&chain=berachain_mainnet",
         name1: "iBGT",
         name2: "wBERA",
@@ -399,7 +405,8 @@ const pools_json: PoolDef[] = [
         url_name: "BR-wBERA",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x56449b16ff2b1e5ee61f532ceffda8f408f718a1?farm=0xed0fb3170390ef82e13102f36fa7fd5047722890&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "BR",
@@ -452,7 +459,8 @@ const pools_json: PoolDef[] = [
         url_name: "SolvBTC-XSolvBTC",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x43e487126c4f37d1915cf02a90b5c5295afb1790?farm=0x3fc5cb0290c82680afe9ef8cdde5468d74c85705&chain=berachain_mainnet",
         name1: "SolvBtc",
         name2: "SolvBTC.BBN",
@@ -505,7 +513,8 @@ const pools_json: PoolDef[] = [
         url_name: "wBTC-SolvBTC",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x3879451f4f69f0c2d37cad45319cff2e7d29c596?farm=0x11fadf69a02340a676b4bd2a27ffd952094fae99&chain=berachain_mainnet",
         name1: "wBTC",
         name2: "SolvBTC",
@@ -558,7 +567,8 @@ const pools_json: PoolDef[] = [
         url_name: "iBERA-wBERA",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0xe3eeb9e48934634d8b5b39a0d15dd89ee0f969c4?farm=0xa2c5adb20a446fa71a1762002e3c9b4dd37dbaf4&chain=berachain_mainnet",
         name1: "iBERA",
         name2: "wBERA",
@@ -611,7 +621,8 @@ const pools_json: PoolDef[] = [
         url_name: "osBGT-iBERA",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0xad445256ff81171043a5e7cd8831e4371b000176?farm=0x15f1156f56a06af851cbdc0aceb0780bbcb913c4&chain=berachain_mainnet",
         name1: "iBERA",
         name2: "osBGT",
@@ -664,7 +675,8 @@ const pools_json: PoolDef[] = [
         url_name: "sUSDa-USDa",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x7cebcc76a2faecc0ae378b340815fcbb71ec1fe0?farm=0xc196d595dece185ea39f8e1c3ce07a274ac31985&chain=berachain_mainnet",
         name1: "sUSDa",
         name2: "USDa",
@@ -716,7 +728,8 @@ const pools_json: PoolDef[] = [
         name: "iBERA",
         url_name: "iBERA",
         originPlatform: FarmOriginPlatform.Infrared,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         source: "https://infrared.finance/ibera",
         name1: "iBERA",
         description:
@@ -763,7 +776,8 @@ const pools_json: PoolDef[] = [
         name: "stLBGT",
         url_name: "stLBGT",
         originPlatform: FarmOriginPlatform.BeraPaw,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico",
         source: "https://www.berapaw.com/stake",
         name1: "stLBGT",
         description:
@@ -808,7 +822,8 @@ const pools_json: PoolDef[] = [
         name: "wBERA-LBGT",
         url_name: "wBERA-LBGT",
         originPlatform: FarmOriginPlatform.BeraPaw,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico",
         source: "https://hub.berachain.com/pools/0x705fc16ba5a1eb67051934f2fb17eacae660f6c70002000000000000000000d5/details/",
         name1: "wBERA",
         name2: "LBGT",
@@ -1094,7 +1109,8 @@ const pools_json: PoolDef[] = [
         synthetic: true,
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x93a913351cae2d8c82c4b85f699726947eb76d32?farm=0x6b23e121c6a13c959d69493ea5ca015a5847596a&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "RAMEN",
@@ -1147,7 +1163,8 @@ const pools_json: PoolDef[] = [
         url_name: "wBERA-BM",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x0fd67ac75f9df51f5d81f582417b318f44b45f5c?farm=0x193ff57dc9efa1dec154946c10332ba31c8e72b2&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "BM",
@@ -1200,7 +1217,8 @@ const pools_json: PoolDef[] = [
         originPlatform: FarmOriginPlatform.Kodiak,
         platform: "Kodiak",
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0xef8c3239e0d8be9d58f145e18f5909ddad681365?farm=0x66eb42c499372e897929efbf6026821b0a148119&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "NAV",
@@ -1253,7 +1271,8 @@ const pools_json: PoolDef[] = [
         url_name: "wBERA-stBGT",
         originPlatform: FarmOriginPlatform.Kodiak,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         source: "https://app.kodiak.finance/#/liquidity/pools/0x8b161685135e9fbc5475169e1addc0f2c4b7c343?farm=0xcf77d23cfc561e34e3b6137c736ea5cb395bcda0&chain=berachain_mainnet",
         name1: "wBERA",
         name2: "stBGT",
@@ -1314,7 +1333,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Burrbear logo",
         total_apy: 154.43,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
         pair1: "wBERA",
         pair2: "wgBERA",
         token1: "0x6969696969696969696969696969696969696969",
@@ -1364,7 +1384,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Infrared logo",
         total_apy: 10.16,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         pair1: "iBGT",
         token1: "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b",
         zapper_addr: "0xbEDc2b73feBa033Cc2b6F7FC20b5a474CD5e6b4f",
@@ -1415,7 +1436,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Burrbear logo",
         total_apy: 154.43,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
         pair1: "Nect",
         pair2: "wgBERA",
         token1: "0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3",
@@ -1468,7 +1490,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Burrbear logo",
         total_apy: 36.477,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
         pair1: "Nect",
         pair2: "USDC",
         pair3: "HONEY",
@@ -1525,7 +1548,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Burrbear logo",
         total_apy: 36.477,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
         pair1: "wBTC",
         pair2: "SolvBTC",
         pair3: "xSolvBTC",
@@ -1548,6 +1572,7 @@ const pools_json: PoolDef[] = [
         lp_address: "0xCbeF1B65399065c2DE2C495971e90466ff38f2d0",
         decimals: 18,
         vault_addr: "0x0446c40B14dfFFb525DECFC8897fE3B6105F262F",
+        rewardVault: "0x576374e222ec51608f9631f074536B9f897d2638",
         createdAt: 1749815834,
         zap_symbol: "HONEY",
         zap_currencies: [
@@ -1572,7 +1597,8 @@ const pools_json: PoolDef[] = [
         platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
         source: "https://infrared.finance/vaults/bex-honey-wbera",
         name1: "wBERA",
         name2: "HONEY",
@@ -1582,7 +1608,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Infrared logo",
         total_apy: 14,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         pair1: "wBERA",
         pair2: "HONEY",
         token1: "0x6969696969696969696969696969696969696969",
@@ -1685,8 +1712,10 @@ const pools_json: PoolDef[] = [
         platform_alt: "Infrared logo",
         total_apy: 14,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
         pair1: "wBERA",
         pair2: "wBTC",
         token1: "0x6969696969696969696969696969696969696969",
@@ -1738,10 +1767,12 @@ const pools_json: PoolDef[] = [
             "This vault is built on the wBERA-wETH vault on Infared. Your deposit is automatically converted into the wBERA-wETH LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT at anytime. Additionally, you'll accumulate BTX points for our future airdrop, as well as any aidrops any of the underlying. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
         stableCoin: false,
         platform_alt: "Infrared logo",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
         total_apy: 14,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         pair1: "wBERA",
         pair2: "wETH",
         token1: "0x6969696969696969696969696969696969696969",
@@ -1786,7 +1817,8 @@ const pools_json: PoolDef[] = [
         platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
         source: "https://infrared.finance/vaults/bex-byusd-honey",
         name1: "HONEY",
         name2: "BYUSD",
@@ -1796,7 +1828,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Infrared logo",
         total_apy: 10.16,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         pair1: "HONEY",
         pair2: "BYUSD",
         token1: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
@@ -1842,7 +1875,8 @@ const pools_json: PoolDef[] = [
         platform: "Infrared",
         originPlatform: FarmOriginPlatform.Infrared,
         secondary_platform: FarmOriginPlatform.Bex,
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico",
         source: "https://infrared.finance/vaults/bex-usdc.e-honey",
         name1: "USDC",
         name2: "HONEY",
@@ -1852,7 +1886,8 @@ const pools_json: PoolDef[] = [
         platform_alt: "Infrared logo",
         total_apy: 10.16,
         rewards_apy: 0,
-        platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico",
         pair1: "USDC",
         pair2: "HONEY",
         token1: "0x549943e04f40284185054145c6e4e9568c1d3241",
@@ -2140,7 +2175,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform_alt: "Steer logo",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
@@ -2189,7 +2225,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform_alt: "Steer logo",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
@@ -2238,7 +2275,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform_alt: "Steer logo",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
@@ -2287,7 +2325,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform_alt: "Steer logo",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
@@ -2336,7 +2375,8 @@ const pools_json: PoolDef[] = [
         stableCoin: false,
         platform_alt: "Steer logo",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         total_apy: 14,
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
@@ -2388,7 +2428,8 @@ const pools_json: PoolDef[] = [
         rewards_apy: 0,
         platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/steer/steer.ico",
         secondary_platform: "Kodiak",
-        secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
+        secondary_platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         pair1: "wBTC",
         pair2: "wETH",
         token1: "0x0555E30da8f98308EdB960aa94C0Db47230d2B9c",

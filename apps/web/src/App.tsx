@@ -16,6 +16,7 @@ import { rainbowConfig } from "./config/walletConfig";
 import WalletProvider from "./context/WalletProvider";
 import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "./utils/analytics";
+import OnchainKitProvider from "./context/OnchainKitProvider";
 
 setHook("notifications", useNotifications);
 
@@ -51,10 +52,12 @@ function App() {
                     appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
                 >
                     <WalletProvider>
-                        <Router>
-                            <Body />
-                        </Router>
-                        <ReactHooksWrapper />
+                        <OnchainKitProvider>
+                            <Router>
+                                <Body />
+                            </Router>
+                            <ReactHooksWrapper />
+                        </OnchainKitProvider>
                     </WalletProvider>
                     <ReactQueryDevtools />
                 </RainbowKitProvider>
@@ -64,3 +67,4 @@ function App() {
 }
 
 export default App;
+

@@ -57,6 +57,7 @@ export const useStats = (forGalxe?: boolean) => {
     } = useQuery<VaultStatsResponse["data"]>({
         queryKey: ["stats/tvl/vaults", vaultStatsPage, vaultStatsLimit, onlyAutoCompound],
         queryFn: () => fetchVaultStats(vaultStatsPage, vaultStatsLimit, onlyAutoCompound),
+        enabled: window.location.pathname === "/stats",
     });
 
     // const { data: tvlBasicInfo } = useQuery({

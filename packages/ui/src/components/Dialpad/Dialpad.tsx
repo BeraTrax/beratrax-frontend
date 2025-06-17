@@ -34,7 +34,7 @@ const DialPadButton = memo(
 				onPress={onPress}
 				onPressIn={onPressIn}
 				onPressOut={onPressOut}
-				className="w-[30%] h-16 rounded-2xl items-center justify-center bg-bgDark active:bg-bgSecondary"
+				className="w-[30%] h-12 rounded-2xl items-center justify-center bg-bgDark active:bg-bgSecondary"
 			>
 				{buttonContent}
 			</Pressable>
@@ -103,7 +103,7 @@ const DialPad: FC<DialPadProps> = ({ inputValue, setInputValue, cursorPosition, 
 	}, [buttons, handleBackspace, handleButtonClick, handleBackspaceHold, clearBackspaceTimeout]);
 
 	return (
-		<View className={`flex flex-row flex-wrap justify-between gap-y-4 mt-4 ${className}`}>
+		<View className={`flex flex-row flex-wrap justify-between gap-y-8 gap-x-1 mt-4 ${className}`}>
 			{buttons.map((num, index) => (
 				<DialPadButton
 					key={num}

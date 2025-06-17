@@ -42,7 +42,7 @@ const MobileModalContainer = ({
 						className="w-full rounded-t-[40px]"
 						showsVerticalScrollIndicator={true}
 						bounces={true}
-						contentContainerStyle={{ paddingBottom: 20 }}
+						contentContainerStyle={{ paddingBottom: Platform.OS === "ios" ? 20 : 0 }}
 					>
 						{children}
 					</ScrollView>

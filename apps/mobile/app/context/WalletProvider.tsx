@@ -66,7 +66,6 @@ const WalletProvider: React.FC<IProps> = ({
 	const [isSocial, setIsSocial] = useState(false);
 	const [currentWallet, setCurrentWallet] = useState<Address | undefined>();
 	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-	const wagmiConnector = walletConfig.connectors[0];
 
 	// Initialize Web3Auth and check for existing session
 	useEffect(() => {

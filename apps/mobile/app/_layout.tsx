@@ -26,6 +26,7 @@ import BottomBar from "./components/BottomBar";
 import { ReactHooksWrapper, setHook } from "react-hooks-outside";
 import { NotificationsProvider, useNotifications } from "reapop";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
+import { useBackgroundImagePrefetch } from "@beratrax/core/src/hooks/useBackgroundImagePrefetch";
 
 // Set up the notifications hook for react-hooks-outside
 setHook("notifications", useNotifications);
@@ -77,9 +78,10 @@ const tabOptions = {
 	},
 };
 
-// Create a new component that uses useDataRefresh
 const AppContent = () => {
 	useDataRefresh();
+	useBackgroundImagePrefetch(); // 🖼️ Silently prefetch all pool images in the background
+
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView className="flex-1 bg-bgSecondary">

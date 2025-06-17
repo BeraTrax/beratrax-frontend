@@ -54,7 +54,7 @@ export function FarmView() {
 	return (
 		<View className="relative bg-bgSecondary text-textWhite h-full overflow-hidden font-league-spartan">
 			{/* Background Leaves */}
-			<View className="absolute z-10 top-14 right-1 w-50">
+			<View className="absolute top-14 right-1 w-50">
 				<Earnpageleaves2 />
 			</View>
 			<View className="absolute top-2 -right-2 w-40">

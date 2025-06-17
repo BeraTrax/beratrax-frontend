@@ -6,7 +6,7 @@ import { formatBalance } from "@beratrax/core/src/utils/common";
 import { FC, useEffect, useMemo, useCallback } from "react";
 import { ModalLayout } from "ui/src/components/modals/ModalLayout/ModalLayout";
 import TransactionDetails from "@beratrax/ui/src/components/Transactions/components/TransactionDetail/TransactionDetail";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
 interface DepositInfo {
 	amount: string;
@@ -69,7 +69,6 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 				handleClose();
 			}}
 			wrapperClassName="w-full lg:w-[92%]"
-			style={{ borderColor: "var(--new-border_dark)" }}
 		>
 			<View className="text-textWhite flex flex-col gap-4">
 				<Text className="text-xl text-textWhite font-bold align-middle uppercase">{getTransactionTitle()}</Text>
@@ -94,12 +93,12 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 								</View>
 							))}
 						</View>
-						<Pressable
+						<TouchableOpacity
 							className={`mt-4 uppercase bg-buttonPrimaryLight text-textBlack w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px]`}
 							onPress={handleGoBack}
 						>
 							{goBackText}
-						</Pressable>
+						</TouchableOpacity>
 					</>
 				)}
 

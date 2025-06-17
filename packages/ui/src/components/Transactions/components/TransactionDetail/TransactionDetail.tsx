@@ -8,7 +8,7 @@ import useTransaction from "@beratrax/core/src/state/transactions/useTransaction
 import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
-import { View, Text, Image, Platform } from "react-native";
+import { View, Text, Image, Platform, ActivityIndicator } from "react-native";
 
 type IProps =
 	| {
@@ -81,11 +81,7 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 				) : status === TransactionStepStatus.PENDING ? (
 					<CircleOneIcon color="var(--new-color_secondary)" style={{ transform: "scale(0.8)" }} />
 				) : (
-					<View
-						className={
-							"w-5 h-5 border-[3px] border-bgPrimary border-b-transparent border-r-transparent rounded-full scale-80 box-border animate-spin"
-						}
-					/>
+					<ActivityIndicator size="small" color="#72B21F" />
 				)}
 				<View>
 					<Text className="font-league-spartan font-light text-base leading-5 text-textWhite">{name}</Text>

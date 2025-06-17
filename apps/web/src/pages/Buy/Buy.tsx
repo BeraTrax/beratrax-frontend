@@ -1,24 +1,59 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { getOnrampBuyUrl, FundButton } from "@coinbase/onchainkit/fund";
 import { useAccount } from "wagmi";
 import { defaultNetworkName, RAMP_TRANSAK_API_KEY } from "src/config/constants";
 import transaklogo from "src/assets/images/transaklogo.png";
-import thirdweblogo from "src/assets/images/thirdweblogo.png";
+import holyheldlogo from "src/assets/images/holyheldlogo.png";
 import coinbaselogo from "src/assets/images/coinbaselogo.png";
+import HolyheldSDK, { HolyheldSDKError, HolyheldSDKErrorCode, Network } from '@holyheld/sdk';
+import { useQuery } from "@tanstack/react-query";
 
-type BuyService = "coinbase" | "transak" | "thirdweb";
+enum BuyService {
+    coinbase = "coinbase",
+    transak = "transak",
+    holyheld = "holyheld"
+}
 
 export const Buy: React.FC = () => {
     const [amount, setAmount] = useState<string>("10");
     const { address } = useAccount();
+    // Keeping the state, because earlier we had the option to switch between FIAT and Crypto
     const [currencyType, setCurrencyType] = useState<"USD" | "USDC">("USD");
     const [isCustomInput, setIsCustomInput] = useState<boolean>(false);
-    const [customAmount, setCustomAmount] = useState<string>("2");
-    const [selectedService, setSelectedService] = useState<BuyService>("coinbase");
+    const [customAmount, setCustomAmount] = useState<string>("10");
+    const [selectedService, setSelectedService] = useState<BuyService>(BuyService.coinbase);
+    const [isHolyheldLoading, setIsHolyheldLoading] = useState<boolean>(false);
+    const [isHolyheldAllowed, setIsHolyheldAllowed] = useState<boolean>(true);
+    //usequery to fetch amount limits
+    const { refetch: refetchAmountLimits } = useQuery({
+        queryKey: ['amountLimits'],
+        queryFn: async () => {
+            const settings = await holyheldSDK.getServerSettings()
+            return {
+                minAmount: Number(settings.external.minOnRampAmountInEUR),
+                maxAmount: Number(settings.external.maxOnRampAmountInEUR)
+            }
+        },
+        enabled: selectedService === BuyService.holyheld,
+        placeholderData: {
+            minAmount: 5,
+            maxAmount: 1000
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        gcTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        
+    })
 
-    const presetAmounts = ["10", "20", "50"];
-    const minAmount = 2;
-    const maxAmount = 500;
+    const [amountLimits, setAmountLimits] = useState({
+        minAmount: 10,
+        maxAmount: 999999999999999
+    })
+    const {minAmount, maxAmount} = amountLimits
+
+    const presetAmounts = ["20", "50", "100"];
 
     const currentAmount = isCustomInput ? customAmount : amount;
     const displayAmount = currentAmount || "0";
@@ -26,6 +61,41 @@ export const Buy: React.FC = () => {
     // USD to USDC is 1:1 ratio
     const convertedAmount = displayAmount;
 
+    const holyheldSDK = useMemo(() => new HolyheldSDK({ apiKey: import.meta.env.REACT_APP_HOLYHELD_API_KEY }), []);
+
+    useLayoutEffect(() => {
+        (async () => {
+            await holyheldSDK.init();
+            // validate address
+            if (address) {
+                const addressValidation = await holyheldSDK.validateAddress(address.toString());
+                setIsHolyheldAllowed(addressValidation.isOnRampAllowed);
+            }
+
+        })();
+
+    },[])
+
+    useEffect(() => {
+        if(selectedService === BuyService.holyheld) {
+            holyheldSDK.getServerSettings().then((settings) => {
+                console.log('Holyheld server settings:', settings);
+                setAmountLimits({
+                    minAmount: Math.floor(usdToEurToUsd(Number(settings.external.minOnRampAmountInEUR), false)),
+                    maxAmount: Math.floor(usdToEurToUsd(Number(settings.external.maxOnRampAmountInEUR), false)),
+                })
+            })
+        }
+        else {
+            setAmountLimits({
+                minAmount: 10,
+                maxAmount: 999999999999999
+            })
+        }
+    },[selectedService])
+
+
+    // coinbase
     const onrampBuyUrl = useMemo(() => {
         return getOnrampBuyUrl({
             projectId: import.meta.env.REACT_APP_CDP_PROJECT_ID,
@@ -36,9 +106,24 @@ export const Buy: React.FC = () => {
         });
     }, [address, displayAmount]);
 
+    // transak
     const transakUrl = useMemo(() => {
         return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&defaultCryptoCurrency=USDC&network=berachain&defaultCryptoCurrency=BERA&walletAddress=${address}&defaultFiatAmount=${displayAmount}&fiatCurrency=USD`;
     }, [address, displayAmount]);
+
+    // Convert USD to EUR (approximate rate, in production you'd want real-time rates)
+    const usdToEurToUsd = useCallback((amount: number, isUSD = true) => {
+        const usdToEurRate = 0.92; // Example rate: 1 USD = 0.92 EUR
+        const eurToUsdRate = 1 / usdToEurRate;
+      
+        if (typeof amount !== 'number' || amount < 0) {
+          throw new Error('Invalid amount. Must be a positive number.');
+        }
+      
+        return isUSD 
+          ? (amount * usdToEurRate) 
+          : (amount * eurToUsdRate);
+      }, []);
 
     const handlePresetClick = (presetAmount: string) => {
         setAmount(presetAmount);
@@ -51,7 +136,7 @@ export const Buy: React.FC = () => {
         // Allow only numbers and decimal point
         if (value === "" || /^\d*\.?\d*$/.test(value)) {
             const numValue = parseFloat(value);
-            if (value === "" || (numValue >= minAmount && numValue <= maxAmount)) {
+            if (value === "" || ( numValue <= maxAmount)) {
                 setCustomAmount(value);
                 setIsCustomInput(true);
             }
@@ -67,31 +152,136 @@ export const Buy: React.FC = () => {
         return num >= minAmount && num <= maxAmount;
     };
 
+    // holyheld
+    const handleHolyheldBuy = async () => {
+        await holyheldSDK.init();
+        // In a real implementation, you would:
+        // 1. Initialize Holyheld SDK with API key
+        // 2. Call getServerSettings to check availability
+        // 3. Validate address
+        // 4. Get estimation
+        // 5. Request onramp
+        // 6. Watch for confirmation
+        if (!isValidAmount() || !address || !holyheldSDK) {
+            console.error('Invalid conditions for Holyheld onramp');
+            return;
+        }
+
+        setIsHolyheldLoading(true);
+
+        try {
+            // Convert USD to EUR for Holyheld
+            const eurAmount = usdToEurToUsd(parseFloat(displayAmount));
+            
+            console.log(`Starting Holyheld onramp: ${eurAmount} EUR (${displayAmount} USD) to ${address}`);
+
+            // Step 1: Get server settings and check availability
+            const settings = await holyheldSDK.getServerSettings();
+            if (!settings.external.isOnRampEnabled) {
+                throw new Error('Holyheld onramp is currently disabled');
+            }
+
+            console.log('Holyheld server settings:', settings);
+
+            // Step 2: Validate address
+            const addressValidation = await holyheldSDK.validateAddress(address);
+            if (!addressValidation.isOnRampAllowed) {
+                throw new Error('Address is not allowed for onramp');
+            }
+
+            console.log('Holyheld address validation:', addressValidation);
+
+            // Step 3: Get estimation
+            const estimation = await holyheldSDK.evm.onRamp.getOnRampEstimation({
+                walletAddress: address,
+                tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC address (example)
+                tokenNetwork: Network.berachain, // network
+                EURAmount: eurAmount.toString()
+            });
+
+            console.log('Holyheld estimation:', estimation);
+
+            // Step 4: Confirm with user
+            const userConfirmed = window.confirm(
+                `Holyheld Onramp Details:\n` +
+                `Amount: ${eurAmount} EUR (${displayAmount} USD)\n` +
+                `Fee: ${estimation.feeAmount} EUR\n` +
+                `Expected tokens: ${estimation.expectedAmount}\n` +
+                `\nProceed with the transaction?`
+            );
+
+            if (!userConfirmed) {
+                setIsHolyheldLoading(false);
+                return;
+            }
+
+            // Step 5: Request onramp
+            const onrampRequest = await holyheldSDK.evm.onRamp.requestOnRamp({
+                walletAddress: address,
+                tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC address
+                tokenNetwork: Network.berachain,
+                EURAmount: eurAmount.toString()
+            });
+
+            console.log('Holyheld onramp request created:', onrampRequest);
+
+            // Step 6: Inform user about mobile app confirmation
+            alert(
+                `Onramp request created!\n` +
+                `Request ID: ${onrampRequest.requestUid}\n` +
+                `\nPlease confirm this transaction in your Holyheld mobile app within 3 minutes.`
+            );
+
+            // Step 7: Watch for confirmation
+            const result = await holyheldSDK.evm.onRamp.watchRequestId(
+                onrampRequest.requestUid,
+                { 
+                    timeout: 180000, // 3 minutes
+                    waitForTransactionHash: true 
+                }
+            );
+
+            if (result.success) {
+                alert(
+                    `Transaction successful! 🎉\n` +
+                    `${result.hash ? `Transaction hash: ${result.hash}` : 'Transaction completed'}`
+                );
+            } else {
+                throw new Error('Transaction was declined or failed');
+            }
+
+        } catch (error) {
+            console.error('Holyheld onramp error:', error);
+            alert(`Holyheld onramp failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        } finally {
+            setIsHolyheldLoading(false);
+        }
+    };
+
     const handleBuyClick = () => {
         if (!isValidAmount()) return;
 
         switch (selectedService) {
-            case "coinbase":
+            case BuyService.coinbase:
                 // FundButton will handle this automatically
                 break;
-            case "transak":
+            case BuyService.transak:
                 window.open(transakUrl, "_blank", "noopener,noreferrer");
                 break;
-            case "thirdweb":
-                // TODO: Implement thirdweb integration
-                console.log("thirdweb integration coming soon");
+            case BuyService.holyheld:
+                handleHolyheldBuy();
                 break;
         }
     };
 
     const tabs = [
         {
-            id: "coinbase" as BuyService,
-            label: "Coinbase",
-            icon: <img src={coinbaselogo} alt="Coinbase" className="w-5 h-5" />,
+            id: BuyService.coinbase,
+            label: BuyService.coinbase[0].toUpperCase() + BuyService.coinbase.slice(1),
+            icon: <img src={coinbaselogo} alt={BuyService.coinbase} className="w-5 h-5 rounded-full" />,
         },
-        { id: "transak" as BuyService, label: "Transak", icon: <img src={transaklogo} alt="Transak" className="w-5 h-5" /> },
-        { id: "thirdweb" as BuyService, label: "thirdweb", icon: <img src={thirdweblogo} alt="thirdweb" className="w-5 h-5" /> },
+        { id: BuyService.transak, label: BuyService.transak[0].toUpperCase() + BuyService.transak.slice(1), icon: <img src={transaklogo} alt={BuyService.transak} className="w-5 h-5 rounded-full" /> },
+        { id: BuyService.holyheld, label: BuyService.holyheld[0].toUpperCase() + BuyService.holyheld.slice(1), icon: <img src={holyheldlogo} alt={BuyService.holyheld} className="w-5 h-5 rounded-full" /> },
     ];
 
     return (
@@ -104,29 +294,32 @@ export const Buy: React.FC = () => {
                     <div className="flex bg-bgSecondary rounded-lg p-1 border border-borderDark">
                         {tabs.map((tab) => (
                             <button
-                                disabled={tab.id === "thirdweb"}
                                 key={tab.id}
                                 onClick={() => setSelectedService(tab.id)}
+                                disabled={isHolyheldLoading && selectedService === BuyService.holyheld}
                                 className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-all font-medium ${
                                     selectedService === tab.id
                                         ? "bg-buttonPrimary text-bgDark"
                                         : "text-textWhite hover:bg-bgDark"
-                                }`}
+                                } ${isHolyheldLoading && selectedService === BuyService.holyheld ? "opacity-50 cursor-not-allowed" : ""}`}
                             >
                                 <div
                                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                                         selectedService === tab.id
                                             ? "bg-bgDark text-buttonPrimary"
-                                            : tab.id === "coinbase"
-                                            ? "bg-blue-500 text-white"
-                                            : tab.id === "transak"
-                                            ? "bg-purple-500 text-white"
-                                            : "bg-gray-500 text-white"
+                                            : tab.id === BuyService.coinbase
+                                                ? "bg-blue-500 text-white"
+                                                : tab.id === BuyService.transak
+                                                    ? "bg-purple-500 text-white"
+                                                    : "bg-gray-500 text-white"
                                     }`}
                                 >
                                     {tab.icon}
                                 </div>
                                 <span className="text-sm">{tab.label}</span>
+                                {isHolyheldLoading && selectedService === BuyService.holyheld && (
+                                    <div className="w-3 h-3 border border-bgDark border-t-transparent rounded-full animate-spin ml-1"></div>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -145,6 +338,11 @@ export const Buy: React.FC = () => {
                                 {convertedAmount} {currencyType === "USD" ? "USDC" : "USD"}
                             </span>
                         </div>
+                          
+                        <div className={`text-xs text-textSecondary mt-1  ${selectedService === BuyService.holyheld ? "visible" : "invisible"}`}>
+                            ≈ {usdToEurToUsd(parseFloat(displayAmount))} EUR
+                        </div>
+                        
                     </div>
 
                     {/* Custom Amount Input */}
@@ -154,11 +352,14 @@ export const Buy: React.FC = () => {
                         </label>
                         <input
                             step={1}
+                            min={minAmount}
+                            max={maxAmount}
                             type="number"
                             value={customAmount}
                             onChange={handleCustomInputChange}
+                            disabled={isHolyheldLoading}
                             placeholder={`Enter amount in ${currencyType}`}
-                            className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary focus:border-borderLight focus:outline-none transition-colors"
+                            className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary focus:border-borderLight focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                     </div>
 
@@ -170,7 +371,8 @@ export const Buy: React.FC = () => {
                                 <button
                                     key={presetAmount}
                                     onClick={() => handlePresetClick(presetAmount)}
-                                    className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium ${
+                                    disabled={isHolyheldLoading}
+                                    className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
                                         !isCustomInput && amount === presetAmount
                                             ? "bg-buttonPrimary border-buttonPrimary text-bgDark"
                                             : "bg-bgSecondary border-borderDark text-textWhite hover:border-borderLight"
@@ -184,14 +386,14 @@ export const Buy: React.FC = () => {
 
                     {/* Buy Button - Conditional Rendering Based on Selected Service */}
                     <div className="mb-4">
-                        {selectedService === "coinbase" ? (
+                        {selectedService === BuyService.coinbase ? (
                             <FundButton
                                 hideIcon={true}
                                 fundingUrl={onrampBuyUrl}
-                                disabled={!isValidAmount()}
+                                disabled={!isValidAmount() || isHolyheldLoading}
                                 text="+ Buy"
                                 className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
-                                    isValidAmount()
+                                    isValidAmount() && !isHolyheldLoading
                                         ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
                                         : "bg-buttonDisabled cursor-not-allowed"
                                 }`}
@@ -199,15 +401,24 @@ export const Buy: React.FC = () => {
                         ) : (
                             <button
                                 onClick={handleBuyClick}
-                                disabled={!isValidAmount()}
-                                className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
-                                    isValidAmount()
+                                disabled={!isValidAmount() || isHolyheldLoading || !isHolyheldAllowed}
+                                className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
+                                    isValidAmount() && !isHolyheldLoading && isHolyheldAllowed
                                         ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
-                                        : "bg-buttonDisabled text-textSecondary cursor-not-allowed"
+                                        : "bg-buttonDisabled text-textBlack cursor-not-allowed"
                                 }`}
                             >
-                                {selectedService === "transak" && "+ Buy"}
-                                {selectedService === "thirdweb" && "+ Buy"}
+                                {isHolyheldLoading && selectedService === BuyService.holyheld ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-bgDark border-t-transparent rounded-full animate-spin"></div>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        {selectedService === BuyService.transak && "+ Buy"}
+                                        {selectedService === BuyService.holyheld && isHolyheldAllowed ? "+ Buy" : "Not allowed"}
+                                    </>
+                                )}
                             </button>
                         )}
                     </div>
@@ -215,10 +426,21 @@ export const Buy: React.FC = () => {
                     {/* Service-specific Footer */}
                     <div className="text-center">
                         <p className="text-xs text-textSecondary">
-                            {selectedService === "coinbase" && "Powered by Coinbase"}
-                            {selectedService === "transak" && "Powered by Transak"}
-                            {selectedService === "thirdweb" && "Powered by thirdweb"}
+                            {
+                                Object.values(BuyService).map((service) => (
+                                    service === selectedService && (
+                                        <span key={service}>
+                                            {`Powered by ${service[0].toUpperCase() + service.slice(1)}`}
+                                        </span>
+                                    )
+                                ))
+                            }
                         </p>
+                        {selectedService === BuyService.holyheld && isHolyheldLoading && (
+                            <p className="text-xs text-buttonPrimary mt-1">
+                                Please confirm in your Holyheld mobile app
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>

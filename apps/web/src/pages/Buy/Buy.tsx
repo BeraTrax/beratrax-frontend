@@ -26,35 +26,38 @@ export const Buy: React.FC = () => {
     const [isHolyheldAllowed, setIsHolyheldAllowed] = useState<boolean>(true);
     
     const holyheldSDK = useMemo(() => new HolyheldSDK({ apiKey: import.meta.env.REACT_APP_HOLYHELD_API_KEY }), []);
-
-    // Convert USD to EUR (approximate rate, in production you'd want real-time rates)
-    const usdToEurToUsd = useCallback((amount: number, isUSD = true) => {
-        const usdToEurRate = 0.92; // Example rate: 1 USD = 0.92 EUR
-        const eurToUsdRate = 1 / usdToEurRate;
-      
-        if (typeof amount !== 'number' || amount < 0) {
-          throw new Error('Invalid amount. Must be a positive number.');
-        }
-      
-        return isUSD 
-          ? (amount * usdToEurRate) 
-          : (amount * eurToUsdRate);
-    }, []);
-
-    // Use React Query to fetch amount limits with proper caching
-    const { data: holyheldLimits } = useQuery({
-        queryKey: ['holyheld-server-settings'],
+    
+    // Combined query for both exchange rate and Holyheld settings
+    const { data: { usdToEurRate = 0.88, holyheldLimits } = {} } = useQuery<{
+        usdToEurRate: number;
+        holyheldLimits: { minAmountEUR: number; maxAmountEUR: number; isEnabled: boolean } | null;
+      }>({
+        queryKey: ['buy-service-data', selectedService],
         queryFn: async () => {
-            await holyheldSDK.init();
-            const settings = await holyheldSDK.getServerSettings();
-            console.log('Holyheld server settings:', settings);
+            const results = await Promise.allSettled([
+                // Fetch USD to EUR rate
+                fetch('https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR')
+                    .then(response => response.json())
+                    .then(data => data.rates.EUR),
+                
+                // Fetch Holyheld settings only if Holyheld is selected
+                selectedService === BuyService.holyheld ? (async () => {
+                    await holyheldSDK.init();
+                    const settings = await holyheldSDK.getServerSettings();
+                    console.log('Holyheld server settings:', settings);
+                    return {
+                        minAmountEUR: Number(settings.external.minOnRampAmountInEUR),
+                        maxAmountEUR: Number(settings.external.maxOnRampAmountInEUR),
+                        isEnabled: settings.external.isOnRampEnabled
+                    };
+                })() : Promise.resolve(null)
+            ]);
+
             return {
-                minAmountEUR: Number(settings.external.minOnRampAmountInEUR),
-                maxAmountEUR: Number(settings.external.maxOnRampAmountInEUR),
-                isEnabled: settings.external.isOnRampEnabled
+                usdToEurRate: results[0].status === 'fulfilled' ? results[0].value : 0.88,
+                holyheldLimits: results[1].status === 'fulfilled' ? results[1].value : null
             };
         },
-        enabled: selectedService === BuyService.holyheld,
         staleTime: 1000 * 60 * 5, // 5 minutes
         gcTime: 1000 * 60 * 10, // 10 minutes
         refetchOnWindowFocus: false,
@@ -62,6 +65,22 @@ export const Buy: React.FC = () => {
         refetchOnReconnect: false,
         refetchInterval: 1000 * 60 * 5, // Auto refetch every 5 minutes
     });
+
+    // Convert USD to EUR (approximate rate, in production you'd want real-time rates)
+    const usdToEurToUsd = useCallback((amount: number, isUSD = true) => {
+        const eurToUsdRate = 1 / usdToEurRate;
+      
+        if (typeof amount !== 'number' || amount < 0) {
+          throw new Error('Invalid amount. Must be a positive number.');
+        }
+      
+        const convertedAmount = isUSD 
+          ? (amount * usdToEurRate) 
+          : (amount * eurToUsdRate);
+        
+        // Apply 1% downgrade for safety
+        return convertedAmount * 0.99;
+    }, [usdToEurRate]);
 
     // Calculate amount limits based on selected service
     const amountLimits = useMemo(() => {

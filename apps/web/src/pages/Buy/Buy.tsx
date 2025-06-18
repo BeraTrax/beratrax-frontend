@@ -1,12 +1,13 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { getOnrampBuyUrl, FundButton } from "@coinbase/onchainkit/fund";
 import { useAccount } from "wagmi";
-import { defaultNetworkName, RAMP_TRANSAK_API_KEY } from "src/config/constants";
+import { defaultChainId, defaultNetworkName, RAMP_TRANSAK_API_KEY } from "src/config/constants";
 import transaklogo from "src/assets/images/transaklogo.png";
 import holyheldlogo from "src/assets/images/holyheldlogo.png";
 import coinbaselogo from "src/assets/images/coinbaselogo.png";
 import HolyheldSDK, { HolyheldSDKError, HolyheldSDKErrorCode, Network } from '@holyheld/sdk';
 import { useQuery } from "@tanstack/react-query";
+import { addressesByChainId } from "src/config/constants/contracts";
 
 enum BuyService {
     coinbase = "coinbase",
@@ -130,7 +131,7 @@ export const Buy: React.FC = () => {
 
     // transak
     const transakUrl = useMemo(() => {
-        return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&defaultCryptoCurrency=USDC&network=berachain&defaultCryptoCurrency=BERA&walletAddress=${address}&defaultFiatAmount=${displayAmount}&fiatCurrency=USD`;
+        return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
     }, [address, displayAmount]);
 
     const handlePresetClick = (presetAmount: string) => {
@@ -202,7 +203,7 @@ export const Buy: React.FC = () => {
             // Step 3: Get estimation
             const estimation = await holyheldSDK.evm.onRamp.getOnRampEstimation({
                 walletAddress: address,
-                tokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC address (example)
+                tokenAddress: addressesByChainId[defaultChainId].usdcAddress,
                 tokenNetwork: Network.berachain, // network
                 EURAmount: eurAmount.toString()
             });

@@ -24,34 +24,60 @@ export const Buy: React.FC = () => {
     const [selectedService, setSelectedService] = useState<BuyService>(BuyService.coinbase);
     const [isHolyheldLoading, setIsHolyheldLoading] = useState<boolean>(false);
     const [isHolyheldAllowed, setIsHolyheldAllowed] = useState<boolean>(true);
-    //usequery to fetch amount limits
-    const { refetch: refetchAmountLimits } = useQuery({
-        queryKey: ['amountLimits'],
+    
+    const holyheldSDK = useMemo(() => new HolyheldSDK({ apiKey: import.meta.env.REACT_APP_HOLYHELD_API_KEY }), []);
+
+    // Convert USD to EUR (approximate rate, in production you'd want real-time rates)
+    const usdToEurToUsd = useCallback((amount: number, isUSD = true) => {
+        const usdToEurRate = 0.92; // Example rate: 1 USD = 0.92 EUR
+        const eurToUsdRate = 1 / usdToEurRate;
+      
+        if (typeof amount !== 'number' || amount < 0) {
+          throw new Error('Invalid amount. Must be a positive number.');
+        }
+      
+        return isUSD 
+          ? (amount * usdToEurRate) 
+          : (amount * eurToUsdRate);
+    }, []);
+
+    // Use React Query to fetch amount limits with proper caching
+    const { data: holyheldLimits } = useQuery({
+        queryKey: ['holyheld-server-settings'],
         queryFn: async () => {
-            const settings = await holyheldSDK.getServerSettings()
+            await holyheldSDK.init();
+            const settings = await holyheldSDK.getServerSettings();
+            console.log('Holyheld server settings:', settings);
             return {
-                minAmount: Number(settings.external.minOnRampAmountInEUR),
-                maxAmount: Number(settings.external.maxOnRampAmountInEUR)
-            }
+                minAmountEUR: Number(settings.external.minOnRampAmountInEUR),
+                maxAmountEUR: Number(settings.external.maxOnRampAmountInEUR),
+                isEnabled: settings.external.isOnRampEnabled
+            };
         },
         enabled: selectedService === BuyService.holyheld,
-        placeholderData: {
-            minAmount: 5,
-            maxAmount: 1000
-        },
         staleTime: 1000 * 60 * 5, // 5 minutes
-        gcTime: 1000 * 60 * 5, // 5 minutes
+        gcTime: 1000 * 60 * 10, // 10 minutes
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
-        
-    })
+        refetchInterval: 1000 * 60 * 5, // Auto refetch every 5 minutes
+    });
 
-    const [amountLimits, setAmountLimits] = useState({
-        minAmount: 10,
-        maxAmount: 999999999999999
-    })
-    const {minAmount, maxAmount} = amountLimits
+    // Calculate amount limits based on selected service
+    const amountLimits = useMemo(() => {
+        if (selectedService === BuyService.holyheld && holyheldLimits) {
+            return {
+                minAmount: Math.floor(usdToEurToUsd(holyheldLimits.minAmountEUR, false)),
+                maxAmount: Math.floor(usdToEurToUsd(holyheldLimits.maxAmountEUR, false)),
+            };
+        }
+        return {
+            minAmount: 10,
+            maxAmount: 999999999999999
+        };
+    }, [selectedService, holyheldLimits, usdToEurToUsd]);
+
+    const { minAmount, maxAmount } = amountLimits;
 
     const presetAmounts = ["20", "50", "100"];
 
@@ -61,8 +87,6 @@ export const Buy: React.FC = () => {
     // USD to USDC is 1:1 ratio
     const convertedAmount = displayAmount;
 
-    const holyheldSDK = useMemo(() => new HolyheldSDK({ apiKey: import.meta.env.REACT_APP_HOLYHELD_API_KEY }), []);
-
     useLayoutEffect(() => {
         (async () => {
             await holyheldSDK.init();
@@ -71,29 +95,8 @@ export const Buy: React.FC = () => {
                 const addressValidation = await holyheldSDK.validateAddress(address.toString());
                 setIsHolyheldAllowed(addressValidation.isOnRampAllowed);
             }
-
         })();
-
-    },[])
-
-    useEffect(() => {
-        if(selectedService === BuyService.holyheld) {
-            holyheldSDK.getServerSettings().then((settings) => {
-                console.log('Holyheld server settings:', settings);
-                setAmountLimits({
-                    minAmount: Math.floor(usdToEurToUsd(Number(settings.external.minOnRampAmountInEUR), false)),
-                    maxAmount: Math.floor(usdToEurToUsd(Number(settings.external.maxOnRampAmountInEUR), false)),
-                })
-            })
-        }
-        else {
-            setAmountLimits({
-                minAmount: 10,
-                maxAmount: 999999999999999
-            })
-        }
-    },[selectedService])
-
+    }, [address, holyheldSDK]);
 
     // coinbase
     const onrampBuyUrl = useMemo(() => {
@@ -110,20 +113,6 @@ export const Buy: React.FC = () => {
     const transakUrl = useMemo(() => {
         return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&defaultCryptoCurrency=USDC&network=berachain&defaultCryptoCurrency=BERA&walletAddress=${address}&defaultFiatAmount=${displayAmount}&fiatCurrency=USD`;
     }, [address, displayAmount]);
-
-    // Convert USD to EUR (approximate rate, in production you'd want real-time rates)
-    const usdToEurToUsd = useCallback((amount: number, isUSD = true) => {
-        const usdToEurRate = 0.92; // Example rate: 1 USD = 0.92 EUR
-        const eurToUsdRate = 1 / usdToEurRate;
-      
-        if (typeof amount !== 'number' || amount < 0) {
-          throw new Error('Invalid amount. Must be a positive number.');
-        }
-      
-        return isUSD 
-          ? (amount * usdToEurRate) 
-          : (amount * eurToUsdRate);
-      }, []);
 
     const handlePresetClick = (presetAmount: string) => {
         setAmount(presetAmount);
@@ -401,9 +390,15 @@ export const Buy: React.FC = () => {
                         ) : (
                             <button
                                 onClick={handleBuyClick}
-                                disabled={!isValidAmount() || isHolyheldLoading || !isHolyheldAllowed}
+                                disabled={
+                                    !isValidAmount() || 
+                                    isHolyheldLoading || 
+                                    (selectedService === BuyService.holyheld && !isHolyheldAllowed)
+                                }
                                 className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
-                                    isValidAmount() && !isHolyheldLoading && isHolyheldAllowed
+                                    isValidAmount() && 
+                                    !isHolyheldLoading && 
+                                    (selectedService !== BuyService.holyheld || isHolyheldAllowed)
                                         ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
                                         : "bg-buttonDisabled text-textBlack cursor-not-allowed"
                                 }`}
@@ -416,7 +411,9 @@ export const Buy: React.FC = () => {
                                 ) : (
                                     <>
                                         {selectedService === BuyService.transak && "+ Buy"}
-                                        {selectedService === BuyService.holyheld && isHolyheldAllowed ? "+ Buy" : "Not allowed"}
+                                        {selectedService === BuyService.holyheld && (
+                                            isHolyheldAllowed ? "+ Buy" : "Not allowed"
+                                        )}
                                     </>
                                 )}
                             </button>

@@ -361,7 +361,7 @@ export const Buy: React.FC = () => {
                             </div>
                             <iframe
                                 height="625"
-                                title="Transak On/Off Ramp Widget"
+                                title="Transak OnRamp Widget"
                                 src={transakUrl}
                                 allowFullScreen={true}
                                 style={{ 

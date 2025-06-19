@@ -364,7 +364,7 @@ export const Buy: React.FC = () => {
                                     title="Transak OnRamp Widget"
                                     src={transakUrl}
                                     allowFullScreen={true}
-                                    className="w-full bg-white rounded-lg h-[400px] sm:h-[500px] md:h-[600px] lg:h-[625px]"
+                                    className="w-full bg-white rounded-lg h-[500px] sm:h-[500px] md:h-[600px] lg:h-[625px]"
                                     style={{ 
                                         border: "none",
                                         borderRadius: "8px"

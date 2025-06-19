@@ -9,7 +9,8 @@
       "distribution": "internal",
       "channel": "development",
       "node": "22.15.0",
-      "android": { "buildType": "apk" }
+      "android": { "buildType": "apk" },
+      "ios": { "simulator": true }
     },
     "preview": {
       "distribution": "internal",

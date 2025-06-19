@@ -10,8 +10,6 @@ export const useBackgroundImagePrefetch = (): void => {
 	useEffect(() => {
 		const prefetchImagesInBackground = async (): Promise<void> => {
 			try {
-				console.log(`🖼️ Starting to prefetch ${PREFETCH_IMAGE_URLS.length} images in background...`);
-
 				// Prefetch images in smaller batches to be less aggressive
 				const batchSize = 5;
 				let completed = 0;
@@ -40,8 +38,6 @@ export const useBackgroundImagePrefetch = (): void => {
 						await new Promise((resolve) => setTimeout(resolve, 100));
 					}
 				}
-
-				console.log(`✅ Background image prefetch completed: ${completed}/${PREFETCH_IMAGE_URLS.length} images`);
 			} catch (error) {
 				console.warn("Background image prefetch encountered an error:", error);
 			}

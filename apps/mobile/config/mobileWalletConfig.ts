@@ -1,10 +1,9 @@
 import { Chain, createWalletClient, CustomTransport, http, JsonRpcAccount, LocalAccount, PublicClient, Transport } from "viem";
 import { chains } from "@beratrax/core/src/config/baseWalletConfig";
 import * as Linking from "expo-linking";
-import Web3Auth, { WEB3AUTH_NETWORK, ChainNamespace, LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
+import Web3Auth, { OPENLOGIN_NETWORK, LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
-import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthConnector } from "./web3authRnConnector";
 import { createConfig } from "wagmi";
 
@@ -13,29 +12,12 @@ const redirectUrl = `${scheme}://auth`;
 
 const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
 
-const chainConfig = {
-	chainNamespace: ChainNamespace.EIP155,
-	chainId: "0x" + (80094).toString(16),
-	rpcTarget: "https://rpc.berachain.com",
-	displayName: "Berachain",
-	tickerName: "Berachain",
-	ticker: "BERA",
-	blockExplorerUrl: "https://berascan.com",
-};
-
-const ethereumPrivateKeyProvider = new EthereumPrivateKeyProvider({
-	config: {
-		chainConfig,
-	},
-});
-
 export const web3auth = new Web3Auth(WebBrowser, SecureStore, {
 	clientId,
-	network: WEB3AUTH_NETWORK.CYAN,
-	privateKeyProvider: ethereumPrivateKeyProvider,
+	network: OPENLOGIN_NETWORK.CYAN,
 	redirectUrl,
 	enableLogging: true, // Enable logging for debugging
-	sessionTime: 60 * 60, // 1 hour
+	sessionTime: 60 * 60 * 24, // 1 day
 });
 
 // Initialize Web3Auth and return a promise
@@ -51,13 +33,8 @@ export const initWeb3Auth = async () => {
 
 // Helper function to get the private key
 export const getWeb3AuthPrivateKey = async (): Promise<string | undefined> => {
-	if (!web3auth.connected) return undefined;
-
 	try {
-		const privateKey = await web3auth.provider?.request({
-			method: "eth_private_key",
-		});
-		return privateKey as string;
+		return web3auth.privKey;
 	} catch (error) {
 		console.error("Error getting private key:", error);
 		return undefined;
@@ -66,7 +43,7 @@ export const getWeb3AuthPrivateKey = async (): Promise<string | undefined> => {
 
 // Check if Web3Auth is connected
 export const isWeb3AuthConnected = (): boolean => {
-	return web3auth.connected;
+	return web3auth.privKey !== undefined;
 };
 
 // Logout from Web3Auth
@@ -97,6 +74,16 @@ const createWeb3AuthConnector = (
 	});
 };
 
+// Create a stable connector for the initial config
+const web3AuthConnector = Web3AuthConnector({
+	web3AuthInstance: web3auth,
+	loginParams: {
+		redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+		mfaLevel: "default",
+		loginProvider: LOGIN_PROVIDER.GOOGLE, // Default provider
+	},
+});
+
 // Create Wagmi config with Web3Auth connector
 export const createMobileWalletConfig = (
 	email?: string,
@@ -114,8 +101,17 @@ export const createMobileWalletConfig = (
 	});
 };
 
-// Export the default config for initial setup
-export const mobileWalletConfig = createMobileWalletConfig();
+// Export the default config for initial setup with stable connector
+export const mobileWalletConfig = createConfig({
+	chains,
+	connectors: [web3AuthConnector],
+	transports: chains.reduce<Record<number, Transport>>((acc, chain) => {
+		return {
+			...acc,
+			[chain.id]: http(chain.rpcUrls.default.http[0]),
+		};
+	}, {}),
+});
 
 export interface IClients {
 	wallet: ReturnType<typeof createWalletClient<CustomTransport | Transport, Chain, JsonRpcAccount | LocalAccount, undefined>>;

@@ -1,7 +1,8 @@
 import { createConnector } from "@wagmi/core";
 import type { IWeb3Auth } from "@web3auth/react-native-sdk";
 import { privateKeyToAccount } from "viem/accounts";
-import { Chain, getAddress } from "viem";
+import { getAddress } from "viem";
+import { ethereumPrivateKeyProvider } from "./ethereumProvider";
 
 export type Web3AuthConnectorOptions = {
 	web3AuthInstance: IWeb3Auth;
@@ -16,33 +17,45 @@ export type Web3AuthConnectorOptions = {
 };
 
 export function Web3AuthConnector({ web3AuthInstance, loginParams = { loginProvider: "google" } }: Web3AuthConnectorOptions) {
+	let currentLoginParams = loginParams;
+
 	return createConnector((config) => {
 		const connector = {
 			id: "web3Auth",
 			name: "Web3Auth",
 			type: "web3Auth",
+			// Enable auto-reconnection for wagmi
+			supportsSimulation: false,
 
 			async connect({ chainId }: { chainId?: number } = {}) {
-				await web3AuthInstance.login(loginParams);
-
-				if (!web3AuthInstance.provider) {
-					throw new Error("Web3Auth provider not available after login");
+				// Check if user is already logged in, if not then login
+				if (!web3AuthInstance.privKey) {
+					await web3AuthInstance.login(currentLoginParams);
 				}
 
-				const privateKey = (await web3AuthInstance.provider.request({
-					method: "eth_private_key",
-				})) as string;
+				if (!web3AuthInstance.privKey) {
+					throw new Error("Web3Auth private key not available after login");
+				}
 
 				// Convert to proper hex format
-				const hexPrivateKey = privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`;
+				const hexPrivateKey = web3AuthInstance.privKey.startsWith("0x") ? web3AuthInstance.privKey : `0x${web3AuthInstance.privKey}`;
 
 				// Create a Viem account from the private key
 				const account = privateKeyToAccount(hexPrivateKey as `0x${string}`);
 
-				// Get current chain ID from provider
-				const currentChainId = await web3AuthInstance.provider.request({
-					method: "eth_chainId",
-				});
+				// Set up the ethereum provider with the private key
+				await ethereumPrivateKeyProvider.setupProvider(web3AuthInstance.privKey);
+
+				// Get current chain ID from ethereum provider or use provided chainId
+				let currentChainId;
+				try {
+					currentChainId = await ethereumPrivateKeyProvider.request({
+						method: "eth_chainId",
+					});
+				} catch (error) {
+					console.log("Could not get chainId from provider, using provided chainId");
+					currentChainId = chainId ? `0x${chainId.toString(16)}` : "0x1";
+				}
 
 				const id = Number(currentChainId || chainId || "0x1");
 
@@ -57,38 +70,37 @@ export function Web3AuthConnector({ web3AuthInstance, loginParams = { loginProvi
 			},
 
 			async getAccounts() {
-				if (!web3AuthInstance.provider) {
+				if (!web3AuthInstance.privKey) {
 					return [];
 				}
 
-				const privateKey = (await web3AuthInstance.provider.request({
-					method: "eth_private_key",
-				})) as string;
-
-				const hexPrivateKey = privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`;
+				const hexPrivateKey = web3AuthInstance.privKey.startsWith("0x") ? web3AuthInstance.privKey : `0x${web3AuthInstance.privKey}`;
 				const account = privateKeyToAccount(hexPrivateKey as `0x${string}`);
 
 				return [account.address];
 			},
 
 			async getChainId() {
-				if (!web3AuthInstance.provider) {
+				if (!web3AuthInstance.privKey) {
 					return 1; // Default to mainnet
 				}
 
-				const chainId = await web3AuthInstance.provider.request({
-					method: "eth_chainId",
-				});
-
-				return Number(chainId || "0x1");
+				try {
+					const chainId = await ethereumPrivateKeyProvider.request({
+						method: "eth_chainId",
+					});
+					return Number(chainId || "0x1");
+				} catch (error) {
+					return 80094; // Default to Berachain if request fails
+				}
 			},
 
 			async getProvider() {
-				return web3AuthInstance.provider;
+				return ethereumPrivateKeyProvider;
 			},
 
 			async isAuthorized() {
-				return web3AuthInstance.connected;
+				return !!web3AuthInstance.privKey;
 			},
 
 			onAccountsChanged(accounts: string[]) {
@@ -110,12 +122,21 @@ export function Web3AuthConnector({ web3AuthInstance, loginParams = { loginProvi
 			},
 		};
 
-		// Set up event listeners
-		if (web3AuthInstance.provider) {
-			web3AuthInstance.provider.on("accountsChanged", connector.onAccountsChanged);
-			web3AuthInstance.provider.on("chainChanged", connector.onChainChanged);
-			web3AuthInstance.provider.on("disconnect", connector.onDisconnect);
+		// Set up event listeners on the ethereum provider
+		if (ethereumPrivateKeyProvider) {
+			try {
+				ethereumPrivateKeyProvider.on("accountsChanged", connector.onAccountsChanged);
+				ethereumPrivateKeyProvider.on("chainChanged", connector.onChainChanged);
+				ethereumPrivateKeyProvider.on("disconnect", connector.onDisconnect);
+			} catch (error) {
+				console.log("Could not set up provider event listeners:", error);
+			}
 		}
+
+		// Expose the setLoginParams method on the connector
+		(connector as any).setLoginParams = (newParams: typeof loginParams) => {
+			currentLoginParams = { ...currentLoginParams, ...newParams };
+		};
 
 		return connector;
 	});

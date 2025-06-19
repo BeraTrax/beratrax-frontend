@@ -8,11 +8,8 @@ import { trackTransaction } from "@beratrax/core/src/utils/analytics";
 import type { Config } from "@wagmi/core";
 import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import Web3Auth, { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
-import {
-	initWeb3Auth as initWeb3AuthMobile,
-	web3auth as web3authInstance,
-	createMobileWalletConfig,
-} from "@beratrax/mobile/config/mobileWalletConfig";
+import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
+import { ethereumPrivateKeyProvider } from "@beratrax/mobile/config/ethereumProvider";
 
 export interface IWalletContext {
 	currentWallet?: Address;
@@ -46,7 +43,7 @@ const WalletProvider: React.FC<IProps> = ({
 	isWeb3AuthConnected,
 	logoutWeb3Auth,
 }) => {
-	const [walletConfig, setWalletConfig] = useState<Config>(initialWalletConfig);
+	const [walletConfig] = useState<Config>(initialWalletConfig);
 	const { data: getWalletClientHook } = useWalletClient({
 		config: walletConfig,
 	});
@@ -66,30 +63,29 @@ const WalletProvider: React.FC<IProps> = ({
 	const [isSocial, setIsSocial] = useState(false);
 	const [currentWallet, setCurrentWallet] = useState<Address | undefined>();
 	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
+	const [hasInitialized, setHasInitialized] = useState(false);
 
 	// Initialize Web3Auth and check for existing session
 	useEffect(() => {
 		const initWeb3Auth = async () => {
+			if (hasInitialized) return;
+
 			try {
 				await initWeb3AuthMobile();
 				setWeb3auth(web3authInstance);
+				setHasInitialized(true);
 
 				// Check if user is already logged in
-				if (web3authInstance.connected) {
+				if (web3authInstance.privKey) {
 					setIsConnecting(true);
 					try {
-						const privateKey = await web3authInstance.provider?.request({
-							method: "eth_private_key",
+						// Use wagmi's connectAsync to inform wagmi about the restored session
+						const { accounts } = await connectAsync({
+							connector: walletConfig.connectors[0],
 						});
 
-						if (typeof privateKey === "string") {
-							const cleanPrivateKey = privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
-							const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
-
-							const account = privateKeyToAccount(formattedPrivateKey);
-							setCurrentWallet(account.address);
-							setIsSocial(true);
-						}
+						setCurrentWallet(accounts[0]);
+						setIsSocial(true);
 					} catch (error) {
 						console.error("Error restoring session:", error);
 						// If there's an error restoring the session, log out
@@ -97,28 +93,38 @@ const WalletProvider: React.FC<IProps> = ({
 					} finally {
 						setIsConnecting(false);
 					}
+				} else {
+					console.log("No existing session found");
 				}
 			} catch (error) {
 				console.error("Error initializing Web3Auth:", error);
+				setIsConnecting(false);
 			}
 		};
 
 		initWeb3Auth();
-	}, []);
+	}, [hasInitialized]);
 
 	// Login function
 	const connectWallet = useCallback(
 		async (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER], email?: string) => {
 			try {
-				console.log("connectWallet clicked");
 				setIsConnecting(true);
 
-				// Create new config with the selected provider
-				const newConfig = createMobileWalletConfig(email, provider);
-				setWalletConfig(newConfig);
+				// Update the connector's login parameters before connecting
+				const connector = walletConfig.connectors[0] as any;
+				if (connector.setLoginParams) {
+					connector.setLoginParams({
+						loginProvider: provider,
+						extraLoginOptions: {
+							login_hint: email,
+						},
+					});
+				}
 
+				// Use the existing connector with updated parameters
 				const { accounts } = await connectAsync({
-					connector: newConfig.connectors[0],
+					connector: walletConfig.connectors[0],
 				});
 
 				setCurrentWallet(accounts[0]);
@@ -130,7 +136,7 @@ const WalletProvider: React.FC<IProps> = ({
 				setIsConnecting(false);
 			}
 		},
-		[connectAsync]
+		[connectAsync, walletConfig.connectors]
 	);
 
 	// Set a timeout for reconnecting to prevent infinite reconnection attempts
@@ -172,12 +178,12 @@ const WalletProvider: React.FC<IProps> = ({
 			const client = createPublicClient({
 				chain: chain,
 				transport: http(chain.rpcUrls?.default?.http[0], {
-					timeout: 60_000,
+					timeout: 30_000,
 				}),
 				batch: {
 					multicall: {
-						batchSize: 4096,
-						wait: 250,
+						batchSize: 16_384,
+						wait: 50,
 					},
 				},
 			}) as IClients["public"];
@@ -201,20 +207,19 @@ const WalletProvider: React.FC<IProps> = ({
 
 				let client: IClients["wallet"];
 				if (isSocial) {
-					if (!web3auth || !web3auth.provider) {
-						throw new Error("Web3Auth not initialized");
+					if (!web3auth || !web3auth.privKey) {
+						throw new Error("Web3Auth not initialized or user not logged in");
 					}
 
-					const rawKey = await web3auth.provider.request({
-						method: "eth_private_key",
-					});
-					if (typeof rawKey !== "string") {
-						throw new Error("Failed to retrieve private key from Web3Auth");
-					}
+					// Format the private key properly - same logic as in getPkey
+					const cleanPrivateKey = web3auth.privKey.startsWith("0x") ? web3auth.privKey.slice(2) : web3auth.privKey;
+					const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
+					await ethereumPrivateKeyProvider.setupProvider(web3auth.privKey);
 
 					client = createWalletClient({
-						transport: custom(web3auth.provider),
+						transport: custom(ethereumPrivateKeyProvider as EIP1193Provider),
 						chain,
+						account: privateKeyToAccount(formattedPrivateKey),
 					});
 				} else {
 					// @ts-ignore
@@ -270,7 +275,7 @@ const WalletProvider: React.FC<IProps> = ({
 				throw error;
 			}
 		},
-		[address, isSocial, getWalletClientHook, switchChainAsyncHook]
+		[address, isSocial, getWalletClientHook, switchChainAsyncHook, web3auth]
 	);
 
 	const estimateTxGas = async (args: EstimateTxGasArgs) => {
@@ -323,11 +328,18 @@ const WalletProvider: React.FC<IProps> = ({
 			setIsReconnectingTimeout(false);
 			setCurrentWallet(undefined);
 			setIsSocial(false);
+		} else if (status === "connected" && address) {
+			// Sync wagmi address with local state
+			setCurrentWallet(address);
 		}
-	}, [status]);
+	}, [status, address]);
 
 	const getPkey = async (): Promise<Hex | undefined> => {
 		try {
+			if (web3auth && web3auth.privKey) {
+				const cleanPrivateKey = web3auth.privKey.startsWith("0x") ? web3auth.privKey.slice(2) : web3auth.privKey;
+				return ("0x" + cleanPrivateKey) as Hex;
+			}
 			const pkey = await getWeb3AuthPk?.();
 			return ("0x" + pkey) as Hex;
 		} catch (error) {
@@ -337,9 +349,9 @@ const WalletProvider: React.FC<IProps> = ({
 
 	const contextValue = useMemo(
 		() => ({
-			currentWallet,
+			currentWallet: address || currentWallet, // Prefer wagmi address as source of truth
 			isSocial,
-			isConnecting,
+			isConnecting: isConnecting || wagmiIsConnecting,
 			isSponsored,
 			connector,
 			logout,
@@ -351,9 +363,11 @@ const WalletProvider: React.FC<IProps> = ({
 			connectWallet,
 		}),
 		[
+			address,
 			currentWallet,
 			isSocial,
 			isConnecting,
+			wagmiIsConnecting,
 			isSponsored,
 			connector,
 			logout,

@@ -17,9 +17,11 @@ export default {
 		newArchEnabled: true,
 		jsEngine: "hermes",
 		ios: {
-			jsEngine: "jsc",
 			supportsTablet: true,
 			bundleIdentifier: "com.beratrax.mobile",
+			infoPlist: {
+				ITSAppUsesNonExemptEncryption: false,
+			},
 		},
 		android: {
 			adaptiveIcon: {

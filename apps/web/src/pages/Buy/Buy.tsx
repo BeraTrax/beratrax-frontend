@@ -359,20 +359,18 @@ export const Buy: React.FC = () => {
                                     ✕
                                 </button>
                             </div>
-                            <iframe
-                                height="625"
-                                title="Transak OnRamp Widget"
-                                src={transakUrl}
-                                allowFullScreen={true}
-                                style={{ 
-                                    display: "block", 
-                                    width: "100%", 
-                                    maxHeight: "625px", 
-                                    maxWidth: "100%",
-                                    borderRadius: "8px"
-                                }}
-                                className="bg-white rounded-lg"
-                            />
+                            <div className="w-full">
+                                <iframe
+                                    title="Transak OnRamp Widget"
+                                    src={transakUrl}
+                                    allowFullScreen={true}
+                                    className="w-full bg-white rounded-lg h-[400px] sm:h-[500px] md:h-[600px] lg:h-[625px]"
+                                    style={{ 
+                                        border: "none",
+                                        borderRadius: "8px"
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}

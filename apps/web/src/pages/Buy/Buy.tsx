@@ -345,8 +345,8 @@ export const Buy: React.FC = () => {
 
                 {/* Transak Widget */}
                 {selectedService === BuyService.transak && showTransakWidget && (
-                    <div className="mb-6">
-                        <div className="bg-bgDark rounded-2xl border border-gradientSecondary p-4">
+                    <div className="mb-6  h-[73vh]">
+                        <div className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[inherit] overflow-scroll">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <img src={transaklogo} alt={BuyService.transak} className="w-7 h-7 rounded-full" />
@@ -359,16 +359,12 @@ export const Buy: React.FC = () => {
                                     ✕
                                 </button>
                             </div>
-                            <div className="w-full">
+                            <div className="w-full h-[94%]">
                                 <iframe
                                     title="Transak OnRamp Widget"
                                     src={transakUrl}
                                     allowFullScreen={true}
-                                    className="w-full bg-white rounded-lg h-[500px] sm:h-[500px] md:h-[600px] lg:h-[625px]"
-                                    style={{ 
-                                        border: "none",
-                                        borderRadius: "8px"
-                                    }}
+                                    className="border-none rounded-lg w-full bg-white h-full"
                                 />
                             </div>
                         </div>

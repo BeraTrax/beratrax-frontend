@@ -50,7 +50,10 @@ export const TokenBalances: FC<IProps> = () => {
 			.map((e) => ({ ...e, isTransferable: e.name !== "BGT" }));
 	}, [tokens, showTokenDetailedBalances]);
 
-	const beraToken = tokens.find((token) => token.address == zeroAddress);
+	const beraToken = useMemo(() => {
+		const foundToken = tokens.find((token) => token.address === zeroAddress);
+		return foundToken ? { ...foundToken, isTransferable: true } : undefined;
+	}, [tokens]);
 
 	// Function to render Token Card
 	const renderTokenCard = (token: Token & { isTransferable?: boolean }, index: string | number, isBera = false) => {

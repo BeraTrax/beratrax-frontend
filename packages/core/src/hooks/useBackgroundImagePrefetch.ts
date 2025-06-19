@@ -12,7 +12,6 @@ export const useBackgroundImagePrefetch = (): void => {
 			try {
 				// Prefetch images in smaller batches to be less aggressive
 				const batchSize = 5;
-				let completed = 0;
 
 				for (let i = 0; i < PREFETCH_IMAGE_URLS.length; i += batchSize) {
 					const batch = PREFETCH_IMAGE_URLS.slice(i, i + batchSize);
@@ -21,12 +20,10 @@ export const useBackgroundImagePrefetch = (): void => {
 					const batchPromises = batch.map(async (url) => {
 						try {
 							await Image.prefetch(url);
-							completed++;
 							return { url, success: true };
 						} catch (error) {
 							// Silently handle errors - don't spam console
 							console.warn(`Failed to prefetch: ${url}`);
-							completed++;
 							return { url, success: false };
 						}
 					});

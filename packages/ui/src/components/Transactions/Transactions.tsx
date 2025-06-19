@@ -122,7 +122,7 @@ const TransactionDetailsContent: FC<{
 	// Text size classes for mobile vs web
 	const labelClass = isMobile ? "text-sm" : "text-xs";
 	const valueClass = isMobile ? "text-base" : "text-sm";
-	const sectionClass = isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : "bg-[#2A2A2A] p-2 rounded-lg";
+	const sectionClass = (isMobile ? "mb-4 p-4" : "p-2") + " bg-[#2A2A2A] rounded-lg justify-between items-center flex-row";
 	const detailItemClass = isMobile ? "mb-3" : "";
 	const assetItemClass = isMobile ? "pl-4 mb-2" : "pl-2";
 
@@ -173,7 +173,7 @@ const TransactionDetailsContent: FC<{
 
 			{/* LP Received */}
 			{tx.vaultShares !== undefined && (
-				<View className={`flex flex-row justify-between items-start ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
+				<View className={`flex flex-row justify-between items-center ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
 					<Text className={`text-textSecondary ${labelClass}`}>LP Received:</Text>
 					<View className="flex flex-col items-end">
 						<Text className={`${valueClass} text-textWhite`}>
@@ -308,30 +308,16 @@ const TransactionRow = memo(
 			e.stopPropagation();
 		}, []);
 
-		const handleInfoPress = useCallback(
-			(e: GestureResponderEvent) => {
-				e.stopPropagation();
-				if (isMobile) {
-					setShowTooltipModal(true);
-				}
-			},
-			[isMobile]
-		);
+		const handleInfoPress = useCallback((e: GestureResponderEvent) => {
+			e.stopPropagation();
+			setShowTooltipModal(true); // always show modal now
+		}, []);
 
 		const infoIcon = useMemo(() => <InfoCircleIcon />, []);
 
-		const tooltipContent = useMemo(() => {
-			if (!isMobile) {
-				return (
-					<View className="absolute bottom-full left-1/2 translate-x-0 mb-2 px-4 py-2 bg-[#1A1A1A] rounded-lg text-sm text-textWhite w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-						<View className="flex flex-col justify-end gap-2">
-							<TransactionDetailsContent tx={tx} farm={farm} prices={prices} decimals={decimals} isMobile={false} />
-						</View>
-					</View>
-				);
-			}
-			return null;
-		}, [isMobile, tx, farm, prices, decimals]);
+		// const tooltipContent = useMemo(() => {
+		// 	return null;
+		// }, [isMobile, tx, farm, prices, decimals]);
 
 		// Memoize the close button component
 		const closeButton = useMemo(
@@ -352,7 +338,7 @@ const TransactionRow = memo(
 		// Memoize the modal inner content
 		const modalInnerContent = useMemo(
 			() => (
-				<Pressable className="bg-[#1A1A1A] rounded-t-xl p-6" onPress={handleModalPress}>
+				<Pressable className="w-full tablet:w-2/5 m-0 tablet:m-auto bg-[#1A1A1A] rounded-t-xl p-6" onPress={handleModalPress}>
 					<View className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />
 					{transactionDetails}
 					{closeButton}
@@ -376,15 +362,7 @@ const TransactionRow = memo(
 		);
 
 		// Memoize the info button content
-		const infoButtonContent = useMemo(
-			() => (
-				<Pressable onPress={handleInfoPress}>
-					{infoIcon}
-					{tooltipContent}
-				</Pressable>
-			),
-			[handleInfoPress, infoIcon, tooltipContent]
-		);
+		const infoButtonContent = useMemo(() => <Pressable onPress={handleInfoPress}>{infoIcon}</Pressable>, [handleInfoPress, infoIcon]);
 
 		// Memoize the extra info section
 		const extraInfoSection = useMemo(

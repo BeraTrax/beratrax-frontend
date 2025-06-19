@@ -414,7 +414,8 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 			{openQrCodeModal ? <ExportPublicKey setOpenModal={setOpenQrCodeModal} /> : null}
 
 			{/* Login Modal */}
-			{connectWallet && <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />}
+			{/* only for mobile app */}
+			{showLoginModal && <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />}
 		</View>
 	);
 };

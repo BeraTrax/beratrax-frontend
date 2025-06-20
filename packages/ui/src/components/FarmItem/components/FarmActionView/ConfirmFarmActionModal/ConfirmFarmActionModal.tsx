@@ -68,7 +68,7 @@ const ConfirmFarmActionModal: FC<IProps> = ({ handleClose, txId, farm, depositIn
 				clearAllNotifications();
 				handleClose();
 			}}
-			wrapperClassName="w-full lg:w-[92%]"
+			wrapperClassName="w-[90vw] max-w-[600px]"
 		>
 			<View className="text-textWhite flex flex-col gap-4">
 				<Text className="text-xl text-textWhite font-bold align-middle uppercase">{getTransactionTitle()}</Text>

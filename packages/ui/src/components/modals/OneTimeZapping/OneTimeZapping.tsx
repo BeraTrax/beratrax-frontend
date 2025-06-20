@@ -5,7 +5,7 @@ import { useAppDispatch } from "@beratrax/core/src/state";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { LoaderIcon } from "@beratrax/ui/src/icons/Loader";
 import { disableZapWarning } from "@beratrax/core/src/state/account/accountReducer";
-import { View, Text, Pressable, Switch } from "react-native";
+import { View, Text, Pressable, Switch, Platform } from "react-native";
 
 interface IProps {
 	inputToken: string;
@@ -30,7 +30,7 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 	};
 
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[90vw] max-w-[600px]">
 			<View className="w-full mb-4">
 				<View className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
 					<Text className="text-2xl font-bold text-center text-textWhite">Important Notice!</Text>
@@ -51,8 +51,9 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 					trackColor={{ false: "#767577", true: "#4CAF50" }}
 					thumbColor={doNotNotifyAgain ? "#ffffff" : "#f4f3f4"}
 					ios_backgroundColor="#767577"
+					style={Platform.OS !== "web" ? { transform: [{ scaleX: 0.6 }, { scaleY: 0.6 }] } : undefined}
 				/>
-				<Text className="text-textWhite text-base">Do not notify me again</Text>
+				<Text className="text-textWhite text-base py-3">Do not notify me again</Text>
 			</View>
 			<View className="flex flex-row justify-between items-center">
 				<Pressable
@@ -63,11 +64,7 @@ export const OneTimeZapping: FC<IProps> = ({ inputToken, outputToken, handleClos
 				>
 					<Text className="text-center text-textWhite font-bold">Cancel</Text>
 				</Pressable>
-				<Pressable
-					className={`bg-bgPrimary p-4 rounded-xl  text-textWhite`}
-					disabled={isLoading}
-					onPress={handleUnderstand}
-				>
+				<Pressable className={`bg-bgPrimary p-4 rounded-xl  text-textWhite`} disabled={isLoading} onPress={handleUnderstand}>
 					<Text className="text-center text-textWhite font-bold">
 						{isLoading ? <LoaderIcon className={styles.loader} /> : "I understand"}
 					</Text>

@@ -4,7 +4,7 @@ import { noExponents } from "@beratrax/core/src/utils/common";
 import { FC, useMemo, useCallback, memo } from "react";
 import { ModalLayout } from "ui/src/components/modals/ModalLayout/ModalLayout";
 import { UsdToggle } from "../../UsdToggle/UsdToggle";
-import { Text, View, TextInput, Pressable, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Pressable, TouchableOpacity, ActivityIndicator } from "react-native";
 import Colors from "@beratrax/typescript-config/Colors";
 
 interface IProps {
@@ -28,7 +28,14 @@ const TransferButton = memo(({ hasInsufficientBalance, isLoading, amount, receiv
 		onPress={onPress}
 		disabled={isLoading || Number(amount) <= 0 || !receiverAddress || hasInsufficientBalance}
 	>
-		<Text className="text-textBlack text-base font-bold text-center">{hasInsufficientBalance ? "Insufficient Fund" : "Transfer"}</Text>
+		{isLoading ? (
+			<View className="flex flex-row items-center justify-center">
+				<ActivityIndicator size="small" color="#72B21F" />
+				<Text className="text-textBlack text-base font-bold text-center">Transferring...</Text>
+			</View>
+		) : (
+			<Text className="text-textBlack text-base font-bold text-center">{hasInsufficientBalance ? "Insufficient Fund" : "Transfer"}</Text>
+		)}
 	</Pressable>
 ));
 
@@ -54,10 +61,10 @@ export const TransferToken: FC<IProps> = ({ token, handleClose }) => {
 	const onPress = useCallback(() => {
 		const mockEvent = { preventDefault: () => {} } as any;
 		handleSubmit(mockEvent);
-	}, []);
+	}, [handleSubmit]);
 
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[90vw] max-w-[400px]">
 			<View className="w-full flex flex-col justify-center items-center">
 				<Text className="text-base text-center text-textWhite mb-4 font-medium">Transfer {token.name}</Text>
 

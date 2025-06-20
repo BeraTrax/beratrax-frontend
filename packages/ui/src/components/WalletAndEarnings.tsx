@@ -302,7 +302,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 											)}
 										</View>
 										{/* Beraname */}
-										<GradientText className="text-xl uppercase font-arame-mono font-normal">
+										<GradientText className="text-lg uppercase font-arame-mono font-normal">
 											{ensName || referralCode ? `${ensName || referralCode}` : ""}
 										</GradientText>
 									</View>
@@ -415,7 +415,9 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 
 			{/* Login Modal */}
 			{/* only for mobile app */}
-			{showLoginModal && <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />}
+			{showLoginModal && connectWallet && (
+				<LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />
+			)}
 		</View>
 	);
 };

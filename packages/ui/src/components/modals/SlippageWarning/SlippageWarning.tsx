@@ -9,9 +9,9 @@ interface IProps {
 }
 export const SlippageWarning: FC<IProps> = ({ handleClose, handleSubmit, percentage }) => {
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[90vw] max-w-[600px]">
 			<View className={"text-center tablet:w-full flex flex-col items-center justify-center width-[50%]"}>
-				<Text className="text-red-500">Warning</Text>
+				<Text className="text-red-500 text-2xl font-bold uppercase">Warning</Text>
 				<Text
 					className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}
 				>{`Slipage is higher than normal at ${percentage?.toFixed(2)}%.`}</Text>
@@ -23,7 +23,7 @@ export const SlippageWarning: FC<IProps> = ({ handleClose, handleSubmit, percent
 							handleClose();
 						}}
 					>
-						<Text className="text-white text-center group-hover:text-buttonPrimaryLight transition-colors">Close</Text>
+						<Text className="text-black text-center font-bold transition-colors">Close</Text>
 					</Pressable>
 					<Pressable
 						className="bg-bgDark border border-red-500 flex-1 py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-red-500 transition-colors group"
@@ -32,7 +32,7 @@ export const SlippageWarning: FC<IProps> = ({ handleClose, handleSubmit, percent
 							handleClose();
 						}}
 					>
-						<Text className="text-red-500 text-center group-hover:text-white transition-colors">Continue</Text>
+						<Text className="text-red-500 text-center font-bold group-hover:text-white transition-colors">Continue</Text>
 					</Pressable>
 				</View>
 			</View>

@@ -12,29 +12,6 @@ export const SlippageNotCalculate: FC<IProps> = ({ handleClose, handleSubmit }) 
 	const closeText = useMemo(() => <Text className="text-textBlack font-bold text-center">Close</Text>, []);
 	const continueText = useMemo(() => <Text className="text-textWhite font-bold text-center">Continue</Text>, []);
 
-	const closeButtonStyle = useMemo<ViewStyle>(
-		() => ({
-			backgroundColor: "#a0ff3b",
-			borderRadius: 40,
-			borderWidth: 1,
-			paddingVertical: 10.5,
-			width: "100%",
-		}),
-		[]
-	);
-
-	const continueButtonStyle = useMemo<ViewStyle>(
-		() => ({
-			backgroundColor: "#020907",
-			borderColor: "#a0ff3b",
-			borderRadius: 40,
-			borderWidth: 1,
-			paddingVertical: 10.5,
-			width: "100%",
-		}),
-		[]
-	);
-
 	const onClosePress = useCallback(() => {
 		handleClose();
 	}, [handleClose]);
@@ -45,25 +22,27 @@ export const SlippageNotCalculate: FC<IProps> = ({ handleClose, handleSubmit }) 
 	}, [handleSubmit, handleClose]);
 
 	return (
-		<ModalLayout onClose={handleClose} wrapperClassName="w-[400px]">
-			<View className="tablet:w-full flex flex-col gap-4 items-center justify-center width-[540px]">
-				<Image src={errorIcon} alt="error" className="mt-4 mb-2 tablet:mt-1" />
-				<Text className="text-center tablet:text-base mobile:text-sm text-xl text-textSecondary ">
+		<ModalLayout onClose={handleClose} wrapperClassName="w-[90vw] max-w-[600px]">
+			<View className={"text-center tablet:w-full flex flex-col items-center justify-center width-[50%]"}>
+				<Text className="text-red-500 text-2xl font-bold uppercase">Warning</Text>
+				<Text className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}>
 					Transaction slippage could not be simulated. Your total fees are not confirmed.
 				</Text>
-				<Text className="text-center tablet:text-base mobile:text-sm text-xl text-textSecondary ">Do you still wish to continue?</Text>
-				<View className="tablet:gap-2 mt-4 flex gap-4 w-full justify-evenly">
+				<Text className={"text-center tablet:text-base mobile:text-sm text-xl text-red-500"}>Do you still wish to continue?</Text>
+				<View className={"tablet:gap-2 mt-4 flex flex-row gap-4 w-full justify-between"}>
 					<Pressable
-						style={closeButtonStyle}
-						className="text-xl font-bold tracking-widest uppercase"
-						onPress={onClosePress}
+						className="bg-buttonPrimaryLight flex-1 py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-white transition-colors group"
+						onPress={() => {
+							onClosePress();
+						}}
 					>
 						{closeText}
 					</Pressable>
 					<Pressable
-						style={continueButtonStyle}
-						className="text-xl font-bold tracking-widest uppercase text-gradientPrimary"
-						onPress={onContinuePress}
+						className="bg-bgDark border border-red-500 flex-1 py-3 px-2 cursor-pointer text-xl font-bold tracking-widest rounded-[40px] uppercase hover:bg-red-500 transition-colors group"
+						onPress={() => {
+							onContinuePress();
+						}}
 					>
 						{continueText}
 					</Pressable>

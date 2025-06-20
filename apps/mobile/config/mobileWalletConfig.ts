@@ -16,7 +16,7 @@ export const web3auth = new Web3Auth(WebBrowser, SecureStore, {
 	clientId,
 	network: OPENLOGIN_NETWORK.CYAN,
 	redirectUrl,
-	enableLogging: true, // Enable logging for debugging
+	enableLogging: false,
 	sessionTime: 60 * 60 * 24, // 1 day
 });
 

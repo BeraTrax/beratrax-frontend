@@ -9,6 +9,7 @@ import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
 import { View, Text, Image, Platform, ActivityIndicator } from "react-native";
+import Colors from "@beratrax/typescript-config/Colors";
 
 type IProps =
 	| {
@@ -79,7 +80,7 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 				) : status === TransactionStepStatus.FAILED ? (
 					<CancelOutlineIcon color="red" />
 				) : status === TransactionStepStatus.PENDING ? (
-					<CircleOneIcon color="var(--new-color_secondary)" style={{ transform: "scale(0.8)" }} />
+					<CircleOneIcon color={Colors.textSecondary} style={{ transform: "scale(0.8)" }} />
 				) : (
 					<ActivityIndicator size="small" color="#72B21F" />
 				)}

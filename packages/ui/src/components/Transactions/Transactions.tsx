@@ -614,7 +614,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 	const contentContainerStyle = useMemo(() => ({ gap: 0.7 }), []);
 
 	return (
-		<ModalLayout onClose={() => setOpenModal(false)} wrapperClassName="w-[90vw] max-w-[500px] h-[60vh] mx-4 my-8">
+		<ModalLayout onClose={() => setOpenModal(false)} wrapperClassName="w-[90vw] max-w-[500px] h-[60vh]">
 			<Text className="text-[1.5rem] font-bold text-textWhite mb-[1.2rem] font-arame-mono">Transactions</Text>
 			<FlatList
 				data={transactions}

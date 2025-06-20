@@ -50,7 +50,7 @@ export const PointsEarnings: React.FC<Props> = () => {
 							showDollarSign: false,
 						})}
 					</Text>
-					<GradientText>x2 Multiplier-Mainnet 🚀</GradientText>
+					<GradientText className="text-xs sm:text-lg">x2 Multiplier-Mainnet 🚀</GradientText>
 					{boosts && boosts.includes(Boosts.NFT) && <GradientText>x2 Multiplier - NFT 🚀</GradientText>}
 					{boosts && boosts.includes(Boosts.BETA) && <GradientText>x1.5 Multiplier - BETA 🚀</GradientText>}
 					{boosts && boosts.includes(Boosts.BETA_TESTER) && <GradientText>x2 Multiplier - BETA TESTER 🚀</GradientText>}

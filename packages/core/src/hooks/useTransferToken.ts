@@ -14,41 +14,48 @@ export const useTransferToken = (token: Token, handleClose: Function) => {
 	const { transfer, isLoading } = useTransfer();
 	const [max, setMax] = useState(false);
 
-	const getAmountInWei = () => {
+	const getAmountInWei = useCallback(() => {
 		const price = token.price;
 		let amountInEthFormat = showInUsd ? (parseFloat(amount) / price).toString() : amount;
 		console.log(amount, price, amountInEthFormat, token.decimals);
 		const converted = toWei(amountInEthFormat, token.decimals);
 		return converted;
-	};
+	}, [amount, showInUsd, token.price, token.decimals]);
 
-	const handleSubmit = async (e: FormEvent) => {
-		e.preventDefault();
-		const id = notifyLoading(loadingMessages.transferingTokens());
-		try {
-			const addr = await resolveEnsDomain(receiverAddress);
-			if (addr === null) {
-				throw new Error("Invalid domain!");
+	const handleSubmit = useCallback(
+		async (e: FormEvent) => {
+			e.preventDefault();
+			const id = notifyLoading(loadingMessages.transferingTokens());
+			try {
+				if (!receiverAddress || receiverAddress.trim() === "") {
+					throw new Error("Receiver address is required!");
+				}
+
+				const addr = await resolveEnsDomain(receiverAddress.trim());
+				if (addr === null) {
+					throw new Error("Invalid domain!");
+				}
+				const res = await transfer({
+					tokenAddress: token.address,
+					to: addr,
+					amount: getAmountInWei(),
+					max,
+					chainId: token.networkId,
+				});
+				if (res?.error) throw new Error(res.error);
+				notifySuccess(successMessages.tokenTransfered());
+			} catch (error: any) {
+				console.log(error);
+				let err = JSON.parse(JSON.stringify(error.message || "Error transfering tokens..."));
+				notifyError(errorMessages.generalError(err));
 			}
-			const res = await transfer({
-				tokenAddress: token.address,
-				to: addr,
-				amount: getAmountInWei(),
-				max,
-				chainId: token.networkId,
-			});
-			if (res?.error) throw new Error(res.error);
-			notifySuccess(successMessages.tokenTransfered());
-		} catch (error: any) {
-			console.log(error);
-			let err = JSON.parse(JSON.stringify(error.message || "Error transfering tokens..."));
-			notifyError(errorMessages.generalError(err));
-		}
 
-		dismissNotify(id);
-		handleClose();
-		reloadBalances();
-	};
+			dismissNotify(id);
+			handleClose();
+			reloadBalances();
+		},
+		[receiverAddress, amount, max, showInUsd, token, transfer, handleClose, reloadBalances]
+	);
 
 	const handleMaxClick = () => {
 		setMax(true);

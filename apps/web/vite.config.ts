@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
 				},
 				protocolImports: true,
 			}),
-		],
+		] as any,
 		server: {
 			port: 3000,
 			open: true,
@@ -48,6 +48,8 @@ export default defineConfig(({ mode }) => {
 				"~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",
 				"~@fontsource/inter": "@fontsource/inter",
 				"react-native": "react-native-web",
+				// Node.js module polyfills for browser
+				"end-of-stream": "empty-module",
 			},
 		},
 		optimizeDeps: {

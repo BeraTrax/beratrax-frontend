@@ -503,4 +503,3 @@ export const Buy: React.FC = () => {
         </div>
     );
 };
-

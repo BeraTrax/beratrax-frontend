@@ -1,7 +1,8 @@
+import { CHAIN_ID } from "src/types/enums";
+
 export const blockExplorersByChainId: { [key: number]: string } = {
-    42161: "https://arbiscan.io",
-    80084: "https://bartio.beratrail.io",
-    80094: "https://berascan.com",
+    [CHAIN_ID.ARBITRUM]: "https://arbiscan.io",
+    [CHAIN_ID.BERACHAIN]: "https://berascan.com",
 };
 
 export const paymastersByChainId: { [key: number]: string } = {

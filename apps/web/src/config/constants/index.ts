@@ -56,7 +56,6 @@ export const WERT_PARTNER_ID = import.meta.env.REACT_APP_WERT_PARTNER_ID;
 export const POLLING_INTERVAL = 30000;
 export const INFURA_KEY = import.meta.env.REACT_APP_INFURA;
 export const ALCHEMY_KEY = import.meta.env.REACT_APP_ALCHEMY;
-console.log(process.env.REACT_APP_BARTIO_RPC_URL);
 export const BARTIO_RPC_URL =
     import.meta.env.REACT_APP_BARTIO_RPC_URL ??
     "https://berachain-bartio.g.alchemy.com/v2/VUwkyWR596J0Wq8sxvXtBYH_8X7CLcNn";

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Chain } from "viem/chains";
+import { arbitrum, Chain } from "viem/chains";
 import { CHAIN_NAMESPACES } from "@web3auth/base";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
@@ -73,7 +73,7 @@ export const berachain = /*#__PURE__*/ defineChain({
 //     },
 // });
 
-export const SupportedChains = [berachain] as (Chain & {
+export const SupportedChains = [berachain, arbitrum] as (Chain & {
     rpcUrls: { alchemy?: { http: string[] } };
     iconUrl?: string;
 })[];

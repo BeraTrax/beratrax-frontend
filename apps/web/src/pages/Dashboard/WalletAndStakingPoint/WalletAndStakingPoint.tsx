@@ -24,6 +24,8 @@ import { trackLogin } from "src/utils/analytics";
 import { formatCurrency } from "src/utils/common";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
 import StakingModal from "../Staking/StakingModal";
+import ConnectWalletButton from "src/components/ConnectWalletButton/ConnectWalletButton";
+import { ChainSelectorDisplay } from "src/components/ChainSelectorDisplay/ChainSelectorDisplay";
 
 const TokenSale: React.FC = () => {
     const [timeLeft, setTimeLeft] = useState<{
@@ -385,16 +387,10 @@ export const WalletAndStakingPoint: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* Switch to Berachain */}
+                                {/* Switch to Multiple Chains */}
                                 <div className="flex items-center gap-4 z-20">
-                                    {!isSocial && chainId !== CHAIN_ID.BERACHAIN && (
-                                        <button
-                                            onClick={() => switchChain({ chainId: CHAIN_ID.BERACHAIN })}
-                                            className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 cursor-pointer"
-                                        >
-                                            Switch to Berachain
-                                        </button>
-                                    )}
+                                {currentWallet && <ChainSelectorDisplay />}
+                                    
                                     <LiaPowerOffSolid
                                         onClick={() => disconnect()}
                                         className="w-8 h-8 text-textWhite cursor-pointer z-10"
@@ -403,13 +399,7 @@ export const WalletAndStakingPoint: React.FC = () => {
                             </div>
                         ) : (
                             <div className="flex justify-end">
-                                <button
-                                    onClick={openConnectModal}
-                                    type="button"
-                                    className="bg-bgPrimary text-white font-medium font-league-spartan rounded-xl px-4 py-2 m-4 cursor-pointer"
-                                >
-                                    {isConnecting ? "Connecting..." : "Sign In/Up"}
-                                </button>
+                                <ConnectWalletButton />
                             </div>
                         )}
                     </div>

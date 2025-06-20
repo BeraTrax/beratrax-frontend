@@ -94,10 +94,10 @@ const berachainAddresses: Addresses = {
 };
 
 export const addressesByChainId: { [key: number]: Addresses } = {
-    0xa4b1: arbitrumAddresses,
     137: polygonAddresses,
     [CHAIN_ID.BASE]: baseAddresses,
     [CHAIN_ID.CORE]: coreAddresses,
     [CHAIN_ID.BERACHAIN]: berachainAddresses,
+    [CHAIN_ID.ARBITRUM]: arbitrumAddresses
 };
 

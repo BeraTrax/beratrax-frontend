@@ -5,7 +5,7 @@ import { incrementErrorCount, resetErrorCount } from "src/state/error/errorReduc
 import { CHAIN_ID } from "src/types/enums";
 import { rainbowConfig, SupportedChains, web3AuthInstance } from "src/config/walletConfig";
 import { ENTRYPOINT_ADDRESS_V06 } from "permissionless";
-import { Address, Hex, createPublicClient, createWalletClient, getAddress, http } from "viem";
+import { Address, Chain, Hex, createPublicClient, createWalletClient, getAddress, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { EstimateTxGasArgs, IClients } from "src/types";
 import { AlchemyWebSigner } from "@alchemy/aa-alchemy";
@@ -57,6 +57,10 @@ export interface IWalletContext {
     estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
     connectWeb3Auth: () => Promise<any>;
     connector?: Connector;
+    supportedChains: Chain[];
+    switchToChain: (chainId: number) => Promise<void>;
+    getChainName: (chainId: number) => string;
+    isChainSupported: (chainId: number) => boolean;
 }
 
 export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
@@ -113,6 +117,24 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
             }
             console.log(e);
         }
+    };
+
+    const switchToChain = async (chainId: number) => {
+        try{
+            console.log("Switching to chain", chainId);
+            await switchChainCore(rainbowConfig, { chainId });
+        }catch(error){
+            console.log("Failed to switch chain", error);
+            throw error;
+        }
+    };
+
+    const getChainName = (chainId: number) => {
+        return SupportedChains.find((chain) => chain.id === chainId)!.name;
+    };
+
+    const isChainSupported = (chainId: number) => {
+        return SupportedChains.some((chain) => chain.id === chainId);
     };
 
     const getPublicClient = (chainId: number): IClients["public"] => {
@@ -195,8 +217,11 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
                         return tx;
                     },
                 }));
-                // @ts-ignore
-                await switchChainCore(rainbowConfig, { chainId });
+                
+                // Connect wallet to the chain
+                const currentWalletChainId = await _walletClient.getChainId();
+                console.log("currentWalletChainId", currentWalletChainId);
+                await switchChainCore(rainbowConfig, { chainId: currentWalletChainId });
                 // @ts-ignore
                 return _walletClient;
             } else {
@@ -340,7 +365,8 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
     React.useEffect(() => {
         const int = setInterval(async () => {
             try {
-                const _publicClient = getPublicClient(defaultChainId);
+                const currentChain = wagmiChainId || defaultChainId;
+                const _publicClient = getPublicClient(currentChain);
                 await _publicClient.getBlockNumber();
                 dispatch(resetErrorCount());
             } catch (error) {
@@ -351,7 +377,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
         return () => {
             clearInterval(int);
         };
-    }, []);
+    }, [wagmiChainId]);
 
     // useEffect(() => {
     //     if (currentWallet) {
@@ -372,9 +398,9 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
     }, [wagmiChainId, connector]);
 
     useEffect(() => {
-        if (rainbowkitAddress && status === "connected") connectWallet();
+        if (rainbowkitAddress && status === "connected" && !currentWallet) connectWallet();
         if (status === "disconnected") logout();
-    }, [connectWallet, status]);
+    }, [connectWallet, status, currentWallet]);
 
     return (
         <WalletContext.Provider
@@ -397,6 +423,10 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
                 getWalletClient,
                 getClients,
                 connector,
+                supportedChains: SupportedChains,
+                switchToChain,
+                getChainName,
+                isChainSupported,
             }}
         >
             {children}

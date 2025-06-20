@@ -38,12 +38,9 @@ import { PowerIcon, CopyIcon, KeysIcon, QrcodeIcon } from "../icons";
 import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
 import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
 import { LoginModal } from "@beratrax/mobile/components/LoginModal";
-import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
-interface WalletAndEarningsProps {
-	connectWallet?: (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER], email?: string) => Promise<void>;
-}
+import { WalletHookType } from "packages/core/src/hooks/useWallet";
 
 const ExportPrivateKeyButton = memo(({ onPress }: { onPress: () => void }) => (
 	<TouchableOpacity onPress={onPress}>
@@ -99,7 +96,7 @@ const ExportKeysSection = memo(
 	}
 );
 
-export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWallet }) => {
+export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) => {
 	const {
 		referralCode,
 		connector: connectorId,
@@ -416,6 +413,7 @@ export const WalletAndEarnings: React.FC<WalletAndEarningsProps> = ({ connectWal
 			{/* Login Modal */}
 			{/* only for mobile app */}
 			{showLoginModal && connectWallet && (
+				// @ts-ignore
 				<LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />
 			)}
 		</View>

@@ -25,6 +25,7 @@ export const Buy: React.FC = () => {
     const [selectedService, setSelectedService] = useState<BuyService>(BuyService.coinbase);
     const [isHolyheldLoading, setIsHolyheldLoading] = useState<boolean>(false);
     const [isHolyheldAllowed, setIsHolyheldAllowed] = useState<boolean>(true);
+    const [showTransakWidget, setShowTransakWidget] = useState<boolean>(false);
     
     const holyheldSDK = useMemo(() => new HolyheldSDK({ apiKey: import.meta.env.REACT_APP_HOLYHELD_API_KEY }), []);
     
@@ -129,7 +130,6 @@ export const Buy: React.FC = () => {
         });
     }, [address, displayAmount]);
 
-    // transak
     const transakUrl = useMemo(() => {
         return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
     }, [address, displayAmount]);
@@ -275,12 +275,16 @@ export const Buy: React.FC = () => {
                 // FundButton will handle this automatically
                 break;
             case BuyService.transak:
-                window.open(transakUrl, "_blank", "noopener,noreferrer");
+                setShowTransakWidget(true);
                 break;
             case BuyService.holyheld:
                 handleHolyheldBuy();
                 break;
         }
+    };
+
+    const handleCloseTransakWidget = () => {
+        setShowTransakWidget(false);
     };
 
     const tabs = [
@@ -304,7 +308,12 @@ export const Buy: React.FC = () => {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setSelectedService(tab.id)}
+                                onClick={() => {
+                                    setSelectedService(tab.id);
+                                    if (tab.id !== BuyService.transak) {
+                                        setShowTransakWidget(false);
+                                    }
+                                }}
                                 disabled={isHolyheldLoading && selectedService === BuyService.holyheld}
                                 className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-md transition-all font-medium ${
                                     selectedService === tab.id
@@ -334,132 +343,162 @@ export const Buy: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main Amount Display Card */}
-                <div className="bg-bgDark rounded-2xl border border-gradientSecondary p-6 mb-4">
-                    {/* Large Amount Display */}
-                    <div className="text-center mb-6">
-                        <div className="text-4xl font-bold text-textWhite mb-2">
-                            {displayAmount} {currencyType}
-                        </div>
-                        <div className="flex items-center justify-center gap-2 text-textSecondary">
-                            <span className="text-sm">⟷</span>
-                            <span className="text-sm">
-                                {convertedAmount} {currencyType === "USD" ? "USDC" : "USD"}
-                            </span>
-                        </div>
-                          
-                        <div className={`text-xs text-textSecondary mt-1  ${selectedService === BuyService.holyheld ? "visible" : "invisible"}`}>
-                            ≈ {usdToEurToUsd(parseFloat(displayAmount))} EUR
-                        </div>
-                        
-                    </div>
-
-                    {/* Custom Amount Input */}
-                    <div className="mb-6">
-                        <label className="block text-textWhite text-sm font-medium mb-2">
-                            Enter Amount (${minAmount} - ${maxAmount})
-                        </label>
-                        <input
-                            step={1}
-                            min={minAmount}
-                            max={maxAmount}
-                            type="number"
-                            value={customAmount}
-                            onChange={handleCustomInputChange}
-                            disabled={isHolyheldLoading}
-                            placeholder={`Enter amount in ${currencyType}`}
-                            className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary focus:border-borderLight focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        />
-                    </div>
-
-                    {/* Preset Amount Buttons */}
-                    <div className="mb-6">
-                        <label className="block text-textWhite text-sm font-medium mb-3">Quick Select</label>
-                        <div className="flex gap-3">
-                            {presetAmounts.map((presetAmount) => (
+                {/* Transak Widget */}
+                {selectedService === BuyService.transak && showTransakWidget && (
+                    <div className="mb-6  h-[73vh]">
+                        <div className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[inherit] overflow-scroll">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                    <img src={transaklogo} alt={BuyService.transak} className="w-7 h-7 rounded-full" />
+                                    <h3 className="text-textWhite font-medium">Transak Onramp</h3>
+                                </div>
                                 <button
-                                    key={presetAmount}
-                                    onClick={() => handlePresetClick(presetAmount)}
-                                    disabled={isHolyheldLoading}
-                                    className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
-                                        !isCustomInput && amount === presetAmount
-                                            ? "bg-buttonPrimary border-buttonPrimary text-bgDark"
-                                            : "bg-bgSecondary border-borderDark text-textWhite hover:border-borderLight"
+                                    onClick={handleCloseTransakWidget}
+                                    className="text-textSecondary hover:text-textWhite transition-colors"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <div className="w-full h-[94%]">
+                                <iframe
+                                    title="Transak OnRamp Widget"
+                                    src={transakUrl}
+                                    allowFullScreen={true}
+                                    className="border-none rounded-lg w-full bg-white h-full"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Main Amount Display Card */}
+                {!(selectedService === BuyService.transak && showTransakWidget) && (
+                    <div className="bg-bgDark rounded-2xl border border-gradientSecondary p-6 mb-4">
+                        {/* Large Amount Display */}
+                        <div className="text-center mb-6">
+                            <div className="text-4xl font-bold text-textWhite mb-2">
+                                {displayAmount} {currencyType}
+                            </div>
+                            <div className="flex items-center justify-center gap-2 text-textSecondary">
+                                <span className="text-sm">⟷</span>
+                                <span className="text-sm">
+                                    {convertedAmount} {currencyType === "USD" ? "USDC" : "USD"}
+                                </span>
+                            </div>
+                              
+                            <div className={`text-xs text-textSecondary mt-1  ${selectedService === BuyService.holyheld ? "visible" : "invisible"}`}>
+                                ≈ {usdToEurToUsd(parseFloat(displayAmount))} EUR
+                            </div>
+                            
+                        </div>
+
+                        {/* Custom Amount Input */}
+                        <div className="mb-6">
+                            <label className="block text-textWhite text-sm font-medium mb-2">
+                                Enter Amount (${minAmount} - ${maxAmount})
+                            </label>
+                            <input
+                                step={1}
+                                min={minAmount}
+                                max={maxAmount}
+                                type="number"
+                                value={customAmount}
+                                onChange={handleCustomInputChange}
+                                disabled={isHolyheldLoading}
+                                placeholder={`Enter amount in ${currencyType}`}
+                                className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary focus:border-borderLight focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                        </div>
+
+                        {/* Preset Amount Buttons */}
+                        <div className="mb-6">
+                            <label className="block text-textWhite text-sm font-medium mb-3">Quick Select</label>
+                            <div className="flex gap-3">
+                                {presetAmounts.map((presetAmount) => (
+                                    <button
+                                        key={presetAmount}
+                                        onClick={() => handlePresetClick(presetAmount)}
+                                        disabled={isHolyheldLoading}
+                                        className={`flex-1 py-3 px-4 rounded-lg border transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed ${
+                                            !isCustomInput && amount === presetAmount
+                                                ? "bg-buttonPrimary border-buttonPrimary text-bgDark"
+                                                : "bg-bgSecondary border-borderDark text-textWhite hover:border-borderLight"
+                                        }`}
+                                    >
+                                        ${presetAmount}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Buy Button - Conditional Rendering Based on Selected Service */}
+                        <div className="mb-4">
+                            {selectedService === BuyService.coinbase ? (
+                                <FundButton
+                                    hideIcon={true}
+                                    fundingUrl={onrampBuyUrl}
+                                    disabled={!isValidAmount() || isHolyheldLoading}
+                                    text="+ Buy"
+                                    className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
+                                        isValidAmount() && !isHolyheldLoading
+                                            ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
+                                            : "bg-buttonDisabled cursor-not-allowed"
+                                    }`}
+                                />
+                            ) : (
+                                <button
+                                    onClick={handleBuyClick}
+                                    disabled={
+                                        !isValidAmount() || 
+                                        isHolyheldLoading || 
+                                        (selectedService === BuyService.holyheld && !isHolyheldAllowed)
+                                    }
+                                    className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
+                                        isValidAmount() && 
+                                        !isHolyheldLoading && 
+                                        (selectedService !== BuyService.holyheld || isHolyheldAllowed)
+                                            ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
+                                            : "bg-buttonDisabled text-textBlack cursor-not-allowed"
                                     }`}
                                 >
-                                    ${presetAmount}
+                                    {isHolyheldLoading && selectedService === BuyService.holyheld ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-bgDark border-t-transparent rounded-full animate-spin"></div>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            {selectedService === BuyService.transak && "+ Buy"}
+                                            {selectedService === BuyService.holyheld && (
+                                                isHolyheldAllowed ? "+ Buy" : "Not allowed"
+                                            )}
+                                        </>
+                                    )}
                                 </button>
-                            ))}
+                            )}
+                        </div>
+
+                        {/* Service-specific Footer */}
+                        <div className="text-center">
+                            <p className="text-xs text-textSecondary">
+                                {
+                                    Object.values(BuyService).map((service) => (
+                                        service === selectedService && (
+                                            <span key={service}>
+                                                {`Powered by ${service[0].toUpperCase() + service.slice(1)}`}
+                                            </span>
+                                        )
+                                    ))
+                                }
+                            </p>
+                            {selectedService === BuyService.holyheld && isHolyheldLoading && (
+                                <p className="text-xs text-buttonPrimary mt-1">
+                                    Please confirm in your Holyheld mobile app
+                                </p>
+                            )}
                         </div>
                     </div>
-
-                    {/* Buy Button - Conditional Rendering Based on Selected Service */}
-                    <div className="mb-4">
-                        {selectedService === BuyService.coinbase ? (
-                            <FundButton
-                                hideIcon={true}
-                                fundingUrl={onrampBuyUrl}
-                                disabled={!isValidAmount() || isHolyheldLoading}
-                                text="+ Buy"
-                                className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
-                                    isValidAmount() && !isHolyheldLoading
-                                        ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
-                                        : "bg-buttonDisabled cursor-not-allowed"
-                                }`}
-                            />
-                        ) : (
-                            <button
-                                onClick={handleBuyClick}
-                                disabled={
-                                    !isValidAmount() || 
-                                    isHolyheldLoading || 
-                                    (selectedService === BuyService.holyheld && !isHolyheldAllowed)
-                                }
-                                className={`w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
-                                    isValidAmount() && 
-                                    !isHolyheldLoading && 
-                                    (selectedService !== BuyService.holyheld || isHolyheldAllowed)
-                                        ? "bg-buttonPrimary hover:bg-buttonPrimaryLight text-bgDark"
-                                        : "bg-buttonDisabled text-textBlack cursor-not-allowed"
-                                }`}
-                            >
-                                {isHolyheldLoading && selectedService === BuyService.holyheld ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-bgDark border-t-transparent rounded-full animate-spin"></div>
-                                        Processing...
-                                    </>
-                                ) : (
-                                    <>
-                                        {selectedService === BuyService.transak && "+ Buy"}
-                                        {selectedService === BuyService.holyheld && (
-                                            isHolyheldAllowed ? "+ Buy" : "Not allowed"
-                                        )}
-                                    </>
-                                )}
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Service-specific Footer */}
-                    <div className="text-center">
-                        <p className="text-xs text-textSecondary">
-                            {
-                                Object.values(BuyService).map((service) => (
-                                    service === selectedService && (
-                                        <span key={service}>
-                                            {`Powered by ${service[0].toUpperCase() + service.slice(1)}`}
-                                        </span>
-                                    )
-                                ))
-                            }
-                        </p>
-                        {selectedService === BuyService.holyheld && isHolyheldLoading && (
-                            <p className="text-xs text-buttonPrimary mt-1">
-                                Please confirm in your Holyheld mobile app
-                            </p>
-                        )}
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );

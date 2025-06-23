@@ -15,7 +15,7 @@ import { mobileWalletConfig, getWeb3AuthPrivateKey, isWeb3AuthConnected, logoutW
 import { useFonts } from "expo-font";
 import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import "react-native-reanimated";
 
 import WalletProvider from "@beratrax/mobile/app/context/WalletProvider";
@@ -23,7 +23,7 @@ import { View } from "react-native";
 import { WagmiProvider } from "wagmi";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import store from "@beratrax/core/src/state";
-import BottomBar from "./components/BottomBar";
+import BottomBar from "./components/BottomBar/BottomBar";
 import { ReactHooksWrapper, setHook } from "react-hooks-outside";
 import { NotificationsProvider, useNotifications } from "reapop";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
@@ -79,7 +79,7 @@ const tabOptions = {
 	},
 };
 
-const AppContent = () => {
+const AppContent = memo(() => {
 	useDataRefresh();
 	useBackgroundImagePrefetch(); // 🖼️ Silently prefetch all pool images in the background
 
@@ -99,7 +99,7 @@ const AppContent = () => {
 			</SafeAreaView>
 		</SafeAreaProvider>
 	);
-};
+});
 
 const RootLayout = () => {
 	// const router = useRouter();

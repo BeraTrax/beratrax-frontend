@@ -37,7 +37,7 @@ import { GradientText } from "./GradientText";
 import { PowerIcon, CopyIcon, KeysIcon, QrcodeIcon } from "../icons";
 import { ExportPublicKey } from "./ExportPublicKey/ExportPublicKey";
 import { ExportPrivateKey } from "./ExportPrivateKey/ExportPrivateKey";
-import { LoginModal } from "@beratrax/mobile/components/LoginModal";
+import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 // import StakingModal from "web/src/pages/Dashboard/Staking/StakingModal";
 
 import { WalletHookType } from "packages/core/src/hooks/useWallet";

@@ -1,4 +1,3 @@
-import React from "react";
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";

@@ -48,13 +48,13 @@ export const updateFarmDetails = createAsyncThunk(
 		try {
 			const data: FarmDetails = {};
 			farms
-				.filter((farm) => farm.originPlatform !== FarmOriginPlatform.Core)
+				.filter((farm) => farm.originPlatform !== FarmOriginPlatform.Core.name)
 				.forEach((farm) => {
 					data[farm.id] = farmFunctions[farm.id]?.getProcessedFarmData(
 						balances,
 						prices,
 						decimals,
-						totalSupplies[farm.chainId][farm.vault_addr]?.supplyWei
+						totalSupplies[farm.chainId][farm.vault_addr].supplyWei
 					);
 				});
 
@@ -102,7 +102,6 @@ export const updateEarnings = createAsyncThunk(
 					] as const
 			); // Added 'as const' here too for the array of contract calls, ensuring readonly properties
 
-			console.log(`Preparing multicall for ${farms.length} farms, total ${multicallContracts.length} calls reduced to 1 call`);
 			const multicallResults = await publicClient.multicall({
 				contracts: multicallContracts, // This should now satisfy the type checker
 				allowFailure: true, // Important: allows individual calls to fail without failing the whole batch

@@ -4,8 +4,8 @@ import stakingAbi from "@beratrax/core/src/assets/abis/stakingAbi";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useVaults } from "@beratrax/core/src/hooks";
-import { useAppDispatch } from "@beratrax/core/src/state";
-import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+// import { useAppDispatch } from "@beratrax/core/src/state";
+// import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
@@ -17,7 +17,7 @@ import VaultItem from "./VaultItem";
 import { ReloadIcon } from "../icons/Reload";
 
 export const Vaults: FC<React.PropsWithChildren> = ({}) => {
-	const dispatch = useAppDispatch();
+	// const dispatch = useAppDispatch();
 	const { reloadFarmData } = useFarmDetails();
 	const { vaults: unsortedVaults, isLoading } = useVaults();
 
@@ -98,7 +98,7 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 		setIsRefreshing(true);
 		try {
 			if (currentWallet) {
-				await dispatch(updatePoints(currentWallet));
+				// await dispatch(updatePoints(currentWallet));
 				await reloadFarmData();
 				// Trigger a refresh of the rewards data
 				setRewardsUpdateTrigger((prev) => prev + 1);

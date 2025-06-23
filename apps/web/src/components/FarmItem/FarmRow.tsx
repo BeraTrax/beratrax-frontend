@@ -58,7 +58,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 		!isNaN(parseFloat(farmData?.withdrawableAmounts[0].amountDollar)) &&
 		(parseInt(farmData?.withdrawableAmounts[0].amountDollar) > 0 || Number(farmData?.withdrawableAmounts[0].amountDollar) > 0);
 
-	const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted;
+	const isHighlighted = farm.isCurrentWeeksRewardsVault || farm.isBoosted || farm.isUpcoming;
 
 	if (farm.id === 16) {
 		console.log(
@@ -128,8 +128,10 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 							) : (
 								<div className="flex flex-col justify-end items-end">
 									<div className="flex justify-between gap-2">
+										{farm.synthetic && <FarmRowChip text="Synthetic Reward Vault" />}
 										{hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
 										{farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
+										{farm.isUpcoming && <FarmRowChip text="Coming Soon" />}
 										{farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
 									</div>
 									<div className="flex gap-2 items-center">
@@ -140,7 +142,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 											? "??? "
 											: customCommify((farm.isUpcoming ? farm.total_apy : farmApys?.apy + farmApys?.pointsApr) || 0, {
 													minimumFractionDigits: 0,
-												})}
+											  })}
 										%
 									</p>
 									{farmApys && farmApys.merklApr
@@ -149,7 +151,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 													<span className="mr-1">+</span>
 													{toFixedFloor(farmApys.merklApr, 2)}%<span className="ml-1 text-xs">Jumper APY</span>
 												</p>
-											)
+										  )
 										: null}
 
 									<a id={key} data-tooltip-html={/* tooltip text here */ ""}>
@@ -162,8 +164,16 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
 					</div>
 
 					{/* APY (Mobile) */}
-					<div className="flex flex-col items-center justify-center min-w-[60px] mobile:block mobile:min-w-fit sm:hidden">
-						{hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
+					<div className="flex flex-col items-end justify-center min-w-[60px] mobile:block mobile:min-w-fit sm:hidden">
+						{
+							<div className="flex gap-2 items-center">
+								{farm.synthetic && <FarmRowChip text="Synthetic Reward Vault" />}
+								{hasDeposited && !farm.isUpcoming && <FarmRowChip text="Deposited" />}
+								{farm.isCurrentWeeksRewardsVault && <FarmRowChip text="Boosted BGT" />}
+								{farm.isUpcoming && <FarmRowChip text="Coming Soon" />}
+								{farm.isBoosted && <FarmRowChip text={`Jumper Boost`} />}
+							</div>
+						}
 						{
 							<>
 								<div className="flex gap-2 items-center">

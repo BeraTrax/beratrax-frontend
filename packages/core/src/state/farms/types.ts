@@ -1,8 +1,10 @@
 import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
 import { PoolDef } from "./../../config/constants/pools_json";
 import { FarmData, IClients } from "./../../types";
-import { FarmTransactionType } from "./../../types/enums";
+import { FarmTransactionType, FarmOriginPlatform } from "./../../types/enums";
 
+export type FarmOriginName = (typeof FarmOriginPlatform)[keyof typeof FarmOriginPlatform]["name"];
+export type FarmOriginLogo = (typeof FarmOriginPlatform)[keyof typeof FarmOriginPlatform]["logo"];
 export interface StateInterface {
 	farmDetails: FarmDetails;
 	earnings: Earnings;

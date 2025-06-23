@@ -7,7 +7,13 @@ import { VaultStatsTable } from "web/src/components/VaultStatsTable/VaultStatsTa
 import PlatformTVLGraph from "./PlatformTVLGraph/PlatformTVLGraph";
 
 function Stats() {
-	const { meanTvl, activeUsers, totalBtxPoints, facetUserCount, accountConnectorsStats } = useStats();
+	const { meanTvl, activeUsers, totalBtxPoints, facetUserCount, accountConnectorsStats, isLoading, isFacetUsersLoading } = useStats();
+
+	// Determine loading states for different stats
+	const isActiveUsersLoading = isLoading || activeUsers === undefined;
+	const isTotalBtxPointsLoading = isLoading || totalBtxPoints === undefined;
+	const isAccountConnectorsLoading = isLoading || !accountConnectorsStats;
+
 	return (
 		<div className="container mx-auto px-4 py-6 space-y-6">
 			<div className="grid grid-cols-1 tablet:grid-cols-2 gap-4">
@@ -20,6 +26,7 @@ function Stats() {
 						value={totalBtxPoints}
 						icon="📈"
 						gradientClass="bg-gradient-to-br from-buttonPrimary to-buttonPrimaryLight"
+						isLoading={isTotalBtxPointsLoading}
 					/>
 				</div>
 				<div className="transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-textPrimary/20">
@@ -28,6 +35,7 @@ function Stats() {
 						value={activeUsers}
 						icon="👥"
 						gradientClass="bg-gradient-to-br from-buttonPrimary to-buttonPrimaryLight"
+						isLoading={isActiveUsersLoading}
 					/>
 				</div>
 				<div className="transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-textPrimary/20">
@@ -36,21 +44,16 @@ function Stats() {
 						value={facetUserCount}
 						icon="🚀"
 						gradientClass="bg-gradient-to-br from-buttonPrimary to-buttonPrimaryLight"
+						isLoading={isFacetUsersLoading}
 					/>
 				</div>
 				<div className="transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-textPrimary/20">
 					<StatsCard
 						heading="EOA Users"
-						value={
-							accountConnectorsStats?.reduce((acc, curr) => {
-								if (curr.connector === "metaMask" || curr.connector === "io.metamask") {
-									return acc + curr.count;
-								}
-								return acc;
-							}, 0) || 0
-						}
+						value={(activeUsers || 0) - (accountConnectorsStats?.find((stat) => stat.connector === "web3auth")?.count || 0)}
 						icon="🦊"
 						gradientClass="bg-gradient-to-br from-buttonPrimary to-buttonPrimaryLight"
+						isLoading={isAccountConnectorsLoading}
 					/>
 				</div>
 				<div className="transform hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-textPrimary/20">
@@ -59,6 +62,7 @@ function Stats() {
 						value={accountConnectorsStats?.find((stat) => stat.connector === "web3auth")?.count || 0}
 						icon="🔑"
 						gradientClass="bg-gradient-to-br from-buttonPrimary to-buttonPrimaryLight"
+						isLoading={isAccountConnectorsLoading}
 					/>
 				</div>
 			</div>

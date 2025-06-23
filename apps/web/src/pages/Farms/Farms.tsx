@@ -15,7 +15,7 @@ function Farms() {
 	const [openedFarm, setOpenedFarm] = useState<number | undefined>();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
-	const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
+	const { sortedFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
 
 	// Get unique platforms from farms including both original and secondary platforms
 	const platforms = useMemo(() => {
@@ -24,9 +24,9 @@ function Farms() {
 			if (farm.originPlatform && farm.platform_logo) {
 				uniquePlatforms.set(farm.originPlatform, farm.platform_logo);
 			}
-			if (farm.secondary_platform) {
+			if (farm.secondary_platform && farm.secondary_platform_logo) {
 				// If secondary platform doesn't have a logo, use the primary platform's logo
-				uniquePlatforms.set(farm.secondary_platform, farm.platform_logo || "");
+				uniquePlatforms.set(farm.secondary_platform, farm.secondary_platform_logo || farm.platform_logo || "");
 			}
 		});
 		return Array.from(uniquePlatforms.entries()).sort((a, b) => a[0].localeCompare(b[0]));
@@ -71,9 +71,7 @@ function Farms() {
 						<div className="flex items-center gap-4">
 							{/* New Vaults Sort Option */}
 							<button
-								onClick={() =>
-									setSortSelected(sortSelected === FarmSortOptions.New ? FarmSortOptions.APY_High_to_Low : FarmSortOptions.New)
-								}
+								onClick={() => setSortSelected(sortSelected === FarmSortOptions.New ? undefined : FarmSortOptions.New)}
 								className={`pointer flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-200 ${
 									sortSelected === FarmSortOptions.New
 										? "bg-buttonPrimary border-buttonPrimary text-textWhite font-medium shadow-lg shadow-buttonPrimary/20"
@@ -156,44 +154,40 @@ function Farms() {
 				)}
 
 				{/* Vaults */}
-				<div className="flex flex-col gap-2">
+				{/* <div className="flex flex-col gap-2">
 					{sortedFarms.map((farm, index) => (
 						<FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
 					))}
-				</div>
+				</div> */}
 
-        {/* Mobile Vaults */}
-        <div className="flex flex-col gap-2">
-          {sortedFarms
-            ? sortedFarms
-                .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
-                .map((farm, index) => (
-                  <MobileFarmRow
-                    key={index + "nowallet"}
-                    farm={farm}
-                    openedFarm={openedFarm}
-                    setOpenedFarm={setOpenedFarm}
-                  />
-                ))
-            : farms
-                .filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
-                .map((farm, index) => (
-                  <MobileFarmRow
-                    key={index + "nowallet"}
-                    farm={farm}
-                    openedFarm={openedFarm}
-                    setOpenedFarm={setOpenedFarm}
-                  />
-                ))}
-        </div>
-				{/* Bottom padding */}
-				{(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) && upcomingFarms.length > 0 && (
-					<div className="flex flex-col mt-2 gap-2">
-						{upcomingFarms.map((farm, index) => (
-							<FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
-						))}
-					</div>
-				)}
+				{/* Mobile Vaults */}
+				<div className="flex flex-col gap-2">
+					{sortedFarms
+						? sortedFarms
+								.filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+								.map((farm, index) => (
+									<MobileFarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+								))
+						: farms
+								.filter((farm) => (IS_LEGACY ? farm.isDeprecated : !farm.isDeprecated))
+								.map((farm, index) => (
+									<MobileFarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+								))}
+				</div>
+				{/* Bottom padding
+                {(window.location.origin.includes("staging") || window.location.origin.includes("localhost")) &&
+                    upcomingFarms.length > 0 && (
+                        <div className="flex flex-col mt-2 gap-2">
+                            {upcomingFarms.map((farm, index) => (
+                                <FarmRow
+                                    key={index + "nowallet"}
+                                    farm={farm}
+                                    openedFarm={openedFarm}
+                                    setOpenedFarm={setOpenedFarm}
+                                />
+                            ))}
+                        </div>
+                    )} */}
 				<div className="h-32"></div>
 			</div>
 		</div>
@@ -201,4 +195,3 @@ function Farms() {
 }
 
 export default Farms;
-

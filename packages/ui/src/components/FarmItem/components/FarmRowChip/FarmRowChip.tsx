@@ -39,7 +39,7 @@ const FarmRowChip: FC<IProps> = ({ top, right, bottom, left, position, color, te
 			}}
 		>
 			<Text
-				className={`${getColor().bgColor} ${getColor().textColor} font-arame-mono uppercase modile:font-semi-bold relative rounded-lg text-sm font-bold `}
+				className={`${getColor().bgColor} ${getColor().textColor} font-arame-mono modile:font-semi-bold relative rounded-lg text-sm font-bold `}
 			>
 				{text}
 			</Text>

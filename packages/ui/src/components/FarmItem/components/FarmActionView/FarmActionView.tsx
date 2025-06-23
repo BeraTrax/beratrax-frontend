@@ -8,7 +8,7 @@ import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsR
 import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
 import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState, useCallback, useMemo, memo } from "react";

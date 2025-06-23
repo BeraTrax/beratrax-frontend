@@ -1,7 +1,7 @@
 import axios from "axios";
-import { createPublicClient, getContract, http, PublicClient } from "viem";
-import { berachain } from "viem/chains";
+import { createPublicClient, getContract, PublicClient } from "viem";
 import vaultAbi from "@beratrax/core/src/assets/abis/vault.json";
+import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
 import {
 	EARNINGS_GRAPH_URL,
 	STEER_PROTOCOL_EARNINGS_GRAPH_URL,
@@ -15,6 +15,7 @@ import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { toEth, toWei } from "@beratrax/core/src/utils/common";
 import { getPricesByTime } from "@beratrax/core/src/api/token";
 import { getApyByTime } from "@beratrax/core/src/api/stats";
+import { IClients } from "@beratrax/mobile/config/mobileWalletConfig";
 interface Response {
 	deposit: string;
 	vaultAddress: string;
@@ -53,18 +54,18 @@ export const getEarnings = async (userAddress: string) => {
 	try {
 		const res = await axios.post(EARNINGS_GRAPH_URL, {
 			query: `query MyQuery {
-                user(id: \"${userAddress.toLowerCase()}\") {
-                  earn {
-                    vaultAddress                    
-                    deposit
-                    withdraw
-                    blockNumber
-                    tokenId
-                    blockTimestamp
-                    userBalance
-                  }
-                }
-              }`,
+							user(id: \"${userAddress.toLowerCase()}\") {
+								earn {
+									vaultAddress                    
+									deposit
+									withdraw
+									blockNumber
+									tokenId
+									blockTimestamp
+									userBalance
+								}
+							}
+						}`,
 		});
 
 		let responseDataArb =
@@ -99,26 +100,46 @@ const fetchAllTransactions = async (query: string, variables = {}) => {
 
 export const getEarningsForPlatforms = async (userAddress: string) => {
 	try {
-		const client = createPublicClient({
-			chain: berachain,
-			transport: http(),
-		});
+		const client = createPublicClient(getPublicClientConfiguration()) as IClients["public"];
 		const earningsSubgraphQuery = prepareSubgraphQuery(activePoolIdsOfAllPlatforms);
 
 		const balances = store.getState().tokens.balances;
 
 		const transactionsByPlatform = await fetchAllTransactions(earningsSubgraphQuery, { userAddress: userAddress.toLowerCase() });
 
-		const [infraredEarnings, steerEarnings, kodiakEarnings, burrbearEarnings, iberaEarnings, berapawEarnings] = await Promise.all([
+		const [
+			infraredEarnings,
+			steerEarnings,
+			kodiakEarnings,
+			burrbearEarnings,
+			iberaEarnings,
+			berapawEarnings,
+			bearnEarnings,
+			beratraxEarnings,
+			apyBasedEarnings,
+		] = await Promise.all([
 			getEarningsForInfrared(transactionsByPlatform.Infrared, client, balances),
 			getEarningsForSteer(transactionsByPlatform.Steer, client, balances),
 			getEarningsForKodiak([...transactionsByPlatform.Kodiak, ...transactionsByPlatform.BeraPaw], client, balances),
 			getEarningsForBurrbear(transactionsByPlatform.Burrbear, client, balances),
 			calculateIBeraEarnings(transactionsByPlatform.iBERA),
 			calculateBerapawEarnings(transactionsByPlatform.BeraPaw),
+			getEarningsForBearn(transactionsByPlatform.Bearn, client, balances),
+			getEarningsForBeraTrax(transactionsByPlatform.BeraTrax, client, balances),
+			getApyBasedEarnings(Object.values(transactionsByPlatform).flat()),
 		]);
 
-		return [...infraredEarnings, ...steerEarnings, ...kodiakEarnings, ...burrbearEarnings, iberaEarnings, ...berapawEarnings];
+		return [
+			...infraredEarnings,
+			...steerEarnings,
+			...kodiakEarnings,
+			...burrbearEarnings,
+			iberaEarnings,
+			...berapawEarnings,
+			...bearnEarnings,
+			...beratraxEarnings,
+			...apyBasedEarnings,
+		];
 	} catch (err: any) {
 		console.error(err);
 		return [];
@@ -127,7 +148,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 
 const getEarningsForInfrared = async (infraredPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
-		const infraredPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Infrared];
+		const infraredPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Infrared.name];
 		const infraredPools = pools_json
 			.filter((pool) => infraredPoolIds.includes(pool.id))
 			.map((pool) => ({
@@ -206,7 +227,7 @@ const getEarningsForInfrared = async (infraredPoolsTxs: any, client: PublicClien
 
 const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
-		const steerPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Steer];
+		const steerPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Steer.name];
 
 		const steerPools = pools_json
 			.filter((pool) => steerPoolIds.includes(pool.id))
@@ -265,15 +286,15 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 
 				// Get the fee data at the time of the last transaction
 				const lastFeeQuery = `
-                    query GetLastTransactionFee {
-                        vault(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
-                            fees0
-                            fees1
-                            totalLPTokensIssued
-                            token0
-                            token1
-                        }
-                    }`;
+									query GetLastTransactionFee {
+											vault(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
+													fees0
+													fees1
+													totalLPTokensIssued
+													token0
+													token1
+											}
+									}`;
 
 				const lastFeeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, {
 					query: lastFeeQuery,
@@ -318,13 +339,13 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 
 				// Get current fees data
 				const currentFeeQuery = `
-                    query GetCurrentLPFee {
-                        vault(id: "${pool.underlyingVault}") {
-                            fees0
-                            fees1
-                            totalLPTokensIssued
-                        }
-                    }`;
+									query GetCurrentLPFee {
+											vault(id: "${pool.underlyingVault}") {
+													fees0
+													fees1
+													totalLPTokensIssued
+											}
+									}`;
 
 				const currentFeeResponse = await axios.post(STEER_PROTOCOL_EARNINGS_GRAPH_URL, {
 					query: currentFeeQuery,
@@ -369,8 +390,8 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 		// Although no need to check for berapaw, since initially kodiak pools have the berapaw ids.
 		// see file://pools_json.js → GetActivePoolIdsOfAllPlatforms()
 		const kodiakPoolsIds = [
-			...activePoolIdsOfAllPlatforms[FarmOriginPlatform.Kodiak],
-			// ...activePoolIdsOfAllPlatforms[FarmOriginPlatform.BeraPaw],
+			...activePoolIdsOfAllPlatforms[FarmOriginPlatform.Kodiak.name],
+			// ...activePoolIdsOfAllPlatforms[FarmOriginPlatform.BeraPaw.name],
 		];
 
 		const kodiakPools = pools_json
@@ -444,15 +465,15 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 
 				// Get the fee data at the time of the last transaction
 				const lastFeeQuery = `
-                    query GetLastTransactionFee {
-                        kodiakVault(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
-                            cumulativeTotalFeesUSD
-                            outputTokenSupply
-                            outputToken {
-                                decimals
-                            }
-                        }
-                    }`;
+									query GetLastTransactionFee {
+											kodiakVault(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
+													cumulativeTotalFeesUSD
+													outputTokenSupply
+													outputToken {
+															decimals
+													}
+											}
+									}`;
 
 				const lastFeeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: lastFeeQuery });
 				const lastFeeData = lastFeeResponse.data.data.kodiakVault;
@@ -468,16 +489,16 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 
 				// Get current fees data
 				const currentFeeQuery = `
-                    query GetCurrentLPFee {
-                        kodiakVault(id: "${pool.underlyingVault}") {
-                            cumulativeTotalFeesUSD
-                            outputTokenPriceUSD
-                            outputTokenSupply
-                            outputToken {
-                                decimals
-                            }
-                        }
-                    }`;
+									query GetCurrentLPFee {
+											kodiakVault(id: "${pool.underlyingVault}") {
+													cumulativeTotalFeesUSD
+													outputTokenPriceUSD
+													outputTokenSupply
+													outputToken {
+															decimals
+													}
+											}
+									}`;
 
 				const currentFeeResponse = await axios.post(KODIAK_EARNINGS_GRAPH_URL, { query: currentFeeQuery });
 				const currentFeeData = currentFeeResponse.data.data.kodiakVault;
@@ -516,7 +537,7 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 
 const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
-		const burrbearPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Burrbear];
+		const burrbearPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Burrbear.name];
 		const burrbearPools = pools_json
 			.filter((pool) => burrbearPoolIds.includes(pool.id))
 			.map((pool) => {
@@ -552,6 +573,9 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 					}
 				}
 
+				remainings = filteredTransactions;
+				filteredTransactions = [];
+
 				// If no transactions, return zero earnings
 				if (picked.length === 0) {
 					return {
@@ -581,19 +605,19 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 
 				// Get the fee data at the time of the last transaction
 				const lastFeeQuery = `
-                    query GetLastTransactionFee {
-                        pool(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
-                            totalSwapFee
-                            totalLiquidity
-                            tokens {
-                                priceRate
-                                address
-                                token {
-                                    latestUSDPrice
-                                }
-                            }
-                        }
-                    }`;
+									query GetLastTransactionFee {
+											pool(id: "${pool.underlyingVault}", block: {number: ${lastTransaction.blockNumber}}) {
+													totalSwapFee
+													totalLiquidity
+													tokens {
+															priceRate
+															address
+															token {
+																	latestUSDPrice
+															}
+													}
+											}
+									}`;
 
 				const lastFeeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, { query: lastFeeQuery });
 				const lastFeeData = lastFeeResponse.data.data.pool;
@@ -609,19 +633,19 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 
 				// Get current fees data
 				const currentFeeQuery = `
-                    query GetCurrentLPFee {
-                        pool(id: "${pool.underlyingVault}") {
-                            totalSwapFee
-                            totalLiquidity
-                            tokens {
-                                priceRate
-                                address
-                                token {
-                                    latestUSDPrice
-                                }
-                            }
-                        }
-                    }`;
+									query GetCurrentLPFee {
+											pool(id: "${pool.underlyingVault}") {
+													totalSwapFee
+													totalLiquidity
+													tokens {
+															priceRate
+															address
+															token {
+																	latestUSDPrice
+															}
+													}
+											}
+									}`;
 
 				const currentFeeResponse = await axios.post(BURRBEAR_EARNINGS_GRAPH_URL, { query: currentFeeQuery });
 				const currentFeeData = currentFeeResponse.data.data.pool;
@@ -742,7 +766,7 @@ const calculateIBeraEarnings = async (iberaPool42: any): Promise<VaultEarnings> 
 const calculateBerapawEarnings = async (berapawPoolsTxs: any): Promise<VaultEarnings[]> => {
 	try {
 		const berapawPools = pools_json.filter(
-			(pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw && pool.secondary_platform === undefined
+			(pool) => pool.originPlatform === FarmOriginPlatform.BeraPaw.name && pool.secondary_platform === undefined
 		);
 
 		let filteredTransactions: any[] = [];
@@ -811,6 +835,248 @@ const calculateBerapawEarnings = async (berapawPoolsTxs: any): Promise<VaultEarn
 
 					totalEarnings += earnings;
 					if (i === picked.length - 1) {
+						lastEarnings = earnings;
+					}
+				}
+
+				return {
+					tokenId: pool.id.toString(),
+					earnings0: lastEarnings.toString(),
+					token0: pool.lp_address,
+					lifetimeEarnings: totalEarnings.toString(),
+				};
+			})
+		);
+		return earnings;
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+};
+
+const getEarningsForBearn = async (bearnPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+	try {
+		const bearnPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Bearn.name];
+		const bearnPools = pools_json
+			.filter((pool) => bearnPoolIds.includes(pool.id))
+			.map((pool) => ({
+				vault_addr: pool.vault_addr,
+				lp_addr: pool.lp_address,
+				chainId: pool.chainId,
+				farmId: pool.id,
+			}));
+
+		let filteredTransactions: any[] = [];
+		let remainings = bearnPoolsTxs;
+
+		const earnings = await Promise.all(
+			bearnPools.map(async (pool) => {
+				const picked = [];
+
+				/**
+				 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+				 * @description: those transaction which have been processed will be skipped in the next iteration.
+				 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+				 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+				 */
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
+
+				remainings = filteredTransactions;
+				filteredTransactions = [];
+
+				// If no transactions, return zero earnings
+				if (picked.length === 0) {
+					return {
+						tokenId: pool.farmId.toString(),
+						earnings0: "0",
+						token0: pool.lp_addr,
+					};
+				}
+
+				const lifetimeEarnings = await calculateLifetimeLpEarnings(picked, pool.vault_addr, client, balances);
+
+				// Get only the last transaction
+				const lastTransaction = picked[picked.length - 1];
+				const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
+
+				const finalPositionAssets = await calculateFinalPositionAssets({
+					vault_addr: pool.vault_addr!,
+					client,
+					balances,
+					chainId: pool.chainId,
+				});
+
+				const changeInAssets = finalPositionAssets - lastTransactionAssets;
+
+				// If user has no balance after the last transaction, return zero earnings
+				if (changeInAssets <= 0) {
+					return {
+						tokenId: pool.farmId.toString(),
+						earnings0: "0",
+						token0: pool.lp_addr,
+						lifetimeEarnings: lifetimeEarnings.toString(),
+					};
+				}
+
+				return {
+					tokenId: pool.farmId.toString(),
+					earnings0: "0",
+					token0: pool.lp_addr,
+					changeInAssets: changeInAssets.toString(),
+					lifetimeEarnings: lifetimeEarnings.toString(),
+				};
+			})
+		);
+
+		return earnings;
+	} catch (err: any) {
+		console.error(err);
+		return [];
+	}
+};
+
+const getEarningsForBeraTrax = async (beratraxPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+	try {
+		const beratraxPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.BeraTrax.name];
+		const beratraxPools = pools_json
+			.filter((pool) => beratraxPoolIds.includes(pool.id))
+			.map((pool) => ({
+				vault_addr: pool.vault_addr,
+				lp_addr: pool.lp_address,
+				chainId: pool.chainId,
+				farmId: pool.id,
+			}));
+
+		let filteredTransactions: any[] = [];
+		let remainings = beratraxPoolsTxs;
+		/**
+		 * @dev: this loop will trim down the transactions to have only those pools which haven't been picked yet
+		 * @description: those transaction which have been processed will be skipped in the next iteration.
+		 * @example: if there are 4 transactions. 2 for pool1 and 2 for pool2. This loop will run on 4 transactions
+		 * and pick 2 of them. In the next iteration, it will run on the remaining 2 transactions and pick 2 of them.
+		 */
+		const earnings = await Promise.all(
+			beratraxPools.map(async (pool) => {
+				const picked = [];
+
+				for (const transaction of remainings) {
+					if (transaction.tokenId === pool.farmId.toString()) {
+						picked.push(transaction);
+					} else {
+						filteredTransactions.push(transaction);
+					}
+				}
+
+				remainings = filteredTransactions;
+				filteredTransactions = [];
+
+				// If no transactions, return zero earnings
+				if (picked.length === 0) {
+					return {
+						tokenId: pool.farmId.toString(),
+						earnings0: "0",
+						token0: pool.lp_addr,
+					};
+				}
+
+				const lifetimeEarnings = await calculateLifetimeLpEarnings(picked, pool.vault_addr, client, balances);
+
+				// Get only the last transaction
+				const lastTransaction = picked[picked.length - 1];
+				const lastTransactionAssets = BigInt(lastTransaction.userAssetBalance);
+
+				const finalPositionAssets = await calculateFinalPositionAssets({
+					vault_addr: pool.vault_addr!,
+					client,
+					balances,
+					chainId: pool.chainId,
+				});
+
+				const changeInAssets = finalPositionAssets - lastTransactionAssets;
+
+				// If user has no balance after the last transaction, return zero earnings
+				if (changeInAssets <= 0) {
+					return {
+						tokenId: pool.farmId.toString(),
+						earnings0: "0",
+						token0: pool.lp_addr,
+						lifetimeEarnings: lifetimeEarnings.toString(),
+					};
+				}
+
+				return {
+					tokenId: pool.farmId.toString(),
+					earnings0: "0",
+					token0: pool.lp_addr,
+					changeInAssets: changeInAssets.toString(),
+					lifetimeEarnings: lifetimeEarnings.toString(),
+				};
+			})
+		);
+
+		return earnings;
+	} catch (err: any) {
+		console.error(err);
+		return [];
+	}
+};
+
+const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarnings[]> => {
+	try {
+		const berapawPools = pools_json.filter((pool) => pool.apyBasedEarnings);
+
+		const earnings = await Promise.all(
+			berapawPools.map(async (pool) => {
+				const filtered = combinedTransactions.filter((tx: any) => tx.tokenId === pool.id.toString());
+
+				if (filtered.length === 0) {
+					return {
+						tokenId: pool.id.toString(),
+						earnings0: "0",
+						token0: pool.lp_address,
+						changeInAssets: "0",
+						lifetimeEarnings: "0",
+					};
+				}
+
+				const currentTimestamp = Math.floor(Date.now() / 1000);
+
+				// Batch all timestamps for APY fetch
+				const timestamps = filtered.map((tx: any) => ({
+					address: pool.vault_addr,
+					timestamp: Number(tx.blockTimestamp),
+					chainId: pool.chainId,
+				}));
+
+				const apyData = await getApyByTime(timestamps);
+				let totalEarnings = BigInt(0);
+				let lastEarnings = BigInt(0);
+
+				for (let i = 0; i < filtered.length; i++) {
+					const tx = filtered[i];
+					const nextTx = filtered[i + 1];
+					const start = Number(tx.blockTimestamp);
+					const end = nextTx ? Number(nextTx.blockTimestamp) : currentTimestamp;
+					const timePeriod = end - start;
+					const timeInYears = timePeriod / (365 * 24 * 60 * 60);
+
+					const apyObj = apyData?.[pool.chainId]?.[pool.vault_addr]?.find(
+						(entry) => Math.abs(entry.timestamp - start) < 3600 // within 1 hour
+					);
+					const apy = apyObj?.apy?.beratraxApr ?? 0;
+					const apyPercent = Math.floor((apy / 100) * 1e18); // scaled for precision
+
+					const userBalance = BigInt(tx.userAssetBalance || "0");
+					const earnings = (userBalance * BigInt(apyPercent) * BigInt(Math.floor(timeInYears * 1e18))) / BigInt(1e36);
+
+					totalEarnings += earnings;
+					if (i === filtered.length - 1) {
 						lastEarnings = earnings;
 					}
 				}

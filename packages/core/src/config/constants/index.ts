@@ -15,6 +15,7 @@ export const RoutesPaths = {
 	Deposit: "/deposit",
 	UserGuide: "/user-guide",
 	Leaderboard: "/leaderboard",
+	BurrBearAdmin: "/admin/burrbear",
 };
 
 // Utility function to get environment variables across platforms

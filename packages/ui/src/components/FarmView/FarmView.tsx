@@ -12,7 +12,7 @@ import type { FarmDataExtended } from "@beratrax/core/src/types";
 
 export function FarmView() {
 	const [openedFarm, setOpenedFarm] = useState<number | undefined>();
-	const { sortedFarms, upcomingFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
+	const { sortedFarms, farms, selectedPlatform, setSelectedPlatform, setSortSelected, sortSelected } = useEarnPage();
 
 	const router = useRouter();
 
@@ -64,6 +64,21 @@ export function FarmView() {
 				<Earnpagedots />
 			</View>
 
+			<BackButton onClick={() => router.back()} />
+
+			{/* Heading */}
+			<View className="mt-4">
+				<Text className="text-3xl font-bold uppercase text-white">Earn</Text>
+			</View>
+
+			{farms.length === 0 ? (
+				<View className="flex flex-col gap-2">
+					<Text className="mb-9 text-lg font-light text-white">Vaults coming soon</Text>
+				</View>
+			) : (
+				<Text className="mb-9 text-lg font-light text-white">Available Protocols</Text>
+			)}
+
 			<View className="h-full pt-14 px-4 pb-2">
 				<FlatList
 					data={filteredFarms}
@@ -79,6 +94,18 @@ export function FarmView() {
 					ListFooterComponent={renderFooter}
 				/>
 			</View>
+
+			{/* Upcoming Farms (only for dev/staging) */}
+			{/* {__DEV__ && upcomingFarms.length > 0 && (
+          <View className="flex flex-col mt-2 gap-2">
+            {upcomingFarms.map((farm, index) => (
+              <FarmRow key={index + "nowallet"} farm={farm} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+            ))}
+          </View>
+        )} */}
+
+			{/* Bottom padding */}
+			<View className="h-32" />
 		</View>
 	);
 }

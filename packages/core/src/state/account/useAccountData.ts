@@ -4,7 +4,7 @@ import useTokens from "../tokens/useTokens";
 import { RoutesPaths } from "./../../config/constants";
 import useWallet from "./../../hooks/useWallet";
 import { useAppDispatch, useAppSelector } from "./../../state";
-import { addAccount, updateAccountField, updatePoints } from "./../../state/account/accountReducer";
+import { addAccount, updateAccountField } from "./../../state/account/accountReducer";
 import { Platform } from "react-native";
 
 // Web-specific implementation using react-router-dom hooks
@@ -32,7 +32,7 @@ const useAccountDataWeb = () => {
 		await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: referralCodeFromUrl! }));
 		await reloadBalances();
 		if (!currentWallet) return;
-		await dispatch(updatePoints(currentWallet));
+		// await dispatch(updatePoints(currentWallet));
 	}, [currentWallet, referrerCode, refCodeLoaded, referralCodeFromUrl]);
 
 	return {
@@ -60,7 +60,7 @@ const useAccountDataNative = () => {
 		await dispatch(addAccount({ address: currentWallet, referrerCode, referralCodeFromUrl: "" }));
 		await reloadBalances();
 		if (!currentWallet) return;
-		await dispatch(updatePoints(currentWallet));
+		// await dispatch(updatePoints(currentWallet));
 	}, [currentWallet, referrerCode, refCodeLoaded]);
 
 	return {

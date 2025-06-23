@@ -21,10 +21,7 @@ export const ExportPublicKey: FC<IProps> = ({ setOpenModal }) => {
 	};
 
 	return (
-		<ModalLayout
-			onClose={() => setOpenModal(false)}
-			wrapperClassName="w-[400px]"
-		>
+		<ModalLayout onClose={() => setOpenModal(false)} wrapperClassName="w-[400px]">
 			<View className="tablet:text-left">
 				<View className="mb-5">
 					<Text className="font-arame-mono text-4xl font-bold mb-5 text-textWhite">Scan Me</Text>

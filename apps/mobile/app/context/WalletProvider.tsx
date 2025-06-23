@@ -10,7 +10,7 @@ import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import Web3Auth, { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
 import { ethereumPrivateKeyProvider } from "@beratrax/mobile/config/ethereumProvider";
-
+import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
 export interface IWalletContext {
 	currentWallet?: Address;
 	logout: () => void;
@@ -173,21 +173,7 @@ const WalletProvider: React.FC<IProps> = ({
 	const getPublicClient = (chainId: number): IClients["public"] => {
 		if (publicClients.current[chainId]) return publicClients.current[chainId];
 		else {
-			const chain = supportedChains.find((item) => item.id === chainId);
-			if (!chain) throw new Error("chain not found");
-			const client = createPublicClient({
-				chain: chain,
-				transport: http(chain.rpcUrls?.default?.http[0], {
-					timeout: 30_000,
-				}),
-				batch: {
-					multicall: {
-						batchSize: 16_384,
-						wait: 50,
-					},
-				},
-			}) as IClients["public"];
-
+			const client = createPublicClient(getPublicClientConfiguration(chainId)) as IClients["public"];
 			publicClients.current[chainId] = client;
 			return client;
 		}

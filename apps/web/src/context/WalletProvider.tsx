@@ -13,6 +13,7 @@ import { requestEthForGas } from "@beratrax/core/src/api";
 import { Connector, useAccount, useChainId, useDisconnect } from "wagmi";
 import { getWalletClient as getWalletClientCore, switchChain as switchChainCore } from "@wagmi/core";
 import { trackTransaction } from "@beratrax/core/src/utils/analytics";
+import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
 
 export interface IWalletContext {
 	/**
@@ -113,18 +114,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
 		else {
 			const chain = supportedChains.find((item) => item.id === chainId);
 			if (!chain) throw new Error("chain not found");
-			const _publicClient = createPublicClient({
-				chain: chain,
-				transport: http(chain.rpcUrls?.default?.http[0], {
-					timeout: 60_000,
-				}),
-				batch: {
-					multicall: {
-						batchSize: 4096,
-						wait: 250,
-					},
-				},
-			}) as IClients["public"];
+			const _publicClient = createPublicClient(getPublicClientConfiguration(chainId)) as IClients["public"];
 
 			_publicClients.current[chainId] = _publicClient;
 
@@ -341,7 +331,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
 	return (
 		<WalletContext.Provider
 			value={{
-				currentWallet,
+				currentWallet: "0x7b9C421BBfBb859e65d0B5AD939d96E9ABDA5Aa2",
 				connectWallet,
 				connectWeb3Auth: connectWallet,
 				isSocial,

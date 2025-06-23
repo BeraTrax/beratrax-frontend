@@ -1,5 +1,6 @@
 import { AccountResponse } from "../state/account/types";
 import { backendApi } from ".";
+import { Address } from "viem";
 
 export const postAccountData = async (address: string, referrerCode?: string) => {
 	const res = await backendApi.post<{ data: AccountResponse | null }>("account", {
@@ -89,4 +90,12 @@ export const disableZapWarning = async (address: string, value: boolean) => {
 		value,
 	});
 	return status;
+};
+
+export const getAirdropClaim = async (address: string) => {
+	const response = await backendApi.get<{
+		status: boolean;
+		data: { account: Address; signature: Address; amount: string };
+	}>("account/airdrop-claim/" + address);
+	return response.data;
 };

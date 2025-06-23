@@ -244,7 +244,7 @@ export const WalletAndStakingPoint: React.FC = () => {
 					</div>
 
 					{currentWallet && (
-						<div className="z-10 flex justify-self-end gap-4 relative">
+						<div className="z-20 flex justify-self-end gap-4 relative">
 							{/* export keys */}
 							{isSocial && (
 								<div className="flex gap-4 relative group py-2.5 px-5 mt-4 h-auto bg-gradientPrimary rounded-xl shadow-[var(--rk-shadows-connectButton)]">

@@ -1,6 +1,6 @@
 import Closemodalicon from "@beratrax/core/src/assets/images/closemodalicon.svg";
 import Exchange from "@beratrax/core/src/assets/images/exchange.svg";
-import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import DialPad from "ui/src/components/Dialpad/Dialpad";
 import MobileModalContainer from "ui/src/components/MobileModalContainer/MobileModalContainer";

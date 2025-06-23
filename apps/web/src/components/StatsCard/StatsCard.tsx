@@ -3,9 +3,10 @@ interface Props {
 	value: number | undefined;
 	icon?: string;
 	gradientClass?: string;
+	isLoading?: boolean;
 }
 
-export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass }) => {
+export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass, isLoading }) => {
 	return (
 		<div className={`relative overflow-hidden rounded-lg p-4 border border-borderDark ${gradientClass || "bg-bgSecondary"}`}>
 			{/* Background glow effect */}
@@ -16,7 +17,13 @@ export const StatsCard: React.FC<Props> = ({ heading, value, icon, gradientClass
 					{icon && <span>{icon}</span>}
 					<p className="font-arame-mono">{heading}</p>
 				</div>
-				<p className="text-textWhite font-bold">{value?.toLocaleString("en-US")}</p>
+				{isLoading ? (
+					<div className="animate-pulse">
+						<div className="h-8 bg-textSecondary/30 rounded-md w-24"></div>
+					</div>
+				) : (
+					<p className="text-textWhite font-bold">{value?.toLocaleString("en-US")}</p>
+				)}
 			</div>
 
 			{/* Decorative corner accent */}

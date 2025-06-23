@@ -8,12 +8,12 @@ import { usePublicClient } from "wagmi";
 import { useState } from "react";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { awaitTransaction } from "@beratrax/core/src/utils/common";
-import { useAppDispatch } from "@beratrax/core/src/state";
+// import { useAppDispatch } from "@beratrax/core/src/state";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
-import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
+// import { updatePoints } from "@beratrax/core/src/state/account/accountReducer";
 
 export const VaultMigrator = ({ vault }: { vault: Vault }) => {
-	const dispatch = useAppDispatch();
+	// const dispatch = useAppDispatch();
 	const { reloadFarmData } = useFarmDetails();
 
 	const { balances } = useTokens();
@@ -49,7 +49,7 @@ export const VaultMigrator = ({ vault }: { vault: Vault }) => {
 			});
 			if (response.data.success) {
 				reloadFarmData();
-				await dispatch(updatePoints(currentWallet!));
+				// await dispatch(updatePoints(currentWallet!));
 				notifySuccess({
 					title: "Upgraded successfully",
 					message: `Upgraded ${vault.name} Vault`,

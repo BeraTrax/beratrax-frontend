@@ -1,5 +1,17 @@
 import { createWeb3Name } from "@web3-name-sdk/core";
-import { Address, erc20Abi, formatUnits, getAddress, getContract, maxUint256, parseUnits, TransactionReceipt, zeroAddress } from "viem";
+import {
+	Address,
+	erc20Abi,
+	formatUnits,
+	getAddress,
+	getContract,
+	http,
+	maxUint256,
+	parseUnits,
+	PublicClientConfig,
+	TransactionReceipt,
+	zeroAddress,
+} from "viem";
 import { notifyError } from "./../api/notify";
 import { defaultChainId, VAULT_NEW_DURATION } from "./../config/constants";
 import { errorMessages } from "./../config/constants/notifyMessages";
@@ -430,4 +442,21 @@ export const formatCurrency = (amount?: string | number, decimals?: number, isCo
 export const isVaultNew = (createdAt: number) => {
 	const now = Math.floor(Date.now() / 1000);
 	return now - createdAt < VAULT_NEW_DURATION;
+};
+
+export const getPublicClientConfiguration = (chainId = defaultChainId): PublicClientConfig => {
+	const chain = supportedChains.find((item) => item.id === Number(chainId));
+	if (!chain) throw new Error("Invalid Chain");
+	return {
+		chain: chain,
+		transport: http(chain.rpcUrls?.default?.http[0], {
+			timeout: 60_000,
+		}),
+		batch: {
+			multicall: {
+				batchSize: 16_000,
+				wait: 250,
+			},
+		},
+	};
 };

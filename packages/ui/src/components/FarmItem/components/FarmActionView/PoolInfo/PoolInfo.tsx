@@ -3,7 +3,7 @@ import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
 import { CreatedIcon } from "@beratrax/ui/src/icons/Created";
 import { VolumeIcon } from "@beratrax/ui/src/icons/Volume";
 import { MarketCapIcon } from "@beratrax/ui/src/icons/MarketCap";
-import { View, Image, Text, Platform } from "react-native";
+import { View, Image, Text, Platform, useWindowDimensions } from "react-native";
 import { Link } from "expo-router";
 
 // Import for web
@@ -14,8 +14,7 @@ import { useMemo } from "react";
 import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
 import { toFixedFloor } from "@beratrax/core/src/utils/common";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
-import { FarmType } from "@beratrax/core/src/types/enums";
-import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
+import { FarmType, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 
 const getImageSource = () => {
 	if (Platform.OS === "web") {
@@ -43,7 +42,11 @@ const StatInfo = ({
 }) => {
 	return (
 		<View className="flex flex-row items-center gap-4 bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
-			{typeof iconUrl === "string" ? <Image src={iconUrl} alt={title} className="flex-shrink-0 flex-grow-0 w-10 h-10" /> : iconUrl}
+			{typeof iconUrl === "string" ? (
+				<Image source={{ uri: iconUrl }} accessibilityLabel={title} className="flex-shrink-0 flex-grow-0 w-10 h-10" />
+			) : (
+				iconUrl
+			)}
 			<View className={"flex-1"}>
 				<Text className="text-textWhite text-lg font-medium">{title}</Text>
 				{subtitle && <Text className="text-textSecondary text-[16px] font-light">{subtitle}</Text>}
@@ -64,8 +67,7 @@ interface IProps {
 	vaultTvlLoading?: boolean;
 }
 const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading }: IProps) => {
-	const createdTimestamp = 1739292658;
-	const createdDate = new Date(createdTimestamp * 1000);
+	const createdDate = new Date((farm.createdAt ?? 0) * 1000);
 	const createdDateString = createdDate.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "long",
@@ -74,6 +76,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 
 	const { originPlatform, token_type: tokenType, token1, token2, token3, isAutoCompounded, description, source } = farm;
 	const { apy: farmApys } = useFarmApy(farm);
+	const isSyntheticFarm = farm.synthetic;
 
 	const _underlyingApy = useMemo(() => {
 		return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
@@ -96,7 +99,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 		return farmApys.pointsApr > 0 ? customCommify(_beratraxApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%" : 0;
 	}, [farmApys, _beratraxApy]);
 
-	const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7;
+	const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared.name && farm.id !== 7;
 
 	const token1Image = tokenNamesAndImages[token1]?.logos[0];
 	const token2Image = token2 ? tokenNamesAndImages[token2]?.logos[0] : null;
@@ -105,10 +108,9 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 	const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
 	const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
 	const lbgtLogo = tokenNamesAndImages["0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe"]?.logos[0];
-	const infraredLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/infrared/infrared.ico";
-	const burrbearLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico";
-	const beraborrowLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/beraborrow/beraborrow.ico";
-	const btxLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png";
+	const smileeLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/assets/images/smilee.png";
+
+	const { width } = useWindowDimensions();
 
 	return (
 		<View className=" mt-4 relative">
@@ -116,6 +118,51 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				<>
 					<Text className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">ABOUT</Text>
 					<Text className="text-textWhite mt-2 text-[16px] font-light">{description}</Text>
+					{isSyntheticFarm && (
+						<>
+							<Text className="text-textWhite mt-2 text-[16px] font-light">
+								Synthetic Reward Vaults are deposits into Rewards Vaults where the BGT is always claimed as a BGT liquid wrapper and
+								autocompound. BeraTrax always claims the BGT wrapper that is the highest price that minute. The current wrappers that are
+								supported for compounding:
+							</Text>
+							<View className="mt-4 overflow-hidden rounded-xl bg-bgSecondary">
+								<View className="w-full">
+									<View className="flex-row border-b border-gray-700">
+										<View className="flex-1 p-4">
+											<View className="flex-row items-center gap-2">
+												<Image
+													source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png" }}
+													accessibilityLabel="yBGT"
+													className="w-6 h-6"
+												/>
+												<Text className="text-textWhite font-bold">yBGT</Text>
+											</View>
+										</View>
+										<View className="p-4 justify-center">
+											<Text className="text-textWhite">Yearn BGT</Text>
+										</View>
+									</View>
+									<View className="flex-row">
+										<View className="flex-1 p-4">
+											<View className="flex-row items-center gap-2">
+												<Image
+													source={{
+														uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe/logo.png",
+													}}
+													accessibilityLabel="lBGT"
+													className="w-6 h-6"
+												/>
+												<Text className="text-textWhite font-bold">LBGT</Text>
+											</View>
+										</View>
+										<View className="p-4 justify-center">
+											<Text className="text-textWhite">Liquid BGT</Text>
+										</View>
+									</View>
+								</View>
+							</View>
+						</>
+					)}
 					<Text className="text-textWhite mt-4 text-[16px] font-light">
 						You can see the underlying vault on the platform{" "}
 						<Link href={source!} target="_blank" className="text-gradientPrimary uppercase hover:underline">
@@ -129,7 +176,8 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				<Image
 					// @ts-ignore - Platform-specific image handling
 					source={getImageSource()}
-					style={{ width: "100%", height: "auto", aspectRatio: window?.innerWidth > 768 ? 16 / 9 : 1 }}
+					style={{ width: "100%", aspectRatio: Platform.OS === "web" && width > 768 ? 16 / 9 : 1 }}
+					className="h-auto"
 					resizeMode="contain"
 				/>
 			)}
@@ -157,33 +205,42 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							</View>
 						)}
 
-						{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
+						{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear.name) && (
 							<View className="flex-row border-b border-gray-700">
 								<View className="flex-1 p-4">
 									<View className="flex-row items-center gap-2">
-										{originPlatform === FarmOriginPlatform.Infrared && tokenType === FarmType.advanced ? (
+										{originPlatform === FarmOriginPlatform.Infrared.name && tokenType === FarmType.advanced ? (
 											<>
-												<Image source={{ uri: ibgtLogo }} alt="iBGT" className="w-5 h-5" />
+												<Image source={{ uri: ibgtLogo }} accessibilityLabel="iBGT" className="w-5 h-5" />
 												<Text className="text-textWhite font-medium">iBGT</Text>
 											</>
-										) : originPlatform === FarmOriginPlatform.Burrbear || originPlatform === FarmOriginPlatform.BeraPaw ? (
+										) : originPlatform === FarmOriginPlatform.Burrbear.name || originPlatform === FarmOriginPlatform.BeraPaw.name ? (
 											<>
 												{farm.id === 22 ? (
 													<>
-														<Image source={{ uri: wberaLogo }} alt="WBERA" className="w-5 h-5" />
+														<Image source={{ uri: wberaLogo }} accessibilityLabel="WBERA" className="w-5 h-5" />
 														<Text className="text-textWhite font-medium">WBERA</Text>
 													</>
 												) : (
 													<>
-														<Image source={{ uri: lbgtLogo }} alt="LBGT" className="w-5 h-5" />
+														<Image source={{ uri: lbgtLogo }} accessibilityLabel="LBGT" className="w-5 h-5" />
 														<Text className="text-textWhite font-medium">LBGT</Text>
 													</>
 												)}
 											</>
 										) : (
 											<>
-												<Image source={{ uri: honeyLogo }} alt="HONEY" className="w-5 h-5" />
-												<Text className="text-textWhite font-medium">HONEY</Text>
+												{farm.id === 45 ? (
+													<>
+														<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
+														<Text className="text-textWhite font-medium">TRAX</Text>
+													</>
+												) : (
+													<>
+														<Image source={{ uri: honeyLogo }} accessibilityLabel="HONEY" className="w-5 h-5" />
+														<Text className="text-textWhite font-medium">HONEY</Text>
+													</>
+												)}
 											</>
 										)}
 									</View>
@@ -194,11 +251,39 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							</View>
 						)}
 
-						{originPlatform === FarmOriginPlatform.Infrared && (
+						{originPlatform === FarmOriginPlatform.BeraPaw.name && farm.secondary_platform == null && (
 							<View className="flex-row border-b border-gray-700">
 								<View className="flex-1 p-4">
 									<View className="flex-row items-center gap-2">
-										<Image source={{ uri: infraredLogo }} alt="Infrared" className="w-5 h-5" />
+										<Image source={{ uri: FarmOriginPlatform.BeraPaw.logo }} accessibilityLabel="Berapaw" className="w-5 h-5" />
+										<Text className="text-textWhite font-medium">pPAW</Text>
+									</View>
+								</View>
+								<View className="p-4">
+									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+								</View>
+							</View>
+						)}
+
+						{originPlatform === FarmOriginPlatform.Bearn.name && (
+							<View className="flex-row border-b border-gray-700">
+								<View className="flex-1 p-4">
+									<View className="flex-row items-center gap-2">
+										<Image source={{ uri: FarmOriginPlatform.Bearn.logo }} accessibilityLabel="Bearn" className="w-5 h-5" />
+										<Text className="text-textWhite font-medium">Bearn airdrop</Text>
+									</View>
+								</View>
+								<View className="p-4">
+									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+								</View>
+							</View>
+						)}
+
+						{originPlatform === FarmOriginPlatform.Infrared.name && (
+							<View className="flex-row border-b border-gray-700">
+								<View className="flex-1 p-4">
+									<View className="flex-row items-center gap-2">
+										<Image source={{ uri: FarmOriginPlatform.Infrared.logo }} accessibilityLabel="Infrared" className="w-5 h-5" />
 										<Text className="text-textWhite font-medium">Infrared airdrop</Text>
 									</View>
 								</View>
@@ -208,13 +293,13 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							</View>
 						)}
 
-						{originPlatform === FarmOriginPlatform.Burrbear && (
+						{originPlatform === FarmOriginPlatform.Burrbear.name && (
 							<>
 								{farm.name.includes("wgBERA") && (
 									<View className="flex-row border-b border-gray-700">
 										<View className="flex-1 p-4">
 											<View className="flex-row items-center gap-2">
-												<Image src="/smilee.png" alt="Smilee" className="w-5 h-5" />
+												<Image source={{ uri: smileeLogo }} accessibilityLabel="Smilee" className="w-5 h-5" />
 												<Text className="text-textWhite font-medium">Love Score airdrop</Text>
 											</View>
 										</View>
@@ -226,7 +311,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 								<View className="flex-row border-b border-gray-700">
 									<View className="flex-1 p-4">
 										<View className="flex-row items-center gap-2">
-											<Image source={{ uri: burrbearLogo }} alt="Burrbear" className="w-5 h-5" />
+											<Image source={{ uri: FarmOriginPlatform.Burrbear.logo }} accessibilityLabel="Burrbear" className="w-5 h-5" />
 											<Text className="text-textWhite font-medium">BURR Points (Burrbear Airdrop)</Text>
 										</View>
 									</View>
@@ -237,7 +322,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 								<View className="flex-row border-b border-gray-700">
 									<View className="flex-1 p-4">
 										<View className="flex-row items-center gap-2">
-											<Image source={{ uri: beraborrowLogo }} alt="Beraborrow" className="w-5 h-5" />
+											<Image source={{ uri: FarmOriginPlatform.Beraborrow.logo }} accessibilityLabel="Beraborrow" className="w-5 h-5" />
 											<Text className="text-textWhite font-medium">Pollen Points (Beraborrow Airdrop)</Text>
 										</View>
 									</View>
@@ -251,7 +336,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 						<View className="flex-row">
 							<View className="flex-1 p-4">
 								<View className="flex-row items-center gap-2">
-									<Image source={{ uri: btxLogo }} alt="BTX" className="w-5 h-5" />
+									<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
 									<Text className="text-textWhite font-medium">BTX Points (BeraTrax Airdrop)</Text>
 								</View>
 							</View>
@@ -276,7 +361,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 					/>
 				) : null}
 
-				{isAutoCompounded ? <StatInfo title="BeraTrax auto-compounded APY" value={beraTraxApy + "%"} iconUrl={<RocketIcon />} /> : null}
+				{isAutoCompounded ? <StatInfo title="BeraTrax auto-c-ompounded APY" value={beraTraxApy + "%"} iconUrl={<RocketIcon />} /> : null}
 
 				{isAutoCompounded && beraTraxApyWithPoints ? (
 					<StatInfo title="BeraTrax APY with Points" value={beraTraxApyWithPoints} iconUrl={<RocketIcon />} />
@@ -284,16 +369,8 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				{farmApys.merklApr > 0 && (
 					<StatInfo title="Additional Merkl APR" value={farmApys.merklApr?.toFixed(2) || "0" + "%"} iconUrl={<RocketIcon />} />
 				)}
-				{/* <StatInfo title="Volume" subtitle="Past 24h" value={"$16.5M"} iconUrl={volume} /> */}
-				{/* <StatInfo title="Holders" value={"-"} iconUrl={holders} /> */}
-				{/* <StatInfo title="Circulating Supply" value={"1.0B"} iconUrl={circulatingsupply} /> */}
-				<StatInfo title="Added" value={createdDateString} iconUrl={<CreatedIcon />} />
+				{farm.createdAt && <StatInfo title="Created On" value={createdDateString} iconUrl={<CreatedIcon />} />}
 			</View>
-			{/* <p className="mt-2 text-textSecondary text-[12px] font-light leading-[18px]">
-                Uauctor, augue porta dignissim vestibulum, arcu diam lobortis velit, Ut auctor, augue porta dignissim
-                vestibulumUauctor, augue porta dignissim vestibulum, arcu diam lobortis velit, Ut auctor, augue porta
-                dignissim vestibulum
-            </p> */}
 		</View>
 	);
 };

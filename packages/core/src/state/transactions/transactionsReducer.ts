@@ -18,6 +18,7 @@ import {
 	ZapInStep,
 	ZapOutStep,
 } from "./types";
+import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
 
 const initialState: StateInterface = {
 	transactions: [],
@@ -162,18 +163,7 @@ export const checkPendingTransactionsStatus = createAsyncThunk("transactions/che
 			) {
 				const chainId = pools_json.find((item) => item.id === curr.farmId)?.chainId;
 				if (chainId) {
-					const chain = supportedChains.find((item) => item.id === chainId);
-					if (!chain) throw new Error("chain not found");
-					const publicClient = createPublicClient({
-						chain: chain,
-						transport: http(),
-						batch: {
-							multicall: {
-								batchSize: 4096,
-								wait: 250,
-							},
-						},
-					}) as IClients["public"];
+					const publicClient = createPublicClient(getPublicClientConfiguration(chainId)) as IClients["public"];
 					acc.push(publicClient.getTransactionReceipt({ hash: lastStep.txHash }));
 				}
 			}

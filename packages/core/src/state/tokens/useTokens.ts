@@ -130,22 +130,30 @@ const useTokens = () => {
 			});
 		});
 
-		const lpTokens: Token[] = lpAddresses.map(({ address, decimals }) => {
-			const farm = farms.find((farm) => getAddress(farm.lp_address) === address)!;
-			let obj: Token = {
-				address: address,
-				decimals: decimals,
-				token_type: FarmType.advanced,
-				balance: balances[farm.chainId][address]?.valueFormatted ?? "0",
-				usdBalance: balances[farm.chainId][address]?.valueUsdFormatted ?? "0",
-				name: farm?.url_name!,
-				logo: farm?.logo1!,
-				logo2: farm?.logo2,
-				price: prices[farm.chainId]?.[address],
-				networkId: defaultChainId,
-			};
-			return obj;
-		});
+		const lpTokens: Token[] = lpAddresses
+			.map(({ address, decimals }) => {
+				const farm = farms.find((farm) => getAddress(farm.lp_address) === address)!;
+
+				// Skip if it is a single token LP
+				if (!farm.token2) {
+					return null;
+				}
+
+				let obj: Token = {
+					address: address,
+					decimals: decimals,
+					token_type: FarmType.advanced,
+					balance: balances[farm.chainId][address]?.valueFormatted ?? "0",
+					usdBalance: balances[farm.chainId][address]?.valueUsdFormatted ?? "0",
+					name: farm?.url_name!,
+					logo: farm?.logo1!,
+					logo2: farm?.logo2,
+					price: prices[farm.chainId]?.[address],
+					networkId: defaultChainId,
+				};
+				return obj;
+			})
+			.filter(Boolean) as Token[];
 
 		// Native coins for each chain
 		Object.entries(balances).map(([chainId, value]) => {

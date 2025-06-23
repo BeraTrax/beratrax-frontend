@@ -12,7 +12,6 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import { GoRocket } from "react-icons/go";
 import { FarmOriginPlatform, FarmType } from "@beratrax/core/src/types/enums";
 import lbgtLogo from "@beratrax/core/src/assets/images/lbgt.svg";
-import btxLogo from "@beratrax/core/src/assets/images/btxTokenLogo.png";
 
 const StatInfo = ({
 	iconUrl,
@@ -50,8 +49,9 @@ interface IProps {
 	vaultTvlLoading?: boolean;
 }
 const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading }: IProps) => {
-	const { originPlatform, token_type: tokenType, token1, token2, token3, isAutoCompounded, description, source } = farm;
+	const { originPlatform, secondary_platform, token_type: tokenType, token1, token2, token3, isAutoCompounded, description, source } = farm;
 	const { apy: farmApys } = useFarmApy(farm);
+	const isSyntheticFarm = farm.synthetic;
 
 	const _underlyingApy = useMemo(() => {
 		return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.feeApr + farmApys?.rewardsApr) || 0, 2);
@@ -81,7 +81,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 		day: "numeric",
 	});
 
-	const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared && farm.id !== 7;
+	const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared.name && farm.id !== 7;
 
 	const token1Image = tokenNamesAndImages[token1]?.logos[0];
 	const token2Image = token2 ? tokenNamesAndImages[token2]?.logos[0] : null;
@@ -109,6 +109,47 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 											</p>
 									)} */}
 					<p className="text-textWhite mt-2 text-[16px] font-light">{description}</p>
+					{isSyntheticFarm && (
+						<>
+							<p className="text-textWhite mt-2 text-[16px] font-light">
+								Synthetic Reward Vaults are deposits into Rewards Vaults where the BGT is always claimed as a BGT liquid wrapper and
+								autocompound. BeraTrax always claims the BGT wrapper that is the highest price that minute. The current wrappers that are
+								supported for compounding:
+							</p>
+							<div className="mt-4 overflow-hidden rounded-xl bg-bgSecondary">
+								<table className="w-full border-collapse">
+									<tbody>
+										<tr className="border-b border-gray-700">
+											<td className="p-4 text-textWhite font-medium">
+												<div className="flex items-center gap-2">
+													<img
+														src="https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png"
+														alt="yBGT"
+														className="w-6 h-6"
+													/>
+													<span className="font-bold">yBGT</span>
+												</div>
+											</td>
+											<td className="p-4 text-textWhite">Yearn BGT</td>
+										</tr>
+										<tr>
+											<td className="p-4 text-textWhite font-medium">
+												<div className="flex items-center gap-2">
+													<img
+														src="https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe/logo.png"
+														alt="lBGT"
+														className="w-6 h-6"
+													/>
+													<span className="font-bold">LBGT</span>
+												</div>
+											</td>
+											<td className="p-4 text-textWhite">Liquid BGT</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</>
+					)}
 					<p className="text-textWhite mt-4 text-[16px] font-light">
 						You can see the underlying vault on the platform{" "}
 						<a href={source} target="_blank" className="text-gradientPrimary uppercase hover:underline">
@@ -146,16 +187,16 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							)}
 
 							{/* TODO: change to dynamic reward token */}
-							{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear) && (
+							{(isAutoCompounded || originPlatform === FarmOriginPlatform.Burrbear.name) && (
 								<tr className="border-b border-gray-700">
 									<td className="p-4 text-textWhite font-medium">
 										<div className="flex items-center gap-2">
-											{originPlatform === FarmOriginPlatform.Infrared && tokenType === FarmType.advanced ? (
+											{originPlatform === FarmOriginPlatform.Infrared.name && tokenType === FarmType.advanced ? (
 												<>
 													<img src={ibgtLogo} alt="iBGT" className="w-5 h-5" />
 													iBGT
 												</>
-											) : originPlatform === FarmOriginPlatform.Burrbear || originPlatform === FarmOriginPlatform.BeraPaw ? (
+											) : originPlatform === FarmOriginPlatform.Burrbear.name || originPlatform === FarmOriginPlatform.BeraPaw.name ? (
 												<>
 													{farm.id === 22 ? (
 														<>
@@ -171,8 +212,17 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 												</>
 											) : (
 												<>
-													<img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
-													HONEY
+													{farm.id === 45 ? (
+														<>
+															<img src={FarmOriginPlatform.BeraTrax.logo} alt="BTX" className="w-5 h-5" />
+															TRAX
+														</>
+													) : (
+														<>
+															<img src={honeyLogo} alt="HONEY" className="w-5 h-5" />
+															HONEY
+														</>
+													)}
 												</>
 											)}
 										</div>
@@ -180,18 +230,40 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 									<td className="p-4 text-gradientPrimary font-bold text-right">Autocompounded to APY</td>
 								</tr>
 							)}
-							{originPlatform === FarmOriginPlatform.Infrared && (
+							{originPlatform === FarmOriginPlatform.BeraPaw.name && secondary_platform == null && (
 								<tr className="border-b border-gray-700">
 									<td className="p-4 text-textWhite font-medium">
 										<div className="flex items-center gap-2">
-											<img src="/infrared.ico" alt="Infrared" className="w-5 h-5" />
+											<img src={FarmOriginPlatform.BeraPaw.logo} alt="Berapaw" className="w-5 h-5" />
+											pPAW
+										</div>
+									</td>
+									<td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+								</tr>
+							)}
+							{originPlatform === FarmOriginPlatform.Bearn.name && (
+								<tr className="border-b border-gray-700">
+									<td className="p-4 text-textWhite font-medium">
+										<div className="flex items-center gap-2">
+											<img src={FarmOriginPlatform.Bearn.logo} alt="Bearn" className="w-5 h-5" />
+											Boints
+										</div>
+									</td>
+									<td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
+								</tr>
+							)}
+							{originPlatform === FarmOriginPlatform.Infrared.name && (
+								<tr className="border-b border-gray-700">
+									<td className="p-4 text-textWhite font-medium">
+										<div className="flex items-center gap-2">
+											<img src={FarmOriginPlatform.Infrared.logo} alt="Infrared" className="w-5 h-5" />
 											Infrared airdrop
 										</div>
 									</td>
 									<td className="p-4 text-gradientPrimary font-bold text-right">Future claim</td>
 								</tr>
 							)}
-							{originPlatform === FarmOriginPlatform.Burrbear && (
+							{originPlatform === FarmOriginPlatform.Burrbear.name && (
 								<>
 									{farm.name.includes("wgBERA") && (
 										<tr className="border-b border-gray-700">
@@ -207,7 +279,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 									<tr className="border-b border-gray-700">
 										<td className="p-4 text-textWhite font-medium">
 											<div className="flex items-center gap-2">
-												<img src="/burrbear.ico" alt="Burrbear" className="w-5 h-5" />
+												<img src={FarmOriginPlatform.Burrbear.logo} alt="Burrbear" className="w-5 h-5" />
 												BURR Points (Burrbear Airdrop)
 											</div>
 										</td>
@@ -227,7 +299,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							<tr>
 								<td className="p-4 text-textWhite font-medium">
 									<div className="flex items-center gap-2">
-										<img src={btxLogo} alt="BTX" className="w-5 h-5" />
+										<img src={FarmOriginPlatform.BeraTrax.logo} alt="BTX" className="w-5 h-5" />
 										BTX Points (BeraTrax Airdrop)
 									</div>
 								</td>

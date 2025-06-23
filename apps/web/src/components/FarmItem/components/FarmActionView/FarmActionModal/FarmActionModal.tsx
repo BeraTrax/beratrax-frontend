@@ -1,7 +1,7 @@
 import closemodalicon from "@beratrax/core/src/assets/images/closemodalicon.svg";
 import exchange from "@beratrax/core/src/assets/images/exchange.svg";
-import { FarmOriginPlatform, FarmTransactionType } from "@beratrax/core/src/types/enums";
-import React, { memo, useCallback, useMemo, useRef, useState } from "react";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DialPad from "web/src/components/Dialpad/Dialpad";
 import MobileModalContainer from "web/src/components/MobileModalContainer/MobileModalContainer";
 import { Select } from "web/src/components/Select/Select";
@@ -99,10 +99,10 @@ const QuickDepositButtons = memo(
 												isSelected
 													? "bg-gradientSecondary text-gradientPrimary"
 													: isMax
-														? "max-button-gradient text-bgDark hover:scale-105 shadow-lg"
-														: isEarnings
-															? "bg-gradientSecondary bg-opacity-20 border border-gradientSecondary"
-															: "bg-bgDark text-textWhite"
+													? "max-button-gradient text-bgDark hover:scale-105 shadow-lg"
+													: isEarnings
+													? "bg-gradientSecondary bg-opacity-20 border border-gradientSecondary"
+													: "bg-bgDark text-textWhite"
 											}
 									`}
 				>
@@ -115,6 +115,7 @@ const QuickDepositButtons = memo(
 );
 
 const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
+	const dispatch = useAppDispatch();
 	const { disableZapWarning } = useAppSelector((state) => state.account);
 	const [confirmDeposit, setConfirmDeposit] = useState<boolean>();
 	const { farmDetails, vaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
@@ -151,7 +152,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 							BigInt(currentVaultEarnings?.earnings1 || 0n),
 							decimals[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
 						)
-					) * prices[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
+				  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
 				: 0) +
 			(currentVaultEarnings?.changeInAssets
 				? Number(
@@ -159,7 +160,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 							BigInt(currentVaultEarnings?.changeInAssets || 0n),
 							decimals[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
 						)
-					) * prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+				  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
 				: 0)
 		);
 	}, [isVaultEarningsFirstLoad]);
@@ -252,8 +253,6 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		}
 	};
 
-	const dispatch = useAppDispatch();
-
 	const setFarmOptions = (opt: Partial<FarmDetailInputOptions>) => {
 		dispatch(setFarmDetailInputOptions(opt));
 	};
@@ -297,14 +296,14 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 							Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
 								maximumFractionDigits: 4,
 							})
-					)
+				  )
 				: farmData?.withdrawableAmounts.map(
 						(_) =>
 							(showInUsd ? ": $" : ": ") +
 							Number(showInUsd ? _.amountDollar : _.amount).toLocaleString("en-us", {
 								maximumFractionDigits: 4,
 							})
-					) || [],
+				  ) || [],
 		[transactionType, farmData, showInUsd]
 	);
 
@@ -486,7 +485,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 					<div className="flex flex-wrap justify-around gap-2 py-2">
 						{transactionType === FarmTransactionType.Deposit
 							? // For deposits, show standard percentage buttons
-								quickDepositList
+							  quickDepositList
 									.filter((item) => item !== "EARNINGS")
 									.map((text) => (
 										<QuickDepositButtons
@@ -509,7 +508,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 										/>
 									))
 							: // For withdrawals, show EARNINGS, 50%, MAX
-								[
+							  [
 									{
 										text: "EARNINGS",
 										isSelected: (() => {
@@ -529,7 +528,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 										text: "MAX",
 										isSelected: Math.abs(Number(amount) - Number(maxBalance)) < 0.0001,
 									},
-								].map(({ text, isSelected }) => (
+							  ].map(({ text, isSelected }) => (
 									<QuickDepositButtons
 										key={text}
 										text={text}
@@ -553,7 +552,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 										}}
 										isSelected={isSelected}
 									/>
-								))}
+							  ))}
 					</div>
 					<DialPad
 						inputValue={amount}
@@ -595,16 +594,16 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 						{!currentWallet
 							? "Please Login"
 							: parseFloat(amount) > 0
-								? parseFloat(amount) > parseFloat(maxBalance)
-									? "Insufficent Balance"
-									: fetchingSlippage
-										? "Simulating..."
-										: isLoadingTransaction
-											? "Loading..."
-											: transactionType === FarmTransactionType.Deposit
-												? "Deposit"
-												: "Withdraw"
-								: "Enter Amount"}
+							? parseFloat(amount) > parseFloat(maxBalance)
+								? "Insufficent Balance"
+								: fetchingSlippage
+								? "Simulating..."
+								: isLoadingTransaction
+								? "Loading..."
+								: transactionType === FarmTransactionType.Deposit
+								? "Deposit"
+								: "Withdraw"
+							: "Enter Amount"}
 					</button>
 				</div>
 			</div>

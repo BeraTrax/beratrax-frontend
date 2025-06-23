@@ -4,15 +4,17 @@ import Farms from "web/src/pages/Farms/Farms";
 import { RoutesPaths } from "@beratrax/core/src/config/constants";
 import { useDataRefresh } from "@beratrax/core/src/hooks";
 import { usePageTracking } from "@beratrax/core/src/hooks";
-import Leaderboard from "./pages/Dashboard/Leaderboard/Leaderboard";
-import FarmAction from "./pages/FarmAction/FarmAction";
-import FarmInfo from "./pages/FarmInfo/FarmInfo";
-import Home from "./pages/Home/Home";
-import Stats from "./pages/Stats/Stats";
-import Withdrawals from "./pages/Stats/Withdrawals";
-import Test from "./pages/Test/Test";
-import UserGuide from "./pages/UserGuide/UserGuide";
-import { Buy } from "./pages/Buy/Buy";
+import Leaderboard from "web/src/pages/Dashboard/Leaderboard/Leaderboard";
+import FarmAction from "web/src/pages/FarmAction/FarmAction";
+import FarmInfo from "web/src/pages/FarmInfo/FarmInfo";
+import Home from "web/src/pages/Home/Home";
+import Stats from "web/src/pages/Stats/Stats";
+import Withdrawals from "web/src/pages/Stats/Withdrawals";
+import Test from "web/src/pages/Test/Test";
+import UserGuide from "web/src/pages/UserGuide/UserGuide";
+import { Buy } from "web/src/pages/Buy/Buy";
+import BurrBearAdmin from "web/src/pages/BurrBearAdmin/BurrBearAdmin";
+
 function Body() {
 	usePageTracking();
 	useDataRefresh();
@@ -29,6 +31,7 @@ function Body() {
 				<Route path={RoutesPaths.Leaderboard} element={<Leaderboard />} />
 				<Route path={RoutesPaths.UserGuide} element={<UserGuide />} />
 				<Route path={RoutesPaths.Buy} element={<Buy />} />
+				<Route path={RoutesPaths.BurrBearAdmin} element={<BurrBearAdmin />} />
 				<Route path="" element={<Dashboard />} />
 				<Route path="/:refCode" element={<Dashboard />} />
 				<Route path="*" element={<h3 style={{ color: "white" }}>Not Found</h3>} />

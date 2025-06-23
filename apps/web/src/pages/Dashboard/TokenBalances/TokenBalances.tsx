@@ -33,7 +33,7 @@ export const TokenBalances: FC<IProps> = () => {
 	const { balances, isBalancesLoading: balancesLoading, isPricesLoading: pricesLoading, tokens, lpTokens, UIState } = useTokens();
 
 	const filteredLpTokens = useMemo(() => {
-		return lpTokens.filter((t) => Number(t.usdBalance) > 0.01 && t.address !== "0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b");
+		return lpTokens.filter((t) => Number(t.usdBalance) > 0.01);
 	}, [lpTokens]);
 
 	const { isConnecting } = useWallet();

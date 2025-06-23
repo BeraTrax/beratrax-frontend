@@ -1,24 +1,25 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: [
-      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
-      "nativewind/babel",
-    ],
-    plugins: ["react-native-reanimated/plugin",
-      [
-        "module-resolver",
-        {
-          root: ["."],
-          alias: {
-            "core/src": "../../packages/core/src",
-            "ui/src": "../../packages/ui/src",
-          },
-        },
-      ],
-    ],
-  };
+	api.cache(true);
+	return {
+		presets: [
+			["babel-preset-expo", { jsxImportSource: "nativewind", jsxImportSource: "@welldone-software/why-did-you-render" }],
+			"nativewind/babel",
+		],
+		plugins: [
+			"react-native-reanimated/plugin",
+			[
+				"module-resolver",
+				{
+					root: ["."],
+					alias: {
+						"core/src": "../../packages/core/src",
+						"ui/src": "../../packages/ui/src",
+					},
+				},
+			],
+		],
+	};
 };

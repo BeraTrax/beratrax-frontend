@@ -1,3 +1,4 @@
+// import "../wdyr";
 import "@walletconnect/react-native-compat";
 import "./../global.css";
 import "../globals";

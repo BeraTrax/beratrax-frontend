@@ -427,7 +427,7 @@ const pools_json: PoolDef[] = [
         logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xd352dc6e5F0c45E2F2b38eb5565EB286A1ea4087/logo.png",
         rewards1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/kodiak/kodiak.ico",
         rewards1_alt: "Kodiak logo",
-        isDeprecated: false,
+        isDeprecated: true,
         isUpgradable: false,
         isAutoCompounded: true,
         lp_address: "0x56449b16ff2b1E5EE61F532ceFFDa8F408f718a1",

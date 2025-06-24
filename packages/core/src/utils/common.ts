@@ -444,6 +444,18 @@ export const isVaultNew = (createdAt: number) => {
 	return now - createdAt < VAULT_NEW_DURATION;
 };
 
+export const formatDate = (dateString: string) => {
+	const date = new Date(dateString);
+	return date.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+};
+
+export const getColorClass = (succeeded: number = 0) => (succeeded > 0 ? "bg-green-500" : "bg-red-800");
+
 export const getPublicClientConfiguration = (chainId = defaultChainId): PublicClientConfig => {
 	const chain = supportedChains.find((item) => item.id === Number(chainId));
 	if (!chain) throw new Error("Invalid Chain");

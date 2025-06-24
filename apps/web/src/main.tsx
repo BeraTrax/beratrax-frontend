@@ -10,7 +10,6 @@ import Notifications from "./components/Notifications/Notifications";
 import { AppProvider } from "@beratrax/core/src/context";
 import "./polyfills";
 import store from "@beratrax/core/src/state";
-import OnChainKitProvider from "@beratrax/core/src/context/OnChainKitProvider";
 
 // Configuration for toast notifications
 setUpNotifications({
@@ -28,12 +27,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 		<Provider store={store}>
 			{/* <PersistGate loading={null} persistor={persistor}> */}
 			<NotificationsProvider>
-				<OnChainKitProvider>
-					<AppProvider>
-						<App />
-						<Notifications />
-					</AppProvider>
-				</OnChainKitProvider>
+				<AppProvider>
+					<App />
+					<Notifications />
+				</AppProvider>
 			</NotificationsProvider>
 			{/* </PersistGate> */}
 		</Provider>

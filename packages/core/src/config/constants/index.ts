@@ -16,6 +16,7 @@ export const RoutesPaths = {
 	UserGuide: "/user-guide",
 	Leaderboard: "/leaderboard",
 	BurrBearAdmin: "/admin/burrbear",
+	Status: "/status",
 };
 
 // Utility function to get environment variables across platforms
@@ -26,7 +27,7 @@ const getEnvVar = (key: string): string | undefined => {
 
 export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1/";
 export const EARNINGS_GRAPH_URL =
-	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/19.0.0/gn";
+	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/21.0.0/gn";
 export const EARNINGS_GRAPH_URL_BASE =
 	"https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =
@@ -48,6 +49,9 @@ export const isDev = getEnvVar("NODE_ENV") === "development";
 export const IS_LEGACY = getEnvVar("IS_LEGACY") === "true";
 
 // Update environment variable access to use the utility function
-export const [walletConnectProjectId, web3authClientId] = ["WALLET_CONNECT_PROJECT_ID", "WEB3AUTH_CLIENT_ID"].map(
-	getEnvVar
-) as Array<string>;
+export const [walletConnectProjectId, web3authClientId, RAMP_TRANSAK_API_KEY, HOLYHELD_API_KEY] = [
+	"WALLET_CONNECT_PROJECT_ID",
+	"WEB3AUTH_CLIENT_ID",
+	"RAMP_TRANSAK_API_KEY",
+	"HOLYHELD_API_KEY",
+].map(getEnvVar) as Array<string>;

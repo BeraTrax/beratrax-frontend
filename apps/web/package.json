@@ -6,6 +6,7 @@
   "dependencies": {
     "@coinbase/onchainkit": "^0.37.8",
     "@ethersproject/abstract-provider": "^5.7.0",
+    "@holyheld/sdk": "^4.0.5",
     "@rainbow-me/rainbowkit": "^2.2.1",
     "@react-native-vector-icons/common": "^11.0.0",
     "@react-native-vector-icons/fontawesome6": "^6.7.1",

@@ -43,7 +43,7 @@ export const TokenBalances: FC<IProps> = () => {
 	const filteredTokens = useMemo(() => {
 		return tokens
 			.filter((item) => {
-				if (Number(item.usdBalance) < 0.01) return false;
+				if (Number(item.usdBalance) < 0.0001) return false;
 				if (item.name === "BERA") return false;
 				return true;
 			})

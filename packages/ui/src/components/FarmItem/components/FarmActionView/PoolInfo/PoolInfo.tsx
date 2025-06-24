@@ -173,13 +173,14 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				</>
 			)}
 			{showFlywheelChart && (
-				<Image
-					// @ts-ignore - Platform-specific image handling
-					source={getImageSource()}
-					style={{ width: "100%", aspectRatio: Platform.OS === "web" && width > 768 ? 16 / 9 : 1 }}
-					className="h-auto"
-					resizeMode="contain"
-				/>
+				<View className="w-full overflow-hidden">
+					<Image
+						// @ts-ignore - Platform-specific image handling
+						source={getImageSource()}
+						style={Platform.OS === "web" ? { width: "100%", aspectRatio: width > 768 ? 16 / 9 : 4 / 3 } : { width: "100%", height: 250 }}
+						resizeMode="contain"
+					/>
+				</View>
 			)}
 			<View className="mt-6 mb-6">
 				<Text className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest mb-4">
@@ -361,7 +362,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 					/>
 				) : null}
 
-				{isAutoCompounded ? <StatInfo title="BeraTrax auto-c-ompounded APY" value={beraTraxApy + "%"} iconUrl={<RocketIcon />} /> : null}
+				{isAutoCompounded ? <StatInfo title="BeraTrax auto-compounded APY" value={beraTraxApy + "%"} iconUrl={<RocketIcon />} /> : null}
 
 				{isAutoCompounded && beraTraxApyWithPoints ? (
 					<StatInfo title="BeraTrax APY with Points" value={beraTraxApyWithPoints} iconUrl={<RocketIcon />} />

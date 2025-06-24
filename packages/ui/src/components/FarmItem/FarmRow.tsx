@@ -1,6 +1,6 @@
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import React, { useEffect, useState } from "react";
-import { Image, View, Text, TouchableOpacity } from "react-native";
+import { Image, View, Text, TouchableOpacity, Platform } from "react-native";
 import { InfoIcon } from "ui/src/icons/Infoicon";
 import { useRouter, Link } from "expo-router";
 // import { Tooltip } from "react-tooltip";
@@ -13,6 +13,7 @@ import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";
 import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
 	farm: PoolDef;
@@ -31,21 +32,24 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 	const dispatch = useAppDispatch();
 	const showVaultsWithFunds = useAppSelector((state) => state.settings.showVaultsWithFunds);
 	const router = useRouter();
+	let navigate = null;
+	if (Platform.OS === "web") {
+		navigate = useNavigate();
+	}
 	const handleClick = (e: any) => {
 		// Check if router is initialized properly
 		dispatch(setLastVisitedPage("/Earn"));
-		if (router) {
-			try {
+		try {
+			if (Platform.OS === "web") {
+				navigate?.(`/Earn/${farm.vault_addr}`, { replace: true });
+			} else {
 				router.replace({
 					pathname: "/Earn/[vaultAddr]",
 					params: { vaultAddr: farm.vault_addr },
 				});
-			} catch (error) {
-				// Fallback approach - using window.location for web context
-				window.location.href = `/Earn/${farm.vault_addr}`;
 			}
-		} else {
-			// If router is undefined, use direct navigation
+		} catch (error) {
+			// Fallback approach - using window.location for web context
 			window.location.href = `/Earn/${farm.vault_addr}`;
 		}
 	};

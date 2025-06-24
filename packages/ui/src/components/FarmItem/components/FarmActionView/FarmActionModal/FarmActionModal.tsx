@@ -35,7 +35,7 @@ import { SlippageWarning } from "ui/src/components/modals/SlippageWarning/Slippa
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import ConfirmFarmActionModal from "ui/src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
-import { Text, Pressable, View, ScrollView } from "react-native";
+import { Text, Pressable, View } from "react-native";
 import { SvgImage } from "@beratrax/ui/src/components/SvgImage/SvgImage";
 
 interface FarmActionModalProps {
@@ -410,6 +410,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 								extraText={selectExtraOptions}
 								className="text-textWhite font-light text-[16px]"
 								bgSecondary={true}
+								customWidth={180}
 							/>
 						) : (
 							<View></View>

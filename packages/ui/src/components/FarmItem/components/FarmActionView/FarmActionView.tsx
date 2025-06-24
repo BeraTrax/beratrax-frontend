@@ -13,6 +13,7 @@ import { formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "expo-router";
+import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
@@ -60,6 +61,10 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const isMarketCapAndVaultLoading = isTotalSuppliesLoading || marketCap === null || vaultTvl === null || marketCap === "0";
 
 	const router = useRouter();
+	let navigate = null;
+	if (Platform.OS === "web") {
+		navigate = useNavigate();
+	}
 	const { withdrawable, isLoadingFarm } = useDetailInput(farm);
 
 	const [openDepositModal, setOpenDepositModal] = useState(false);
@@ -91,10 +96,8 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 
 	const handleGoBack = () => {
 		if (Platform.OS === "web") {
-			// Use browser history on web
-			window.history.back();
+			navigate?.(lastVisitedPage || "/Earn", { replace: true });
 		} else {
-			// Use router.back() on mobile
 			router.replace(lastVisitedPage || "/Earn");
 		}
 	};

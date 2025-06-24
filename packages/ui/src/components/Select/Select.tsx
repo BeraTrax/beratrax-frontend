@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useRef, useCallback } from "react";
-import { Platform, View, Text, Pressable, Image, LayoutChangeEvent, Dimensions, Modal } from "react-native";
+import { Platform, View, Text, Pressable, Image, LayoutChangeEvent, Dimensions, Modal, SafeAreaView, ScrollView } from "react-native";
 import Svg, { G, Path, ClipPath, Rect, Defs } from "react-native-svg";
 import { createPortal } from "react-dom";
 
@@ -30,65 +30,9 @@ const Select: FC<IProps> = ({
 	customWidth,
 }) => {
 	const [openSelect, setOpenSelect] = useState(false);
-	const [maxWidth, setMaxWidth] = useState<number>(100);
 	const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
 	const selectRef = useRef<View>(null);
 	const dropdownRef = useRef<View>(null);
-	const optionWidths = useRef<number[]>([]);
-	const [selectWidth, setSelectWidth] = useState<number>(0);
-
-	// Calculate the required width based on all options
-	useEffect(() => {
-		if (Platform.OS === "web" && options.length > 0) {
-			// Create a temporary div to measure text width
-			const measureElement = document.createElement("div");
-			measureElement.style.position = "absolute";
-			measureElement.style.visibility = "hidden";
-			measureElement.style.fontSize = "14px"; // Adjust to match your text size
-			measureElement.style.padding = "0 30px 0 0"; // Account for extra padding and images
-			document.body.appendChild(measureElement);
-
-			let maxOptionWidth = 0;
-
-			options.forEach((option, index) => {
-				// Include both option text and extra text if available
-				const displayText = extraText ? `${option} ${extraText[index] || ""}` : option;
-				measureElement.textContent = displayText;
-
-				// Add extra width for images if present
-				const imageWidth = images && images[option] ? (images[option].length > 1 ? 30 : 20) : 0;
-				const totalWidth = measureElement.getBoundingClientRect().width + imageWidth + 40; // 40px for padding
-
-				if (totalWidth > maxOptionWidth) {
-					maxOptionWidth = totalWidth;
-				}
-			});
-
-			document.body.removeChild(measureElement);
-
-			// If customWidth is provided, use it
-			if (customWidth) {
-				setMaxWidth(customWidth);
-			} else {
-				setMaxWidth(Math.max(maxOptionWidth, 100));
-			}
-		} else if (Platform.OS !== "web" && options.length > 0) {
-			// For mobile, calculate appropriate width
-			const screenWidth = Dimensions.get("window").width;
-
-			// If customWidth is provided, use it
-			if (customWidth) {
-				setMaxWidth(customWidth);
-			} else {
-				// For smaller dropdowns like dates or numbers
-				if (options.every((opt) => opt.length <= 12)) {
-					setMaxWidth(Math.min(screenWidth * 0.5, 200)); // Narrower for short options
-				} else {
-					setMaxWidth(Math.min(screenWidth * 0.9, 300)); // 90% of screen width for longer options
-				}
-			}
-		}
-	}, [options, extraText, images, customWidth]);
 
 	useEffect(() => {
 		if (options && options.length > 0 && !options.includes(value)) {
@@ -105,15 +49,15 @@ const Select: FC<IProps> = ({
 				setPosition({
 					top: rect.bottom + window.scrollY,
 					left: rect.left + window.scrollX,
-					width: dropdownWidth === "content" ? maxWidth : dropdownWidth === "full" ? window.innerWidth * 0.9 : rect.width,
+					width: dropdownWidth === "content" ? rect.width : dropdownWidth === "full" ? window.innerWidth * 0.9 : rect.width,
 				});
 			}
 		}
-	}, [openSelect, maxWidth, dropdownWidth]);
+	}, [openSelect, dropdownWidth]);
 
 	useEffect(() => {
 		updatePosition();
-	}, [openSelect, maxWidth, updatePosition]);
+	}, [openSelect, updatePosition]);
 
 	// Add event listener to close dropdown when clicking outside (web only)
 	useEffect(() => {
@@ -138,25 +82,6 @@ const Select: FC<IProps> = ({
 		}
 	}, [openSelect]);
 
-	const handleOptionLayout = (event: LayoutChangeEvent, index: number) => {
-		if (Platform.OS === "web") {
-			const { width } = event.nativeEvent.layout;
-			optionWidths.current[index] = width;
-
-			// Find the maximum width
-			const newMaxWidth = Math.max(...optionWidths.current.filter(Boolean), 100);
-			if (newMaxWidth > maxWidth && !customWidth) {
-				setMaxWidth(newMaxWidth + 40); // Add some padding
-			}
-		}
-	};
-
-	// Handle select component layout to get its width
-	const handleSelectLayout = (event: LayoutChangeEvent) => {
-		const { width } = event.nativeEvent.layout;
-		setSelectWidth(width);
-	};
-
 	// Render the down arrow icon using react-native-svg
 	const ArrowIcon = () => (
 		<Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
@@ -176,23 +101,6 @@ const Select: FC<IProps> = ({
 		</Svg>
 	);
 
-	// Calculate mobile dropdown width
-	const getMobileDropdownWidth = () => {
-		// This is now only used for the select component's width, not the dropdown
-		const screenWidth = Dimensions.get("window").width;
-
-		// Determine if this is a narrow dropdown based on content
-		const isShortOptions = options.every((opt) => opt.length <= 12);
-
-		if (customWidth) {
-			return Math.min(customWidth, screenWidth);
-		} else if (isShortOptions) {
-			return Math.min(screenWidth * 0.4, 200); // Narrower for select button with short options
-		} else {
-			return Math.min(screenWidth * 0.9, 300); // Default for select button
-		}
-	};
-
 	// Create dropdown element
 	const renderDropdown = () => {
 		if (!openSelect) return null;
@@ -202,15 +110,15 @@ const Select: FC<IProps> = ({
 			const dropdownContent = (
 				<View
 					ref={dropdownRef}
-					className={`rounded-2xl p-4 flex flex-wrap justify-around ${bgSecondary ? "bg-bgSecondary" : "bg-bgDark"}`}
+					className={`rounded-2xl overflow-hidden shadow-xl border ${bgSecondary ? "bg-bgSecondary border-gray-700" : "bg-bgDark border-gray-800"}`}
 					style={{
 						position: "absolute",
 						top: position.top,
 						left: position.left,
 						width: position.width,
-						minWidth: dropdownWidth === "content" ? maxWidth : undefined,
+						maxWidth: 300, // Prevent dropdown from getting too wide
 						zIndex: 9999,
-						boxShadow: "0px 2px 3.84px rgba(0, 0, 0, 0.25)",
+						boxShadow: "0px 8px 32px rgba(0, 0, 0, 0.4), 0px 2px 8px rgba(0, 0, 0, 0.2)",
 					}}
 				>
 					{options.map((option, index) => (
@@ -220,30 +128,45 @@ const Select: FC<IProps> = ({
 								setValue(option);
 								setOpenSelect(false);
 							}}
-							className="w-full z-[9999]"
+							className="w-full z-[9999] group hover:bg-white5 active:bg-white/10 transition-colors duration-200"
+							style={({ pressed }) => ({
+								backgroundColor: pressed ? "rgba(255, 255, 255, 0.1)" : "transparent",
+							})}
 						>
 							<View
-								className="flex flex-row items-center justify-between px-3 py-3 border-b last:border-b-0 cursor-pointer"
-								onLayout={(e) => handleOptionLayout(e, index)}
+								className={`flex flex-row items-center justify-between px-4 py-3.5 cursor-pointer transition-all duration-200 ${
+									index !== options.length - 1 ? "border-b border-gray-700/50" : ""
+								} ${value === option ? "bg-textPrimary/20 border-textPrimary/30" : ""}`}
 							>
-								<View className="flex flex-row gap-x-2">
+								<View className="flex flex-row gap-x-3 items-center flex-1">
 									{images && images[option] && (
-										<View className="flex flex-row">
-											<Image source={{ uri: images[option][0] }} className="w-5 h-5 rounded-full" />
-											{images[option].length > 1 && <Image source={{ uri: images[option][1] }} className="w-5 h-5 -ml-2.5 rounded-full" />}
+										<View className="flex flex-row relative">
+											<Image source={{ uri: images[option][0] }} className="w-6 h-6 rounded-full border border-gray-600/50" />
+											{images[option].length > 1 && (
+												<Image source={{ uri: images[option][1] }} className="w-6 h-6 -ml-3 rounded-full border border-gray-600/50" />
+											)}
 										</View>
 									)}
-									<View className="flex flex-row flex-wrap">
-										<Text className="text-textWhite" numberOfLines={1} ellipsizeMode="tail">
+									<View className="flex flex-row flex-wrap flex-1">
+										<Text
+											className={`font-medium ${value === option ? "text-textPrimary" : "text-textWhite"}`}
+											numberOfLines={1}
+											ellipsizeMode="tail"
+										>
 											{option}
 										</Text>
-										{extraText && (
-											<Text className="text-textWhite" numberOfLines={1} ellipsizeMode="tail">
-												{" " + extraText[index]}
+										{extraText && extraText[index] && (
+											<Text
+												className={`ml-1 ${value === option ? "text-textPrimary" : "text-gray-400"}`}
+												numberOfLines={1}
+												ellipsizeMode="tail"
+											>
+												{extraText[index]}
 											</Text>
 										)}
 									</View>
 								</View>
+								{value === option && <View className="w-2 h-2 bg-textPrimary rounded-full ml-2" />}
 							</View>
 						</Pressable>
 					))}
@@ -254,70 +177,104 @@ const Select: FC<IProps> = ({
 			return createPortal(dropdownContent, document.body);
 		} else {
 			// For mobile, render a Modal instead of absolute positioning
-			const mobileWidth = getMobileDropdownWidth();
+			const screenHeight = Dimensions.get("window").height;
+			const maxDropdownHeight = screenHeight * 0.5; // Maximum 50% of screen height
 
 			return (
 				<Modal transparent={true} visible={openSelect} animationType="fade" onRequestClose={() => setOpenSelect(false)}>
-					<Pressable className="flex-1 justify-end" onPress={() => setOpenSelect(false)}>
-						<View className="bg-black/50 flex-1 w-full justify-end">
-							<Pressable onPress={(e) => e.stopPropagation()} className="max-h-[300px] w-full">
-								<View
-									ref={dropdownRef}
-									className={`rounded-t-2xl p-4 flex flex-wrap justify-around w-full shadow-md ${
-										bgSecondary ? "bg-bgSecondary" : "bg-bgDark"
-									}`}
-								>
-									{options.map((option, index) => (
-										<Pressable
-											key={option}
-											onPress={() => {
-												setValue(option);
-												setOpenSelect(false);
-											}}
-											className="w-full"
+					<SafeAreaView className="flex-1">
+						<Pressable className="flex-1 justify-end" onPress={() => setOpenSelect(false)}>
+							<View className="bg-black/60 flex-1 w-full justify-end">
+								<View className="w-full" style={{ maxHeight: maxDropdownHeight }}>
+									<View
+										ref={dropdownRef}
+										className={`rounded-t-2xl shadow-2xl border-t border-l border-r ${bgSecondary ? "bg-bgSecondary border-gray-700" : "bg-bgDark border-gray-800"}`}
+									>
+										{/* Header handle */}
+										<View className="flex items-center py-3">
+											<View className="w-12 h-1 bg-gray-600 rounded-full" />
+										</View>
+										<ScrollView
+											showsVerticalScrollIndicator={false}
+											style={{ maxHeight: maxDropdownHeight - 80 }} // Account for header and padding
+											contentContainerStyle={{ paddingBottom: 20 }}
 										>
-											<View className="flex flex-row items-center justify-between px-3 py-3 border-b last:border-b-0">
-												<View className="flex flex-row gap-x-2">
-													{images && images[option] && (
-														<View className="flex flex-row">
-															<Image source={{ uri: images[option][0] }} className="w-5 h-5 rounded-full" />
-															{images[option].length > 1 && (
-																<Image source={{ uri: images[option][1] }} className="w-5 h-5 -ml-2.5 rounded-full" />
+											{options.map((option, index) => (
+												<Pressable
+													key={option}
+													onPress={() => {
+														setValue(option);
+														setOpenSelect(false);
+													}}
+													className="w-full"
+													style={({ pressed }) => ({
+														backgroundColor: pressed ? "rgba(255, 255, 255, 0.1)" : "transparent",
+													})}
+												>
+													<View
+														className={`flex flex-row items-center justify-between px-6 py-4 ${
+															index !== options.length - 1 ? "border-b border-gray-700/30" : ""
+														} ${value === option ? "bg-textPrimary/20 border-textPrimary/30" : ""}`}
+													>
+														<View className="flex flex-row gap-x-3 items-center flex-1">
+															{images && images[option] && (
+																<View className="flex flex-row relative">
+																	<Image source={{ uri: images[option][0] }} className="w-6 h-6 rounded-full border border-gray-600/50" />
+																	{images[option].length > 1 && (
+																		<Image
+																			source={{ uri: images[option][1] }}
+																			className="w-6 h-6 -ml-3 rounded-full border border-gray-600/50"
+																		/>
+																	)}
+																</View>
 															)}
+															<View className="flex flex-row flex-wrap flex-1 items-center">
+																<Text
+																	className={`font-medium text-base ${value === option ? "text-textPrimary" : "text-textWhite"}`}
+																	numberOfLines={1}
+																	ellipsizeMode="tail"
+																>
+																	{option}
+																</Text>
+																{extraText && extraText[index] && (
+																	<Text
+																		className={`ml-1 text-sm ${value === option ? "text-textPrimary" : "text-gray-400"}`}
+																		numberOfLines={1}
+																		ellipsizeMode="tail"
+																	>
+																		{extraText[index]}
+																	</Text>
+																)}
+															</View>
 														</View>
-													)}
-													<View className="flex flex-row flex-wrap">
-														<Text className="text-textWhite" numberOfLines={1} ellipsizeMode="tail">
-															{option}
-														</Text>
-														{extraText && (
-															<Text className="text-textWhite" numberOfLines={1} ellipsizeMode="tail">
-																{" " + extraText[index]}
-															</Text>
-														)}
+														{value === option && <View className="w-2.5 h-2.5 bg-textPrimary rounded-full ml-3" />}
 													</View>
-												</View>
-											</View>
-										</Pressable>
-									))}
+												</Pressable>
+											))}
+										</ScrollView>
+									</View>
 								</View>
-							</Pressable>
-						</View>
-					</Pressable>
+							</View>
+						</Pressable>
+					</SafeAreaView>
 				</Modal>
 			);
 		}
 	};
 
 	return (
-		<View className={className + " relative"} style={{ minWidth: maxWidth }} ref={selectRef} onLayout={handleSelectLayout}>
+		<View className={className + " relative"} ref={selectRef}>
 			{/* The main select button */}
 			<Pressable onPress={() => setOpenSelect(!openSelect)}>
 				<View
-					className={`relative rounded-2xl flex flex-row items-center gap-x-6 px-3 py-4 ${bgSecondary ? "bg-bgSecondary" : "bg-bgDark"} ${size === "small" ? "w-[50px]" : ""}`}
-					style={{ minWidth: maxWidth }}
+					className={`relative rounded-2xl flex flex-row items-center justify-between px-3 py-4 ${bgSecondary ? "bg-bgSecondary" : "bg-bgDark"} ${size === "small" ? "w-[50px]" : "w-full"}`}
+					style={{
+						alignSelf: "flex-start", // Allow the component to size to content
+						minWidth: customWidth || 120, // Reasonable minimum width
+						maxWidth: Platform.OS === "web" ? 400 : "80%", // Reasonable maximum width
+					}}
 				>
-					<View className="flex flex-row items-center justify-around gap-2 flex-grow">
+					<View className="flex flex-row items-center gap-2 flex-1 pr-2">
 						{/* Render images if provided */}
 						{images && images[value] && (
 							<View className="flex flex-row">
@@ -325,11 +282,11 @@ const Select: FC<IProps> = ({
 								{images[value].length > 1 && <Image source={{ uri: images[value][1] }} className="w-5 h-5 -ml-2.5 rounded-full" />}
 							</View>
 						)}
-						<Text className="text-textWhite" numberOfLines={1} ellipsizeMode="tail">
+						<Text className="text-textWhite flex-1">
 							{value} {extraText ? extraText[options.findIndex((opt) => opt === value)] : ""}
 						</Text>
 					</View>
-					<View style={{ transform: [{ rotate: openSelect ? "180deg" : "0deg" }] }}>
+					<View className="flex-shrink-0 ml-2" style={{ transform: [{ rotate: openSelect ? "180deg" : "0deg" }] }}>
 						<ArrowIcon />
 					</View>
 				</View>

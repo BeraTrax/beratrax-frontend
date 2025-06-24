@@ -11,6 +11,7 @@ import { approveErc20 } from "@beratrax/core/src/api/token";
 import { Vault } from "@beratrax/core/src/types";
 import FarmRowChip from "./FarmItem/components/FarmRowChip/FarmRowChip";
 import { useRouter } from "expo-router";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@beratrax/core/src";
 import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
 
@@ -63,6 +64,10 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const totalEarningsUsd = changeInAssetsValueUsd + currentVaultEarningsUsd;
 
 	const router = useRouter();
+	let navigate = null;
+	if (Platform.OS === "web") {
+		navigate = useNavigate();
+	}
 	const { getTraxApy } = useTrax();
 	const estimateTrax = useMemo(() => getTraxApy(vault.vault_addr), [getTraxApy, vault]);
 	const { userVaultBalance, priceOfSingleToken, apys } = vault || {};
@@ -206,18 +211,17 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const handleClick = (e: any) => {
 		// Check if router is initialized properly
 		dispatch(setLastVisitedPage("/"));
-		if (router) {
-			try {
+		try {
+			if (Platform.OS === "web") {
+				navigate?.(`/Earn/${vault.vault_addr}`, { replace: true });
+			} else {
 				router.replace({
 					pathname: "/Earn/[vaultAddr]",
 					params: { vaultAddr: vault.vault_addr },
 				});
-			} catch (error) {
-				// Fallback approach - using window.location for web context
-				window.location.href = `/Earn/${vault.vault_addr}`;
 			}
-		} else {
-			// If router is undefined, use direct navigation
+		} catch (error) {
+			// Fallback approach - using window.location for web context
 			window.location.href = `/Earn/${vault.vault_addr}`;
 		}
 	};

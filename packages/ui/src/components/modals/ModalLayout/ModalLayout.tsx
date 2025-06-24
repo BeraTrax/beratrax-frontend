@@ -32,6 +32,10 @@ export const ModalLayout: FC<IProps> = ({ onClose, children, wrapperClassName = 
 	const containerClass = twMerge("shadow-lg text-white", wrapperClassName);
 
 	const containerStyle = {
+		backgroundColor: "#151915", // bgSecondary color
+		borderRadius: 16, // This ensures rounded corners work on web
+		margin: 16, // Margin around the modal
+		padding: 24, // Internal padding
 		minHeight: 200, // Minimum height
 	};
 

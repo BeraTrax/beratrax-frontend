@@ -454,6 +454,11 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
                   max-[1300px]:min-w-[calc(50%-8px)]
                   max-[768px]:min-w-full
 		    `}
+			style={{
+				background: !vault.isCurrentWeeksRewardsVault
+					? "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)"
+					: undefined,
+			}}
 		>
 			{pressableChildren}
 		</Pressable>

@@ -20,6 +20,7 @@ export interface Addresses {
     btxAddress?: Address;
     stakingAddress?: Address;
     airdropAddress?: Address;
+    additionalAirdropAddress?: Address;
 }
 
 const arbitrumAddresses: Addresses = {
@@ -91,6 +92,7 @@ const berachainAddresses: Addresses = {
     btxAddress: "0xAE24e5B7E669E87D88c5CD02Bcbb7DeF001A2612",
     stakingAddress: "0xD278E826eB2c5B85D85989aB842fa9788DD4bDaF",
     airdropAddress: "0x7d6cffa350E6725bA8BF3bcC876d9211DD071FBd",
+    additionalAirdropAddress: "0x8B773994314040B385191A92655A14d299BfE47E",
 };
 
 export const addressesByChainId: { [key: number]: Addresses } = {

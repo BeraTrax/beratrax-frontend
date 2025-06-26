@@ -72,6 +72,8 @@ export const tenderlyRpcs: { [key: string]: string } = {
     [CHAIN_ID.ARBITRUM]: `https://arbitrum.gateway.tenderly.co/6YtRegY86MErUrbfeB4e8L`,
     [CHAIN_ID.BASE]: `https://base.gateway.tenderly.co/6lueMXUaDSXb1VtTVFELQ1`,
 };
+export const TRAX_TOKEN_ADDRESS = "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8";
+export const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =
     "https://api.subgraph.ormilabs.com/api/public/803c8c8c-be12-4188-8523-b9853e23051d/subgraphs/steer-protocol-bera/prod/gn";

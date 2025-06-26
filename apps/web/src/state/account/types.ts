@@ -39,6 +39,15 @@ export interface StateInterface {
         isClaimRewardsLoading: boolean;
         isStakeLoading: boolean;
     };
+
+    // Additional Airdrop-related state (without staking)
+    // contains, mainnet, testnet, social user, teddy nft BTX points airdrop
+    additionalAirdrop?: {
+        isClaimed: boolean;
+        isInitialLoading: boolean;
+        claimData: { account: Address; signature: Address; amount: string, sources: boolean[] } | null;
+        isLoading: boolean;
+    };
 }
 
 export interface AccountResponse {

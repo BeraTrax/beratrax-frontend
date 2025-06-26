@@ -40,7 +40,12 @@ const initialState: StateInterface = {
         isClaimed: false,
         isInitialLoading: true,
         claimData: null,
+        stakeInfo: "0",
+        pendingRewards: "0",
         isLoading: false,
+        isWithdrawLoading: false,
+        isClaimRewardsLoading: false,
+        isStakeLoading: false,
         //[mainnet, testnet, steddy teddy, social]
         //first for mainnet points, 2nd for testnet, 3rd for social user points, 4th for teddy nft points
     },
@@ -447,14 +452,16 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
             };
         } catch (error) {
             console.error("Error in fetchAdditionalAirdropData", error);
-            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch additional airdrop data");
+            return thunkApi.rejectWithValue(
+                error instanceof Error ? error.message : "Failed to fetch additional airdrop data"
+            );
         }
     }
 );
 
 export const claimAdditionalAirdrop = createAsyncThunk(
     "account/claimAdditionalAirdrop",
-    async ({ getClients }: { getClients: (chainId: number) => Promise<IClients> }, thunkApi) => {
+    async ({ claim, getClients }: { claim: boolean; getClients: (chainId: number) => Promise<IClients> }, thunkApi) => {
         try {
             const state = thunkApi.getState() as { account: StateInterface };
             const additionalAirdropClaimData = state.account.additionalAirdrop?.claimData;
@@ -464,17 +471,26 @@ export const claimAdditionalAirdrop = createAsyncThunk(
             const airdropAddress = addressesByChainId[CHAIN_ID.BERACHAIN].additionalAirdropAddress;
             const clients = await getClients(CHAIN_ID.BERACHAIN);
 
-            const transactionParams = [BigInt(additionalAirdropClaimData.amount), 0n,additionalAirdropClaimData.signature, true]
+            const transactionParams = [
+                BigInt(additionalAirdropClaimData.amount),
+                0n,
+                additionalAirdropClaimData.signature,
+                claim,
+            ];
             console.log("transactionParams", transactionParams);
 
-            console.log("additionalAirdropClaimData before claim");
             const response = await awaitTransaction(
                 clients.wallet.sendTransaction({
                     to: airdropAddress,
                     data: encodeFunctionData({
                         abi: additionalAirdropClaimAbi,
                         functionName: "claimAirdrop",
-                        args: [BigInt(additionalAirdropClaimData.amount), 0n, additionalAirdropClaimData.signature, true] as const,
+                        args: [
+                            BigInt(additionalAirdropClaimData.amount),
+                            0n,
+                            additionalAirdropClaimData.signature,
+                            claim,
+                        ] as const,
                     }),
                 }),
                 clients
@@ -483,13 +499,17 @@ export const claimAdditionalAirdrop = createAsyncThunk(
             if (!response.status) {
                 throw new Error(response.error || "Failed to claim additional airdrop");
             }
-            // Fetch updated data after successful claim
-            await thunkApi.dispatch(fetchAdditionalAirdropData({ address: clients.wallet.account.address, getClients }));
+            // Fetch updated data after successful claim/stake
+            await thunkApi.dispatch(
+                fetchAdditionalAirdropData({ address: clients.wallet.account.address, getClients })
+            );
 
-            return response;
+            return { response, claim };
         } catch (error) {
             console.error("Error in claimAdditionalAirdrop", error);
-            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to claim additional airdrop");
+            return thunkApi.rejectWithValue(
+                error instanceof Error ? error.message : "Failed to claim additional airdrop"
+            );
         }
     }
 );
@@ -536,7 +556,12 @@ const accountSlice = createSlice({
                     isClaimed: false,
                     isInitialLoading: true,
                     claimData: null,
+                    stakeInfo: "0",
+                    pendingRewards: "0",
                     isLoading: false,
+                    isWithdrawLoading: false,
+                    isClaimRewardsLoading: false,
+                    isStakeLoading: false,
                 };
             }
             state.additionalAirdrop[field] = value;
@@ -670,7 +695,12 @@ const accountSlice = createSlice({
                     isClaimed: false,
                     isInitialLoading: true,
                     claimData: null,
+                    stakeInfo: "0",
+                    pendingRewards: "0",
                     isLoading: false,
+                    isWithdrawLoading: false,
+                    isClaimRewardsLoading: false,
+                    isStakeLoading: false,
                 };
             }
             state.additionalAirdrop.isInitialLoading = true;
@@ -689,20 +719,32 @@ const accountSlice = createSlice({
             }
         });
 
-        builder.addCase(claimAdditionalAirdrop.pending, (state) => {
+        builder.addCase(claimAdditionalAirdrop.pending, (state, action) => {
             if (state.additionalAirdrop) {
-                state.additionalAirdrop.isLoading = true;
+                const { claim } = action.meta.arg;
+                if (claim) {
+                    state.additionalAirdrop.isLoading = true;
+                } else {
+                    state.additionalAirdrop.isStakeLoading = true;
+                }
             }
         });
-        builder.addCase(claimAdditionalAirdrop.fulfilled, (state) => {
+        builder.addCase(claimAdditionalAirdrop.fulfilled, (state, action) => {
             if (state.additionalAirdrop) {
-                state.additionalAirdrop.isLoading = false;
+                const claim = action.payload?.claim;
+                if (claim) {
+                    state.additionalAirdrop.isLoading = false;
+                } else {
+                    state.additionalAirdrop.isStakeLoading = false;
+                }
             }
         });
         builder.addCase(claimAdditionalAirdrop.rejected, (state, action) => {
             state.error = action.payload as string;
             if (state.additionalAirdrop) {
+                // Reset both loading states on error to be safe
                 state.additionalAirdrop.isLoading = false;
+                state.additionalAirdrop.isStakeLoading = false;
             }
         });
     },

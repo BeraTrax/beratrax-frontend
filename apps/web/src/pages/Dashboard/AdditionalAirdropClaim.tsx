@@ -39,7 +39,7 @@ const top20 = [
     "0x9dEfF269B22849889cAE9A965769f576a1e72d27",
 ];
 
-type TokenActionTypeModified = Omit<TokenActionType, "stake">;
+type TokenActionTypeModified = "claim" | "stake" | "burn";
 interface WarningModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -110,6 +110,7 @@ export const AdditionalAirdropClaim = () => {
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [warningType, setWarningType] = useState<TokenActionTypeModified>("claim");
     const [isBurnLoading, setIsBurnLoading] = useState(false);
+    const [isStakeLoading, setIsStakeLoading] = useState(false);
 
     // Get additional airdrop state from Redux
     const additionalAirdropState = useSelector((state: RootState) => state.account.additionalAirdrop);
@@ -120,6 +121,8 @@ export const AdditionalAirdropClaim = () => {
         claimData = null,
         isLoading = false,
     } = additionalAirdropState || {};
+
+    const isStakeLoadingRedux = additionalAirdropState?.isStakeLoading || false;
 
     const fetchAirdropInfo = useCallback(async () => {
         if (!currentWallet) return;
@@ -145,7 +148,7 @@ export const AdditionalAirdropClaim = () => {
                 message: "Processing your claim transaction...",
             });
 
-            await dispatch(claimAdditionalAirdrop({ getClients })).unwrap();
+            await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
             await reloadBalances();
 
             id && dismissNotify(id);
@@ -165,6 +168,36 @@ export const AdditionalAirdropClaim = () => {
         }
     };
 
+    const handleStake = async () => {
+        if (!claimData) return;
+
+        let id: string | undefined = undefined;
+        try {
+            id = notifyLoading({
+                title: "Staking TRAX...",
+                message: "Processing your stake transaction...",
+            });
+
+            await dispatch(claimAdditionalAirdrop({ claim: false, getClients })).unwrap();
+            await reloadBalances();
+
+            id && dismissNotify(id);
+            notifySuccess({
+                title: "Success!",
+                message: "TRAX tokens staked successfully for 5X rewards",
+            });
+        } catch (error: any) {
+            console.error(error);
+            id && dismissNotify(id);
+            notifyError({
+                title: "Error",
+                message: error.message || "Failed to stake due to Berachain RPC issue. Please try again later",
+            });
+        } finally {
+            setShowWarningModal(false);
+        }
+    };
+
     const handleBurn = async () => {
         if (!claimData) return;
 
@@ -177,7 +210,7 @@ export const AdditionalAirdropClaim = () => {
             });
 
             // First claim the tokens
-            await dispatch(claimAdditionalAirdrop({ getClients })).unwrap();
+            await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
 
             // Update notification
             id && dismissNotify(id);
@@ -287,53 +320,73 @@ export const AdditionalAirdropClaim = () => {
 
                     <div className="space-y-6">
                         <div className="flex flex-col gap-4">
-                            {/* Main claim button (no staking option for additional airdrop) */}
-                            <div className="flex items-center justify-between flex-col xlMobile:flex-row gap-4">
+                            {/* Main claim/stake buttons */}
+                            <div className="flex items-center justify-center gap-4 xlMobile:flex-row flex-col">
                                 <button
                                     onClick={() => showWarning("claim")}
-                                    disabled={isLoading || isBurnLoading || !currentWallet}
-                                    className={`w-full xlMobile:flex-1 py-3 px-4 rounded-xl font-league-spartan font-bold text-lg
+                                    disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                    className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-medium text-base
                                         ${
-                                            isLoading || isBurnLoading || !currentWallet
+                                            isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
+                                                ? "bg-buttonDisabled cursor-not-allowed"
+                                                : "bg-gray-600 hover:bg-gray-500 text-textWhite"
+                                        }`}
+                                >
+                                    {isLoading ? "Processing..." : "Claim Additional TRAX without staking"}
+                                </button>
+
+                                <span className="text-textWhite/80 font-league-spartan">OR</span>
+
+                                <button
+                                    onClick={handleStake}
+                                    disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                    className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-bold text-lg
+                                        ${
+                                            isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
                                                 ? "bg-buttonDisabled cursor-not-allowed"
                                                 : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
                                         }`}
                                 >
-                                    {isLoading ? "Processing..." : "Claim Additional TRAX"}
+                                    {isStakeLoadingRedux ? "Processing..." : "Claim and stake for 2000% APY"}
                                 </button>
-                                <button
-                                    onClick={() => showWarning("burn")}
-                                    disabled={isLoading || isBurnLoading || !currentWallet}
-                                    className={`w-full xlMobile:flex-1 flex items-center justify-center group relative overflow-hidden py-3 px-6 rounded-xl font-league-spartan font-bold text-base border-2 transition-all duration-300
+                            </div>
+
+                            {/* Trash It button - centered and special */}
+                            <div className="flex justify-center">
+                                <div className="relative">
+                                    <button
+                                        onClick={() => showWarning("burn")}
+                                        disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                        className={`group relative overflow-hidden py-3 px-6 rounded-xl font-league-spartan font-bold text-base border-2 transition-all duration-300
                                             ${
-                                                isLoading || isBurnLoading || !currentWallet
+                                                isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
                                                     ? "bg-buttonDisabled border-gray-600 cursor-not-allowed"
                                                     : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500 hover:border-red-400 text-white hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
                                             }`}
-                                >
-                                    <span className="relative z-10 flex items-center gap-2">
-                                        <img src="trash.gif" alt="trash" className="w-6 h-6" />
-                                        {isBurnLoading ? "Burning..." : "Trash"}
-                                        <span className="text-xl">🔥</span>
-                                    </span>
-                                    {/* Animated background effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                                </button>
+                                    >
+                                        <span className="relative z-10 flex items-center gap-2">
+                                            <img src="trash.gif" alt="trash" className="w-6 h-6" />
+                                            {isBurnLoading ? "Burning..." : "Trash"}
+                                            <span className="text-xl">🔥</span>
+                                        </span>
+                                        {/* Animated background effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                                    </button>
+                                    {/* Sparkle effects */}
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 rounded-xl opacity-0 group-hover:opacity-30 blur transition-all duration-300"></div>
+                                </div>
                             </div>
                         </div>
 
                         <div className="p-4 bg-bgPrimary/50 backdrop-blur-sm rounded-2xl border border-borderDark">
-                            <div className="flex items-start gap-3 mb-2">
+                            <div className="flex items-start gap-3">
                                 <IoInformationCircle className="text-xl text-textWhite/80 mt-1" />
                                 <p className="font-league-spartan text-sm text-textWhite/80">
-                                    This is an additional TRAX airdrop of Season 3. You can claim your additional TRAX
-                                    tokens or burn them if you don't want them.
-                                </p>
-                            </div>
-                            <div className="border-l-4 border-yellow-400 bg-yellow-100/10 p-2 rounded-md">
-                                <p className="font-league-spartan text-sm text-yellow-300">
-                                    <strong className="text-yellow-400">Note:</strong> Additional airdrops cannot be
-                                    staked in the 2000% APR vault. Burning tokens is permanent and cannot be undone!
+                                    You can either claim your TRAX tokens now, stake them to earn 2000% APR for 3
+                                    months, or if you don't want your airdrop? burn it and we'll match you 🔥. Staking
+                                    is non-locking, so you can withdraw at any time. However, if you choose to claim
+                                    your tokens now, you WILL NOT be able to stake them in this vault again. Burning
+                                    tokens is permanent and cannot be undone!
                                 </p>
                             </div>
                         </div>
@@ -344,9 +397,11 @@ export const AdditionalAirdropClaim = () => {
             <WarningModal
                 isOpen={showWarningModal}
                 onClose={() => setShowWarningModal(false)}
-                onConfirm={warningType === "claim" ? handleClaim : handleBurn}
+                onConfirm={warningType === "claim" ? handleClaim : warningType === "stake" ? handleStake : handleBurn}
                 type={warningType}
-                isLoading={warningType === "claim" ? isLoading : isBurnLoading}
+                isLoading={
+                    warningType === "claim" ? isLoading : warningType === "stake" ? isStakeLoadingRedux : isBurnLoading
+                }
             />
         </div>
     );

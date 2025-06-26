@@ -45,8 +45,13 @@ export interface StateInterface {
     additionalAirdrop?: {
         isClaimed: boolean;
         isInitialLoading: boolean;
-        claimData: { account: Address; signature: Address; amount: string, sources: boolean[] } | null;
+        claimData: { account: Address; signature: Address; amount: string; sources: boolean[] } | null;
+        stakeInfo: string;
+        pendingRewards: string;
         isLoading: boolean;
+        isWithdrawLoading: boolean;
+        isClaimRewardsLoading: boolean;
+        isStakeLoading: boolean;
     };
 }
 

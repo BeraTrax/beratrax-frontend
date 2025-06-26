@@ -116,7 +116,6 @@ export const AirdropClaim = () => {
     const [warningType, setWarningType] = useState<TokenActionType>("claim");
     const [isBurnLoading, setIsBurnLoading] = useState(false);
 
-
     // Get airdrop state from Redux
     const airdropState = useSelector((state: RootState) => state.account.airdrop);
 

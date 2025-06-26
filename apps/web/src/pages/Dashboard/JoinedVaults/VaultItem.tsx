@@ -251,6 +251,10 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
                         {vault.alt3 ? (
                             <img className="w-9 h-9 rounded-full -ml-3" alt={vault.alt3} src={vault.logo3} />
                         ) : null}
+
+                        {vault.alt4 ? (
+                            <img className="w-9 h-9 rounded-full -ml-3" alt={vault.alt4} src={vault.logo4} />
+                        ) : null}
                     </div>
                     <div className="flex items-center gap-2">
                         <p className="text-lg text-textWhite">{vault.name}</p>

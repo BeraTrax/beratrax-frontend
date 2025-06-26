@@ -36,7 +36,7 @@ export const Status = (): React.JSX.Element => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-bgDark p-6 flex items-center justify-center">
+            <div className="h-screen p-6 flex items-center justify-center">
                 <div className="text-white">Loading cron status...</div>
             </div>
         );
@@ -143,7 +143,7 @@ export const Status = (): React.JSX.Element => {
     });
 
     return (
-        <div className="min-h-screen bg-bgDark p-6">
+        <div className=" p-6">
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-3xl font-bold text-white font-sans">System Status</h1>

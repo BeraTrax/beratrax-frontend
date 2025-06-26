@@ -10,14 +10,17 @@ import {
     sendBtxForXFollow,
     agreeTermsOfUse as agreeTermsOfUseApi,
     getAirdropClaim,
+    getAdditionalAirdropClaim,
 } from "src/api/account";
 import { addressesByChainId } from "src/config/constants/contracts";
 import { pointsStakingAndClaimAbi } from "../../assets/abis/pointsStakingAndClaim";
+import { additionalAirdropClaimAbi } from "../../assets/abis/additionalAirdropClaim";
 import { Address, getContract, encodeFunctionData } from "viem";
 import { CHAIN_ID } from "src/types/enums";
 import { awaitTransaction } from "src/utils/common";
 import { IClients } from "src/types";
 
+// #region Initial State
 const initialState: StateInterface = {
     estimatedTraxPerDay: [],
     refCodeLoaded: false,
@@ -33,8 +36,18 @@ const initialState: StateInterface = {
         isClaimRewardsLoading: false,
         isStakeLoading: false,
     },
+    additionalAirdrop: {
+        isClaimed: false,
+        isInitialLoading: true,
+        claimData: null,
+        isLoading: false,
+        //[mainnet, testnet, steddy teddy, social]
+        //first for mainnet points, 2nd for testnet, 3rd for social user points, 4th for teddy nft points
+    },
 };
+// #endregion
 
+// #region Account Async Actions
 const getAccountData = createAsyncThunk(
     "account/getAccountData",
     async ({ address, referralCodeFromUrl }: { address: string; referralCodeFromUrl: string }, thunkApi) => {
@@ -254,7 +267,8 @@ export const disableZapWarning = createAsyncThunk(
         }
     }
 );
-
+// #endregion
+// #region Airdrop
 export const fetchAirdropData = createAsyncThunk(
     "account/fetchAirdropData",
     async (
@@ -399,6 +413,87 @@ export const claimAirdropRewards = createAsyncThunk(
         }
     }
 );
+// #endregion
+
+// #region Additional Airdrop
+export const fetchAdditionalAirdropData = createAsyncThunk(
+    "account/fetchAdditionalAirdropData",
+    async (
+        { address, getClients }: { address: Address; getClients: (chainId: number) => Promise<IClients> },
+        thunkApi
+    ) => {
+        try {
+            const airdropAddress = addressesByChainId[CHAIN_ID.BERACHAIN].additionalAirdropAddress;
+            if (!airdropAddress || !address) return;
+
+            // Get airdrop claim data
+            const airdropClaimResponse = await getAdditionalAirdropClaim(address);
+            console.log("airdropClaimResponse", airdropClaimResponse);
+            const airdropClaimData = airdropClaimResponse.data;
+
+            // Get contract data
+            const clients = await getClients(CHAIN_ID.BERACHAIN);
+            const contract = getContract({
+                address: airdropAddress,
+                abi: additionalAirdropClaimAbi,
+                client: clients.public,
+            });
+
+            const claimed = await contract.read.isClaimed([address, 0n]);
+
+            return {
+                claimData: airdropClaimData,
+                isClaimed: claimed,
+            };
+        } catch (error) {
+            console.error("Error in fetchAdditionalAirdropData", error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch additional airdrop data");
+        }
+    }
+);
+
+export const claimAdditionalAirdrop = createAsyncThunk(
+    "account/claimAdditionalAirdrop",
+    async ({ getClients }: { getClients: (chainId: number) => Promise<IClients> }, thunkApi) => {
+        try {
+            const state = thunkApi.getState() as { account: StateInterface };
+            const additionalAirdropClaimData = state.account.additionalAirdrop?.claimData;
+
+            if (!additionalAirdropClaimData) throw new Error("Additional airdrop claim not found");
+
+            const airdropAddress = addressesByChainId[CHAIN_ID.BERACHAIN].additionalAirdropAddress;
+            const clients = await getClients(CHAIN_ID.BERACHAIN);
+
+            const transactionParams = [BigInt(additionalAirdropClaimData.amount), 0n,additionalAirdropClaimData.signature, true]
+            console.log("transactionParams", transactionParams);
+
+            console.log("additionalAirdropClaimData before claim");
+            const response = await awaitTransaction(
+                clients.wallet.sendTransaction({
+                    to: airdropAddress,
+                    data: encodeFunctionData({
+                        abi: additionalAirdropClaimAbi,
+                        functionName: "claimAirdrop",
+                        args: [BigInt(additionalAirdropClaimData.amount), 0n, additionalAirdropClaimData.signature, true] as const,
+                    }),
+                }),
+                clients
+            );
+
+            if (!response.status) {
+                throw new Error(response.error || "Failed to claim additional airdrop");
+            }
+            // Fetch updated data after successful claim
+            await thunkApi.dispatch(fetchAdditionalAirdropData({ address: clients.wallet.account.address, getClients }));
+
+            return response;
+        } catch (error) {
+            console.error("Error in claimAdditionalAirdrop", error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to claim additional airdrop");
+        }
+    }
+);
+// #endregion
 
 const accountSlice = createSlice({
     name: "account",
@@ -430,6 +525,21 @@ const accountSlice = createSlice({
                 };
             }
             state.airdrop[field] = value;
+        },
+        updateAdditionalAirdropField: <T extends keyof NonNullable<StateInterface["additionalAirdrop"]>>(
+            state: StateInterface,
+            action: { payload: { field: T; value: NonNullable<StateInterface["additionalAirdrop"]>[T] } }
+        ) => {
+            const { field, value } = action.payload;
+            if (!state.additionalAirdrop) {
+                state.additionalAirdrop = {
+                    isClaimed: false,
+                    isInitialLoading: true,
+                    claimData: null,
+                    isLoading: false,
+                };
+            }
+            state.additionalAirdrop[field] = value;
         },
         reset: (state: StateInterface) => {
             return { ...initialState, referrerCode: state.referrerCode, refCodeLoaded: state.refCodeLoaded };
@@ -552,10 +662,53 @@ const accountSlice = createSlice({
                 state.airdrop.isClaimRewardsLoading = false;
             }
         });
+
+        // Additional Airdrop reducers
+        builder.addCase(fetchAdditionalAirdropData.pending, (state) => {
+            if (!state.additionalAirdrop) {
+                state.additionalAirdrop = {
+                    isClaimed: false,
+                    isInitialLoading: true,
+                    claimData: null,
+                    isLoading: false,
+                };
+            }
+            state.additionalAirdrop.isInitialLoading = true;
+        });
+        builder.addCase(fetchAdditionalAirdropData.fulfilled, (state, action) => {
+            if (action.payload && state.additionalAirdrop) {
+                state.additionalAirdrop.claimData = action.payload.claimData;
+                state.additionalAirdrop.isClaimed = action.payload.isClaimed;
+                state.additionalAirdrop.isInitialLoading = false;
+            }
+        });
+        builder.addCase(fetchAdditionalAirdropData.rejected, (state, action) => {
+            state.error = action.payload as string;
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isInitialLoading = false;
+            }
+        });
+
+        builder.addCase(claimAdditionalAirdrop.pending, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isLoading = true;
+            }
+        });
+        builder.addCase(claimAdditionalAirdrop.fulfilled, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isLoading = false;
+            }
+        });
+        builder.addCase(claimAdditionalAirdrop.rejected, (state, action) => {
+            state.error = action.payload as string;
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isLoading = false;
+            }
+        });
     },
 });
 
-export const { updateAccountField, updateAirdropField, reset } = accountSlice.actions;
+export const { updateAccountField, updateAirdropField, updateAdditionalAirdropField, reset } = accountSlice.actions;
 
 export default accountSlice.reducer;
 

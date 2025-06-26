@@ -18,6 +18,7 @@ const VaultContracts: FC<VaultContractsProps> = ({ farm }) => {
         { name: `Token 1 (${farm.pair1})`, address: farm.token1 },
         ...(farm.token2 ? [{ name: `Token 2 (${farm.pair2})`, address: farm.token2 }] : []),
         ...(farm.token3 ? [{ name: `Token 3 (${farm.pair3})`, address: farm.token3 }] : []),
+        ...(farm.token4 ? [{ name: `Token 4 (${farm.pair4})`, address: farm.token4 }] : []),
     ].filter((contract) => contract.address);
 
     return (
@@ -56,3 +57,4 @@ const VaultContracts: FC<VaultContractsProps> = ({ farm }) => {
 };
 
 export default VaultContracts;
+

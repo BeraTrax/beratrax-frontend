@@ -24,6 +24,7 @@ export interface PoolDef {
     name1: string;
     name2?: string;
     name3?: string;
+    name4?: string;
     platform_alt: string;
     total_apy?: number;
     rewards_apy?: number;
@@ -31,16 +32,20 @@ export interface PoolDef {
     pair1: string;
     pair2?: string;
     pair3?: string;
+    pair4?: string;
     token1: Address;
     token2?: Address;
     token3?: Address;
+    token4?: Address;
     zapper_addr: Address;
     alt1: string;
     alt2?: string;
     alt3?: string;
+    alt4?: string;
     logo1: string;
     logo2?: string;
     logo3?: string;
+    logo4?: string;
     rewards1: string;
     rewards1_alt: string;
     rewards2?: string;
@@ -50,6 +55,7 @@ export interface PoolDef {
     decimals1?: number;
     decimals2?: number;
     decimals3?: number;
+    decimals4?: number;
     vault_addr: Address;
     zap_symbol?: string;
     apTkn?: Address;
@@ -1628,6 +1634,70 @@ const pools_json: PoolDef[] = [
         vault_addr: "0x34B40A95D97E7a1145Ae285C1E86720D0BAF82f2",
         rewardVault: "0x9BC3D407D930910a7aF515D473Ce9633624C1574",
         createdAt: 1750077263,
+        zap_symbol: "HONEY",
+        zap_currencies: [
+            {
+                symbol: "HONEY",
+                address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+                decimals: 18,
+            },
+            {
+                symbol: "BERA",
+                address: zeroAddress,
+                decimals: 18,
+            },
+        ],
+    },
+    {
+        id: 52,
+        chainId: CHAIN_ID.BERACHAIN,
+        synthetic: true,
+        token_type: "LP Token",
+        name: "Nect-USDCe-USDT0-HONEY",
+        url_name: "Nect-USDCe-USDT0-HONEY",
+        platform: "Burrbear",
+        originPlatform: FarmOriginPlatform.Burrbear,
+        source: "https://app.burrbear.io/#/berachain/pool/0xac8a437d1e6905e419431662aead90fb04ac300800020000000000000000000f",
+        name1: "Nect",
+        name2: "USDCe",
+        name3: "USDT0",
+        name4: "HONEY",
+        description:
+            "This vault is built on Burrbear's Nect-USDCe-USDT0-HONEY vault. Your deposit is automatically converted into the Nect-USDCe-USDT0-HONEY LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDCe-USDT0-HONEY, not your starting token before zapping.) ",
+        stableCoin: false,
+        platform_alt: "Burrbear logo",
+        total_apy: 36.477,
+        rewards_apy: 0,
+        platform_logo:
+            "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        pair1: "Nect",
+        pair2: "USDCe",
+        pair3: "USDT0",
+        pair4: "HONEY",
+        token1: "0x1cE0a25D13CE4d52071aE7e02Cf1F6606F4C79d3",
+        token2: "0x549943e04f40284185054145c6E4e9568C1D3241",
+        token3: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
+        token4: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+        zapper_addr: "0x2cD2f685b26A456041096DB63b7D3d35514d044E",
+        alt1: "Nect logo",
+        alt2: "USDCe logo",
+        alt3: "USDT0 logo",
+        alt4: "HONEY logo",
+        logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x1ce0a25d13ce4d52071ae7e02cf1f6606f4c79d3/logo.png",
+        logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0xd6D83aF58a19Cd14eF3CF6fe848C9A4d21e5727c/logo.png",
+        logo3: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
+        logo4: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
+        rewards1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/burrbear/burrbear.ico",
+        rewards1_alt: "Burrbear logo",
+        isDeprecated: false,
+        isUpgradable: false,
+        isAutoCompounded: true,
+        isStablePool: true,
+        lp_address: "0xB34FCA9739249578D93a22ce02bf7FaD277bAD35",
+        decimals: 18,
+        vault_addr: "0xc7FF252B31e5ab63850f9eb80F270C771985c16D",
+        rewardVault: "0x6fD82191550c53414B1d4cE982a8424CE039697B",
+        createdAt: 1750847302,
         zap_symbol: "HONEY",
         zap_currencies: [
             {

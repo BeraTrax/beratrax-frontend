@@ -109,6 +109,13 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm, setOpenedFarm }) => {
                                     src={farm?.logo3}
                                 />
                             )}
+                            {farm?.logo4 && (
+                                <img
+                                    alt={farm?.alt4}
+                                    className="w-8 h-8 lg:h-14 lg:w-14 ml-[-10px] lg:ml-[-25px] max-w-fit rounded-full"
+                                    src={farm?.logo4}
+                                />
+                            )}
                         </div>
 
                         <div>

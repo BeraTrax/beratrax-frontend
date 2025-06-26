@@ -11,7 +11,7 @@ import { CgSpinner } from "react-icons/cg";
 import { ImSpinner8 } from "react-icons/im";
 import FarmRowChip from "src/components/FarmItem/components/FarmRowChip/FarmRowChip";
 import { CHAIN_ID } from "src/types/enums";
-
+import { TRAX_TOKEN_ADDRESS } from "src/config/constants";
 interface WarningModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -76,7 +76,6 @@ export const TraxAirdropVault = () => {
     } = airdropState || {};
 
     // TRAX token address
-    const TRAX_TOKEN_ADDRESS = "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8";
     const traxPrice = prices[CHAIN_ID.BERACHAIN]?.[TRAX_TOKEN_ADDRESS] || 0;
 
     // Calculate USD values

@@ -1,18 +1,12 @@
 import { formatEther, getAddress } from "viem";
-import { useEffect, useCallback } from "react";
 import { customCommify } from "src/utils/common";
 import { IoInformationCircle } from "react-icons/io5";
-import { ImSpinner8 } from "react-icons/im";
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "src/state";
-import { fetchAirdropData, claimAirdrop } from "src/state/account/accountReducer";
-import { useState } from "react";
 import useWallet from "src/hooks/useWallet";
-import useTokens from "src/state/tokens/useTokens";
-import useTransfer from "src/hooks/useTransfer";
-import { CHAIN_ID } from "src/types/enums";
-import { DEAD_ADDRESS, TRAX_TOKEN_ADDRESS } from "src/config/constants";
+import useAirdrop from "src/hooks/useAirdrop";
+import WarningModal from "src/components/modals/WarningModal";
+
+// Re-export for backward compatibility
+export type { TokenActionType } from "src/types/airdrop";
 
 const top20 = [
     "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
@@ -38,222 +32,22 @@ const top20 = [
     "0x9dEfF269B22849889cAE9A965769f576a1e72d27",
 ];
 
-export type TokenActionType = "claim" | "stake" | "burn";
-interface WarningModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-    type: TokenActionType;
-    isLoading: boolean;
-}
-
-const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningModalProps) => {
-    if (!isOpen) return null;
-
-    const getModalContent = () => {
-        switch (type) {
-            case "burn":
-                return {
-                    title: "🗑️ Burn Your TRAX Tokens!",
-                    message: "Don't want your airdrop? Burn it and we'll match you!",
-                    buttonText: "Trashhhhhh it!",
-                };
-            case "claim":
-                return {
-                    title: "Important Notice!",
-                    message:
-                        "You are choosing to claim your TRAX tokens. You understand that after this transaction, you will receive your TRAX tokens immediately. You recognize that you won't be able to stake these tokens later in the 2000% APR pool.",
-                    buttonText: "I understand",
-                };
-            default:
-                return {
-                    title: "Important Notice!",
-                    message: "You are choosing to stake your TRAX tokens.",
-                    buttonText: "I understand",
-                };
-        }
-    };
-
-    const content = getModalContent();
-
-    return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-            <div className="bg-bgSecondary rounded-3xl p-6 max-w-lg w-full mx-4 border border-borderDark">
-                <div className="w-full mb-4">
-                    <div className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
-                        <p className="text-2xl font-bold text-center text-textWhite">{content.title}</p>
-                        <p className="text-base text-textWhite">{content.message}</p>
-                    </div>
-                </div>
-                <div className="flex justify-end gap-4">
-                    <button
-                        className="bg-gray-500 p-4 rounded-xl w-32 font-league-spartan text-textWhite"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className={`p-4 rounded-xl w-32 font-league-spartan text-textWhite ${
-                            type === "burn" ? "bg-red-600 hover:bg-red-700" : "bg-bgPrimary"
-                        }`}
-                        disabled={isLoading}
-                        onClick={onConfirm}
-                    >
-                        {isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : content.buttonText}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 export const AirdropClaim = () => {
-    const dispatch = useAppDispatch();
-    const { reloadBalances } = useTokens();
-    const { getClients, currentWallet } = useWallet();
-    const { transfer } = useTransfer();
-    const [showWarningModal, setShowWarningModal] = useState(false);
-    const [warningType, setWarningType] = useState<TokenActionType>("claim");
-    const [isBurnLoading, setIsBurnLoading] = useState(false);
-
-    // Get airdrop state from Redux
-    const airdropState = useSelector((state: RootState) => state.account.airdrop);
-
+    const { currentWallet } = useWallet();
     const {
-        isClaimed = false,
-        isInitialLoading = true,
-        claimData = null,
-        stakeInfo = "0",
-        isLoading = false,
-        isStakeLoading = false,
-    } = airdropState || {};
-
-    const fetchAirdropInfo = useCallback(async () => {
-        if (!currentWallet) return;
-
-        try {
-            await dispatch(fetchAirdropData({ address: currentWallet, getClients })).unwrap();
-        } catch (error) {
-            console.error("Failed to fetch airdrop data:", error);
-        }
-    }, [currentWallet, getClients, dispatch]);
-
-    useEffect(() => {
-        fetchAirdropInfo();
-    }, [fetchAirdropInfo]);
-
-    const handleClaim = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        try {
-            id = notifyLoading({
-                title: "Claiming TRAX...",
-                message: "Processing your claim transaction...",
-            });
-
-            await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
-            await reloadBalances();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "Success!",
-                message: "TRAX tokens claimed successfully",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to claim due to Berachain RPC issue. Please try again later",
-            });
-        } finally {
-            setShowWarningModal(false);
-        }
-    };
-
-    const handleStake = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        try {
-            id = notifyLoading({
-                title: "Staking TRAX...",
-                message: "Processing your stake transaction...",
-            });
-
-            await dispatch(claimAirdrop({ claim: false, getClients })).unwrap();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "Success!",
-                message: "TRAX tokens staked successfully for 5X rewards",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to claim due to Berachain RPC issue. Please try again later",
-            });
-        }
-    };
-
-    const handleBurn = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        setIsBurnLoading(true);
-        try {
-            id = notifyLoading({
-                title: "🔥 Burning TRAX...",
-                message: "Step 1/2: Claiming your TRAX tokens...",
-            });
-
-            // First claim the tokens
-            await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
-
-            // Update notification
-            id && dismissNotify(id);
-            id = notifyLoading({
-                title: "🔥 Burning TRAX...",
-                message: "Step 2/2: Sending tokens to the void... 🗑️",
-            });
-
-            // Then burn them by sending to dead address
-            await transfer({
-                tokenAddress: TRAX_TOKEN_ADDRESS,
-                to: DEAD_ADDRESS,
-                amount: BigInt(claimData.amount),
-                chainId: CHAIN_ID.BERACHAIN,
-            });
-
-            await reloadBalances();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "🔥 Tokens Burned Successfully!",
-                message: "Your TRAX tokens have been permanently destroyed! They're gone forever! 🗑️💸",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to burn tokens. Please try again later",
-            });
-        } finally {
-            setIsBurnLoading(false);
-            setShowWarningModal(false);
-        }
-    };
-
-    const showWarning = (type: TokenActionType) => {
-        setWarningType(type);
-        setShowWarningModal(true);
-    };
-
-    const shouldRenderAirdropSection = !isInitialLoading && claimData && BigInt(claimData.amount) > 0n && !isClaimed;
+        showWarningModal,
+        warningType,
+        isBurnLoading,
+        isStakeLoading,
+        isLoading,
+        claimData,
+        handleClaim,
+        handleStake,
+        handleBurn,
+        showWarning,
+        setShowWarningModal,
+        shouldRenderAirdropSection,
+    } = useAirdrop({ type: "regular" });
 
     return (
         <div className="w-full p-4">
@@ -337,7 +131,7 @@ export const AirdropClaim = () => {
                                                     : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500 hover:border-red-400 text-white hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
                                             }`}
                                     >
-                                        <span className="relative z-10 flex items-center gap-2">
+                                        <span className="relative z-[1] flex items-center gap-2">
                                             <img src="trash.gif" alt="trash" className="w-6 h-6" />
                                             {isBurnLoading ? "Burning..." : "Trash"}
                                             <span className="text-xl">🔥</span>
@@ -356,7 +150,7 @@ export const AirdropClaim = () => {
                                 <IoInformationCircle className="text-xl text-textWhite/80 mt-1" />
                                 <p className="font-league-spartan text-sm text-textWhite/80">
                                     You can either claim your TRAX tokens now, stake them to earn 2000% APR for 3
-                                    months, or if you don’t want your airdrop? burn it and we’ll match you 🔥. Staking
+                                    months, or if you don't want your airdrop? burn it and we'll match you 🔥. Staking
                                     is non-locking, so you can withdraw at any time. However, if you choose to claim
                                     your tokens now, you WILL NOT be able to stake them in this vault again. Burning
                                     tokens is permanent and cannot be undone!

@@ -433,7 +433,6 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
 
             // Get airdrop claim data
             const airdropClaimResponse = await getAdditionalAirdropClaim(address);
-            console.log("airdropClaimResponse", airdropClaimResponse);
             const airdropClaimData = airdropClaimResponse.data;
 
             // Get contract data
@@ -444,10 +443,16 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
                 client: clients.public,
             });
 
-            const claimed = await contract.read.isClaimed([address, 0n]);
+            const [amount, pendingRewards, claimed] = await Promise.all([
+                contract.read.stakes([address]),
+                contract.read.pendingRewards([address]),
+                contract.read.isClaimed([address, 0n]),
+            ]);
 
             return {
                 claimData: airdropClaimData,
+                stakeInfo: amount[0].toString(),
+                pendingRewards: pendingRewards.toString(),
                 isClaimed: claimed,
             };
         } catch (error) {
@@ -476,8 +481,7 @@ export const claimAdditionalAirdrop = createAsyncThunk(
                 0n,
                 additionalAirdropClaimData.signature,
                 claim,
-            ];
-            console.log("transactionParams", transactionParams);
+            ] as const;
 
             const response = await awaitTransaction(
                 clients.wallet.sendTransaction({
@@ -485,12 +489,7 @@ export const claimAdditionalAirdrop = createAsyncThunk(
                     data: encodeFunctionData({
                         abi: additionalAirdropClaimAbi,
                         functionName: "claimAirdrop",
-                        args: [
-                            BigInt(additionalAirdropClaimData.amount),
-                            0n,
-                            additionalAirdropClaimData.signature,
-                            claim,
-                        ] as const,
+                        args: transactionParams,
                     }),
                 }),
                 clients
@@ -510,6 +509,81 @@ export const claimAdditionalAirdrop = createAsyncThunk(
             return thunkApi.rejectWithValue(
                 error instanceof Error ? error.message : "Failed to claim additional airdrop"
             );
+        }
+    }
+);
+
+export const withdrawAdditionalAirdrop = createAsyncThunk(
+    "account/withdrawAdditionalAirdrop",
+    async (
+        { amount, getClients }: { amount: bigint; getClients: (chainId: number) => Promise<IClients> },
+        thunkApi
+    ) => {
+        try {
+            const airdropAddress = addressesByChainId[CHAIN_ID.BERACHAIN].additionalAirdropAddress;
+            const clients = await getClients(CHAIN_ID.BERACHAIN);
+
+            const response = await awaitTransaction(
+                clients.wallet.sendTransaction({
+                    to: airdropAddress,
+                    data: encodeFunctionData({
+                        abi: additionalAirdropClaimAbi,
+                        functionName: "withdraw",
+                        args: [amount],
+                    }),
+                }),
+                clients
+            );
+
+            if (!response.status) {
+                throw new Error(response.error || "Failed to withdraw additional airdrop stake");
+            }
+
+            // Fetch updated data after successful withdraw
+            await thunkApi.dispatch(
+                fetchAdditionalAirdropData({ address: clients.wallet.account.address, getClients })
+            );
+
+            return response;
+        } catch (error) {
+            console.error("Error in withdrawAdditionalAirdrop", error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to withdraw additional airdrop stake");
+        }
+    }
+);
+
+export const claimAdditionalAirdropRewards = createAsyncThunk(
+    "account/claimAdditionalAirdropRewards",
+    async ({ getClients }: { getClients: (chainId: number) => Promise<IClients> }, thunkApi) => {
+        try {
+            const airdropAddress = addressesByChainId[CHAIN_ID.BERACHAIN].additionalAirdropAddress;
+            const clients = await getClients(CHAIN_ID.BERACHAIN);
+
+            const response = await awaitTransaction(
+                clients.wallet.sendTransaction({
+                    to: airdropAddress,
+                    data: encodeFunctionData({
+                        abi: additionalAirdropClaimAbi,
+                        functionName: "claimRewards",
+                        args: [],
+                    }),
+                }),
+                clients
+            );
+
+            if (!response.status) {
+                throw new Error(response.error || "Failed to claim additional airdrop rewards");
+            }
+
+            // Fetch updated data after successful rewards claim
+            await thunkApi.dispatch(
+                fetchAdditionalAirdropData({ address: clients.wallet.account.address, getClients })
+            );
+
+            return response;
+        } catch (error) {
+            console.error("Error in claimAdditionalAirdropRewards", error);
+            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to claim additional airdrop rewards");
         }
     }
 );
@@ -708,6 +782,8 @@ const accountSlice = createSlice({
         builder.addCase(fetchAdditionalAirdropData.fulfilled, (state, action) => {
             if (action.payload && state.additionalAirdrop) {
                 state.additionalAirdrop.claimData = action.payload.claimData;
+                state.additionalAirdrop.stakeInfo = action.payload.stakeInfo;
+                state.additionalAirdrop.pendingRewards = action.payload.pendingRewards;
                 state.additionalAirdrop.isClaimed = action.payload.isClaimed;
                 state.additionalAirdrop.isInitialLoading = false;
             }
@@ -745,6 +821,40 @@ const accountSlice = createSlice({
                 // Reset both loading states on error to be safe
                 state.additionalAirdrop.isLoading = false;
                 state.additionalAirdrop.isStakeLoading = false;
+            }
+        });
+
+        builder.addCase(withdrawAdditionalAirdrop.pending, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isWithdrawLoading = true;
+            }
+        });
+        builder.addCase(withdrawAdditionalAirdrop.fulfilled, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isWithdrawLoading = false;
+            }
+        });
+        builder.addCase(withdrawAdditionalAirdrop.rejected, (state, action) => {
+            state.error = action.payload as string;
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isWithdrawLoading = false;
+            }
+        });
+
+        builder.addCase(claimAdditionalAirdropRewards.pending, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isClaimRewardsLoading = true;
+            }
+        });
+        builder.addCase(claimAdditionalAirdropRewards.fulfilled, (state) => {
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isClaimRewardsLoading = false;
+            }
+        });
+        builder.addCase(claimAdditionalAirdropRewards.rejected, (state, action) => {
+            state.error = action.payload as string;
+            if (state.additionalAirdrop) {
+                state.additionalAirdrop.isClaimRewardsLoading = false;
             }
         });
     },

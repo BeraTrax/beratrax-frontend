@@ -1,19 +1,9 @@
 import { formatEther, getAddress } from "viem";
-import { useEffect, useCallback } from "react";
 import { customCommify } from "src/utils/common";
 import { IoInformationCircle } from "react-icons/io5";
-import { ImSpinner8 } from "react-icons/im";
-import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "src/state";
-import { fetchAdditionalAirdropData, claimAdditionalAirdrop } from "src/state/account/accountReducer";
-import { useState } from "react";
 import useWallet from "src/hooks/useWallet";
-import useTokens from "src/state/tokens/useTokens";
-import useTransfer from "src/hooks/useTransfer";
-import { CHAIN_ID } from "src/types/enums";
-import { DEAD_ADDRESS, TRAX_TOKEN_ADDRESS } from "src/config/constants";
-import { TokenActionType } from "./AirdropClaim";
+import useAirdrop from "src/hooks/useAirdrop";
+import WarningModal from "src/components/modals/WarningModal";
 
 const top20 = [
     "0xa8E6fC2F1E92D0005A4dbee8f8d698748D3B334F",
@@ -39,220 +29,22 @@ const top20 = [
     "0x9dEfF269B22849889cAE9A965769f576a1e72d27",
 ];
 
-type TokenActionTypeModified = "claim" | "stake" | "burn";
-interface WarningModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-    type: TokenActionTypeModified;
-    isLoading: boolean;
-}
-
-const WarningModal = ({ isOpen, onClose, onConfirm, type, isLoading }: WarningModalProps) => {
-    if (!isOpen) return null;
-
-    const getModalContent = () => {
-        switch (type) {
-            case "burn":
-                return {
-                    title: "🗑️ Burn Your TRAX Tokens!",
-                    message: "Don't want your airdrop? Burn it and we'll match you!",
-                    buttonText: "Trashhhhhh it!",
-                };
-            default:
-                return {
-                    title: "Important Notice!",
-                    message:
-                        "You are choosing to claim your TRAX tokens. You understand that after this transaction, you will receive your TRAX tokens immediately. You recognize that you won't be able to stake these tokens later in the 2000% APR pool.",
-                    buttonText: "I understand",
-                };
-        }
-    };
-
-    const content = getModalContent();
-
-    return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-            <div className="gap-4 items-center justify-center bg-bgSecondary rounded-3xl p-6 max-w-lg w-full mx-4 border border-borderDark">
-                <div className="flex flex-col gap-4 items-center w-full mb-4">
-                    <p className="normal-case font-league-spartan text-2xl font-bold text-center text-textWhite">
-                        {content.title}
-                    </p>
-                    <p className="normal-case font-league-spartan text-base text-textWhite">{content.message}</p>
-                </div>
-                <div className="flex  gap-4">
-                    <button
-                        className="bg-gray-500 p-4 rounded-xl w-full font-league-spartan text-textWhite"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className={`p-4 rounded-xl w-full font-league-spartan text-textWhite ${
-                            type === "burn" ? "bg-red-600 hover:bg-red-700" : "bg-bgPrimary"
-                        }`}
-                        disabled={isLoading}
-                        onClick={onConfirm}
-                    >
-                        {isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : content.buttonText}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 export const AdditionalAirdropClaim = () => {
-    const dispatch = useAppDispatch();
-    const { reloadBalances } = useTokens();
-    const { getClients, currentWallet } = useWallet();
-    const { transfer } = useTransfer();
-    const [showWarningModal, setShowWarningModal] = useState(false);
-    const [warningType, setWarningType] = useState<TokenActionTypeModified>("claim");
-    const [isBurnLoading, setIsBurnLoading] = useState(false);
-    const [isStakeLoading, setIsStakeLoading] = useState(false);
-
-    // Get additional airdrop state from Redux
-    const additionalAirdropState = useSelector((state: RootState) => state.account.additionalAirdrop);
-
+    const { currentWallet } = useWallet();
     const {
-        isClaimed = false,
-        isInitialLoading = true,
-        claimData = null,
-        isLoading = false,
-    } = additionalAirdropState || {};
-
-    const isStakeLoadingRedux = additionalAirdropState?.isStakeLoading || false;
-
-    const fetchAirdropInfo = useCallback(async () => {
-        if (!currentWallet) return;
-
-        try {
-            await dispatch(fetchAdditionalAirdropData({ address: currentWallet, getClients })).unwrap();
-        } catch (error) {
-            console.error("Failed to fetch additional airdrop data:", error);
-        }
-    }, [currentWallet, getClients, dispatch]);
-
-    useEffect(() => {
-        fetchAirdropInfo();
-    }, [fetchAirdropInfo]);
-
-    const handleClaim = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        try {
-            id = notifyLoading({
-                title: "Claiming TRAX...",
-                message: "Processing your claim transaction...",
-            });
-
-            await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
-            await reloadBalances();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "Success!",
-                message: "TRAX tokens claimed successfully",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to claim due to Berachain RPC issue. Please try again later",
-            });
-        } finally {
-            setShowWarningModal(false);
-        }
-    };
-
-    const handleStake = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        try {
-            id = notifyLoading({
-                title: "Staking TRAX...",
-                message: "Processing your stake transaction...",
-            });
-
-            await dispatch(claimAdditionalAirdrop({ claim: false, getClients })).unwrap();
-            await reloadBalances();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "Success!",
-                message: "TRAX tokens staked successfully for 5X rewards",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to stake due to Berachain RPC issue. Please try again later",
-            });
-        } finally {
-            setShowWarningModal(false);
-        }
-    };
-
-    const handleBurn = async () => {
-        if (!claimData) return;
-
-        let id: string | undefined = undefined;
-        setIsBurnLoading(true);
-        try {
-            id = notifyLoading({
-                title: "🔥 Burning TRAX...",
-                message: "Step 1/2: Claiming your TRAX tokens...",
-            });
-
-            // First claim the tokens
-            await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
-
-            // Update notification
-            id && dismissNotify(id);
-            id = notifyLoading({
-                title: "🔥 Burning TRAX...",
-                message: "Step 2/2: Sending tokens to the void... 🗑️",
-            });
-
-            // Then burn them by sending to dead address
-            await transfer({
-                tokenAddress: TRAX_TOKEN_ADDRESS,
-                to: DEAD_ADDRESS,
-                amount: BigInt(claimData.amount),
-                chainId: CHAIN_ID.BERACHAIN,
-            });
-
-            await reloadBalances();
-
-            id && dismissNotify(id);
-            notifySuccess({
-                title: "🔥 Tokens Burned Successfully!",
-                message: "Your TRAX tokens have been permanently destroyed! They're gone forever! 🗑️💸",
-            });
-        } catch (error: any) {
-            console.error(error);
-            id && dismissNotify(id);
-            notifyError({
-                title: "Error",
-                message: error.message || "Failed to burn tokens. Please try again later",
-            });
-        } finally {
-            setIsBurnLoading(false);
-            setShowWarningModal(false);
-        }
-    };
-
-    const showWarning = (type: TokenActionTypeModified) => {
-        setWarningType(type);
-        setShowWarningModal(true);
-    };
-
-    const shouldRenderAirdropSection = !isInitialLoading && claimData && Number(claimData.amount) > 0 && !isClaimed;
+        showWarningModal,
+        warningType,
+        isBurnLoading,
+        isStakeLoading,
+        isLoading,
+        claimData,
+        handleClaim,
+        handleStake,
+        handleBurn,
+        showWarning,
+        setShowWarningModal,
+        shouldRenderAirdropSection,
+    } = useAirdrop({ type: "additional" });
 
     return (
         <div className="w-full p-4">
@@ -283,7 +75,7 @@ export const AdditionalAirdropClaim = () => {
                                 <div className="flex items-center gap-1">
                                     {(() => {
                                         const sourceLabels = ["Mainnet", "Testnet", "Teddy", "Social"];
-                                        return claimData.sources.map((source, index) =>
+                                        return claimData.sources.map((source: boolean, index: number) =>
                                             source ? (
                                                 <span
                                                     key={index}
@@ -324,10 +116,10 @@ export const AdditionalAirdropClaim = () => {
                             <div className="flex items-center justify-center gap-4 xlMobile:flex-row flex-col">
                                 <button
                                     onClick={() => showWarning("claim")}
-                                    disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                    disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
                                     className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-medium text-base
                                         ${
-                                            isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
+                                            isLoading || isStakeLoading || isBurnLoading || !currentWallet
                                                 ? "bg-buttonDisabled cursor-not-allowed"
                                                 : "bg-gray-600 hover:bg-gray-500 text-textWhite"
                                         }`}
@@ -339,15 +131,15 @@ export const AdditionalAirdropClaim = () => {
 
                                 <button
                                     onClick={handleStake}
-                                    disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                    disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
                                     className={`flex-1 py-3 px-4 rounded-xl font-league-spartan font-bold text-lg
                                         ${
-                                            isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
+                                            isLoading || isStakeLoading || isBurnLoading || !currentWallet
                                                 ? "bg-buttonDisabled cursor-not-allowed"
                                                 : "bg-buttonPrimary hover:bg-buttonPrimaryLight text-black"
                                         }`}
                                 >
-                                    {isStakeLoadingRedux ? "Processing..." : "Claim and stake for 2000% APY"}
+                                    {isStakeLoading ? "Processing..." : "Claim and stake for 2000% APY"}
                                 </button>
                             </div>
 
@@ -356,15 +148,15 @@ export const AdditionalAirdropClaim = () => {
                                 <div className="relative">
                                     <button
                                         onClick={() => showWarning("burn")}
-                                        disabled={isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet}
+                                        disabled={isLoading || isStakeLoading || isBurnLoading || !currentWallet}
                                         className={`group relative overflow-hidden py-3 px-6 rounded-xl font-league-spartan font-bold text-base border-2 transition-all duration-300
                                             ${
-                                                isLoading || isStakeLoadingRedux || isBurnLoading || !currentWallet
+                                                isLoading || isStakeLoading || isBurnLoading || !currentWallet
                                                     ? "bg-buttonDisabled border-gray-600 cursor-not-allowed"
                                                     : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500 hover:border-red-400 text-white hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
                                             }`}
                                     >
-                                        <span className="relative z-10 flex items-center gap-2">
+                                        <span className="relative z-[1] flex items-center gap-2">
                                             <img src="trash.gif" alt="trash" className="w-6 h-6" />
                                             {isBurnLoading ? "Burning..." : "Trash"}
                                             <span className="text-xl">🔥</span>
@@ -400,7 +192,7 @@ export const AdditionalAirdropClaim = () => {
                 onConfirm={warningType === "claim" ? handleClaim : warningType === "stake" ? handleStake : handleBurn}
                 type={warningType}
                 isLoading={
-                    warningType === "claim" ? isLoading : warningType === "stake" ? isStakeLoadingRedux : isBurnLoading
+                    warningType === "claim" ? isLoading : warningType === "stake" ? isStakeLoading : isBurnLoading
                 }
             />
         </div>

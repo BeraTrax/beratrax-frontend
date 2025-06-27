@@ -32,18 +32,18 @@ function Sidebar() {
             path: RoutesPaths.Farms,
             target: undefined,
         },
-        {
-            title: "Leaderboard",
-            icon: <ImStatsDots size={15} />,
-            path: RoutesPaths.Leaderboard,
-            target: undefined,
-        },
-        {
-            title: "Buy (thoon!)",
-            icon: <FaCoins size={18} />,
-            path: RoutesPaths.Buy,
-            target: "noop",
-        },
+        // {
+        //     title: "Leaderboard",
+        //     icon: <ImStatsDots size={15} />,
+        //     path: RoutesPaths.Leaderboard,
+        //     target: undefined,
+        // },
+        // {
+        //     title: "Buy (thoon!)",
+        //     icon: <FaCoins size={18} />,
+        //     path: RoutesPaths.Buy,
+        //     target: "noop",
+        // },
         {
             title: "User Guide",
             icon: <HiDocumentText size={18} />,

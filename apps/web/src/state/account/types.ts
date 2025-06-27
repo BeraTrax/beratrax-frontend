@@ -1,4 +1,4 @@
-import { UserVVL } from "src/types";
+import { UserVVL, AirdropType } from "src/types";
 import { Address } from "viem";
 
 export interface StateInterface {
@@ -29,25 +29,14 @@ export interface StateInterface {
 
     // Airdrop-related state
     airdrop?: {
-        isClaimed: boolean;
-        isInitialLoading: boolean;
         claimData: { account: Address; signature: Address; amount: string } | null;
-        stakeInfo: string;
-        pendingRewards: string;
-        isLoading: boolean;
-        isWithdrawLoading: boolean;
-        isClaimRewardsLoading: boolean;
-        isStakeLoading: boolean;
-    };
+    } & AirdropType;
 
     // Additional Airdrop-related state (without staking)
     // contains, mainnet, testnet, social user, teddy nft BTX points airdrop
     additionalAirdrop?: {
-        isClaimed: boolean;
-        isInitialLoading: boolean;
-        claimData: { account: Address; signature: Address; amount: string, sources: boolean[] } | null;
-        isLoading: boolean;
-    };
+        claimData: { account: Address; signature: Address; amount: string; sources: boolean[] } | null;
+    } & AirdropType;
 }
 
 export interface AccountResponse {

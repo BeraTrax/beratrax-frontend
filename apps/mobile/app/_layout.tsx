@@ -55,21 +55,21 @@ const tabOptions = {
 		activeIcon: require("@beratrax/core/src/assets/images/earnactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/earnnonactiveicon.svg").default,
 	},
-	Leaderboard: {
-		name: "Leaderboard",
-		tabBarLabel: "Leaderboard",
-		route: "/Leaderboard",
-		activeIcon: require("@beratrax/core/src/assets/images/leaderboardactiveicon.svg").default,
-		inactiveIcon: require("@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg").default,
-	},
-	Buy: {
-		name: "Buy",
-		tabBarLabel: "Buy (thoon!)",
-		route: "/Buy",
-		target: "noop", // This will prevent navigation, matching web behavior
-		activeIcon: require("@beratrax/core/src/assets/images/coinsactiveicon.svg").default,
-		inactiveIcon: require("@beratrax/core/src/assets/images/coinsnonactiveicon.svg").default,
-	},
+	// Leaderboard: {
+	// 	name: "Leaderboard",
+	// 	tabBarLabel: "Leaderboard",
+	// 	route: "/Leaderboard",
+	// 	activeIcon: require("@beratrax/core/src/assets/images/leaderboardactiveicon.svg").default,
+	// 	inactiveIcon: require("@beratrax/core/src/assets/images/leaderboardnonactiveicon.svg").default,
+	// },
+	// Buy: {
+	// 	name: "Buy",
+	// 	tabBarLabel: "Buy (thoon!)",
+	// 	route: "/Buy",
+	// 	target: "noop", // This will prevent navigation, matching web behavior
+	// 	activeIcon: require("@beratrax/core/src/assets/images/coinsactiveicon.svg").default,
+	// 	inactiveIcon: require("@beratrax/core/src/assets/images/coinsnonactiveicon.svg").default,
+	// },
 	"User Guide": {
 		name: "User Guide",
 		tabBarLabel: "User Guide",

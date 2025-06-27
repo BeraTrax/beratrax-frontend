@@ -18,7 +18,7 @@ function Dashboard() {
         // TODO: figure out why scroll is not working without overflow
         <div className="overflow-auto font-arame-mono" id="dashboard">
             <WalletAndStakingPoint />
-            {window.location.hostname === 'localhost' && <AdditionalAirdropClaim />}
+            <AdditionalAirdropClaim />
             <AirdropClaim />
             <div className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
                 {currentWallet ? (

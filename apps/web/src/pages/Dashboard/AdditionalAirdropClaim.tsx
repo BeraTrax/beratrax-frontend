@@ -56,11 +56,11 @@ export const AdditionalAirdropClaim = () => {
                             "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)",
                     }}
                 >
-                    <h2 className="font-league-spartan font-bold text-3xl ">TRAX Season 3 Airdrop</h2>
+                    <h2 className="font-league-spartan font-bold text-3xl ">TRAX 2nd Airdrop</h2>
 
                     <div className="flex items-center justify-between flex-col xlMobile:flex-row gap-y-4 ">
                         <h3 className="font-arame-mono font-normal text-base text-textWhite/80">
-                            Available Additional TRAX to Claim
+                            Available TRAX to Claim
                         </h3>
                         {/* Show eligible drops info */}
                         {claimData && claimData.sources && claimData.sources.length > 0 && (

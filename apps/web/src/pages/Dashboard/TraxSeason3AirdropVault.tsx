@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "src/state";
-import { withdrawAdditionalAirdrop, claimAdditionalAirdropRewards, fetchAdditionalAirdropData } from "src/state/account/accountReducer";
+import {
+    withdrawAdditionalAirdrop,
+    claimAdditionalAirdropRewards,
+    fetchAdditionalAirdropData,
+} from "src/state/account/accountReducer";
 import useWallet from "src/hooks/useWallet";
 import useTokens from "src/state/tokens/useTokens";
 import { formatEther } from "viem";
@@ -171,7 +175,7 @@ export const TraxSeason3AirdropVault = () => {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <p className="text-lg text-textWhite">TRAX Season 3 Airdrop Vault</p>
+                        <p className="text-lg text-textWhite">TRAX 2nd Airdrop Vault</p>
                     </div>
                 </div>
                 <div className="flex-col gap-1">
@@ -286,4 +290,4 @@ export const TraxSeason3AirdropVault = () => {
             />
         </div>
     );
-}; 
+};

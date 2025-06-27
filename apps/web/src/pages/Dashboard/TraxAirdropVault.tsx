@@ -170,7 +170,7 @@ export const TraxAirdropVault = () => {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <p className="text-lg text-textWhite">TRAX Airdrop Vault</p>
+                        <p className="text-lg text-textWhite">TRAX 1st Airdrop Vault</p>
                     </div>
                 </div>
                 <div className="flex-col gap-1">

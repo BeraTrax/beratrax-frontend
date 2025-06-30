@@ -103,7 +103,8 @@ export const getAirdropClaim = async (address: string) => {
 export const getAdditionalAirdropClaim = async (address: string) => {
     const response = await backendApi.get<{
         status: boolean;
-        data: { account: Address; signature: Address; amount: string, sources: boolean[] };
+        data: { account: Address; signature: Address; amount: string; sources: boolean[]; nonce: number }[];
     }>("account/airdrop-claim-additional/" + address);
     return response.data;
 };
+

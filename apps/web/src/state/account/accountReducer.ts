@@ -433,7 +433,7 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
 
             // Get airdrop claim data
             const airdropClaimResponse = await getAdditionalAirdropClaim(address);
-            const airdropClaimData = airdropClaimResponse.data;
+            const airdropClaimsData = airdropClaimResponse.data;
 
             // Get contract data
             const clients = await getClients(CHAIN_ID.BERACHAIN);
@@ -443,17 +443,32 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
                 client: clients.public,
             });
 
-            const [amount, pendingRewards, claimed] = await Promise.all([
+            // If airdropClaimsData is an array, check each nonce
+            let unclaimedClaim = null;
+            if (Array.isArray(airdropClaimsData)) {
+                for (let i = 0; i < airdropClaimsData.length; i++) {
+                    const claim = airdropClaimsData[i];
+                    // Assume claim.nonce exists, otherwise use i as nonce
+                    const nonce = claim.nonce !== undefined ? BigInt(claim.nonce) : BigInt(i);
+                    const claimed = await contract.read.isClaimed([address, nonce]);
+                    if (!claimed) {
+                        unclaimedClaim = { ...claim, nonce };
+                        break;
+                    }
+                }
+            }
+
+            // Get contract info for UI (stake, pendingRewards)
+            const [amount, pendingRewards] = await Promise.all([
                 contract.read.stakes([address]),
                 contract.read.pendingRewards([address]),
-                contract.read.isClaimed([address, 0n]),
             ]);
 
             return {
-                claimData: airdropClaimData,
+                claimData: unclaimedClaim,
                 stakeInfo: amount[0].toString(),
                 pendingRewards: pendingRewards.toString(),
-                isClaimed: claimed,
+                isClaimed: !unclaimedClaim,
             };
         } catch (error) {
             console.error("Error in fetchAdditionalAirdropData", error);
@@ -547,7 +562,9 @@ export const withdrawAdditionalAirdrop = createAsyncThunk(
             return response;
         } catch (error) {
             console.error("Error in withdrawAdditionalAirdrop", error);
-            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to withdraw additional airdrop stake");
+            return thunkApi.rejectWithValue(
+                error instanceof Error ? error.message : "Failed to withdraw additional airdrop stake"
+            );
         }
     }
 );
@@ -583,7 +600,9 @@ export const claimAdditionalAirdropRewards = createAsyncThunk(
             return response;
         } catch (error) {
             console.error("Error in claimAdditionalAirdropRewards", error);
-            return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to claim additional airdrop rewards");
+            return thunkApi.rejectWithValue(
+                error instanceof Error ? error.message : "Failed to claim additional airdrop rewards"
+            );
         }
     }
 );

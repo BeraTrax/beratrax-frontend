@@ -23,16 +23,13 @@ const MobileModalContainer = ({
 		return null;
 	}
 
-	// Use fixed positioning on web to ensure the modal appears at the bottom of the viewport
-	const positionClass = Platform.OS === "web" ? "fixed" : "absolute";
-
 	// Create the style object with maxHeight
 	const modalStyle: ViewStyle = {
 		maxHeight: maxHeight as any,
 	};
 
 	return (
-		<View className={twMerge(`${positionClass} w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>
+		<View className={twMerge(`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>
 			<View className="flex-1 justify-end">
 				<View
 					className={twMerge(`w-full bg-[#1A1A1A] rounded-t-[40px] border-t-2 border-t-[#333333] overflow-hidden`, className)}

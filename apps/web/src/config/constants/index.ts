@@ -38,7 +38,7 @@ export const SOCKET_API_KEY = import.meta.env.REACT_APP_SOCKET_BRIDGE_KEY;
 const isProduction = window.location.hostname === "app.beratrax.com";
 const productionTransakKey = import.meta.env.REACT_APP_RAMP_TRANSAK_API_KEY;
 const stagingTransakKey = import.meta.env.REACT_APP_STAGING_RAMP_TRANSAK_API_KEY;
-export const RAMP_TRANSAK_API_KEY = isProduction ? productionTransakKey : productionTransakKey;
+export const RAMP_TRANSAK_API_KEY = isProduction ? productionTransakKey : stagingTransakKey;
 console.log(RAMP_TRANSAK_API_KEY);
 
 export const ZERODEV_PROJECT_ID = import.meta.env.REACT_APP_ZERODEV_PROJECT_ID!;

@@ -17,6 +17,7 @@ import { CHAIN_ID } from "src/types/enums";
 import { Address, getContract } from "viem";
 import VaultItem from "./VaultItem";
 import { TraxAirdropVault } from "../TraxAirdropVault";
+import { TraxSeason3AirdropVault } from "../TraxSeason3AirdropVault";
 
 const Vaults: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -43,7 +44,9 @@ const Vaults: React.FC = () => {
 
     // Get airdrop state to check if user has staked TRAX
     const airdropState = useAppSelector((state) => state.account.airdrop);
+    const additionalAirdropState = useAppSelector((state) => state.account.additionalAirdrop);
     const hasStakedTrax = Boolean(airdropState?.stakeInfo && BigInt(airdropState.stakeInfo) > 0n);
+    const hasStakedAdditionalTrax = Boolean(additionalAirdropState?.stakeInfo && BigInt(additionalAirdropState.stakeInfo) > 0n);
     const hasUserBTXStake = userBTXStake > 0n;
 
     const publicClient = getPublicClient(CHAIN_ID.BERACHAIN);
@@ -136,15 +139,16 @@ const Vaults: React.FC = () => {
             <div
                 className="w-full flex flex-wrap gap-4"
                 style={
-                    !isLoading && (vaults.length > 0 || hasUserBTXStake || hasStakedTrax)
+                    !isLoading && (vaults.length > 0 || hasUserBTXStake || hasStakedTrax || hasStakedAdditionalTrax)
                         ? undefined
                         : { display: "block" }
                 }
             >
                 {!isLoading ? (
-                    vaults.length > 0 || hasStakedTrax ? (
+                    vaults.length > 0 || hasStakedTrax || hasStakedAdditionalTrax ? (
                         <React.Fragment>
                             {hasStakedTrax && <TraxAirdropVault />}
+                            {hasStakedAdditionalTrax && <TraxSeason3AirdropVault />}
                             {vaults
                                 .filter((vault) => !vault.isUpcoming)
                                 .map((vault) => (

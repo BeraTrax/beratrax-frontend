@@ -21,6 +21,7 @@ import { Web3AuthSigner } from "@alchemy/aa-signers/web3auth";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { PoolDef } from "src/config/constants/pools_json";
 import { Balances } from "src/state/tokens/types";
+export type { AirdropType } from "./airdrop";
 
 export interface FarmDetails extends PoolDef {
     userVaultBalance: number;

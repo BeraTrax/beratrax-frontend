@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "src/state";
-import { withdrawAirdrop, claimAirdropRewards, fetchAirdropData } from "src/state/account/accountReducer";
+import {
+    withdrawAdditionalAirdrop,
+    claimAdditionalAirdropRewards,
+    fetchAdditionalAirdropData,
+} from "src/state/account/accountReducer";
 import useWallet from "src/hooks/useWallet";
 import useTokens from "src/state/tokens/useTokens";
 import { formatEther } from "viem";
@@ -12,6 +16,7 @@ import { ImSpinner8 } from "react-icons/im";
 import FarmRowChip from "src/components/FarmItem/components/FarmRowChip/FarmRowChip";
 import { CHAIN_ID } from "src/types/enums";
 import { TRAX_TOKEN_ADDRESS } from "src/config/constants";
+
 interface WarningModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -55,15 +60,15 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
     );
 };
 
-export const TraxAirdropVault = () => {
+export const TraxSeason3AirdropVault = () => {
     const dispatch = useAppDispatch();
     const { reloadBalances } = useTokens();
     const { getClients, currentWallet } = useWallet();
     const { prices } = useTokens();
     const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
-    // Get airdrop state from Redux
-    const airdropState = useSelector((state: RootState) => state.account.airdrop);
+    // Get additional airdrop state from Redux
+    const additionalAirdropState = useSelector((state: RootState) => state.account.additionalAirdrop);
 
     const {
         isClaimed = false,
@@ -73,7 +78,7 @@ export const TraxAirdropVault = () => {
         pendingRewards = "0",
         isWithdrawLoading = false,
         isClaimRewardsLoading = false,
-    } = airdropState || {};
+    } = additionalAirdropState || {};
 
     // TRAX token address
     const traxPrice = prices[CHAIN_ID.BERACHAIN]?.[TRAX_TOKEN_ADDRESS] || 0;
@@ -92,7 +97,7 @@ export const TraxAirdropVault = () => {
                 message: "Processing your withdrawal transaction...",
             });
 
-            await dispatch(withdrawAirdrop({ amount: BigInt(stakeInfo || "0"), getClients })).unwrap();
+            await dispatch(withdrawAdditionalAirdrop({ amount: BigInt(stakeInfo), getClients })).unwrap();
 
             id && dismissNotify(id);
             notifySuccess({
@@ -100,7 +105,7 @@ export const TraxAirdropVault = () => {
                 message: "Stake withdrawn successfully",
             });
 
-            await dispatch(fetchAirdropData({ address: currentWallet!, getClients })).unwrap();
+            await dispatch(fetchAdditionalAirdropData({ address: currentWallet!, getClients })).unwrap();
             await reloadBalances();
         } catch (error: any) {
             console.error(error);
@@ -122,7 +127,7 @@ export const TraxAirdropVault = () => {
                 message: "Processing your rewards claim...",
             });
 
-            await dispatch(claimAirdropRewards({ getClients })).unwrap();
+            await dispatch(claimAdditionalAirdropRewards({ getClients })).unwrap();
 
             id && dismissNotify(id);
             notifySuccess({
@@ -130,7 +135,7 @@ export const TraxAirdropVault = () => {
                 message: "Rewards claimed successfully",
             });
 
-            await dispatch(fetchAirdropData({ address: currentWallet!, getClients })).unwrap();
+            await dispatch(fetchAdditionalAirdropData({ address: currentWallet!, getClients })).unwrap();
         } catch (error: any) {
             console.error(error);
             id && dismissNotify(id);
@@ -170,7 +175,7 @@ export const TraxAirdropVault = () => {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <p className="text-lg text-textWhite">TRAX 1st Airdrop Vault</p>
+                        <p className="text-lg text-textWhite">TRAX 2nd Airdrop Vault</p>
                     </div>
                 </div>
                 <div className="flex-col gap-1">
@@ -286,4 +291,3 @@ export const TraxAirdropVault = () => {
         </div>
     );
 };
-

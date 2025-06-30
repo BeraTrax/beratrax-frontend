@@ -33,7 +33,14 @@ export const isStagging = window.location.hostname.includes("staging.beratrax.co
 export const GATEFI_MERCHANT_ID = import.meta.env.REACT_APP_GATEFI_MERCHANT_ID as string;
 export const SOCKET_BRIDGE_KEY = import.meta.env.REACT_APP_SOCKET_BRIDGE_KEY;
 export const SOCKET_API_KEY = import.meta.env.REACT_APP_SOCKET_BRIDGE_KEY;
-export const RAMP_TRANSAK_API_KEY = import.meta.env.REACT_APP_RAMP_TRANSAK_API_KEY;
+
+// Conditionally use the appropriate Transak API key based on environment
+const isProduction = window.location.hostname === "app.beratrax.com";
+const productionTransakKey = import.meta.env.REACT_APP_RAMP_TRANSAK_API_KEY;
+const stagingTransakKey = import.meta.env.REACT_APP_STAGING_RAMP_TRANSAK_API_KEY;
+export const RAMP_TRANSAK_API_KEY = isProduction ? productionTransakKey : productionTransakKey;
+console.log(RAMP_TRANSAK_API_KEY);
+
 export const ZERODEV_PROJECT_ID = import.meta.env.REACT_APP_ZERODEV_PROJECT_ID!;
 export const ZERODEV_PROJECT_ID_MAINNET = import.meta.env.REACT_APP_ZERODEV_PROJECT_ID_MAINNET!;
 export const IS_LEGACY = import.meta.env.REACT_APP_IS_LEGACY === "true";

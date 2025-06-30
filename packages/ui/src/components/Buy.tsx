@@ -79,8 +79,8 @@ export const Buy = () => {
 
 				{/* Transak Widget */}
 				{isWebViewVisible && (
-					<View className="mb-6 w-full h-[700px]">
-						<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-full w-full">
+					<View className="mb-6 w-full">
+						<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[75vh] w-full">
 							<View className="flex-row justify-between items-center mb-4">
 								<View className="flex-row items-center gap-2">
 									<Image source={transaklogo as ImageSourcePropType} style={{ width: 28, height: 28, borderRadius: 14 }} />

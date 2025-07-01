@@ -10,6 +10,80 @@ const TransakSDK = Platform.OS !== "web" ? require("@transak/react-native-sdk") 
 const { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } = TransakSDK || {};
 
 /**
+ * Transak Widget Component that renders conditionally for web and mobile.
+ *
+ * - On web: Displays Transak iframe using the provided API URL.
+ * - On mobile: Embeds the Transak React Native SDK WebView.
+ */
+interface TransakWidgetProps {
+	isVisible: boolean;
+	onClose: () => void;
+	transakUrl: string;
+	displayAmount: string;
+	address: string | undefined;
+	onTransakEventHandler: ((event: typeof EventTypes, data: typeof Order) => void) | null;
+}
+
+const TransakWidget = ({
+	isVisible,
+	onClose,
+	transakUrl,
+	displayAmount,
+	address,
+	onTransakEventHandler,
+}: TransakWidgetProps): JSX.Element | null => {
+	if (!isVisible) return null;
+
+	return (
+		<View className="mb-6 w-full">
+			<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[75vh] w-full">
+				<View className="flex-row justify-between items-center mb-4">
+					<View className="flex-row items-center gap-2">
+						<Image source={transaklogo as ImageSourcePropType} style={{ width: 28, height: 28, borderRadius: 14 }} />
+						<Text className="text-textWhite font-medium">Transak Onramp</Text>
+					</View>
+					<Pressable onPress={onClose}>
+						<Text className="text-textWhite">✕</Text>
+					</Pressable>
+				</View>
+
+				<View className="flex-1 rounded-lg overflow-hidden">
+					{Platform.OS === "web" ? (
+						<View className="w-full h-full">
+							<iframe
+								title="Transak OnRamp"
+								src={transakUrl}
+								allowFullScreen={true}
+								className="border-none rounded-lg w-full h-full bg-white"
+							/>
+						</View>
+					) : (
+						TransakWebView && (
+							<TransakWebView
+								transakConfig={
+									{
+										apiKey: RAMP_TRANSAK_API_KEY,
+										environment: Environments.PRODUCTION,
+										cryptoCurrencyCode: "BERA",
+										network: "berachain",
+										defaultFiatCurrency: "USD",
+										walletAddress: address,
+										fiatAmount: displayAmount,
+									} as typeof TransakConfig
+								}
+								onTransakEvent={onTransakEventHandler}
+								mediaPlaybackRequiresUserAction={false}
+								style={{ marginBottom: 50 }}
+							/>
+						)
+					)}
+				</View>
+			</View>
+		</View>
+	);
+};
+
+/**
  * A cross-platform UI for buying tokens using the Transak fiat on-ramp.
  *
  * @returns {React.JSX.Element} The Buy component.
@@ -77,73 +151,20 @@ export const Buy = (): React.JSX.Element => {
 
 	const transakUrl = `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatCurrency=USD&fiatAmount=${displayAmount}`;
 
-	/**
-	 * Renders the Transak Widget conditionally for web and mobile.
-	 *
-	 * - On web: Displays Transak iframe using the provided API URL.
-	 * - On mobile: Embeds the Transak React Native SDK WebView.
-	 *
-	 * @returns {JSX.Element | null} The rendered modal or null if hidden.
-	 */
-	const renderTransakWidget = (): JSX.Element | null => {
-		if (!isWebViewVisible) return null;
-
-		return (
-			<View className="mb-6 w-full">
-				<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[75vh] w-full">
-					<View className="flex-row justify-between items-center mb-4">
-						<View className="flex-row items-center gap-2">
-							<Image source={transaklogo as ImageSourcePropType} style={{ width: 28, height: 28, borderRadius: 14 }} />
-							<Text className="text-textWhite font-medium">Transak Onramp</Text>
-						</View>
-						<Pressable onPress={() => setIsWebViewVisible(false)}>
-							<Text className="text-textWhite">✕</Text>
-						</Pressable>
-					</View>
-
-					<View className="flex-1 rounded-lg overflow-hidden">
-						{Platform.OS === "web" ? (
-							<View className="w-full h-full">
-								<iframe
-									title="Transak OnRamp"
-									src={transakUrl}
-									allowFullScreen={true}
-									className="border-none rounded-lg w-full h-full bg-white"
-								/>
-							</View>
-						) : (
-							TransakWebView && (
-								<TransakWebView
-									transakConfig={
-										{
-											apiKey: RAMP_TRANSAK_API_KEY,
-											environment: Environments.PRODUCTION,
-											cryptoCurrencyCode: "BERA",
-											network: "berachain",
-											defaultFiatCurrency: "USD",
-											walletAddress: address,
-											fiatAmount: displayAmount,
-										} as typeof TransakConfig
-									}
-									onTransakEvent={onTransakEventHandler}
-									mediaPlaybackRequiresUserAction={false}
-									style={{ marginBottom: 50 }}
-								/>
-							)
-						)}
-					</View>
-				</View>
-			</View>
-		);
-	};
-
 	return (
 		<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
 			<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
 				<Text className="text-3xl font-bold mb-6 text-center font-arame-mono text-textWhite uppercase">BUY CRYPTO</Text>
 
 				{/* Transak Widget */}
-				{renderTransakWidget()}
+				<TransakWidget
+					isVisible={isWebViewVisible}
+					onClose={() => setIsWebViewVisible(false)}
+					transakUrl={transakUrl}
+					displayAmount={displayAmount}
+					address={address}
+					onTransakEventHandler={onTransakEventHandler}
+				/>
 
 				{/* Amount Selection Card */}
 				{!isWebViewVisible && (

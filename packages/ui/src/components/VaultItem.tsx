@@ -14,6 +14,8 @@ import { useRouter } from "expo-router";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@beratrax/core/src";
 import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
+import Colors from "@beratrax/typescript-config/Colors";
+import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
 
 interface VaultItemProps {
 	vault: Vault;
@@ -24,6 +26,9 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const [vaultBalance, setVaultBalance] = useState(BigInt(0));
 	const [rewards, setRewards] = useState(0n);
 	const [isClaiming, setIsClaiming] = useState(false);
+
+	// Generate unique gradient ID to avoid conflicts when multiple VaultItems are rendered
+	const gradientId = useMemo(() => `vaultGrad-${vault.vault_addr}`, [vault.vault_addr]);
 	// const { oldPrice, isLoading: isLoadingOldData } = useOldPrice(vault.chainId, vault.vault_addr);
 	const { getClients, currentWallet, getPublicClient, getWalletClient } = useWallet();
 	const { reloadFarmData, isVaultEarningsFirstLoad, vaultEarnings, earningsUsd } = useFarmDetails();
@@ -230,9 +235,89 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 		handleClick(e);
 	}, []);
 
+	// Memoize the styles to prevent re-renders
+	const pressableStyles = useMemo(() => {
+		const baseStyles = {
+			borderRadius: 24,
+			padding: 24,
+			shadowColor: "#00000059",
+			borderWidth: 1,
+			borderTopWidth: 0,
+			borderColor: Colors.borderDark,
+			flexDirection: "column" as const,
+			gap: 20,
+			position: "relative" as const,
+			overflow: "hidden" as const,
+		};
+
+		return baseStyles;
+	}, []);
+
+	// Create a stable className with the original responsive design
+	const stableClassName = useMemo(() => {
+		return `cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark relative min-w-[calc(25%-12px)] max-[2000px]:min-w-[calc(33.33%-10.66px)] max-[1300px]:min-w-[calc(50%-8px)] max-[768px]:min-w-full`;
+	}, []);
+
 	const pressableChildren = useMemo(
 		() => (
 			<>
+				{/* Gradient Background - CSS for web, SVG for mobile */}
+				{!vault.isCurrentWeeksRewardsVault && Platform.OS === "web" && (
+					<View
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							borderRadius: 24,
+							zIndex: -1,
+							pointerEvents: "none",
+							// @ts-ignore
+							background: "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)",
+						}}
+					/>
+				)}
+
+				{!vault.isCurrentWeeksRewardsVault && Platform.OS !== "web" && (
+					<View
+						style={{
+							position: "absolute",
+							top: 0,
+							left: -15,
+							right: 0,
+							bottom: 0,
+							borderRadius: 24,
+							zIndex: -1,
+							pointerEvents: "none",
+						}}
+					>
+						<Svg
+							height="100%"
+							width="100%"
+							viewBox="0 0 400 300"
+							style={{
+								position: "absolute",
+								top: 0,
+								left: 0,
+								zIndex: -1,
+							}}
+						>
+							<Defs>
+								<RadialGradient id={gradientId} cx="45%" cy="100%" rx="120%" ry="120%" fx="45%" fy="151%" gradientUnits="objectBoundingBox">
+									<Stop offset="0" stopColor="#72B21F" stopOpacity="0.6" />
+									<Stop offset="0.2" stopColor="#72B21F" stopOpacity="0.4" />
+									<Stop offset="0.4" stopColor="#72B21F" stopOpacity="0.2" />
+									<Stop offset="0.6" stopColor="#020907" stopOpacity="0.3" />
+									<Stop offset="0.75" stopColor="#020907" stopOpacity="0.8" />
+									<Stop offset="1" stopColor="#020907" stopOpacity="1" />
+								</RadialGradient>
+							</Defs>
+							<Rect x="0" y="0" width="100%" height="100%" fill={`url(#${gradientId})`} />
+						</Svg>
+					</View>
+				)}
+
 				{vault.isCurrentWeeksRewardsVault && (
 					<View
 						style={{
@@ -444,21 +529,10 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	return (
 		<Pressable
 			onPress={handlePress}
+			className={stableClassName}
+			style={pressableStyles}
 			// Need to add these classes to the pressable, currently not added as they are causing re-renders:
 			// transition-all duration-300 ease-in-out hover:translate-y-[-4px]
-			className={`
-		              cursor-pointer rounded-3xl p-6 shadow-md flex flex-col gap-5 border border-t-0 border-borderDark
-									relative
-									min-w-[calc(25%-12px)]
-                  max-[2000px]:min-w-[calc(33.33%-10.66px)]
-                  max-[1300px]:min-w-[calc(50%-8px)]
-                  max-[768px]:min-w-full
-		    `}
-			style={{
-				background: !vault.isCurrentWeeksRewardsVault
-					? "radial-gradient(circle at 45% 151%, var(--new-color_primary) -40%, var(--new-background_dark) 75%)"
-					: undefined,
-			}}
 		>
 			{pressableChildren}
 		</Pressable>

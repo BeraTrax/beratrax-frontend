@@ -5,11 +5,11 @@ import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useDetailInput, useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
-import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
 import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
-import { formatCurrency, toFixedFloor } from "@beratrax/core/src/utils/common";
+import { formatCurrency } from "@beratrax/core/src/utils/common";
+import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "expo-router";
@@ -45,9 +45,9 @@ const ActionButton = memo(
 export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	const dispatch = useAppDispatch();
 	const { lastVisitedPage } = useAppSelector((state) => state.account);
-	const { currentWallet, isConnecting } = useWallet();
+	const { currentWallet, isConnecting, connectWallet } = useWallet();
 	const { openConnectModal } = useConnectModal();
-	const { apy: farmApys } = useFarmApy(farm);
+	const [showLoginModal, setShowLoginModal] = useState(false);
 	const {
 		isBalancesLoading: isLoading,
 		prices: {
@@ -104,7 +104,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 
 	const handleDepositPress = useCallback(() => {
 		if (!currentWallet) {
-			openConnectModal && openConnectModal();
+			Platform.OS === "web" ? openConnectModal?.() : setShowLoginModal(true);
 		} else if (!IS_LEGACY) {
 			setFarmOptions({ transactionType: FarmTransactionType.Deposit });
 		}
@@ -185,6 +185,12 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 				</View>
 			</View>
 			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={farm} />
+			{/* Login Modal */}
+			{/* only for mobile app */}
+			{showLoginModal && connectWallet && (
+				// @ts-ignore
+				<LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />
+			)}
 		</>
 	);
 };

@@ -54,6 +54,9 @@ const TokenEarning = ({
 	}, [currentVaultEarnings]);
 
 	const lifetimeEarningsUsd = useMemo(() => {
+		if (typeof lifetimeEarnings === "string") {
+			return 0;
+		}
 		return (
 			Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])) *
 			(prices[farm.chainId][farm.lp_address] || 0)
@@ -115,7 +118,7 @@ const TokenEarning = ({
 						<Text className="text-green-500 text-lg font-medium flex items-center gap-x-2">
 							${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
 						</Text>
-						{farm.apyBasedEarnings ? null : (
+						{farm.apyBasedEarnings || typeof lifetimeEarnings === "string" ? null : (
 							<View className="group relative">
 								<Text className="h-4 w-4 cursor-pointer text-textSecondary text-sm">?</Text>
 								<View className="absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
@@ -197,8 +200,6 @@ const LpAssetChange = ({
 };
 
 const YourBalance = ({ farm }: { farm: PoolDef }) => {
-	console.log("rendering your balance", farm);
-
 	const { currentWallet, isConnecting } = useWallet();
 	const { balances, isBalancesLoading: isLoading, prices } = useTokens();
 	const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();

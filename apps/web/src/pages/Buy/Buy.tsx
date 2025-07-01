@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { getOnrampBuyUrl, FundButton } from "@coinbase/onchainkit/fund";
 import { useAccount } from "wagmi";
-import { defaultChainId, defaultNetworkName, RAMP_TRANSAK_API_KEY } from "src/config/constants";
+import { defaultChainId, defaultNetworkName, isStagging, RAMP_TRANSAK_API_KEY } from "src/config/constants";
 import transaklogo from "src/assets/images/transaklogo.png";
 import holyheldlogo from "src/assets/images/holyheldlogo.png";
 import coinbaselogo from "src/assets/images/coinbaselogo.png";
@@ -131,7 +131,7 @@ export const Buy: React.FC = () => {
     }, [address, displayAmount]);
 
     const transakUrl = useMemo(() => {
-        return `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
+        return `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
     }, [address, displayAmount]);
 
     const handlePresetClick = (presetAmount: string) => {

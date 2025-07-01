@@ -1,61 +1,52 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    "prepare": {
-      "inputs": [
-        "package.json"
-      ]
-    },
-    "build:config": {
-      "cache": true,
-      "persistent": true,
-      "inputs": ["packages/config/package.json", "packages/config/src/**/*.ts", "packages/config/src/**/*.tsx"],
-      "outputs": ["packages/config/dist"]
-    },
-    "build:ui": {
-      "cache": true,
-      "persistent": true
-    },
-    "build:core": {
-      "cache": true,
-      "persistent": true
-    },
-    "build": {
-      "cache": true,
-      "persistent": true
-    },
-    "build:mobile": {
-      "cache": true,
-      "inputs": [
-        "apps/mobile/src/**",
-        "apps/mobile/index.js",
-        "apps/mobile/package.json",
-        "apps/mobile/metro.config.js"
-      ],
-      "outputs": [
-        "apps/mobile/android/app/build/**",
-        "apps/mobile/ios/build/**"
-      ]
-    },
-    "start": {
-      "cache": false,
-      "persistent": true
-    },
-    "start:mobile": {
-      "cache": false,
-      "persistent": true
-    },
-    "start:web": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^lint"],
-      "outputs": []
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"],
-      "outputs": []
-    }
-  }
+	"$schema": "https://turbo.build/schema.json",
+	"pipeline": {
+		"prepare": {
+			"inputs": ["package.json"]
+		},
+		"build:config": {
+			"cache": true,
+			"persistent": true,
+			"inputs": ["packages/config/package.json", "packages/config/src/**/*.ts", "packages/config/src/**/*.tsx"],
+			"outputs": ["packages/config/dist"]
+		},
+		"build:ui": {
+			"cache": true,
+			"persistent": true
+		},
+		"build:core": {
+			"cache": true,
+			"persistent": true
+		},
+		"build": {
+			"cache": true,
+			"persistent": true,
+			"outputs": ["./apps/web/build"]
+		},
+		"build:mobile": {
+			"cache": true,
+			"inputs": ["apps/mobile/src/**", "apps/mobile/index.js", "apps/mobile/package.json", "apps/mobile/metro.config.js"],
+			"outputs": ["apps/mobile/android/app/build/**", "apps/mobile/ios/build/**"]
+		},
+		"start": {
+			"cache": false,
+			"persistent": true
+		},
+		"start:mobile": {
+			"cache": false,
+			"persistent": true
+		},
+		"start:web": {
+			"cache": false,
+			"persistent": true
+		},
+		"lint": {
+			"dependsOn": ["^lint"],
+			"outputs": []
+		},
+		"check-types": {
+			"dependsOn": ["^check-types"],
+			"outputs": []
+		}
+	}
 }

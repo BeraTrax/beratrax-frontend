@@ -1,7 +1,7 @@
 version: 0.2
 
 env:
-  secrets-manager: 
+  secrets-manager:
     REACT_APP_WEB3AUTH_CLIENT_ID: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:WEB3AUTH_CLIENT_ID_PRODUCTION
     REACT_APP_RAMP_TRANSAK_API_KEY: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:TRANSAK_RAMP_API_KEY_PRODUCTION
     REACT_APP_WERT_PARTNER_ID: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:WERT_PARTNER_ID_PRODUCTION
@@ -20,7 +20,6 @@ env:
     REACT_APP_FRONT_API_KEY_SANDBOX: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:FRONT_SANDBOX_API_KEY
     REACT_APP_WALLET_CONNECT_PROJECT_ID: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:WALLET_CONNECT_PROJECT_ID
     REACT_APP_HOLYHELD_API_KEY: arn:aws:secretsmanager:us-east-1:942360293134:secret:staging/contrax-dapp-AOo0sL:HOLYHELD_API_KEY
-
 
 phases:
   install:
@@ -43,19 +42,13 @@ phases:
     commands:
       - echo Deploying to S3 started
       # copy the contents of /build to S3 bucket
-      - aws s3 sync apps/web/build s3://staging.beratrax.com/ --delete --exclude 'index.html' --acl public-read --cache-control 'max-age=860000'
-      - aws s3 sync apps/web/build s3://staging.beratrax.com/ --delete --exclude '*' --include 'index.html' --acl public-read --cache-control 'max-age=0'
-      - aws cloudfront create-invalidation --distribution-id E2HL9KI8D68GCZ --paths '/*'
+      - aws s3 sync apps/web/build s3://experimental.beratrax.com/ --delete --exclude 'index.html' --acl public-read --cache-control 'max-age=860000'
+      - aws s3 sync apps/web/build s3://experimental.beratrax.com/ --delete --exclude '*' --include 'index.html' --acl public-read --cache-control 'max-age=0'
+      - aws cloudfront create-invalidation --distribution-id E2W11JCE91ZP1U --paths '/*'
       - echo Deploying to S3 finsihed
 
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
   discard-paths: no
   base-directory: apps/web/build
-  
-
-  
-  
-  
-  

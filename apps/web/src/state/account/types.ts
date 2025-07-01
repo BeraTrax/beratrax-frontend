@@ -29,13 +29,13 @@ export interface StateInterface {
 
     // Airdrop-related state
     airdrop?: {
-        claimData: { account: Address; signature: Address; amount: string } | null;
+        claimData: { account: Address; signature: Address; amount: string; nonce?: number } | null;
     } & AirdropType;
 
     // Additional Airdrop-related state (without staking)
     // contains, mainnet, testnet, social user, teddy nft BTX points airdrop
     additionalAirdrop?: {
-        claimData: { account: Address; signature: Address; amount: string; sources: boolean[] } | null;
+        claimData: { account: Address; signature: Address; amount: string; sources: boolean[]; nonce: number } | null;
     } & AirdropType;
 }
 

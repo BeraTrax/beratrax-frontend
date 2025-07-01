@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "src/state";
-import { 
-    fetchAirdropData, 
-    claimAirdrop, 
-    fetchAdditionalAirdropData, 
-    claimAdditionalAirdrop 
+import {
+    fetchAirdropData,
+    claimAirdrop,
+    fetchAdditionalAirdropData,
+    claimAdditionalAirdrop,
 } from "src/state/account/accountReducer";
 import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "src/api/notify";
 import useWallet from "src/hooks/useWallet";
@@ -20,14 +20,14 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
     const { reloadBalances } = useTokens();
     const { getClients, currentWallet } = useWallet();
     const { transfer } = useTransfer();
-    
+
     // Local state
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [warningType, setWarningType] = useState<TokenActionType>("claim");
     const [isBurnLoading, setIsBurnLoading] = useState(false);
 
     // Redux state selection based on config
-    const airdropState = useSelector((state: RootState) => 
+    const airdropState = useSelector((state: RootState) =>
         config.type === "regular" ? state.account.airdrop : state.account.additionalAirdrop
     );
 
@@ -73,9 +73,11 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
             if (config.type === "regular") {
                 await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
             } else {
-                await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
+                await dispatch(
+                    claimAdditionalAirdrop({ claim: true, nonce: claimData.nonce || 0, getClients })
+                ).unwrap();
             }
-            
+
             await reloadBalances();
 
             id && dismissNotify(id);
@@ -108,7 +110,9 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
             if (config.type === "regular") {
                 await dispatch(claimAirdrop({ claim: false, getClients })).unwrap();
             } else {
-                await dispatch(claimAdditionalAirdrop({ claim: false, getClients })).unwrap();
+                await dispatch(
+                    claimAdditionalAirdrop({ claim: false, nonce: claimData.nonce || 0, getClients })
+                ).unwrap();
             }
 
             if (config.type === "regular") {
@@ -147,7 +151,9 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
             if (config.type === "regular") {
                 await dispatch(claimAirdrop({ claim: true, getClients })).unwrap();
             } else {
-                await dispatch(claimAdditionalAirdrop({ claim: true, getClients })).unwrap();
+                await dispatch(
+                    claimAdditionalAirdrop({ claim: true, nonce: claimData.nonce || 0, getClients })
+                ).unwrap();
             }
 
             // Update notification
@@ -192,10 +198,10 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
 
     // Computed values
     const shouldRenderAirdropSection = Boolean(
-        !isInitialLoading && 
-        claimData && 
-        (config.type === "regular" ? BigInt(claimData.amount) > 0n : Number(claimData.amount) > 0) && 
-        !isClaimed
+        !isInitialLoading &&
+            claimData &&
+            (config.type === "regular" ? BigInt(claimData.amount) > 0n : Number(claimData.amount) > 0) &&
+            !isClaimed
     );
 
     return {
@@ -210,17 +216,17 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
         claimData,
         stakeInfo,
         pendingRewards,
-        
+
         // Actions
         handleClaim,
         handleStake,
         handleBurn,
         showWarning,
         setShowWarningModal,
-        
+
         // Computed
         shouldRenderAirdropSection,
     };
 };
 
-export default useAirdrop; 
+export default useAirdrop;

@@ -19,6 +19,7 @@ export default {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: "com.beratrax.mobile",
+			permissions: ["CAMERA", "INTERNET"],
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 			},
@@ -28,6 +29,7 @@ export default {
 				foregroundImage: "./assets/images/adaptive-icon.png",
 				backgroundColor: "#ffffff",
 			},
+			permissions: ["CAMERA", "INTERNET"],
 			package: "com.beratrax.mobile",
 		},
 		web: {

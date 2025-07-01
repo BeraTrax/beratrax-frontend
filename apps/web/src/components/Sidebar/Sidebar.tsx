@@ -38,12 +38,12 @@ function Sidebar() {
 		// 	path: RoutesPaths.Leaderboard,
 		// 	target: undefined,
 		// },
-		// {
-		// 	title: "Buy (thoon!)",
-		// 	icon: <FaCoins size={18} />,
-		// 	path: RoutesPaths.Buy,
-		// 	target: "noop",
-		// },
+		{
+			title: "Buy (thoon!)",
+			icon: <FaCoins size={18} />,
+			path: RoutesPaths.Buy,
+			target: undefined,
+		},
 		{
 			title: "User Guide",
 			icon: <HiDocumentText size={18} />,

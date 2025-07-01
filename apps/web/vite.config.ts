@@ -54,6 +54,8 @@ export default defineConfig(({ mode }) => {
 		},
 		optimizeDeps: {
 			include: ["nativewind", "react-native-css-interop"],
+			// Exclude native-only modules from web build to prevent Vite/esbuild from attempting to parse incompatible React native code. These are conditionally imported at runtime on mobile platforms only.
+			exclude: ["@transak/react-native-sdk", "react-native-inappbrowser-reborn"],
 			esbuildOptions: {
 				resolveExtensions: extensions,
 				jsx: "automatic",
@@ -65,6 +67,9 @@ export default defineConfig(({ mode }) => {
 			outDir: "build",
 			commonjsOptions: {
 				transformMixedEsModules: true,
+			},
+			rollupOptions: {
+				external: ["@transak/react-native-sdk", "react-native-inappbrowser-reborn"],
 			},
 		},
 		define: {

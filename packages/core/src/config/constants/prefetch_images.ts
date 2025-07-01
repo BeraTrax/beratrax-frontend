@@ -12,6 +12,9 @@ const extractUniqueImageUrls = (): string[] => {
 		"https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png"
 	);
 
+	// Add the Transak logo from assets
+	imageUrls.add(require("@beratrax/core/src/assets/images/transaklogo.png"));
+
 	// Extract URLs from each pool
 	pools_json.forEach((pool: PoolDef) => {
 		// Platform logos

@@ -452,7 +452,7 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
                     const nonce = claim.nonce !== undefined ? BigInt(claim.nonce) : BigInt(i);
                     const claimed = await contract.read.isClaimed([address, nonce]);
                     if (!claimed) {
-                        unclaimedClaim = { ...claim, nonce };
+                        unclaimedClaim = { ...claim, nonce: Number(nonce) };
                         break;
                     }
                 }
@@ -481,7 +481,14 @@ export const fetchAdditionalAirdropData = createAsyncThunk(
 
 export const claimAdditionalAirdrop = createAsyncThunk(
     "account/claimAdditionalAirdrop",
-    async ({ claim, getClients }: { claim: boolean; getClients: (chainId: number) => Promise<IClients> }, thunkApi) => {
+    async (
+        {
+            claim,
+            nonce,
+            getClients,
+        }: { nonce: number; claim: boolean; getClients: (chainId: number) => Promise<IClients> },
+        thunkApi
+    ) => {
         try {
             const state = thunkApi.getState() as { account: StateInterface };
             const additionalAirdropClaimData = state.account.additionalAirdrop?.claimData;
@@ -493,7 +500,7 @@ export const claimAdditionalAirdrop = createAsyncThunk(
 
             const transactionParams = [
                 BigInt(additionalAirdropClaimData.amount),
-                0n,
+                BigInt(nonce),
                 additionalAirdropClaimData.signature,
                 claim,
             ] as const;

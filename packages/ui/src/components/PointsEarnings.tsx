@@ -41,8 +41,8 @@ export const PointsEarnings: React.FC<Props> = () => {
 			<View className="flex-1 rounded-3xl border border-borderDark p-2 bg-[url('/src/assets/images/referralBg.png')] bg-cover bg-center bg-no-repeat">
 				<Image source={ReferralLogo as ImageSourcePropType} alt="Referral Logo" className="mt-[-0.5rem] mb-[0.5rem] w-28 h-28" />
 				<View className="pl-3">
-					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS</Text>
-					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">FROM STAKING</Text>
+					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS FROM</Text>
+					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">STAKING</Text>
 					<Text className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
 						{customCommify(stakingPoints, {
 							minimumFractionDigits: 0,
@@ -64,8 +64,8 @@ export const PointsEarnings: React.FC<Props> = () => {
 				className={`flex-1 rounded-3xl text-textWhite bg-bgPrimary ${referralPoints ? "" : "p-2"}`}
 			>
 				<Image source={DailyRateLogo as ImageSourcePropType} alt="Daily Rate Logo" className="ml-[-1.5rem] mt-[-1.5rem] w-32 h-32" />
-				<Text className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3`}>TOTAL POINTS</Text>
-				<Text className="font-arame-mono font-normal text-base leading-4 pl-3">FROM REFERRALS</Text>
+				<Text className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3`}>TOTAL POINTS FROM</Text>
+				<Text className="font-arame-mono font-normal text-base leading-4 pl-3">REFERRALS</Text>
 				<Text className="font-league-spartan font-bold text-bgDark text-3xl leading-10 pl-3 pt-2">
 					{customCommify(referralPoints || 0, {
 						minimumFractionDigits: 0,

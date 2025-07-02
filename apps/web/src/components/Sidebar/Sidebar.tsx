@@ -1,4 +1,3 @@
-import { ReactComponent as EarnIcon } from "@beratrax/core/src/assets/images/earn.svg";
 import logo from "@beratrax/core/src/assets/images/logo.png";
 import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
 // import { AiOutlineExport } from "react-icons/ai";
@@ -8,6 +7,7 @@ import { FaCoins } from "react-icons/fa6";
 import { IoIosFlask } from "react-icons/io";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
+import { EarnIcon as EarnIconSvg } from "ui/src/icons/Earn";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {
@@ -28,7 +28,7 @@ function Sidebar() {
 		},
 		{
 			title: "Earn",
-			icon: <EarnIcon height={18} width={18} />,
+			icon: <EarnIconSvg />,
 			path: RoutesPaths.Farms,
 			target: undefined,
 		},

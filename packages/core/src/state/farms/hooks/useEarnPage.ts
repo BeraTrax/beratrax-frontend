@@ -5,7 +5,6 @@ import { useFarmApys } from "./useFarmApy";
 import useFarmDetails from "./useFarmDetails";
 import useFarms from "./useFarms";
 import { isVaultNew } from "./../../../utils/common";
-import { useWallet } from "src/hooks";
 
 type Comparator<T> = (a: T, b: T) => number;
 

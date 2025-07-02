@@ -1,4 +1,4 @@
-import { ReactComponent as WalletSvg } from "@beratrax/core/src/assets/images/walletSvg.svg";
+import WalletSvg from "@beratrax/core/src/assets/images/walletSvg.svg";
 import styles from "./NotSignedIn.module.css";
 import { FC } from "react";
 
@@ -17,7 +17,7 @@ export const NotSignedIn: FC<Props> = ({
 }) => {
 	return (
 		<div className={styles.sign_in_placeholder + " " + className}>
-			<WalletSvg className={styles.walletIcon} />
+			<WalletSvg />
 			<p className={styles.disclaimer}>{heading}</p>
 			<p className={styles.description}>{description}</p>
 			{/* TODO: add connect button */}

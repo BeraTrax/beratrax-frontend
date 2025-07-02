@@ -71,7 +71,7 @@ export const DepositToRewardsVault = ({ rewardsVaultsData, onDepositComplete }: 
 						id && dismissNotify(id);
 					}
 					reloadFarmData();
-				} catch (error) {
+				} catch (error: any) {
 					// Handle error for individual vault
 					console.error(`Error processing vault ${vault.name}:`, error);
 					id && dismissNotify(id);
@@ -87,7 +87,7 @@ export const DepositToRewardsVault = ({ rewardsVaultsData, onDepositComplete }: 
 				title: "Deposited successfully",
 				message: `Deposited to BGT Earning`,
 			});
-		} catch (e) {
+		} catch (e: any) {
 			console.log(e);
 			id && dismissNotify(id);
 			notifyError({

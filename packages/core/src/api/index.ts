@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Address, Hex } from "viem";
 import { BACKEND_BASE_URL } from "./../config/constants";
 
@@ -35,9 +35,10 @@ export const requestEthForGas = async (params: {
 			ethAmountForGas: params.ethAmountForGas.toString(),
 		});
 		return { status: res.data.status, message: res.data.message };
-	} catch (error) {
-		console.log(error?.response?.data?.error);
-		return { status: false, message: "", error: error?.response?.data?.error };
+	} catch (error: unknown) {
+		const axiosError = error as AxiosError<{ error: string }>;
+		console.log(axiosError?.response?.data?.error);
+		return { status: false, message: "", error: axiosError?.response?.data?.error };
 	}
 };
 

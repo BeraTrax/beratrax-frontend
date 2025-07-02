@@ -1,8 +1,9 @@
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
+import reactNativeWeb from "vite-plugin-react-native-web";
 import path from "path";
 
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, transformWithEsbuild } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const extensions = [".web.tsx", ".tsx", ".web.ts", ".ts", ".web.jsx", ".jsx", ".web.js", ".js", ".css", ".json", ".mjs", ".svg"];
@@ -15,6 +16,20 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		plugins: [
+			{
+				name: "vite:jsx-in-node_modules",
+				enforce: "pre",
+				async transform(code: string, id: string) {
+					if (id.includes("node_modules/expo-router") && id.endsWith(".js")) {
+						return transformWithEsbuild(code, id, {
+							loader: "jsx",
+							jsx: "automatic",
+							// if you use nativewind’s pragma:
+							jsxImportSource: "nativewind",
+						});
+					}
+				},
+			},
 			react(),
 			svgr({
 				svgrOptions: {
@@ -33,6 +48,7 @@ export default defineConfig(({ mode }) => {
 				},
 				protocolImports: true,
 			}),
+			reactNativeWeb(),
 		] as any,
 		server: {
 			port: 3000,
@@ -47,7 +63,6 @@ export default defineConfig(({ mode }) => {
 				jsbi: path.resolve(__dirname, "./node_modules/jsbi/dist/jsbi-cjs.js"),
 				"~@fontsource/ibm-plex-mono": "@fontsource/ibm-plex-mono",
 				"~@fontsource/inter": "@fontsource/inter",
-				"react-native": "react-native-web",
 				// Node.js module polyfills for browser
 				"end-of-stream": "empty-module",
 			},

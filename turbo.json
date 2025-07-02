@@ -26,8 +26,7 @@
 		},
 		"build": {
 			"cache": true,
-			"persistent": true,
-			"outputs": ["./apps/web/build"]
+			"persistent": true
 		},
 		"build:mobile": {
 			"cache": true,

@@ -1,11 +1,12 @@
 /* global __DEV__ */
 import { Platform } from "react-native";
-import * as Clipboard from "expo-clipboard";
 
 export const copyToClipboard = async (text: string, cb: Function | null = null) => {
 	if (Platform.OS === "web") {
 		navigator.clipboard.writeText(text);
 	} else {
+		// Dynamically import expo-clipboard only on mobile platforms
+		const Clipboard = await import("expo-clipboard");
 		await Clipboard.setStringAsync(text);
 	}
 	setTimeout(() => {

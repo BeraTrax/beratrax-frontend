@@ -13,7 +13,7 @@ const safeSetStorage = (key: string, value: string) => {
 		// First try to set the item directly
 		sessionStorage.setItem(key, value);
 	} catch (e) {
-		if (e.name === "QuotaExceededError") {
+		if (e instanceof Error && e.name === "QuotaExceededError") {
 			// If storage is full, clear old items
 			const keys = Object.keys(sessionStorage);
 			const oldestKeys = keys

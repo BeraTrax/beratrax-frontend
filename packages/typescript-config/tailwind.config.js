@@ -13,12 +13,12 @@ export default {
 		},
 		colors: {
 			/* Background Colors */
-			bgPrimary: "var(--new-background_primary)", // #72B21F
+			bgPrimary: "var(--new-background_primary)", // #3B7EE3;
 			bgSecondary: "var(--new-background_secondary)", // #151915
 			bgDark: "var(--new-background_dark)", // #020907
 
 			/* Text Colors */
-			textPrimary: "var(--new-color_primary)", // #72B21F
+			textPrimary: "var(--new-color_primary)", // #3B7EE3;
 			textSecondary: "var(--new-color_secondary)", // #878B82
 			textGrey: "var(--new-color_grey)", // #878B82
 			textWhite: "var(--new-color_white)", // #ffffff

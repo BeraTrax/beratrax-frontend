@@ -41,7 +41,7 @@ code {
 @layer base {
     :root {
         /* ///// Background Colors ///// */
-        --new-background_primary: #72b21f;
+        --new-background_primary: #3B7EE3;
         --new-background_secondary: #151915;
         /* --new-background_secondary-hover: #032a51; */
         --new-background_dark: #020907;
@@ -49,7 +49,7 @@ code {
         /* --new-background_primary_white: # */
 
         /* ///// Colors ///// */
-        --new-color_primary: #72B21F;
+        --new-color_primary: #3B7EE3;
         --new-color_secondary: #878B82;
         --new-color-light: #C49167
         --new-color_grey: #878B82;
@@ -78,12 +78,12 @@ code {
             transparent
         ); */
 
-        --new-button-primary-light: #a0ff3b; /* Gradient Light */
-        --new-button-primary: #72b21f;
+        --new-button-primary-light: #3B7EE3; /* Gradient Light */
+        --new-button-primary: #2d72da;
         --new-button-disabled: #878b82;
 
         --new-gradient-dark: #283817;
-        --new-gradient-light: #a0ff3b;
+        --new-gradient-light: #3B7EE3;
 
         --new-top-to-bottom-curved: url("@beratrax/core/src/assets/images/backgroundGradient.svg");
         --new-bottom-right-gradient: url("@beratrax/core/src/assets/images/ellipse.svg");

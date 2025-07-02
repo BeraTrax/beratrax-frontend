@@ -82,7 +82,7 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 				) : status === TransactionStepStatus.PENDING ? (
 					<CircleOneIcon color={Colors.textSecondary} style={{ transform: "scale(0.8)" }} />
 				) : (
-					<ActivityIndicator size="small" color="#72B21F" />
+					<ActivityIndicator size="small" color="#3B7EE3" />
 				)}
 				<View>
 					<Text className="font-league-spartan font-light text-base leading-5 text-textWhite">{name}</Text>

@@ -7,17 +7,17 @@
  * that need to be consistent across platforms.
  */
 const Colors = {
-	gradientLight: "#A0FF3B",
+	gradientLight: "#3B7EE3",
 	gradientDark: "#283817",
 	textSecondary: "#878B82",
-	textPrimary: "#72B21F",
+	textPrimary: "#3B7EE3",
 	textGrey: "#878B82",
-	bgPrimary: "#72B21F",
+	bgPrimary: "#3B7EE3",
 	bgSecondary: "#151915",
 	bgDark: "#020907",
 	borderDark: "#323D27",
 	borderLight: "#90BB62",
-	buttonPrimary: "#72B21F",
+	buttonPrimary: "#3B7EE3",
 	buttonPrimaryLight: "#A0FF3B",
 
 	// Rgba versions for opacity

@@ -1,13 +1,13 @@
 import { customCommify } from "@beratrax/core/src/utils/common";
 import { useAppSelector } from "@beratrax/core/src/state";
 import ReferralLogo from "@beratrax/core/src/assets/images/referralLogo.png";
-import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.png";
 import { Boosts } from "@beratrax/core/src/state/account/types";
 import { useState } from "react";
 import { useEffect } from "react";
 import { View, Text, Image, ImageSourcePropType } from "react-native";
+import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.svg";
 import { GradientText } from "./GradientText";
-
+import { SvgImage } from "./SvgImage/SvgImage";
 interface Props {}
 
 export const PointsEarnings: React.FC<Props> = () => {
@@ -63,8 +63,8 @@ export const PointsEarnings: React.FC<Props> = () => {
 				// }}
 				className={`flex-1 rounded-3xl text-textWhite bg-bgPrimary ${referralPoints ? "" : "p-2"}`}
 			>
-				<Image source={DailyRateLogo as ImageSourcePropType} alt="Daily Rate Logo" className="ml-[-1.5rem] mt-[-1.5rem] w-32 h-32" />
-				<Text className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3`}>TOTAL POINTS FROM</Text>
+				<SvgImage source={DailyRateLogo} height={35} width={35} style={{ marginTop: 10, marginLeft: 10 }} />
+				<Text className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3 mt-2`}>TOTAL POINTS FROM</Text>
 				<Text className="font-arame-mono font-normal text-base leading-4 pl-3">REFERRALS</Text>
 				<Text className="font-league-spartan font-bold text-bgDark text-3xl leading-10 pl-3 pt-2">
 					{customCommify(referralPoints || 0, {

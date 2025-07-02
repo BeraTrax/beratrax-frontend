@@ -445,7 +445,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 						</Text>
 						{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
 							<View className="w-full">
-								<Text className="text-green-500 text-lg font-league-spartan leading-5">
+								<Text className="text-textPrimary text-lg font-league-spartan leading-5">
 									{`$${customCommify(totalEarningsUsd, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 5,

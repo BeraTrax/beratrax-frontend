@@ -154,7 +154,7 @@ export const Buy = (): React.JSX.Element => {
 	return (
 		<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
 			<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
-				<Text className="text-3xl font-bold mb-6 text-center font-arame-mono text-textWhite uppercase">BUY CRYPTO</Text>
+				<Text className="font-arame-mono text-2xl font-bold mb-6 text-center text-textWhite uppercase">BUY CRYPTO</Text>
 
 				{/* Transak Widget */}
 				<TransakWidget
@@ -183,7 +183,7 @@ export const Buy = (): React.JSX.Element => {
 
 						{/* Custom Amount Input */}
 						<View className="mb-6">
-							<Text className="block text-textWhite text-sm font-medium mb-2">
+							<Text className="font-league-spartan text-textWhite text-sm font-medium mb-2">
 								Enter Amount (${minAmount} - ${maxAmount})
 							</Text>
 							<TextInput
@@ -191,13 +191,13 @@ export const Buy = (): React.JSX.Element => {
 								onChangeText={handleCustomInputChange}
 								placeholder={`Enter amount in ${currencyType}`}
 								keyboardType="decimal-pad"
-								className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary"
+								className="font-league-spartan w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg text-textWhite placeholder-textSecondary"
 							/>
 						</View>
 
 						{/* Preset Amount Buttons */}
 						<View className="mb-6">
-							<Text className="block text-textWhite text-sm font-medium mb-3">Quick Select</Text>
+							<Text className="font-league-spartan text-textWhite text-sm font-medium mb-3">Quick Select</Text>
 							<View className="flex-row gap-3">
 								{presetAmounts.map((presetAmount) => (
 									<Pressable
@@ -210,7 +210,7 @@ export const Buy = (): React.JSX.Element => {
 										}`}
 									>
 										<Text
-											className={`text-center font-medium ${!isCustomInput && amount === presetAmount ? "text-bgDark" : "text-textWhite"}`}
+											className={`font-league-spartan text-center font-medium ${!isCustomInput && amount === presetAmount ? "text-bgDark" : "text-textWhite"}`}
 										>
 											${presetAmount}
 										</Text>
@@ -227,7 +227,7 @@ export const Buy = (): React.JSX.Element => {
 								isValidAmount ? "bg-buttonPrimary text-bgDark" : "bg-buttonDisabled text-textBlack"
 							}`}
 						>
-							<Text className="text-center text-lg font-semibold">+ Buy</Text>
+							<Text className="font-league-spartan text-center text-textWhite text-lg font-semibold">Buy</Text>
 						</Pressable>
 					</View>
 				)}

@@ -126,7 +126,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 
 							<View>
 								<View className="flex flex-col">
-									<Text className="text-textWhite text-lg font-medium">{farm?.name}</Text>
+									<Text className="font-league-spartan text-textWhite text-lg font-medium">{farm?.name}</Text>
 								</View>
 								<View className="flex flex-row items-center gap-1">
 									<FarmRowChip text={farm?.platform + (farm?.secondary_platform ? ` | ${farm?.secondary_platform}` : "")} color="invert" />
@@ -162,7 +162,7 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 										<View className="flex gap-2 items-center">
 											<Text className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</Text>
 										</View>
-										<Text className="text-textWhite text-right">
+										<Text className="font-league-spartan text-base text-textWhite text-right">
 											{farm.isCurrentWeeksRewardsVault
 												? "??? "
 												: farmApys && farmApys.apy < 0.01
@@ -188,14 +188,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 							{
 								<>
 									<View className="flex flex-row gap-2 items-center">
-										<Text className="leading-7 text-textPrimary text-lg font-normal font-arame-mono">APY</Text>
+										<Text className="font-arame-mono leading-7 text-textPrimary text-lg font-normal">APY</Text>
 										<InfoIcon size={16} />
 									</View>
 									{farmApys && toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2) === 0 ? (
 										<Text className="text-textWhite text-right">--</Text>
 									) : (
 										<>
-											<Text className="text-textWhite text-right">
+											<Text className="font-league-spartan text-textWhite text-right">
 												{farmApys && farmApys.apy < 0.01
 													? farmApys.apy.toPrecision(2).slice(0, -1)
 													: toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}

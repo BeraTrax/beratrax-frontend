@@ -5,7 +5,7 @@ import userguideimageone from "@beratrax/core/src/assets/images/userguideimageon
 import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
 import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
 import userguideimagetwo from "@beratrax/core/src/assets/images/userguideimagetwo.png";
-import { View, Text, Image, ScrollView, ImageSourcePropType, Dimensions } from "react-native";
+import { View, Text, Image, ScrollView, ImageSourcePropType, Dimensions, Platform } from "react-native";
 import { Link } from "expo-router";
 import { DiamondFillIcon } from "../icons/DiamondFill";
 import { QuestionIcon } from "../icons/Question";
@@ -18,7 +18,7 @@ import { CircleTwoIcon } from "../icons/CircleTwo";
 import { CircleThreeIcon } from "../icons/CircleThree";
 import { CircleFourIcon } from "../icons/CircleFour";
 import { ExternalLinkIcon } from "@beratrax/ui/src/icons/ExternalLInk";
-
+import { HorizontalLine } from "./HorizontalLine";
 // Type the imported images explicitly as ImageSourcePropType
 const images = {
 	one: userguideimageone as ImageSourcePropType,
@@ -32,15 +32,19 @@ const images = {
 const BulletPoint = ({ icon, children }: { icon: ReactNode; children: ReactNode }) => {
 	return (
 		<View className="flex flex-row items-start items-stretch mb-2">
-			<View className="shrink-0 mr-2">{icon}</View>
-			<Text style={{ color: "white", lineHeight: 20, flex: 1, fontSize: 20 }}>{children}</Text>
+			<View className="shrink-0 mr-2 mt-1">{icon}</View>
+			<Text className={`font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"} flex-1 text-textWhite`}>{children}</Text>
 		</View>
 	);
 };
 
-const sectionTitleStyle = "text-[36px] mt-4 mb-2 text-white";
-const subTitleStyle = "text-[28px] mt-2 mb-1 text-white";
-const paragraphStyle = "text-[20px] text-textWhite font-light";
+function isPlatformWeb() {
+	return Platform.OS === "web";
+}
+
+const sectionTitleStyle = `font-league-spartan ${isPlatformWeb() ? "text-4xl" : "text-[23px]"} mt-4 mb-2 text-textWhite leading-none uppercase`;
+const subTitleStyle = `font-league-spartan ${isPlatformWeb() ? "text-[28px]" : "text-[20px]"} mt-2 mb-1 text-textWhite leading-none`;
+const paragraphStyle = `font-league-spartan ${isPlatformWeb() ? "text-[20px]" : "text-[16px]"} text-textWhite font-light`;
 const linkStyle = "text-[#72b21f] underline";
 
 const ResponsiveImage = ({ source, aspectRatio = 1.4 }: { source: ImageSourcePropType; aspectRatio?: number }) => {
@@ -73,7 +77,9 @@ export const UserGuide = () => {
 			horizontal={false}
 		>
 			<View className="p-5 gap-4 text-xl">
-				<Text className="font-bold text-4xl leading-none uppercase text-textWhite">
+				<Text
+					className={`font-league-spartan font-bold ${isPlatformWeb() ? "text-4xl" : "text-2xl"} leading-none uppercase text-textWhite`}
+				>
 					💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
 				</Text>
 				<Text className={paragraphStyle}>
@@ -84,12 +90,13 @@ export const UserGuide = () => {
 					Whether you're new to DeFi or a seasoned yield farmer, BeraTrax is built to{" "}
 					<Text className="font-bold">remove the complexity</Text> and help you maximize your returns.
 				</Text>
+				<HorizontalLine />
 
 				{/* SECTION 1 GETTING STARTED*/}
 				<>
 					<Text className={sectionTitleStyle}>Getting Started with BeraTrax</Text>
 					<Text className={subTitleStyle}>Step 1: Signing In</Text>
-					<Text className={paragraphStyle}>BeraTrax offers two ways to get started:</Text>
+					<Text className={`${paragraphStyle} my-4`}>BeraTrax offers two ways to get started:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="font-bold">Social Login</Text> – Sign in instantly using an email, Twitter, or Discord (you own your social
@@ -150,6 +157,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
 					</BulletPoint>
 				</>
+				<HorizontalLine />
 
 				{/* SECTION 2 DASHBOARD */}
 				<>
@@ -173,7 +181,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">BTX governance points and BGT staking rewards (coming soon).</Text>
 					</BulletPoint>
 				</>
-
+				<HorizontalLine />
 				{/* SECTION 3 DEPOSITING */}
 				<>
 					<Text className={sectionTitleStyle}>Depositing into Yield Vaults (Earning Rewards)</Text>
@@ -225,7 +233,7 @@ export const UserGuide = () => {
 						<Text className="font-bold">Deposits are gas-free</Text> — BeraTrax covers transaction costs for you.
 					</BulletPoint>
 				</>
-
+				<HorizontalLine />
 				{/* SECTION 4 WITHDRAWING */}
 				<>
 					<Text className={sectionTitleStyle}>Withdrawing &amp; Managing Funds</Text>
@@ -251,6 +259,7 @@ export const UserGuide = () => {
 					</BulletPoint>
 				</>
 
+				<HorizontalLine />
 				{/* SECTION 5 Maximizing Rewards */}
 				<>
 					<Text className={sectionTitleStyle}>Maximizing Rewards with the BGT Flywheel</Text>
@@ -278,6 +287,7 @@ export const UserGuide = () => {
 						in the background.
 					</Text>
 				</>
+				<HorizontalLine />
 
 				{/* SECTION 6 Maximizing Rewards */}
 				<>
@@ -295,10 +305,10 @@ export const UserGuide = () => {
 
 					<Text className={paragraphStyle}>~~ &nbsp;The more you stake and refer, the more rewards you earn! 🚀~~ &nbsp;</Text>
 				</>
+				<HorizontalLine />
 
 				{/* SECTION 7 FAQ */}
 				<>
-					<View className="h-px bg-[#999] my-5" />
 					<Text className={sectionTitleStyle}>Frequently Asked Questions (FAQ)</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
@@ -338,10 +348,9 @@ export const UserGuide = () => {
 						unknown exploits using Spherex's zero day exploit protection on every one of our contracts!
 					</Text>
 				</>
-
+				<HorizontalLine />
 				{/* SECTION 8 JOIN BERATRAX COMMUNITY */}
 				<>
-					<View className="h-px bg-[#999] my-5" />
 					<Text className={sectionTitleStyle}>Join the BeraTrax Community</Text>
 					<Text className={paragraphStyle}>Want to stay updated and get involved? Follow us here:</Text>
 
@@ -367,7 +376,7 @@ export const UserGuide = () => {
 					</BulletPoint>
 				</>
 
-				<View className={"flex mt-4 mb-8"}>
+				<View className={"flex mt-4 mb-8 pb-10"}>
 					<Link
 						href="https://docs.beratrax.com/beratrax-beta/"
 						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-5 py-4 rounded-lg cursor-pointer mb-1

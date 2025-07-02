@@ -149,7 +149,7 @@ const Select: FC<IProps> = ({
 									)}
 									<View className="flex flex-row flex-wrap flex-1">
 										<Text
-											className={`font-medium ${value === option ? "text-textPrimary" : "text-textWhite"}`}
+											className={`font-league-spartan text-base ${value === option ? "text-textPrimary" : "text-textWhite"}`}
 											numberOfLines={1}
 											ellipsizeMode="tail"
 										>

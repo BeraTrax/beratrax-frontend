@@ -104,6 +104,7 @@ const RootLayout = () => {
 	// const router = useRouter();
 	const [loaded] = useFonts({
 		LeagueSpartan: require("@beratrax/core/src/assets/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.ttf"),
+		"Arame Mono": require("@beratrax/core/src/assets/fonts/ArameMono/0Arame-Regular.otf"),
 	});
 
 	useEffect(() => {

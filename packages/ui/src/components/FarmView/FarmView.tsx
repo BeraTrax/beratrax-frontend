@@ -76,7 +76,7 @@ export function FarmView() {
 
 				{/* Heading */}
 				<View className="mt-4">
-					<Text className="text-3xl font-bold uppercase text-white">Earn</Text>
+					<Text className="font-league-spartan text-3xl font-bold uppercase text-white">Earn</Text>
 				</View>
 
 				{farms.length === 0 ? (
@@ -85,7 +85,7 @@ export function FarmView() {
 					</View>
 				) : (
 					<View className="flex flex-row justify-between">
-						<Text className="mb-9 text-lg font-light text-white">Available Protocols</Text>
+						<Text className="text-base font-light my-4 text-white">Available Protocols</Text>
 						<View className="flex flex-row gap-4 items-center">
 							<View className="flex items-center gap-4">
 								{/* New Vaults Sort Option */}

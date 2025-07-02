@@ -81,6 +81,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 	const logo1Source = vault.logo1 ? { uri: vault.logo1 } : undefined;
 	const logo2Source = vault.logo2 ? { uri: vault.logo2 } : undefined;
 	const logo3Source = vault.logo3 ? { uri: vault.logo3 } : undefined;
+	const logo4Source = vault.logo4 ? { uri: vault.logo4 } : undefined;
 	const platformLogoSource = vault.platform_logo ? { uri: vault.platform_logo } : undefined;
 	const secondaryPlatformLogoSource = vault.secondary_platform_logo ? { uri: vault.secondary_platform_logo } : undefined;
 
@@ -362,6 +363,10 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 									}}
 									resizeMode="contain"
 								/>
+							)}
+
+							{logo4Source && (
+								<Image source={logo4Source} style={{ width: 36, height: 36, borderRadius: 18, marginLeft: -12 }} resizeMode="contain" />
 							)}
 						</View>
 

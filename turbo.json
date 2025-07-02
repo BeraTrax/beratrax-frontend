@@ -4,6 +4,12 @@
 		"prepare": {
 			"inputs": ["package.json"]
 		},
+    "build:web:exp": {
+      "cache": true,
+      "persistent": true,
+      "inputs": ["apps/web/src/**", "apps/web/package.json"],
+      "outputs": ["apps/web/build"]
+    },
 		"build:config": {
 			"cache": true,
 			"persistent": true,

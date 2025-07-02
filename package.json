@@ -22,13 +22,31 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:web": "turbo run start --filter=@beratrax/web",
-    "build:web": "turbo run build --filter=@beratrax/web",
+    "start:web": "EXPO_PUBLIC_NODE_ENV=development turbo run start --filter=@beratrax/web",
+    "start:web:exp": "EXPO_PUBLIC_NODE_ENV=experimental turbo run start --filter=@beratrax/web",
+    "start:web:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run start --filter=@beratrax/web",
+    "start:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run start --filter=@beratrax/web",
+    "start:web:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run start --filter=@beratrax/web",
+
+    "build:web": "EXPO_PUBLIC_NODE_ENV=development turbo run build --filter=@beratrax/web",
+    "build:web:exp": "EXPO_PUBLIC_NODE_ENV=experimental turbo run build --filter=@beratrax/web",
+    "build:web:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run build --filter=@beratrax/web",
+    "build:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run build --filter=@beratrax/web",
+    "build:web:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run build --filter=@beratrax/web",
+
     "add:web": "yarn --cwd apps/web add",
     "remove:web": "yarn --cwd apps/web remove",
     
-    "start:mobile": "turbo run start:mobile --filter=@beratrax/mobile",
-    "build:mobile": "turbo run build:mobile --filter=@beratrax/mobile",
+    "start:mobile": "EXPO_PUBLIC_NODE_ENV=development turbo run start:mobile --filter=@beratrax/mobile",
+    "start:mobile:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run start:mobile --filter=@beratrax/mobile",
+    "start:mobile:production": "EXPO_PUBLIC_NODE_ENV=production turbo run start:mobile --filter=@beratrax/mobile",
+    "start:mobile:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run start:mobile --filter=@beratrax/mobile",
+
+    "build:mobile": "EXPO_PUBLIC_NODE_ENV=development turbo run build:mobile --filter=@beratrax/mobile",
+    "build:mobile:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run build:mobile --filter=@beratrax/mobile",
+    "build:mobile:production": "EXPO_PUBLIC_NODE_ENV=production turbo run build:mobile --filter=@beratrax/mobile",
+    "build:mobile:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run build:mobile --filter=@beratrax/mobile",
+
     "add:mobile": "echo yarn --cwd apps/mobile add $* && yarn --cwd apps/mobile add",
     "remove:mobile": "yarn --cwd apps/mobile remove",
     

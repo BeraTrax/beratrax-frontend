@@ -1054,6 +1054,12 @@ const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarn
 					chainId: pool.chainId,
 				}));
 
+				timestamps.push({
+					address: pool.vault_addr,
+					timestamp: Number(currentTimestamp),
+					chainId: pool.chainId,
+				});
+
 				const apyData = await getApyByTime(timestamps);
 				let totalEarnings = BigInt(0);
 				let lastEarnings = BigInt(0);
@@ -1067,7 +1073,7 @@ const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarn
 					const timeInYears = timePeriod / (365 * 24 * 60 * 60);
 
 					const apyObj = apyData?.[pool.chainId]?.[pool.vault_addr]?.find(
-						(entry) => Math.abs(entry.timestamp - start) < 3600 // within 1 hour
+						(entry) => Math.abs(entry.timestamp - end) < 3600 // within 1 hour
 					);
 					const apy = apyObj?.apy?.beratraxApr ?? 0;
 					const apyPercent = Math.floor((apy / 100) * 1e18); // scaled for precision

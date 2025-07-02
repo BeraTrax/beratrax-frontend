@@ -63,9 +63,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
+    "dev": "vite --host",
+    "start": "vite --host",
     "build": "tsc && vite build",
+    "build:dev": "tsc && vite build",
+    "build:exp": "tsc && vite build",
+    "build:staging": "tsc && vite build",
+    "build:production": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "find-deadcode": "ts-prune",
     "upgrade-packages": "upgrade-interactive"

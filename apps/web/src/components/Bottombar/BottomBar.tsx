@@ -37,18 +37,17 @@ function BottomBar() {
 			nonActiveIcon: EarnNonActiveIcon,
 			title: "Earn",
 		},
-		{
-			route: RoutesPaths.Leaderboard,
-			activeIcon: LeaderboardActiveIcon,
-			nonActiveIcon: LeaderboardNonActiveIcon,
-			title: "Leaderboard",
-		},
+		// {
+		// 	route: RoutesPaths.Leaderboard,
+		// 	activeIcon: LeaderboardActiveIcon,
+		// 	nonActiveIcon: LeaderboardNonActiveIcon,
+		// 	title: "Leaderboard",
+		// },
 		{
 			route: RoutesPaths.Buy,
 			activeIcon: CoinsActiveIcon,
 			nonActiveIcon: CoinsNonActiveIcon,
-			title: "Buy (thoon!)",
-			target: "noop",
+			title: "Buy",
 		},
 		{
 			route: RoutesPaths.UserGuide,

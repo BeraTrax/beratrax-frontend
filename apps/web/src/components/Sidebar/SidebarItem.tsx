@@ -6,7 +6,7 @@ interface SidebarItemProps {
 	onClick?: () => void;
 }
 
-function SidebarItem({ icon, title, iconRight, active, ...props }: SidebarItemProps) {
+function SidebarItem({ icon, title, iconRight = null, active, ...props }: SidebarItemProps) {
 	return (
 		<div
 			className={`

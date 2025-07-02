@@ -1,7 +1,7 @@
 import { View, TextInput, Text, Pressable, ScrollView, Platform, Image, ImageSourcePropType } from "react-native";
 import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
-import { RAMP_TRANSAK_API_KEY } from "@beratrax/core/src/config/constants";
+import { isStagging, RAMP_TRANSAK_API_KEY } from "@beratrax/core/src/config/constants";
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 
 // Transak React Native SDK is only available on mobile platforms.
@@ -149,7 +149,7 @@ export const Buy = (): React.JSX.Element => {
 
 	const isValidAmount = displayAmount !== "" && displayAmount !== "0" && parseFloat(displayAmount) >= minAmount;
 
-	const transakUrl = `https://global.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatCurrency=USD&fiatAmount=${displayAmount}`;
+	const transakUrl = `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
 
 	return (
 		<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">

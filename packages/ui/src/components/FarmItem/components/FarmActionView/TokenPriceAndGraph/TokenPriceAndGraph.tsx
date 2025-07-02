@@ -119,6 +119,8 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 							{farm?.logo2 ? <Image alt={farm?.alt2} className="w-16 h-16 rounded-full -ml-8" source={{ uri: farm?.logo2 }} /> : null}
 
 							{farm?.logo3 ? <Image alt={farm?.alt3} className="w-16 h-16 rounded-full -ml-8" source={{ uri: farm?.logo3 }} /> : null}
+
+							{farm?.logo4 ? <Image alt={farm?.alt4} className="w-16 h-16 rounded-full -ml-8" source={{ uri: farm?.logo4 }} /> : null}
 						</View>
 					</View>
 				</View>

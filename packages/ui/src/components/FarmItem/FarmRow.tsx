@@ -114,6 +114,14 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 										style={{ zIndex: 3, position: "relative" }}
 									/>
 								)}
+								{farm?.logo4 && (
+									<Image
+										source={{ uri: farm.logo4 }}
+										className="w-8 h-8 lg:h-14 lg:w-14 rounded-full -ml-4 sm:-ml-7"
+										alt={farm.alt4}
+										style={{ zIndex: 4, position: "relative" }}
+									/>
+								)}
 							</View>
 
 							<View>

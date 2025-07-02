@@ -64,7 +64,7 @@ const tabOptions = {
 	// },
 	Buy: {
 		name: "Buy",
-		tabBarLabel: "Buy (thoon!)",
+		tabBarLabel: "Buy",
 		route: "/Buy",
 		activeIcon: require("@beratrax/core/src/assets/images/coinsactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/coinsnonactiveicon.svg").default,

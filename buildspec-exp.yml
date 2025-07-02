@@ -29,31 +29,37 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 22.10.0
+      nodejs: 22.15.0
   pre_build:
     commands:
       - echo Pre build commands started...
-      - yarn set version 3.4.1
+      - yarn set version 1.22.22
       - echo yarn install started.
       - yarn install
       - echo Finished installing packages.
   build:
     commands:
       - echo Generating build directory for react.
-      - yarn build:web
+      - yarn build:web:exp
       - echo Finished generating build directory.
 
   post_build:
     commands:
       - echo Deploying to S3 started
       # copy the contents of /build to S3 bucket
-      - aws s3 sync apps/web/build s3://staging.beratrax.com/ --delete --exclude 'index.html' --acl public-read --cache-control 'max-age=860000'
-      - aws s3 sync apps/web/build s3://staging.beratrax.com/ --delete --exclude '*' --include 'index.html' --acl public-read --cache-control 'max-age=0'
-      - aws cloudfront create-invalidation --distribution-id E2HL9KI8D68GCZ --paths '/*'
+      - aws s3 sync apps/web/build s3://experimental.beratrax.com/ --delete --exclude 'index.html' --acl public-read --cache-control 'max-age=860000'
+      - aws s3 sync apps/web/build s3://experimental.beratrax.com/ --delete --exclude '*' --include 'index.html' --acl public-read --cache-control 'max-age=0'
+      - aws cloudfront create-invalidation --distribution-id E2W11JCE91ZP1U --paths '/*'
       - echo Deploying to S3 finsihed
 
 artifacts:
   files:
-    - "**/*"
+    - '**/*'
   discard-paths: no
   base-directory: apps/web/build
+  
+
+  
+  
+  
+  

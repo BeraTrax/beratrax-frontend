@@ -3,10 +3,83 @@ import svgr from "vite-plugin-svgr";
 import reactNativeWeb from "vite-plugin-react-native-web";
 import path from "path";
 
-import { defineConfig, loadEnv, transformWithEsbuild } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const extensions = [".web.tsx", ".tsx", ".web.ts", ".ts", ".web.jsx", ".jsx", ".web.js", ".js", ".css", ".json", ".mjs", ".svg"];
+
+// Modules to include for optimization (browserify polyfills)
+const optimizeIncludes = [
+	"nativewind",
+	"react-native-css-interop",
+	"crypto-browserify",
+	"stream-browserify",
+	"stream-http",
+	"https-browserify",
+	"os-browserify",
+	"buffer",
+	"process",
+];
+
+// Native-only modules to exclude from web build
+const excludeFromWeb = ["@transak/react-native-sdk", "react-native-inappbrowser-reborn", "expo-router"];
+
+// Web-compatible mock for expo-router using react-router-dom
+const createExpoRouterMock = () => `
+// Web-compatible mock for expo-router
+import React from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+
+export const useRouter = () => {
+  const navigate = useNavigate();
+  return {
+    push: (path) => navigate(path),
+    replace: (path) => navigate(path, { replace: true }),
+    back: () => navigate(-1),
+    canGoBack: () => window.history.length > 1,
+  };
+};
+
+export const useLocalSearchParams = () => {
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const result = {};
+  for (const [key, value] of params.entries()) {
+    result[key] = value;
+  }
+  return result;
+};
+
+export const usePathname = () => {
+  const { pathname } = useLocation();
+  return pathname;
+};
+
+export const Link = ({ href, children, ...props }) => {
+  const navigate = useNavigate();
+  return React.createElement(
+    "a",
+    {
+      ...props,
+      href: href,
+      onClick: (e) => {
+        e.preventDefault();
+        navigate(href);
+      }
+    },
+    children
+  );
+};
+
+export const Stack = ({ children }) => children;
+export const Redirect = ({ href }) => {
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    navigate(href, { replace: true });
+  }, [href, navigate]);
+  return null;
+};
+`;
 
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, "../..");
@@ -17,17 +90,19 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [
 			{
-				name: "vite:jsx-in-node_modules",
+				name: "expo-router-web-compat",
 				enforce: "pre",
-				async transform(code: string, id: string) {
-					if (id.includes("node_modules/expo-router") && id.endsWith(".js")) {
-						return transformWithEsbuild(code, id, {
-							loader: "jsx",
-							jsx: "automatic",
-							// if you use nativewind’s pragma:
-							jsxImportSource: "nativewind",
-						});
+				resolveId(id: string) {
+					if (id === "expo-router") {
+						return "virtual:expo-router-web-mock";
 					}
+					return null;
+				},
+				load(id: string) {
+					if (id === "virtual:expo-router-web-mock") {
+						return createExpoRouterMock();
+					}
+					return null;
 				},
 			},
 			react(),
@@ -41,12 +116,9 @@ export default defineConfig(({ mode }) => {
 				include: "**/*.svg",
 			}),
 			nodePolyfills({
-				globals: {
-					Buffer: true,
-					process: true,
-					global: true,
-				},
+				globals: { Buffer: true, process: true, global: true },
 				protocolImports: true,
+				include: ["crypto", "stream", "http", "https", "os", "path", "buffer", "process", "util"],
 			}),
 			reactNativeWeb(),
 		] as any,
@@ -65,12 +137,17 @@ export default defineConfig(({ mode }) => {
 				"~@fontsource/inter": "@fontsource/inter",
 				// Node.js module polyfills for browser
 				"end-of-stream": "empty-module",
+				// Explicit crypto aliases
+				crypto: "crypto-browserify",
+				stream: "stream-browserify",
+				http: "stream-http",
+				https: "https-browserify",
+				os: "os-browserify",
 			},
 		},
 		optimizeDeps: {
-			include: ["nativewind", "react-native-css-interop"],
-			// Exclude native-only modules from web build to prevent Vite/esbuild from attempting to parse incompatible React native code. These are conditionally imported at runtime on mobile platforms only.
-			exclude: ["@transak/react-native-sdk", "react-native-inappbrowser-reborn"],
+			include: optimizeIncludes,
+			exclude: excludeFromWeb,
 			esbuildOptions: {
 				resolveExtensions: extensions,
 				jsx: "automatic",
@@ -82,15 +159,17 @@ export default defineConfig(({ mode }) => {
 			outDir: "build",
 			commonjsOptions: {
 				transformMixedEsModules: true,
+				include: [/node_modules/],
 			},
 			rollupOptions: {
-				external: ["@transak/react-native-sdk", "react-native-inappbrowser-reborn"],
+				external: excludeFromWeb.slice(0, 2), // Only the first two items (not expo-router)
 			},
 		},
 		define: {
 			"process.env": JSON.stringify(env),
 			"process.browser": true,
 			__DEV__: process.env.NODE_ENV !== "production",
+			global: "globalThis",
 		},
 	};
 });

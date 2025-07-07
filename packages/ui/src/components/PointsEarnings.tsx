@@ -1,14 +1,15 @@
 import { customCommify } from "@beratrax/core/src/utils/common";
 import { useAppSelector } from "@beratrax/core/src/state";
 import DottedStarLogo from "@beratrax/core/src/assets/images/dottedStarLogo.svg";
+import ReferralLogo from "@beratrax/core/src/assets/images/referralLogo.png";
+import ReferralBackground from "@beratrax/core/src/assets/images/referralBg.png";
 import { Boosts } from "@beratrax/core/src/state/account/types";
 import { useState } from "react";
 import { useEffect } from "react";
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import { View, Text, Image, ImageSourcePropType, ImageBackground } from "react-native";
 import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.svg";
 import { GradientText } from "./GradientText";
 import { SvgImage } from "./SvgImage/SvgImage";
-import { ImageBackground } from "react-native";
 import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
 interface Props {}
 

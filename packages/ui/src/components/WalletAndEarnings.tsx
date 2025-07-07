@@ -301,9 +301,12 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 											)}
 										</View>
 										{/* Beraname */}
-										<GradientText className="text-lg uppercase font-arame-mono font-normal">
-											{ensName || referralCode ? `${ensName || referralCode}` : ""}
-										</GradientText>
+										{!openPrivateKeyModal &&
+											!openQrCodeModal && ( // TODO: remove this once we have a better way to handle MaskedView hiding the modal
+												<GradientText className="text-lg uppercase font-arame-mono font-normal">
+													{ensName || referralCode ? `${ensName || referralCode}` : ""}
+												</GradientText>
+											)}
 									</View>
 								</View>
 							</View>

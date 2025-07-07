@@ -1,6 +1,8 @@
 import React from "react";
-import { Buy as BuyShared } from "@beratrax/ui";
+import { View } from "react-native";
+// import { Buy as BuyShared } from "@beratrax/ui";
 
 export const Buy: React.FC = () => {
-	return <BuyShared />;
+	// return <BuyShared />;
+	return <View></View>;
 };

@@ -5,7 +5,9 @@ const config = {
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
 	presets: [require("nativewind/preset")],
 	theme: {
-		...tailwindBaseConfig,
+		extend: {
+			...tailwindBaseConfig.extend,
+		},
 	},
 };
 

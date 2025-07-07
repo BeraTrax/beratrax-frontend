@@ -29,7 +29,13 @@ const MobileModalContainer = ({
 	};
 
 	return (
-		<View className={twMerge(`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>
+		<View
+			className={twMerge(
+				`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`,
+				wrapperClassName
+			)}
+			style={{ height }}
+		>
 			<View className="flex-1 justify-end">
 				<View
 					className={twMerge(`w-full bg-[#1A1A1A] rounded-t-[40px] border-t-2 border-t-[#333333] overflow-hidden`, className)}

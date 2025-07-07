@@ -5,8 +5,7 @@ import { useConstants, useStats } from "@beratrax/core/src/hooks";
 import { CHAIN_ID, UsersTableColumns } from "@beratrax/core/src/types/enums";
 import { customCommify } from "@beratrax/core/src/utils/common";
 import { FC, useEffect, useMemo, useState, memo, useCallback } from "react";
-import { Link } from "expo-router";
-import { View, Image, Text, Pressable, TextInput, Platform, ScrollView } from "react-native";
+import { View, Image, Text, Pressable, TextInput, Platform, ScrollView, Linking } from "react-native";
 import { ChevronDownIcon } from "../../../../icons/ChevronDown";
 import { ChevronUpIcon } from "../../../../icons/ChevronUp";
 import { ExternalLinkIcon } from "../../../../icons/ExternalLInk";
@@ -56,9 +55,9 @@ const AddressDisplay = memo(({ address, explorerUrl }: { address: string; explor
 						{address}
 					</Text>
 				) : (
-					<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+					<Pressable onPress={() => Linking.openURL(explorerUrl)}>
 						<Text className="text-xs text-textSecondary">View on Explorer</Text>
-					</Link>
+					</Pressable>
 				)}
 			</View>
 		</View>
@@ -272,9 +271,9 @@ const StatsTableRow = memo(
 										</Text>
 									) : null}
 
-									<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+									<Pressable onPress={() => Linking.openURL(explorerUrl)}>
 										<ExternalLinkIcon />
-									</Link>
+									</Pressable>
 								</View>
 							</View>
 
@@ -418,9 +417,9 @@ const UserPositionRow = ({ userPosition }: { userPosition: any }) => {
 									{userPosition.address}
 								</Text>
 							) : null}
-							<Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+							<Pressable onPress={() => Linking.openURL(explorerUrl)}>
 								<ExternalLinkIcon width={16} height={16} />
-							</Link>
+							</Pressable>
 						</View>
 					</View>
 					<Text className="text-white text-xs sm:text-sm" style={{ maxWidth: 120, flexShrink: 1, overflow: "hidden" }}>

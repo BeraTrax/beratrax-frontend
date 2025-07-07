@@ -246,7 +246,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								options={["3", "6", "12", "24"]}
 								extraText={["months", "months", "months", "months"]}
 								className="h-full bg-bgDark text-textWhite rounded-lg"
-								customWidth={120}
+								customWidth={140}
 							/>
 						</View>
 					</View>

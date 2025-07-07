@@ -1,8 +1,9 @@
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import React, { useEffect, useState } from "react";
-import { Image, View, Text, TouchableOpacity, Platform } from "react-native";
+import { Image, View, Text, TouchableOpacity, Platform, Pressable, Linking } from "react-native";
 import { InfoIcon } from "ui/src/icons/Infoicon";
-import { useRouter, Link } from "expo-router";
+import { useRouter } from "expo-router";
+import { useNavigate } from "react-router-dom";
 // import { Tooltip } from "react-tooltip";
 import uuid from "react-uuid";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
@@ -13,7 +14,6 @@ import { DropDownView } from "./components/DropDownView/DropDownView";
 import FarmRowChip from "./components/FarmRowChip/FarmRowChip";
 import styles from "./FarmRow.module.css";
 import { setLastVisitedPage } from "@beratrax/core/src/state/account/accountReducer";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
 	farm: PoolDef;
@@ -170,9 +170,9 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 													: toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
 											%
 										</Text>
-										<Link href="/" id={key} data-tooltip-html={/* tooltip text here */ ""}>
+										<Pressable onPress={() => Linking.openURL("/")} id={key} data-tooltip-html={/* tooltip text here */ ""}>
 											{/* Possibly an info icon here */}
-										</Link>
+										</Pressable>
 										{/* <Tooltip
                     anchorId={key}
                     className="shadow-md rounded-md bg-bgSecondary text-white px-2 py-1 leading-none"
@@ -200,9 +200,9 @@ const FarmRow: React.FC<Props> = ({ farm, openedFarm }) => {
 													? farmApys.apy.toPrecision(2).slice(0, -1)
 													: toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2).toString()}
 												%
-												<Link href="/" id={key2} data-tooltip-html={/* tooltip text here */ ""}>
+												<Pressable onPress={() => Linking.openURL("/")} id={key2} data-tooltip-html={/* tooltip text here */ ""}>
 													{/* Possibly an info icon here */}
-												</Link>
+												</Pressable>
 												{/* <Tooltip
                         anchorId={key2}
                         className="shadow-md rounded-md bg-bgDark text-white px-2 py-1 leading-none"
@@ -271,8 +271,8 @@ const FarmRowSkeleton = ({ farm }: { farm: PoolDef }) => {
 									: toFixedFloor(farmApys?.apy || 0, 2).toString()}
 								%
 							</Text>
-							<Link
-								href="/"
+							<Pressable
+								onPress={() => Linking.openURL("/")}
 								id={key}
 								data-tooltip-html={`<p>
                                             <b>Base APRs</b>
@@ -294,7 +294,7 @@ const FarmRowSkeleton = ({ farm }: { farm: PoolDef }) => {
 																				}`}
 							>
 								{/* <CgInfo className={`text-textPrimary text-right	 ml-1`} /> */}
-							</Link>
+							</Pressable>
 							{/* <Tooltip anchorId={key} className={`shadow-md rounded-md bg-bgDark text-white px-2 py-1 leading-none`} /> */}
 						</View>
 					</View>

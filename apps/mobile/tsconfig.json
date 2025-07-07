@@ -1,5 +1,8 @@
 {
-  "extends": ["expo/tsconfig.base", "@beratrax/typescript-config/vite.json"],
+  "extends": [
+    "expo/tsconfig.base",
+    "@beratrax/typescript-config/vite.json"
+  ],
   "compilerOptions": {
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -8,7 +11,9 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -17,5 +22,10 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ],
-  "exclude": ["node_modules", "dist", "build", ".expo"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".expo"
+  ]
 }

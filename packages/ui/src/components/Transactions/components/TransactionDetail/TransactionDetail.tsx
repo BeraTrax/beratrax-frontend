@@ -1,7 +1,6 @@
 import React from "react";
 import { CircleOneIcon } from "@beratrax/ui/src/icons/CircleOne";
 import { CancelOutlineIcon } from "@beratrax/ui/src/icons/CancelOutline";
-import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
 import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
@@ -10,6 +9,8 @@ import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
 import { View, Text, Image, Platform, ActivityIndicator } from "react-native";
 import Colors from "@beratrax/typescript-config/Colors";
+import CheckMarkSvg from "@beratrax/core/src/assets/images/checkmark.svg";
+import { SvgImage } from "../../../SvgImage/SvgImage";
 
 type IProps =
 	| {
@@ -67,22 +68,18 @@ const TransactionDetails: React.FC<IProps> = (args) => {
 
 export default TransactionDetails;
 
-function getImageSource() {
-	return Platform.OS === "web" ? { uri: CheckMark } : require("@beratrax/core/src/assets/images/checkmark.png");
-}
-
 function getStep(name: string, status: TransactionStepStatus, value: number, tokenName?: string, isLastStep?: boolean) {
 	return (
 		<View>
 			<View className="flex flex-row gap-x-2">
 				{status === TransactionStepStatus.COMPLETED ? (
-					<Image source={getImageSource()} alt="Check mark" className="w-6 h-5" />
+					<SvgImage source={CheckMarkSvg} />
 				) : status === TransactionStepStatus.FAILED ? (
 					<CancelOutlineIcon color="red" />
 				) : status === TransactionStepStatus.PENDING ? (
-					<CircleOneIcon color={Colors.textSecondary} style={{ transform: "scale(0.8)" }} />
+					<CircleOneIcon style={{ transform: "scale(0.8)" }} width={30} height={30} />
 				) : (
-					<ActivityIndicator size="small" color="#72B21F" />
+					<ActivityIndicator size="small" color="#3B7EE3" />
 				)}
 				<View>
 					<Text className="font-league-spartan font-light text-base leading-5 text-textWhite">{name}</Text>

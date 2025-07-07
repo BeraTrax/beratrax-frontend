@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, useCallback, memo } from "react";
 import { checkClaimBtx, claimBtx } from "@beratrax/core/src/api/account";
 import { notifyError } from "@beratrax/core/src/api/notify";
-import GreenLogo from "@beratrax/core/src/assets/images/greenLogo.png";
-import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
+import BlueLeaf from "@beratrax/core/src/assets/images/blueLeaf.png";
+import RewardGlowIcon from "@beratrax/core/src/assets/images/rewardGlowIcon.svg";
+import { SvgImage } from "./SvgImage/SvgImage";
 import "react-native-get-random-values";
 import "@ethersproject/shims";
 
@@ -17,6 +18,7 @@ import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { copyToClipboard } from "@beratrax/core/src/utils";
 import { trackLogin } from "@beratrax/core/src/utils/analytics";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
+
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
 import {
 	View,
@@ -277,7 +279,7 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 							<View className="flex flex-col gap-y-4">
 								{/* Address */}
 								<View className="flex flex-row items-center relative">
-									<Image className="w-8 h-8 mr-2" source={GreenLogo as ImageSourcePropType} alt="Staking Icon" />
+									<Image className="w-8 h-8 mr-2" source={BlueLeaf as ImageSourcePropType} alt="Staking Icon" />
 									<View className="flex flex-col pl-2">
 										<View className="flex flex-row items-center">
 											<Link
@@ -362,15 +364,15 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 							<Svg height="100%" width="100%" viewBox="0 0 520 520">
 								<Defs>
 									<RadialGradient id="grad" cx="320" cy="320" rx="320" ry="320" fx="320" fy="320" gradientUnits="userSpaceOnUse">
-										<Stop offset="0" stopColor="#72B21F" stopOpacity="1" />
-										<Stop offset="0.3" stopColor="#72B21F" stopOpacity="0.95" />
-										<Stop offset="0.5" stopColor="#72B21F" stopOpacity="0.85" />
-										<Stop offset="0.65" stopColor="#72B21F" stopOpacity="0.7" />
-										<Stop offset="0.75" stopColor="#72B21F" stopOpacity="0.5" />
-										<Stop offset="0.85" stopColor="#72B21F" stopOpacity="0.3" />
-										<Stop offset="0.92" stopColor="#72B21F" stopOpacity="0.15" />
-										<Stop offset="0.97" stopColor="#72B21F" stopOpacity="0.05" />
-										<Stop offset="1" stopColor="#72B21F" stopOpacity="0" />
+										<Stop offset="0" stopColor="#3B7EE3" stopOpacity="1" />
+										<Stop offset="0.3" stopColor="#3B7EE3" stopOpacity="0.95" />
+										<Stop offset="0.5" stopColor="#3B7EE3" stopOpacity="0.85" />
+										<Stop offset="0.65" stopColor="#3B7EE3" stopOpacity="0.7" />
+										<Stop offset="0.75" stopColor="#3B7EE3" stopOpacity="0.5" />
+										<Stop offset="0.85" stopColor="#3B7EE3" stopOpacity="0.3" />
+										<Stop offset="0.92" stopColor="#3B7EE3" stopOpacity="0.15" />
+										<Stop offset="0.97" stopColor="#3B7EE3" stopOpacity="0.05" />
+										<Stop offset="1" stopColor="#3B7EE3" stopOpacity="0" />
 									</RadialGradient>
 								</Defs>
 								<Circle cx="320" cy="320" r="320" fill="url(#grad)" />
@@ -386,13 +388,8 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 						) : (
 							<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">${formatCurrency(earningsUsd)}</Text>
 						)}
-						<View className="pb-8">
-							<Image
-								className="w-72 h-72 absolute bottom-[-6rem] right-[-2rem]"
-								source={StakingLogo as ImageSourcePropType}
-								alt="Staking Icon"
-								resizeMode="contain"
-							/>
+						<View className="pb-8 absolute bottom-[-3rem] right-[1rem]">
+							<SvgImage source={RewardGlowIcon} width={130} height={200} />
 						</View>
 						<View className="flex gap-x-4"></View>
 					</View>

@@ -1,5 +1,6 @@
 import Tokendetailspageleftsideleaves from "@beratrax/core/src/assets/images/tokendetailspageleftsideleaves.svg";
-import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.svg";
+// import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.svg";
+import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.png";
 import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useDetailInput, useWallet } from "@beratrax/core/src/hooks";
@@ -21,7 +22,7 @@ import FarmActionModal from "./FarmActionModal/FarmActionModal";
 import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
-import { View, Text, Pressable, ScrollView, Platform } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
 
 const ActionButton = memo(
 	({
@@ -131,7 +132,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
 				</View>
 				<View className={`${Platform.OS === "web" ? "fixed" : "absolute"} right-0 top-0`}>
-					<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
+					{Platform.OS === "web" ? (
+						<SvgImage source={Tokendetailspagestoprightleaves} height={200} width={200} />
+					) : (
+						<Image source={Tokendetailspagestoprightleaves as ImageSourcePropType} height={200} width={200} />
+					)}
 				</View>
 				<View className={`px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
 					{openDepositModal ? (

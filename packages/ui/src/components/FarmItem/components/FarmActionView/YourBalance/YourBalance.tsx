@@ -75,7 +75,7 @@ const TokenEarning = ({
 		<View className="flex flex-row justify-between flex-1 mx-2">
 			<View className="flex flex-row items-center gap-x-3">
 				<View className="flex flex-col">
-					<Text className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+					<Text className="text-blue-500 text-lg font-medium flex items-center gap-x-2">
 						${customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
 					</Text>
 					{lastTransaction?.date && typeof lastTransaction.date === "string" && (
@@ -108,14 +108,14 @@ const TokenEarning = ({
 					)}
 				</View>
 				<View className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
-					<Text className="text-green-500 text-md">↑</Text>
+					<Text className="text-blue-500 text-md">↑</Text>
 				</View>
 			</View>
 
 			<View className="flex flex-row items-center gap-x-3">
 				<View className="flex flex-col text-textSecondary">
 					<View className="flex flex-row items-center gap-x-2">
-						<Text className="text-green-500 text-lg font-medium flex items-center gap-x-2">
+						<Text className="text-blue-500 text-lg font-medium flex items-center gap-x-2">
 							${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
 						</Text>
 						{farm.apyBasedEarnings || typeof lifetimeEarnings === "string" ? null : (
@@ -124,7 +124,7 @@ const TokenEarning = ({
 								<View className="absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
 									<View className="flex flex-col gap-1">
 										<View className="flex flex-row items-center justify-center gap-2">
-											<Text className="text-green-400">
+											<Text className="text-blue-400">
 												<Text>+</Text>
 												{customCommify(Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])), {
 													minimumFractionDigits: 2,
@@ -151,7 +151,7 @@ const TokenEarning = ({
 					</View>
 				</View>
 				<View className="h-6 w-6 rounded-full bg-green-500/10 flex items-center justify-center">
-					<Text className="text-green-500 text-md">↑</Text>
+					<Text className="text-blue-500 text-md">↑</Text>
 				</View>
 			</View>
 		</View>

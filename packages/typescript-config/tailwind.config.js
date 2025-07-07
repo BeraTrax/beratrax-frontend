@@ -14,12 +14,12 @@ export default {
 		},
 		colors: {
 			/* Background Colors */
-			bgPrimary: "var(--new-background_primary)", // #72B21F
+			bgPrimary: "var(--new-background_primary)", // #3B7EE3;
 			bgSecondary: "var(--new-background_secondary)", // #151915
 			bgDark: "var(--new-background_dark)", // #020907
 
 			/* Text Colors */
-			textPrimary: "var(--new-color_primary)", // #72B21F
+			textPrimary: "var(--new-color_primary)", // #3B7EE3;
 			textSecondary: "var(--new-color_secondary)", // #878B82
 			textGrey: "var(--new-color_grey)", // #878B82
 			textWhite: "var(--new-color_white)", // #ffffff
@@ -35,8 +35,8 @@ export default {
 			buttonDisabled: "var(--new-button-disabled)", // #878B82
 
 			/* Gradient Colors */
-			gradientPrimary: "var(--new-gradient-light)", // #A0FF3B
-			gradientSecondary: "var(--new-gradient-dark)", // #283817
+			gradientPrimary: "var(--new-gradient-light)", // #3B7EE3
+			gradientSecondary: "var(--new-gradient-dark)", // #0E1F39;
 		},
 		backgroundImage: {
 			"top-to-bottom-curved": "var(--new-top-to-bottom-curved)", // Gradient defined in CSS

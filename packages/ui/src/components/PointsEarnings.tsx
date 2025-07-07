@@ -1,14 +1,16 @@
 import { customCommify } from "@beratrax/core/src/utils/common";
 import { useAppSelector } from "@beratrax/core/src/state";
+import DottedStarLogo from "@beratrax/core/src/assets/images/dottedStarLogo.svg";
 import ReferralLogo from "@beratrax/core/src/assets/images/referralLogo.png";
-import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.png";
 import ReferralBackground from "@beratrax/core/src/assets/images/referralBg.png";
 import { Boosts } from "@beratrax/core/src/state/account/types";
 import { useState } from "react";
 import { useEffect } from "react";
 import { View, Text, Image, ImageSourcePropType, ImageBackground } from "react-native";
+import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.svg";
 import { GradientText } from "./GradientText";
-
+import { SvgImage } from "./SvgImage/SvgImage";
+import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
 interface Props {}
 
 export const PointsEarnings: React.FC<Props> = () => {
@@ -38,12 +40,15 @@ export const PointsEarnings: React.FC<Props> = () => {
 	}, []);
 
 	return (
-		<View className={`flex flex-row gap-4 ${stakingPoints ? "gap-5" : ""}`}>
-			<ImageBackground source={ReferralBackground as ImageSourcePropType} resizeMode="cover" className="flex-1">
+		<View className="flex-row gap-4">
+			{/* Left Card - Staking */}
+			<ImageBackground source={StakingLogo as ImageSourcePropType} style={{ flex: 1 }} imageStyle={{ borderRadius: 24 }}>
 				<View className="flex-1 rounded-3xl border border-borderDark p-2">
-					<Image source={ReferralLogo as ImageSourcePropType} alt="Referral Logo" className="mt-[-0.5rem] mb-[0.5rem] w-28 h-28" />
+					<View style={{ width: 112, height: 112, justifyContent: "center", alignItems: "center" }}>
+						<SvgImage source={DottedStarLogo} />
+					</View>
 					<View className="pl-3">
-						<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS FROM</Text>
+						<Text className="fontR-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS FROM</Text>
 						<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">STAKING</Text>
 						<Text className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
 							{customCommify(stakingPoints, {
@@ -53,20 +58,17 @@ export const PointsEarnings: React.FC<Props> = () => {
 							})}
 						</Text>
 						<GradientText className="text-xs sm:text-lg">x2 Multiplier-Mainnet 🚀</GradientText>
-						{boosts && boosts.includes(Boosts.NFT) && <GradientText>x2 Multiplier - NFT 🚀</GradientText>}
-						{boosts && boosts.includes(Boosts.BETA) && <GradientText>x1.5 Multiplier - BETA 🚀</GradientText>}
-						{boosts && boosts.includes(Boosts.BETA_TESTER) && <GradientText>x2 Multiplier - BETA TESTER 🚀</GradientText>}
+						{boosts?.includes(Boosts.NFT) && <GradientText>x2 Multiplier - NFT 🚀</GradientText>}
+						{boosts?.includes(Boosts.BETA) && <GradientText>x1.5 Multiplier - BETA 🚀</GradientText>}
+						{boosts?.includes(Boosts.BETA_TESTER) && <GradientText>x2 Multiplier - BETA TESTER 🚀</GradientText>}
 					</View>
 				</View>
 			</ImageBackground>
-			<View
-				// style={{
-				//   clipPath: clipPathValue,
-				// }}
-				className={`flex-1 rounded-3xl text-textWhite bg-bgPrimary ${referralPoints ? "" : "p-2"}`}
-			>
-				<Image source={DailyRateLogo as ImageSourcePropType} alt="Daily Rate Logo" className="ml-[-1.5rem] mt-[-1.5rem] w-32 h-32" />
-				<Text className={`font-arame-mono font-normal text-base text-bgDark leading-4 pl-3`}>TOTAL POINTS FROM</Text>
+
+			{/* Right Card - Referral */}
+			<View className="flex-1 rounded-3xl border border-borderDark p-2 bg-bgPrimary">
+				<SvgImage source={DailyRateLogo} height={35} width={35} style={{ marginTop: 10, marginLeft: 10 }} />
+				<Text className="font-arame-mono font-normal text-base text-bgDark leading-4 pl-3 mt-2">TOTAL POINTS FROM</Text>
 				<Text className="font-arame-mono font-normal text-base leading-4 pl-3">REFERRALS</Text>
 				<Text className="font-league-spartan font-bold text-bgDark text-3xl leading-10 pl-3 pt-2">
 					{customCommify(referralPoints || 0, {

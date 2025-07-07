@@ -30,7 +30,7 @@ const TransferButton = memo(({ hasInsufficientBalance, isLoading, amount, receiv
 	>
 		{isLoading ? (
 			<View className="flex flex-row items-center justify-center">
-				<ActivityIndicator size="small" color="#72B21F" />
+				<ActivityIndicator size="small" color="#3B7EE3" />
 				<Text className="text-textBlack text-base font-bold text-center">Transferring...</Text>
 			</View>
 		) : (

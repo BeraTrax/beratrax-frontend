@@ -306,9 +306,9 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 						>
 							<Defs>
 								<RadialGradient id={gradientId} cx="45%" cy="100%" rx="120%" ry="120%" fx="45%" fy="151%" gradientUnits="objectBoundingBox">
-									<Stop offset="0" stopColor="#72B21F" stopOpacity="0.6" />
-									<Stop offset="0.2" stopColor="#72B21F" stopOpacity="0.4" />
-									<Stop offset="0.4" stopColor="#72B21F" stopOpacity="0.2" />
+									<Stop offset="0" stopColor="#3B7EE3" stopOpacity="0.6" />
+									<Stop offset="0.2" stopColor="#3B7EE3" stopOpacity="0.4" />
+									<Stop offset="0.4" stopColor="#3B7EE3" stopOpacity="0.2" />
 									<Stop offset="0.6" stopColor="#020907" stopOpacity="0.3" />
 									<Stop offset="0.75" stopColor="#020907" stopOpacity="0.8" />
 									<Stop offset="1" stopColor="#020907" stopOpacity="1" />
@@ -329,7 +329,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 							bottom: 0,
 							borderRadius: 24,
 							opacity: 0.4,
-							backgroundColor: "rgba(114, 178, 31, 0.4)",
+							backgroundColor: "rgba(8, 21, 82, 0.4)",
 						}}
 					/>
 				)}
@@ -445,7 +445,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 						</Text>
 						{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
 							<View className="w-full">
-								<Text className="text-green-500 text-lg font-league-spartan leading-5">
+								<Text className="text-textPrimary text-lg font-league-spartan leading-5">
 									{`$${customCommify(totalEarningsUsd, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 5,

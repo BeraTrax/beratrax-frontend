@@ -267,7 +267,7 @@ const Select: FC<IProps> = ({
 			{/* The main select button */}
 			<Pressable onPress={() => setOpenSelect(!openSelect)}>
 				<View
-					className={`relative rounded-2xl flex flex-row items-center justify-between px-3 py-4 ${bgSecondary ? "bg-bgSecondary" : "bg-bgDark"} ${size === "small" ? "w-[50px]" : "w-full"}`}
+					className={`relative rounded-2xl flex flex-row items-center justify-between px-3 ${bgSecondary ? "bg-bgSecondary" : "bg-bgDark"} ${size === "small" ? "w-[50px]" : "w-full"} ${Platform.OS === "android" ? "py-3" : "py-4"}`}
 					style={{
 						alignSelf: "flex-start", // Allow the component to size to content
 						minWidth: customWidth || 120, // Reasonable minimum width

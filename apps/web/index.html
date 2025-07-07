@@ -21,6 +21,12 @@
         <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous" />
         <link rel="preconnect" href="https://www.google-analytics.com" crossorigin="anonymous" />
         <title>Beratrax</title>
+        <script>
+            // CommonJS compatibility globals for legacy modules
+            window.global = window.global || window;
+            window.exports = window.exports || {};
+            window.module = window.module || { exports: window.exports };
+        </script>
     </head>
 
     <body>

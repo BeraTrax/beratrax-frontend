@@ -3,8 +3,7 @@ import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
 import { CreatedIcon } from "@beratrax/ui/src/icons/Created";
 import { VolumeIcon } from "@beratrax/ui/src/icons/Volume";
 import { MarketCapIcon } from "@beratrax/ui/src/icons/MarketCap";
-import { View, Image, Text, Platform, useWindowDimensions } from "react-native";
-import { Link } from "expo-router";
+import { View, Image, Text, Platform, useWindowDimensions, Pressable, Linking } from "react-native";
 
 // Import for web
 import flywheelImageWeb from "@beratrax/core/src/assets/images/flywheelChart.png";
@@ -165,9 +164,9 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 					)}
 					<Text className="text-textWhite mt-4 text-[16px] font-light">
 						You can see the underlying vault on the platform{" "}
-						<Link href={source!} target="_blank" className="text-gradientPrimary uppercase hover:underline">
+						<Pressable onPress={() => Linking.openURL(source!)} className="text-gradientPrimary uppercase hover:underline">
 							here
-						</Link>
+						</Pressable>
 						.
 					</Text>
 				</>

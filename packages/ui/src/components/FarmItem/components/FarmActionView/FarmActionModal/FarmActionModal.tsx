@@ -1,7 +1,7 @@
 import Closemodalicon from "@beratrax/core/src/assets/images/closemodalicon.svg";
 import Exchange from "@beratrax/core/src/assets/images/exchange.svg";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
-import React, { memo, useCallback, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useMemo, useRef, useState, useLayoutEffect } from "react";
 import DialPad from "ui/src/components/Dialpad/Dialpad";
 import MobileModalContainer from "ui/src/components/MobileModalContainer/MobileModalContainer";
 import Select from "ui/src/components/Select/Select";
@@ -35,7 +35,7 @@ import { SlippageWarning } from "ui/src/components/modals/SlippageWarning/Slippa
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import ConfirmFarmActionModal from "ui/src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
-import { Text, Pressable, View } from "react-native";
+import { Text, Pressable, View, Dimensions, Platform } from "react-native";
 import { SvgImage } from "@beratrax/ui/src/components/SvgImage/SvgImage";
 
 interface FarmActionModalProps {
@@ -163,6 +163,8 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 	const [showConfirmWithdrawModal, setShowConfirmWithdrawModal] = useState<boolean>(false);
 	const [withdrawModalShown, setWithdrawModalShown] = useState<boolean>(false);
 	const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+	const [contentHeight, setContentHeight] = useState<number>(0);
+	const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("90%");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { decimals, balances } = useTokens();
 	const { width } = useWindowSize();
@@ -191,6 +193,23 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 		slippage,
 		isLoadingTransaction,
 	} = useDetailInput(farm);
+
+	// Calculate dynamic maxHeight based on content overflow
+	useLayoutEffect(() => {
+		if (contentHeight > 0) {
+			const { height: screenHeight } = Dimensions.get("window");
+			const ninetyPercentHeight = screenHeight * 0.9;
+
+			// If content would overflow at 90% height, use 100%, otherwise use 90%
+			const shouldUseFullHeight = contentHeight > ninetyPercentHeight;
+			setDynamicMaxHeight(shouldUseFullHeight ? "100%" : "90%");
+		}
+	}, [contentHeight]);
+
+	const handleContentLayout = useCallback((event: any) => {
+		const { height } = event.nativeEvent.layout;
+		setContentHeight(height);
+	}, []);
 
 	const noOrMaxInputValue = useMemo(() => {
 		if (parseFloat(amount) <= 0 || isNaN(parseFloat(amount)) || parseFloat(amount) > parseFloat(maxBalance)) return true;
@@ -381,8 +400,8 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 	const CloseIcon = useMemo(() => <SvgImage source={Closemodalicon} height={32} width={32} />, []);
 
 	return (
-		<MobileModalContainer open={open}>
-			<View className="px-4 py-3 pb-24 bg-bgDark">
+		<MobileModalContainer open={open} maxHeight={dynamicMaxHeight}>
+			<View className={`px-4 py-3 bg-bgDark desktopLg:pb-24 ${Platform.OS === "ios" ? "pb-24" : ""}`} onLayout={handleContentLayout}>
 				<View className="h-10 w-full relative">
 					<Pressable onPress={handleClose} style={closeButtonStyle}>
 						{CloseIcon}
@@ -410,7 +429,7 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 								extraText={selectExtraOptions}
 								className="text-textWhite font-light text-[16px]"
 								bgSecondary={true}
-								customWidth={180}
+								customWidth={200}
 							/>
 						) : (
 							<View></View>

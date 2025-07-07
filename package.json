@@ -28,7 +28,7 @@
     "start:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run start --filter=@beratrax/web",
     "start:web:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run start --filter=@beratrax/web",
 
-    "build:web": "EXPO_PUBLIC_NODE_ENV=development turbo run build --filter=@beratrax/web",
+    "build:web": "EXPO_PUBLIC_NODE_ENV=development turbo run build --filter=@beratrax/web --force",
     "build:web:exp": "EXPO_PUBLIC_NODE_ENV=experimental turbo run build --filter=@beratrax/web",
     "build:web:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run build --filter=@beratrax/web",
     "build:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run build --filter=@beratrax/web",

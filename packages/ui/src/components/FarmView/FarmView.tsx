@@ -84,9 +84,9 @@ export function FarmView() {
 						<Text className="mb-9 text-lg font-light text-white">Vaults coming soon</Text>
 					</View>
 				) : (
-					<View className="flex flex-row justify-between">
+					<View className="flex flex-col justify-between">
 						<Text className="text-base font-light my-4 text-white">Available Protocols</Text>
-						<View className="flex flex-row gap-4 items-center">
+						<View className="flex flex-row gap-4 justify-end items-center">
 							<View className="flex items-center gap-4">
 								{/* New Vaults Sort Option */}
 								<TouchableOpacity

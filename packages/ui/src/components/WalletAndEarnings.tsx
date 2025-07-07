@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, useCallback, memo } from "react";
 import { checkClaimBtx, claimBtx } from "@beratrax/core/src/api/account";
 import { notifyError } from "@beratrax/core/src/api/notify";
 import BlueLeaf from "@beratrax/core/src/assets/images/blueLeaf.png";
-import StakingLogo from "@beratrax/core/src/assets/images/stakingLogo.png";
+import RewardGlowIcon from "@beratrax/core/src/assets/images/rewardGlowIcon.svg";
+import { SvgImage } from "./SvgImage/SvgImage";
 import "react-native-get-random-values";
 import "@ethersproject/shims";
 
@@ -384,13 +385,8 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 						) : (
 							<Text className="font-league-spartan text-5xl font-bold text-textWhite relative top-4">${formatCurrency(earningsUsd)}</Text>
 						)}
-						<View className="pb-8">
-							<Image
-								className="w-72 h-72 absolute bottom-[-6rem] right-[-2rem]"
-								source={StakingLogo as ImageSourcePropType}
-								alt="Staking Icon"
-								resizeMode="contain"
-							/>
+						<View className="pb-8 absolute bottom-[-3rem] right-[1rem]">
+							<SvgImage source={RewardGlowIcon} width={130} height={200} />
 						</View>
 						<View className="flex gap-x-4"></View>
 					</View>

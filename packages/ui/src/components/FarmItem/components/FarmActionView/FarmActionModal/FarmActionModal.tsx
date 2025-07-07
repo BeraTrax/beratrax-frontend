@@ -50,7 +50,7 @@ const QuickDepositButtons = memo(
 		const isMax = text === "MAX";
 
 		const buttonClasses = useMemo(
-			() => `px-5 py-2 rounded-2xl items-center justify-center ${isMax ? "bg-lime-500" : isSelected ? "bg-gradientSecondary" : ""}`,
+			() => `px-5 py-2 rounded-2xl items-center justify-center ${isMax ? "bg-sky-500" : isSelected ? "bg-gradientSecondary" : ""}`,
 			[isMax, isSelected]
 		);
 

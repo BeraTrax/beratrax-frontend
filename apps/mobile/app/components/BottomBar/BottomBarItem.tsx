@@ -24,13 +24,13 @@ const BottomBarItem = ({ isActive, Icon, label, onPress }: BottomBarItemProps) =
 			{isActive && (
 				<LinearGradient
 					style={StyleSheet.absoluteFillObject}
-					colors={["rgba(160, 255, 59, 0.3)", "transparent"]}
+					colors={["rgba(52, 89, 181, 0.3)", "transparent"]}
 					start={{ x: 0.5, y: 0 }}
 					end={{ x: 0.5, y: 1 }}
 				/>
 			)}
 			<View className="py-3 px-1 z-10 items-center justify-center">
-				<Icon className={`w-5 h-5 mb-1 ${isActive ? "text-gradientPrimary" : "text-textSecondary"}`} />
+				<Icon className={`w-5 h-5 mb-1`} />
 				<Text
 					className={`pt-2 text-center ${isActive ? "text-gradientPrimary" : "text-textSecondary"} text-[8px] font-small uppercase tracking-wide`}
 					numberOfLines={1}

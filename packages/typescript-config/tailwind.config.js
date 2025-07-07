@@ -34,8 +34,8 @@ export default {
 			buttonDisabled: "var(--new-button-disabled)", // #878B82
 
 			/* Gradient Colors */
-			gradientPrimary: "var(--new-gradient-light)", // #A0FF3B
-			gradientSecondary: "var(--new-gradient-dark)", // #283817
+			gradientPrimary: "var(--new-gradient-light)", // #3B7EE3
+			gradientSecondary: "var(--new-gradient-dark)", // #0E1F39;
 		},
 		backgroundImage: {
 			"top-to-bottom-curved": "var(--new-top-to-bottom-curved)", // Gradient defined in CSS

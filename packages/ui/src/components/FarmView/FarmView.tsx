@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { View, Text, Platform, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, Platform, FlatList, TouchableOpacity, Image, ImageSourcePropType } from "react-native";
 import Svg, { G, Path, ClipPath, Rect, Defs } from "react-native-svg";
 import Earnpagedots from "@beratrax/core/src/assets/images/earnpagedots.svg";
-import Earnpageleaves from "@beratrax/core/src/assets/images/earnpagetoprightleaves1.svg";
-import Earnpageleaves2 from "@beratrax/core/src/assets/images/earnpagetoprightleaves2.svg";
+import Earnpageleaves from "@beratrax/core/src/assets/images/earnpagetoprightleaves1.png";
+import Earnpageleaves2 from "@beratrax/core/src/assets/images/earnpagetoprightleaves2.png";
 import { useRouter } from "expo-router";
 import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
@@ -146,10 +146,18 @@ export function FarmView() {
 		<View className="relative bg-bgSecondary text-textWhite h-full overflow-hidden font-league-spartan">
 			{/* Background Leaves */}
 			<View className="absolute top-14 right-1 w-50">
-				<SvgImage source={Earnpageleaves2} height={200} width={200} />
+				{Platform.OS === "web" ? (
+					<SvgImage source={Earnpageleaves2} />
+				) : (
+					<Image source={Earnpageleaves2 as ImageSourcePropType} height={200} width={200} />
+				)}
 			</View>
 			<View className="absolute top-2 -right-2 w-40">
-				<SvgImage source={Earnpageleaves} height={200} width={200} />
+				{Platform.OS === "web" ? (
+					<SvgImage source={Earnpageleaves} />
+				) : (
+					<Image source={Earnpageleaves as ImageSourcePropType} height={200} width={200} />
+				)}
 			</View>
 			<View className="absolute top-2 right-5 w-40">
 				<SvgImage source={Earnpagedots} height={200} width={200} />

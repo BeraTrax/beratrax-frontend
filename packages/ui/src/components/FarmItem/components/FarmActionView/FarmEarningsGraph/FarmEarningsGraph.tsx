@@ -327,7 +327,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={simpleAprChartData}
 								style={{
 									data: {
-										stroke: farm.isAutoCompounded ? "#8884d8" : "#90BB62",
+										stroke: farm.isAutoCompounded ? "#8884d8" : "#3B7EE3",
 										strokeWidth: 2,
 									},
 								}}
@@ -349,7 +349,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 								data={autoCompoundedChartData}
 								style={{
 									data: {
-										stroke: farm.isAutoCompounded ? "#90BB62" : "#8884d8",
+										stroke: farm.isAutoCompounded ? "#3B7EE3" : "#8884d8",
 										strokeWidth: 2,
 									},
 								}}
@@ -368,8 +368,8 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 
 							<VictoryDefsWrapper>
 								<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-									<Stop offset="5%" stopColor="#90BB62" stopOpacity="0.3" />
-									<Stop offset="95%" stopColor="#90BB62" stopOpacity="0" />
+									<Stop offset="5%" stopColor="#3B7EE3" stopOpacity="0.3" />
+									<Stop offset="95%" stopColor="#3B7EE3" stopOpacity="0" />
 								</LinearGradient>
 							</VictoryDefsWrapper>
 

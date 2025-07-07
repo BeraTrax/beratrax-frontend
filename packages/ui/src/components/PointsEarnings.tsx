@@ -2,10 +2,11 @@ import { customCommify } from "@beratrax/core/src/utils/common";
 import { useAppSelector } from "@beratrax/core/src/state";
 import ReferralLogo from "@beratrax/core/src/assets/images/referralLogo.png";
 import DailyRateLogo from "@beratrax/core/src/assets/images/dailyRateLogo.png";
+import ReferralBackground from "@beratrax/core/src/assets/images/referralBg.png";
 import { Boosts } from "@beratrax/core/src/state/account/types";
 import { useState } from "react";
 import { useEffect } from "react";
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import { View, Text, Image, ImageSourcePropType, ImageBackground } from "react-native";
 import { GradientText } from "./GradientText";
 
 interface Props {}
@@ -38,25 +39,26 @@ export const PointsEarnings: React.FC<Props> = () => {
 
 	return (
 		<View className={`flex flex-row gap-4 ${stakingPoints ? "gap-5" : ""}`}>
-			<View className="flex-1 rounded-3xl border border-borderDark p-2 bg-[url('/src/assets/images/referralBg.png')] bg-cover bg-center bg-no-repeat">
-				<Image source={ReferralLogo as ImageSourcePropType} alt="Referral Logo" className="mt-[-0.5rem] mb-[0.5rem] w-28 h-28" />
-				<View className="pl-3">
-					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS FROM</Text>
-					<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">STAKING</Text>
-					<Text className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
-						{customCommify(stakingPoints, {
-							minimumFractionDigits: 0,
-							maximumFractionDigits: 2,
-							showDollarSign: false,
-						})}
-					</Text>
-					<GradientText className="text-xs sm:text-lg">x2 Multiplier-Mainnet 🚀</GradientText>
-					{boosts && boosts.includes(Boosts.NFT) && <GradientText>x2 Multiplier - NFT 🚀</GradientText>}
-					{boosts && boosts.includes(Boosts.BETA) && <GradientText>x1.5 Multiplier - BETA 🚀</GradientText>}
-					{boosts && boosts.includes(Boosts.BETA_TESTER) && <GradientText>x2 Multiplier - BETA TESTER 🚀</GradientText>}
+			<ImageBackground source={ReferralBackground as ImageSourcePropType} resizeMode="cover" className="flex-1">
+				<View className="flex-1 rounded-3xl border border-borderDark p-2">
+					<Image source={ReferralLogo as ImageSourcePropType} alt="Referral Logo" className="mt-[-0.5rem] mb-[0.5rem] w-28 h-28" />
+					<View className="pl-3">
+						<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">TOTAL POINTS FROM</Text>
+						<Text className="font-arame-mono font-normal text-base leading-4 text-textWhite">STAKING</Text>
+						<Text className="font-league-spartan font-bold text-textWhite text-3xl leading-[3.75rem]">
+							{customCommify(stakingPoints, {
+								minimumFractionDigits: 0,
+								maximumFractionDigits: 2,
+								showDollarSign: false,
+							})}
+						</Text>
+						<GradientText className="text-xs sm:text-lg">x2 Multiplier-Mainnet 🚀</GradientText>
+						{boosts && boosts.includes(Boosts.NFT) && <GradientText>x2 Multiplier - NFT 🚀</GradientText>}
+						{boosts && boosts.includes(Boosts.BETA) && <GradientText>x1.5 Multiplier - BETA 🚀</GradientText>}
+						{boosts && boosts.includes(Boosts.BETA_TESTER) && <GradientText>x2 Multiplier - BETA TESTER 🚀</GradientText>}
+					</View>
 				</View>
-			</View>
-
+			</ImageBackground>
 			<View
 				// style={{
 				//   clipPath: clipPathValue,

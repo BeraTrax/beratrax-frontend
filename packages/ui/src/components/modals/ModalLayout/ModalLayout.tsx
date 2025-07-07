@@ -39,16 +39,18 @@ export const ModalLayout: FC<IProps> = ({ onClose, children, wrapperClassName = 
 		minHeight: 200, // Minimum height
 	};
 
+	// Fixed backdrop style for proper centering on web
+	const backdropStyle = {
+		...StyleSheet.absoluteFillObject,
+		display: "flex" as const,
+		alignItems: "center" as const,
+		justifyContent: "center" as const,
+	};
+
 	return (
 		<Modal transparent visible={isVisible} onRequestClose={handleClose}>
 			<TouchableWithoutFeedback onPress={handleClose}>
-				<BlurView
-					intensity={30}
-					tint="dark"
-					style={StyleSheet.absoluteFill}
-					className="flex-1 justify-center items-center"
-					experimentalBlurMethod="dimezisBlurView"
-				>
+				<BlurView intensity={30} tint="dark" style={backdropStyle} experimentalBlurMethod="dimezisBlurView">
 					<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
 						<View style={containerStyle} className={containerClass}>
 							{children}

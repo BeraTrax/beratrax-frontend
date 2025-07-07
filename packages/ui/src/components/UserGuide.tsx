@@ -137,37 +137,51 @@ export const UserGuide = () => {
 					<Text className={subTitleStyle}>Step 2: Funding Your Wallet</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
+						<Text className="text-textWhite">
+							BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						Until then, you must either have airdrop funds from Berachain, or bridge them over to your wallet.
+						<Text className="text-textWhite">
+							Until then, you must either have airdrop funds from Berachain, or bridge them over to your wallet.
+						</Text>
 					</BulletPoint>
 
 					<Text className={subTitleStyle}>Step 3: Earn Rewards</Text>
 					<ResponsiveImage source={images.two} aspectRatio={800 / 80} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) &amp; pick which vault you want to deposit into,
-						tap it, and open up the details page.
+						<Text className="text-textWhite">
+							Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) &amp; pick which vault you want to deposit into,
+							tap it, and open up the details page.
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then confirm. That's all it takes!
+						<Text className="text-textWhite">
+							If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then confirm. That's all it takes!
+						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>Each vault displays:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="font-bold text-textWhite">Supported Assets</Text> – (e.g., BERA or HONEY)
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">Supported Assets</Text> – (e.g., BERA or HONEY)
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="font-bold text-textWhite">Current APY</Text> – (estimated yield on our vaults)
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">Current APY</Text> – (estimated yield on our vaults)
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="font-bold text-textWhite">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
+						</Text>
 					</BulletPoint>
 				</>
 				<HorizontalLine />
@@ -182,17 +196,23 @@ export const UserGuide = () => {
 					<ResponsiveImage source={images.three} aspectRatio={600 / 375} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="font-bold text-textWhite">Your Portfolio</Text> – Track your balances, staked assets, and earnings in
-						real-time.
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">Your Portfolio</Text> – Track your balances, staked assets, and earnings in
+							real-time.
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="font-bold text-textWhite">Transaction History</Text> – Review past deposits, claims, and withdrawals.
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">Transaction History</Text> – Review past deposits, claims, and withdrawals.
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="font-bold text-textWhite">BTX Points</Text> – Monitor your earned{" "}
-						<Text className="font-bold text-textWhite">BTX governance points and BGT staking rewards (coming soon).</Text>
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">BTX Points</Text> – Monitor your earned{" "}
+							<Text className="font-bold text-textWhite">BTX governance points and BGT staking rewards (coming soon).</Text>
+						</Text>
 					</BulletPoint>
 				</>
 				<HorizontalLine />
@@ -286,7 +306,9 @@ export const UserGuide = () => {
 					<Text className={paragraphStyle}>Confirm the transaction — your assets will be unstaked and sent to your wallet.</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="font-bold text-textWhite">BGT &amp; BTX rewards remain in your account</Text>, even after withdrawal.
+						<Text className="text-textWhite">
+							<Text className="font-bold text-textWhite">BGT &amp; BTX rewards remain in your account</Text>, even after withdrawal.
+						</Text>
 					</BulletPoint>
 				</>
 
@@ -450,8 +472,9 @@ export const UserGuide = () => {
 						className="self-center justify-self-center text-center uppercase border border-bgPrimary text-bgSecondary bg-bgPrimary hover:border hover:bg-bgSecondary hover:border-gradientPrimary hover:text-gradientPrimary flex items-center gap-2 px-5 py-4 rounded-lg cursor-pointer mb-1
 									transition-all duration-200 ease-in-out text-xl font-league-spartan"
 					>
-						<View className="flex flex-row items-center">
-							<Text className="font-bold text-textWhite">FULL USER DOCS</Text> <ExternalLinkIcon />
+						<View className="flex flex-row items-center gap-2">
+							<Text className="font-bold text-textWhite">FULL USER DOCS</Text>
+							<ExternalLinkIcon />
 						</View>
 					</Pressable>
 				</View>

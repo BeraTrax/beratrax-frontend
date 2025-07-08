@@ -8,7 +8,6 @@ import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 // Conditionally imported to avoid breaking the Vite web build which can't parse native-only modules.
 const TransakSDK = Platform.OS !== "web" ? require("@transak/react-native-sdk") : null;
 const { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } = TransakSDK || {};
-// import { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } from "@transak/react-native-sdk";
 
 /**
  * Transak Widget Component that renders conditionally for web and mobile.
@@ -69,7 +68,7 @@ const TransakWidget = ({
 										network: "berachain",
 										defaultFiatCurrency: "USD",
 										walletAddress: address,
-										fiatAmount: parseFloat(displayAmount),
+										fiatAmount: displayAmount,
 									} as typeof TransakConfig
 								}
 								onTransakEvent={onTransakEventHandler}

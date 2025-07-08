@@ -44,12 +44,12 @@ export function FarmView() {
 	const platforms = useMemo(() => {
 		const uniquePlatforms = new Map<string, string>();
 		farms.forEach((farm) => {
-			if (farm.originPlatform && farm.platform_logo) {
+			if (farm.originPlatform && farm.platform_logo && !uniquePlatforms.get(farm.originPlatform)) {
 				uniquePlatforms.set(farm.originPlatform, farm.platform_logo);
 			}
-			if (farm.secondary_platform) {
+			if (farm.secondary_platform && !uniquePlatforms.get(farm.secondary_platform)) {
 				// If secondary platform doesn't have a logo, use the primary platform's logo
-				uniquePlatforms.set(farm.secondary_platform, farm.platform_logo || "");
+				uniquePlatforms.set(farm.secondary_platform, farm.secondary_platform_logo || "");
 			}
 		});
 		return Array.from(uniquePlatforms.entries()).sort((a, b) => a[0].localeCompare(b[0]));

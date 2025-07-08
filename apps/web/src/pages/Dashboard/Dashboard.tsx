@@ -14,6 +14,7 @@ import {
 	Vaults as VaultsShared,
 	TokenBalances as TokenBalancesShared,
 	Transactions as TransactionsShared,
+	ClaimAirdrop,
 } from "@beratrax/ui";
 function Dashboard() {
 	const { currentWallet, connectWallet } = useWallet();
@@ -28,6 +29,7 @@ function Dashboard() {
 			<div className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 				{currentWallet ? (
 					<>
+						<ClaimAirdrop />
 						{/* <TraxReferralEarning /> */}
 						<PointsEarnings />
 						{/* <ReferralLinkOld /> */}

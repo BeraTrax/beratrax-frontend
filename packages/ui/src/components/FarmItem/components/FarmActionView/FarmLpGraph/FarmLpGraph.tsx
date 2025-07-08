@@ -5,6 +5,7 @@ import { useLp } from "@beratrax/core/src/hooks";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { Pressable, Text, View, Platform, Dimensions } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
+import Colors from "@beratrax/typescript-config/Colors";
 
 // Import victory libraries based on platform
 import * as Victory from "victory";
@@ -267,7 +268,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 												}}
 												style={[
 													{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // First line style
-													{ fontSize: 14, fontWeight: "bold", fill: "#90BB62", textAnchor: "middle" }, // Second line style
+													{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // Second line style
 												]}
 												dy={-10}
 												centerOffset={{ x: 0 }}
@@ -302,7 +303,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									data={chartData}
 									style={{
 										data: {
-											stroke: "#90BB62",
+											stroke: Colors.buttonPrimary,
 											strokeWidth: 2,
 										},
 									}}
@@ -310,8 +311,8 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 
 								<VictoryDefsWrapper>
 									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-										<Stop offset="5%" stopColor="#90BB62" stopOpacity="0.3" />
-										<Stop offset="95%" stopColor="#90BB62" stopOpacity="0" />
+										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
+										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 

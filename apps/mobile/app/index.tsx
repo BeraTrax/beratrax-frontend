@@ -4,7 +4,7 @@ import "@expo/metro-runtime";
 import "react-native-get-random-values";
 import { ScrollView, View, Text } from "react-native";
 import { lazy, Suspense } from "react";
-import { WalletAndEarnings, EmptyComponent } from "@beratrax/ui";
+import { WalletAndEarnings, EmptyComponent, ClaimAirdrop } from "@beratrax/ui";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
 // Lazy load components
 const PointsEarnings = lazy(() => import("@beratrax/ui").then((module) => ({ default: module.PointsEarnings })));
@@ -23,6 +23,7 @@ const Dashboard = () => {
 				<View className="flex flex-col mx-4 gap-y-4 mt-4 mb-32">
 					{currentWallet ? (
 						<>
+							<ClaimAirdrop />
 							<Suspense fallback={<Text>Loading...</Text>}>
 								<PointsEarnings />
 							</Suspense>

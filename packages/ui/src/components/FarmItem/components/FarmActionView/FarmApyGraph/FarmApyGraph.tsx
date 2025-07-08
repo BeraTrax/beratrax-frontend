@@ -12,6 +12,7 @@ import * as VictoryNative from "victory-native";
 import { LinearGradient, Stop } from "react-native-svg";
 import { Defs } from "react-native-svg";
 import { customCommify } from "@beratrax/core/src/utils/common";
+import Colors from "@beratrax/typescript-config/Colors";
 
 // Create a wrapper component to filter out stringMap prop
 const VictoryDefsWrapper = (props: any) => {
@@ -279,7 +280,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 												? underlyingAprChartData.find((d) => d.x === datum.x)?.y || 0
 												: datum.y || 0;
 
-											return `${datum.x}${farm.isAutoCompounded ? `\nBeraTrax APY : $${customCommify(beratraxApy.toFixed(2))}` : ""}\nUnderlying APR : $${customCommify(underlyingApr.toFixed(2))}`;
+											return `${datum.x}${farm.isAutoCompounded ? `\nBeraTrax APY : ${beratraxApy.toFixed(2)}%` : ""}\nUnderlying APR : ${underlyingApr.toFixed(2)}%`;
 										}}
 										labelComponent={
 											<VictoryTooltip
@@ -295,8 +296,8 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 												}}
 												style={[
 													{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // Date
-													{ fontSize: 14, fontWeight: "bold", fill: "#90BB62", textAnchor: "middle" }, // BeraTrax APY
-													{ fontSize: 14, fontWeight: "bold", fill: "#8884d8", textAnchor: "middle" }, // Underlying APR
+													{ fontSize: 14, fontWeight: "bold", fill: Colors.textPrimary, textAnchor: "middle" }, // BeraTrax APY
+													{ fontSize: 14, fontWeight: "bold", fill: Colors.textSecondary, textAnchor: "middle" }, // Underlying APR
 												]}
 												dy={-10}
 												centerOffset={{ x: 0 }}
@@ -331,7 +332,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 									data={underlyingAprChartData}
 									style={{
 										data: {
-											stroke: farm.isAutoCompounded ? "#8884d8" : "#90BB62",
+											stroke: farm.isAutoCompounded ? Colors.textSecondary : Colors.textPrimary,
 											strokeWidth: 2,
 										},
 									}}
@@ -353,7 +354,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 									data={beratraxApyChartData}
 									style={{
 										data: {
-											stroke: farm.isAutoCompounded ? "#90BB62" : "#8884d8",
+											stroke: farm.isAutoCompounded ? Colors.textPrimary : Colors.textSecondary,
 											strokeWidth: 2,
 										},
 									}}
@@ -372,15 +373,15 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 
 								<VictoryDefsWrapper>
 									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-										<Stop offset="5%" stopColor="#90BB62" stopOpacity="0.3" />
-										<Stop offset="95%" stopColor="#90BB62" stopOpacity="0" />
+										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
+										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 
 								<VictoryDefsWrapper>
 									<LinearGradient id="colorBeraTraxApy" x1="0" y1="0" x2="0" y2="1">
-										<Stop offset="5%" stopColor="#8884d8" stopOpacity="0.3" />
-										<Stop offset="95%" stopColor="#8884d8" stopOpacity="0" />
+										<Stop offset="5%" stopColor={Colors.textSecondary} stopOpacity="0.3" />
+										<Stop offset="95%" stopColor={Colors.textSecondary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 							</VictoryChart>

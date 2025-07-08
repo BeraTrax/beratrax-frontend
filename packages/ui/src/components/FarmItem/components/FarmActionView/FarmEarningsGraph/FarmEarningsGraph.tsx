@@ -8,6 +8,7 @@ import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { customCommify, formatCurrency } from "@beratrax/core/src/utils/common";
 import { View, Text, Platform, Dimensions, TextInput } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
+import Colors from "@beratrax/typescript-config/Colors";
 
 // Import victory libraries based on platform
 import * as Victory from "victory";
@@ -291,8 +292,8 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 											}}
 											style={[
 												{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // Date
-												{ fontSize: 14, fontWeight: "bold", fill: "#90BB62", textAnchor: "middle" }, // BeraTrax APY
-												{ fontSize: 14, fontWeight: "bold", fill: "#8884d8", textAnchor: "middle" }, // Underlying APR
+												{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // BeraTrax APY
+												{ fontSize: 14, fontWeight: "bold", fill: Colors.textSecondary, textAnchor: "middle" }, // Underlying APR
 											]}
 											dy={-10}
 											centerOffset={{ x: 0 }}

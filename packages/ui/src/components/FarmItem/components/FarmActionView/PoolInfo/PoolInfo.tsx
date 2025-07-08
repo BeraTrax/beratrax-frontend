@@ -165,7 +165,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 					<Text className="text-textWhite mt-4 text-[16px] font-light font-league-spartan">
 						You can see the underlying vault on the platform{" "}
 						<Pressable onPress={() => Linking.openURL(source!)} className="text-gradientPrimary uppercase hover:underline">
-							here
+							<Text className="text-gradientPrimary uppercase hover:underline">here</Text>
 						</Pressable>
 						.
 					</Text>

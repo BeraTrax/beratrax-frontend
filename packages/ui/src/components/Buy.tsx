@@ -6,9 +6,9 @@ import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 
 // Transak React Native SDK is only available on mobile platforms.
 // Conditionally imported to avoid breaking the Vite web build which can't parse native-only modules.
-// const TransakSDK = Platform.OS !== "web" ? require("@transak/react-native-sdk") : null;
-// const { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } = TransakSDK || {};
-import { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } from "@transak/react-native-sdk";
+const TransakSDK = Platform.OS !== "web" ? require("@transak/react-native-sdk") : null;
+const { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } = TransakSDK || {};
+// import { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } from "@transak/react-native-sdk";
 
 /**
  * Transak Widget Component that renders conditionally for web and mobile.
@@ -22,7 +22,7 @@ interface TransakWidgetProps {
 	transakUrl: string;
 	displayAmount: string;
 	address: string | undefined;
-	onTransakEventHandler: any;
+	onTransakEventHandler: ((event: typeof EventTypes, data: typeof Order) => void) | null;
 }
 
 const TransakWidget = ({
@@ -70,7 +70,7 @@ const TransakWidget = ({
 										defaultFiatCurrency: "USD",
 										walletAddress: address,
 										fiatAmount: parseFloat(displayAmount),
-									}
+									} as typeof TransakConfig
 								}
 								onTransakEvent={onTransakEventHandler}
 								mediaPlaybackRequiresUserAction={false}
@@ -94,7 +94,7 @@ export const Buy = (): React.JSX.Element => {
 
 	const onTransakEventHandler =
 		Platform.OS !== "web"
-			? (event: any, data: any) => {
+			? (event: typeof EventTypes, data: typeof Order) => {
 					switch (event) {
 						case Events.ORDER_CREATED:
 							console.log(event, data);

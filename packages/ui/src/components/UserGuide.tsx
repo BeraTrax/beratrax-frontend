@@ -50,7 +50,7 @@ function isPlatformWeb() {
 const sectionTitleStyle = `font-league-spartan ${isPlatformWeb() ? "text-4xl" : "text-[23px]"} mt-4 mb-2 text-textWhite leading-none uppercase`;
 const subTitleStyle = `font-league-spartan ${isPlatformWeb() ? "text-[28px]" : "text-[20px]"} mt-2 mb-1 text-textWhite leading-none`;
 const paragraphStyle = `font-league-spartan ${isPlatformWeb() ? "text-[20px]" : "text-[16px]"} text-textWhite font-light`;
-const linkStyle = "text-[#72b21f] underline";
+const linkStyle = "text-[#2d72da] underline";
 
 const ResponsiveImage = ({ source, aspectRatio = 1.4 }: { source: ImageSourcePropType; aspectRatio?: number }) => {
 	const screenWidth = Dimensions.get("window").width;

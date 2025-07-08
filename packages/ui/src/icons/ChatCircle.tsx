@@ -1,11 +1,12 @@
 import { Path } from "react-native-svg";
 import { withIconBehavior } from "./withIconBehavior";
+import Colors from "@beratrax/typescript-config/Colors";
 
 const ChatCircleIconContent = () => (
 	<>
 		<Path stroke="none" d="M0 0h24v24H0z" fill="none" />
 		<Path
-			stroke="#A0FF3B"
+			stroke={Colors.gradientLight}
 			strokeWidth={3}
 			d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"
 		/>

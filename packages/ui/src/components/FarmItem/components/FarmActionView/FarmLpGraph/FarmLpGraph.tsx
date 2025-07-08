@@ -27,7 +27,7 @@ const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick
 	return (
 		<Pressable onPress={onClick}>
 			<Text
-				className={` px-5 py-2 font-light rounded-2xl  text-[16px] ${
+				className={` px-5 py-2 font-light rounded-2xl  text-[16px] font-league-spartan ${
 					isSelected ? "bg-gradientSecondary text-textPrimary" : "bg-bgDark text-textWhite"
 				}`}
 			>
@@ -334,6 +334,11 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 				{graphFiltersList.map((filter, index) => (
 					<GraphFilter key={index} text={filter.text} isSelected={graphFilter === filter.type} onClick={filterCallbacks[filter.type]} />
 				))}
+			</View>
+			<View>
+				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
+					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+				</Text>
 			</View>
 		</View>
 	);

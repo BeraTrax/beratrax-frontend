@@ -75,11 +75,11 @@ const TokenEarning = ({
 		<View className="flex flex-row justify-between flex-1 mx-2">
 			<View className="flex flex-row items-center gap-x-3">
 				<View className="flex flex-col">
-					<Text className="text-blue-500 text-lg font-medium flex items-center gap-x-2">
+					<Text className="text-blue-500 text-lg font-medium flex items-center gap-x-2 font-league-spartan">
 						${customCommify(totalEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
 					</Text>
 					{lastTransaction?.date && typeof lastTransaction.date === "string" && (
-						<Text className="text-textSecondary text-sm">
+						<Text className="text-textSecondary text-sm font-league-spartan">
 							In{" "}
 							{(() => {
 								const timeDiffMs = Date.now() - new Date(lastTransaction.date).getTime();
@@ -95,15 +95,14 @@ const TokenEarning = ({
 									return `${Math.max(minutes, 1)} ${minutes === 1 ? "minute" : "minutes"}`;
 								}
 							})()}
-						</Text>
-					)}
-					{changeInAssetsValue > 0 && (
-						<Text className="text-textSecondary text-sm mt-1">
-							{customCommify(Number(changeInAssetsValue), {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 5,
-							})}{" "}
-							{farm.name}
+							{changeInAssetsValue > 0 && (
+								<Text className="text-textSecondary text-sm mt-1 font-league-spartan">
+									{` (+${customCommify(Number(changeInAssetsValue), {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 5,
+									})} ${farm.name})`}
+								</Text>
+							)}
 						</Text>
 					)}
 				</View>
@@ -270,10 +269,12 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 					) : (
 						<>
 							<View className="flex flex-row items-center gap-x-3">
-								<Text className="text-textWhite text-lg font-medium">${stakedTokenValueUsd ? formatCurrency(stakedTokenValueUsd) : 0}</Text>
+								<Text className="text-textWhite text-lg font-medium font-league-spartan">
+									${stakedTokenValueUsd ? formatCurrency(stakedTokenValueUsd) : 0}
+								</Text>
 							</View>
 							<View className="flex flex-row items-center gap-x-2 mt-2">
-								<Text className="text-textSecondary text-[16px] font-light">
+								<Text className="text-textSecondary text-[16px] font-light font-league-spartan">
 									{stakedTokenValueFormatted ? stakedTokenValueFormatted?.toFixed(3) : 0} {farm.name}
 								</Text>
 							</View>

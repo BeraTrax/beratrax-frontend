@@ -251,7 +251,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 						</View>
 					</View>
 				</View>
-				<Text className="text-sm text-textSecondary">Enter investment amount and period to see projection</Text>
+				<Text className="text-sm text-textSecondary font-league-spartan">Enter investment amount and period to see projection</Text>
 			</View>
 			<View className="mt-4 w-full h-80">
 				{isApyLoading ? (
@@ -387,7 +387,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 			<View
 				className={`text-center ${screenWidth >= 768 ? "absolute bottom-0 left-0 right-0 mb-4" : screenWidth >= 576 ? "mt-6" : "mt-12"}`}
 			>
-				<Text className="text-sm text-center text-textSecondary">
+				<Text className="text-sm text-center text-textSecondary font-league-spartan">
 					{months}-Month Projection of ${formatCurrency(investmentAmount)} Investment
 				</Text>
 			</View>

@@ -47,13 +47,13 @@ const StatInfo = ({
 				iconUrl
 			)}
 			<View className={"flex-1"}>
-				<Text className="text-textWhite text-lg font-medium">{title}</Text>
+				<Text className="text-textWhite text-lg font-medium font-league-spartan">{title}</Text>
 				{subtitle && <Text className="text-textSecondary text-[16px] font-light">{subtitle}</Text>}
 			</View>
 			{isStatLoading ? (
 				<View className="h-7 w-32 bg-gray-700 rounded animate-pulse" />
 			) : (
-				<Text className="text-textWhite text-lg font-medium">{value}</Text>
+				<Text className="text-textWhite text-lg font-medium font-league-spartan">{value}</Text>
 			)}
 		</View>
 	);
@@ -116,10 +116,10 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 			{description && (
 				<>
 					<Text className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">ABOUT</Text>
-					<Text className="text-textWhite mt-2 text-[16px] font-light">{description}</Text>
+					<Text className="text-textWhite mt-2 text-[16px] font-light font-league-spartan">{description}</Text>
 					{isSyntheticFarm && (
 						<>
-							<Text className="text-textWhite mt-2 text-[16px] font-light">
+							<Text className="text-textWhite mt-2 text-[16px] font-light font-league-spartan">
 								Synthetic Reward Vaults are deposits into Rewards Vaults where the BGT is always claimed as a BGT liquid wrapper and
 								autocompound. BeraTrax always claims the BGT wrapper that is the highest price that minute. The current wrappers that are
 								supported for compounding:
@@ -162,7 +162,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							</View>
 						</>
 					)}
-					<Text className="text-textWhite mt-4 text-[16px] font-light">
+					<Text className="text-textWhite mt-4 text-[16px] font-light font-league-spartan">
 						You can see the underlying vault on the platform{" "}
 						<Pressable onPress={() => Linking.openURL(source!)} className="text-gradientPrimary uppercase hover:underline">
 							here
@@ -196,11 +196,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 											{token2Image && <Image source={{ uri: token2Image }} alt={token2} className="w-5 h-5 relative z-20" />}
 											{token3Image && <Image source={{ uri: token3Image }} alt={token3} className="w-5 h-5 relative z-10" />}
 										</View>
-										<Text className="text-textWhite font-medium">LP Trading fees</Text>
+										<Text className="text-textWhite text-base font-league-spartan">LP Trading fees</Text>
 									</View>
 								</View>
 								<View className="p-4">
-									<Text className="text-gradientPrimary font-bold text-right">Included in APY</Text>
+									<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Included in APY</Text>
 								</View>
 							</View>
 						)}
@@ -212,19 +212,19 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 										{originPlatform === FarmOriginPlatform.Infrared.name && tokenType === FarmType.advanced ? (
 											<>
 												<Image source={{ uri: ibgtLogo }} accessibilityLabel="iBGT" className="w-5 h-5" />
-												<Text className="text-textWhite font-medium">iBGT</Text>
+												<Text className="text-textWhite text-base font-league-spartan">iBGT</Text>
 											</>
 										) : originPlatform === FarmOriginPlatform.Burrbear.name || originPlatform === FarmOriginPlatform.BeraPaw.name ? (
 											<>
 												{farm.id === 22 ? (
 													<>
 														<Image source={{ uri: wberaLogo }} accessibilityLabel="WBERA" className="w-5 h-5" />
-														<Text className="text-textWhite font-medium">WBERA</Text>
+														<Text className="text-textWhite text-base font-league-spartan">WBERA</Text>
 													</>
 												) : (
 													<>
 														<Image source={{ uri: lbgtLogo }} accessibilityLabel="LBGT" className="w-5 h-5" />
-														<Text className="text-textWhite font-medium">LBGT</Text>
+														<Text className="text-textWhite text-base font-league-spartan">LBGT</Text>
 													</>
 												)}
 											</>
@@ -233,12 +233,12 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 												{farm.id === 45 ? (
 													<>
 														<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
-														<Text className="text-textWhite font-medium">TRAX</Text>
+														<Text className="text-textWhite text-base font-league-spartan">TRAX</Text>
 													</>
 												) : (
 													<>
 														<Image source={{ uri: honeyLogo }} accessibilityLabel="HONEY" className="w-5 h-5" />
-														<Text className="text-textWhite font-medium">HONEY</Text>
+														<Text className="text-textWhite text-base font-league-spartan">HONEY</Text>
 													</>
 												)}
 											</>
@@ -246,7 +246,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 									</View>
 								</View>
 								<View className="p-4">
-									<Text className="text-gradientPrimary font-bold text-right">Autocompounded to APY</Text>
+									<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Autocompounded to APY</Text>
 								</View>
 							</View>
 						)}
@@ -256,11 +256,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 								<View className="flex-1 p-4">
 									<View className="flex-row items-center gap-2">
 										<Image source={{ uri: FarmOriginPlatform.BeraPaw.logo }} accessibilityLabel="Berapaw" className="w-5 h-5" />
-										<Text className="text-textWhite font-medium">pPAW</Text>
+										<Text className="text-textWhite text-base font-league-spartan">pPAW</Text>
 									</View>
 								</View>
 								<View className="p-4">
-									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+									<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Future claim</Text>
 								</View>
 							</View>
 						)}
@@ -270,11 +270,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 								<View className="flex-1 p-4">
 									<View className="flex-row items-center gap-2">
 										<Image source={{ uri: FarmOriginPlatform.Bearn.logo }} accessibilityLabel="Bearn" className="w-5 h-5" />
-										<Text className="text-textWhite font-medium">Bearn airdrop</Text>
+										<Text className="text-textWhite text-base font-league-spartan">Bearn airdrop</Text>
 									</View>
 								</View>
 								<View className="p-4">
-									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+									<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Future claim</Text>
 								</View>
 							</View>
 						)}
@@ -284,11 +284,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 								<View className="flex-1 p-4">
 									<View className="flex-row items-center gap-2">
 										<Image source={{ uri: FarmOriginPlatform.Infrared.logo }} accessibilityLabel="Infrared" className="w-5 h-5" />
-										<Text className="text-textWhite font-medium">Infrared airdrop</Text>
+										<Text className="text-textWhite text-base font-league-spartan">Infrared airdrop</Text>
 									</View>
 								</View>
 								<View className="p-4">
-									<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+									<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Future claim</Text>
 								</View>
 							</View>
 						)}
@@ -300,11 +300,13 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 										<View className="flex-1 p-4">
 											<View className="flex-row items-center gap-2">
 												<Image source={{ uri: smileeLogo }} accessibilityLabel="Smilee" className="w-5 h-5" />
-												<Text className="text-textWhite font-medium">Love Score airdrop</Text>
+												<Text className="text-textWhite text-base font-league-spartan">Love Score airdrop</Text>
 											</View>
 										</View>
 										<View className="p-4">
-											<Text className="text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</Text>
+											<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">
+												Non-compounding APR (Future Claim)
+											</Text>
 										</View>
 									</View>
 								)}
@@ -312,22 +314,26 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 									<View className="flex-1 p-4">
 										<View className="flex-row items-center gap-2">
 											<Image source={{ uri: FarmOriginPlatform.Burrbear.logo }} accessibilityLabel="Burrbear" className="w-5 h-5" />
-											<Text className="text-textWhite font-medium">BURR Points (Burrbear Airdrop)</Text>
+											<Text className="text-textWhite text-base font-league-spartan">BURR Points (Burrbear Airdrop)</Text>
 										</View>
 									</View>
 									<View className="p-4">
-										<Text className="text-gradientPrimary font-bold text-right">Non-compounding APR (Future Claim)</Text>
+										<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">
+											Non-compounding APR (Future Claim)
+										</Text>
 									</View>
 								</View>
 								<View className="flex-row border-b border-gray-700">
 									<View className="flex-1 p-4">
 										<View className="flex-row items-center gap-2">
 											<Image source={{ uri: FarmOriginPlatform.Beraborrow.logo }} accessibilityLabel="Beraborrow" className="w-5 h-5" />
-											<Text className="text-textWhite font-medium">Pollen Points (Beraborrow Airdrop)</Text>
+											<Text className="text-textWhite text-base font-league-spartan">Pollen Points (Beraborrow Airdrop)</Text>
 										</View>
 									</View>
 									<View className="p-4">
-										<Text className="text-gradientPrimary font-bold text-right">4x Pollen Points (Future Claim)</Text>
+										<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">
+											4x Pollen Points (Future Claim)
+										</Text>
 									</View>
 								</View>
 							</>
@@ -337,11 +343,11 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 							<View className="flex-1 p-4">
 								<View className="flex-row items-center gap-2">
 									<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
-									<Text className="text-textWhite font-medium">BTX Points (BeraTrax Airdrop)</Text>
+									<Text className="text-textWhite text-base font-league-spartan">BTX Points (BeraTrax Airdrop)</Text>
 								</View>
 							</View>
 							<View className="p-4">
-								<Text className="text-gradientPrimary font-bold text-right">Future claim</Text>
+								<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">Future claim</Text>
 							</View>
 						</View>
 					</View>

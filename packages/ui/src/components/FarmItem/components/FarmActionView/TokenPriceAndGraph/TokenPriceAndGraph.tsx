@@ -25,14 +25,18 @@ const PriceLoadingSkeleton = () => {
 
 type TabType = "price" | "tvl" | "apy" | "earnings";
 
-const MemoizedText = memo(({ text, color }: { text: string; color: string }) => <Text style={{ color }}>{text}</Text>);
+const MemoizedText = memo(({ text, color }: { text: string; color: string }) => (
+	<Text style={{ color }} className="text-base font-league-spartan">
+		{text}
+	</Text>
+));
 
 const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: string; isActive: boolean; onPress: () => void }) => {
 	const buttonStyle = useMemo(
 		() => ({
 			borderRadius: 7,
-			paddingVertical: 7,
-			paddingHorizontal: 14,
+			paddingVertical: 8,
+			paddingHorizontal: 16,
 			fontWeight: "500",
 			color: isActive ? "#FFFFFF" : "#878b82",
 		}),
@@ -42,7 +46,7 @@ const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: 
 	const textColor = isActive ? "#FFFFFF" : "#878b82";
 
 	return (
-		<Pressable onPress={onPress} style={buttonStyle}>
+		<Pressable onPress={onPress} style={buttonStyle} className={`${isActive ? "bg-gradientSecondary" : ""}`}>
 			<MemoizedText text={label} color={textColor} />
 		</Pressable>
 	);

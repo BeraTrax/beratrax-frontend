@@ -1,7 +1,7 @@
 import logo from "@beratrax/core/src/assets/images/logo.png";
 import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
-// import { AiOutlineExport } from "react-icons/ai";
-// import { HiDocumentText } from "react-icons/hi";
+import { AiOutlineExport } from "react-icons/ai";
+import { HiDocumentText } from "react-icons/hi";
 import { ImStatsDots } from "react-icons/im";
 import { FaCoins } from "react-icons/fa6";
 import { IoIosFlask } from "react-icons/io";
@@ -44,13 +44,13 @@ function Sidebar() {
 			path: RoutesPaths.Buy,
 			target: undefined,
 		},
-		// {
-		// 	title: "User Guide",
-		// 	icon: <HiDocumentText size={18} />,
-		// 	iconRight: <AiOutlineExport size={12} />,
-		// 	path: RoutesPaths.UserGuide,
-		// 	target: undefined,
-		// },
+		{
+			title: "User Guide",
+			icon: <HiDocumentText size={18} />,
+			iconRight: <AiOutlineExport size={12} />,
+			path: RoutesPaths.UserGuide,
+			target: undefined,
+		},
 		{
 			title: "Stats",
 			icon: <ImStatsDots size={15} />,

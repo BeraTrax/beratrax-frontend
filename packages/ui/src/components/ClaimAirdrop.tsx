@@ -1,7 +1,10 @@
 import React from "react";
 import { View, Text, Pressable, ScrollView, Linking } from "react-native";
+import useAirdrop from "@beratrax/core/src/hooks/useAirdrop";
 
 export const ClaimAirdrop: React.FC = () => {
+	const { shouldRenderAirdropSection } = useAirdrop({ type: "regular" });
+	const { shouldRenderAirdropSection: shouldRenderAdditionalAirdropSection } = useAirdrop({ type: "additional" });
 	const handleClaimAirdrop = async () => {
 		try {
 			const url = "https://legacy.beratrax.com";
@@ -16,6 +19,10 @@ export const ClaimAirdrop: React.FC = () => {
 			console.error("Error opening URL:", error);
 		}
 	};
+
+	if (!shouldRenderAirdropSection && !shouldRenderAdditionalAirdropSection) {
+		return null;
+	}
 
 	return (
 		<ScrollView

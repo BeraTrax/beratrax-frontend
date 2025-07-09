@@ -13,3 +13,6 @@ export * from "./FarmItem/components/FarmActionView/FarmActionView";
 export * from "./FarmView/FarmView";
 export * from "./Buy";
 export * from "./ClaimAirdrop";
+export * from "./TraxAirdrop/AdditionalAirdropClaim";
+export * from "./TraxAirdrop/AirdropClaim";
+export * from "./TraxAirdrop/TraxAirdropVault";

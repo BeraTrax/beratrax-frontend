@@ -5,6 +5,17 @@ import { Apys } from "./../state/apys/types";
 import { Balances } from "./../state/tokens/types";
 import { FarmType } from "./enums";
 
+export type AirdropType = {
+	isClaimed: boolean;
+	isInitialLoading: boolean;
+	stakeInfo: string;
+	pendingRewards: string;
+	isLoading: boolean;
+	isWithdrawLoading: boolean;
+	isClaimRewardsLoading: boolean;
+	isStakeLoading: boolean;
+};
+
 export interface FarmDetails extends PoolDef {
 	userVaultBalance: number;
 	totalVaultBalance: number;

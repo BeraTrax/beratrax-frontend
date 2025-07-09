@@ -15,4 +15,7 @@ const EarnIconContent = () => (
 	</>
 );
 
-export const EarnIcon = withIconBehavior(EarnIconContent);
+const EarnIconWithCustomViewBox = withIconBehavior(EarnIconContent);
+
+// Create a wrapper that overrides the viewBox for this specific icon
+export const EarnIcon = (props: any) => <EarnIconWithCustomViewBox viewBox="0 0 24 24" {...props} />;

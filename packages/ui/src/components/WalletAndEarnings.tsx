@@ -295,8 +295,8 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 												</Text>
 											</TouchableOpacity>
 											{showCopyFeedback && (
-												<View className="absolute left-1/2 -translate-x-1/2 -bottom-12 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center">
-													<Text className="text-white">Address copied!</Text>
+												<View className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center whitespace-nowrap">
+													<Text className="text-white whitespace-nowrap">Address copied!</Text>
 												</View>
 											)}
 										</View>

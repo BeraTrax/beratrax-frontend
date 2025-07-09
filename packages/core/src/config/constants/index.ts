@@ -43,6 +43,8 @@ export const defaultChainId = CHAIN_ID.BERACHAIN; // Berachain
 export const defaultNetworkName = "berachain";
 export const REACT_APP_GA_MEASUREMENT_ID = "G-60G0YWYR4G";
 export const VAULT_NEW_DURATION = 5 * 24 * 60 * 60; // 5 days
+export const TRAX_TOKEN_ADDRESS = "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8";
+export const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 // Update environment variable access to use the utility function
 export const [walletConnectProjectId, web3authClientId, productionTransakKey, stagingTransakKey, HOLYHELD_API_KEY, nodeEnv, IS_LEGACY] = [

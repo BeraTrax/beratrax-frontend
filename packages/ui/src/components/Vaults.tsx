@@ -15,6 +15,9 @@ import { GradientText } from "./GradientText";
 import { useWallet as importedUseWallet } from "@beratrax/core/src/hooks";
 import VaultItem from "./VaultItem";
 import { ReloadIcon } from "../icons/Reload";
+import { TraxAirdropVault } from "@beratrax/ui/src/components/TraxAirdrop/TraxAirdropVault";
+import { TraxSeason3AirdropVault } from "@beratrax/ui/src/components/TraxAirdrop/TraxSeason3AirdropVault";
+import { useAppSelector } from "@beratrax/core/src/state";
 
 export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 	// const dispatch = useAppDispatch();
@@ -38,6 +41,12 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 	const [rewardsVaultsData, setRewardsVaultsData] = useState<PoolDef[]>([]);
 	const [rewardsUpdateTrigger, setRewardsUpdateTrigger] = useState(0);
 	const [userBTXStake, setUserBTXStake] = useState<bigint>(0n);
+
+	// Get airdrop state to check if user has staked TRAX
+	const airdropState = useAppSelector((state) => state.account.airdrop);
+	const additionalAirdropState = useAppSelector((state) => state.account.additionalAirdrop);
+	const hasStakedTrax = Boolean(airdropState?.stakeInfo && BigInt(airdropState.stakeInfo) > 0n);
+	const hasStakedAdditionalTrax = Boolean(additionalAirdropState?.stakeInfo && BigInt(additionalAirdropState.stakeInfo) > 0n);
 
 	const publicClient = getPublicClient?.(CHAIN_ID.BERACHAIN);
 
@@ -142,6 +151,8 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 				{!isLoading ? (
 					vaults.length > 0 ? (
 						<View className="flex flex-wrap flex-row gap-4">
+							{hasStakedTrax && <TraxAirdropVault />}
+							{hasStakedAdditionalTrax && <TraxSeason3AirdropVault />}
 							{vaults
 								.filter((vault) => !vault.isUpcoming)
 								.map((vault) => (

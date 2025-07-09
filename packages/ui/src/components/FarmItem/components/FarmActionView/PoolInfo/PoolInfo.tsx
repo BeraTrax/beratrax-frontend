@@ -107,7 +107,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 	const wberaLogo = tokenNamesAndImages["0x6969696969696969696969696969696969696969"]?.logos[0];
 	const ibgtLogo = tokenNamesAndImages["0xac03CABA51e17c86c921E1f6CBFBdC91F8BB2E6b"]?.logos[0];
 	const lbgtLogo = tokenNamesAndImages["0xBaadCC2962417C01Af99fb2B7C75706B9bd6Babe"]?.logos[0];
-	const smileeLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/assets/images/smilee.png";
+	const smileeLogo = "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/smilee/logo.png";
 
 	const { width } = useWindowDimensions();
 

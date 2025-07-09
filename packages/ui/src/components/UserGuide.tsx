@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import userguideimagefive from "@beratrax/core/src/assets/images/userguideimagefive.png";
-import userguideimagefour from "@beratrax/core/src/assets/images/userguideimagefour.jpg";
+import userguideimagefour from "@beratrax/core/src/assets/images/userguideimagefour.png";
 import userguideimageone from "@beratrax/core/src/assets/images/userguideimageone.png";
 import userguideimagesix from "@beratrax/core/src/assets/images/userguideimagesix.png";
 import userguideimagethree from "@beratrax/core/src/assets/images/userguideimagethree.png";
@@ -52,11 +52,19 @@ const subTitleStyle = `font-league-spartan ${isPlatformWeb() ? "text-[28px]" : "
 const paragraphStyle = `font-league-spartan ${isPlatformWeb() ? "text-[20px]" : "text-[16px]"} text-textWhite font-light`;
 const linkStyle = "text-[#2d72da] underline";
 
-const ResponsiveImage = ({ source, aspectRatio = 1.4 }: { source: ImageSourcePropType; aspectRatio?: number }) => {
+const ResponsiveImage = ({
+	source,
+	aspectRatio = 1.4,
+	width: customWidth,
+}: {
+	source: ImageSourcePropType;
+	aspectRatio?: number;
+	width?: number;
+}) => {
 	const screenWidth = Dimensions.get("window").width;
 
 	// calculates the optimal width for the image based on the device's screen width
-	const width = Math.min(screenWidth - 40, 600);
+	const width = customWidth ?? Math.min(screenWidth - 40, 600);
 
 	return (
 		<View className="w-full max-w-full overflow-hidden items-center my-4">
@@ -137,49 +145,49 @@ export const UserGuide = () => {
 					<Text className={subTitleStyle}>Step 2: Funding Your Wallet</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							Until then, you must either have airdrop funds from Berachain, or bridge them over to your wallet.
 						</Text>
 					</BulletPoint>
 
 					<Text className={subTitleStyle}>Step 3: Earn Rewards</Text>
-					<ResponsiveImage source={images.two} aspectRatio={800 / 80} />
+					<ResponsiveImage source={images.two} aspectRatio={800 / 80} width={1000} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							Go to the "Earn" tab a the bottom of your screen (or on the side on desktop) &amp; pick which vault you want to deposit into,
 							tap it, and open up the details page.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							If you wish to deposit, just tap deposit, type in your deposit amount (or tap "Max") and then confirm. That's all it takes!
 						</Text>
 					</BulletPoint>
 
-					<Text className={paragraphStyle}>Each vault displays:</Text>
+					<Text className="text-textWhite text-xl font-league-spartan">Each vault displays:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
-							<Text className="font-bold text-textWhite">Supported Assets</Text> – (e.g., BERA or HONEY)
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite text-xl font-league-spartan">Supported Assets</Text> – (e.g., BERA or HONEY)
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Current APY</Text> – (estimated yield on our vaults)
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
 						</Text>
 					</BulletPoint>
@@ -193,23 +201,23 @@ export const UserGuide = () => {
 						After signing in, you'll land on the <Text className="font-bold">BeraTrax Dashboard.</Text>
 					</Text>
 					<Text className={paragraphStyle}>Here's what you'll see:</Text>
-					<ResponsiveImage source={images.three} aspectRatio={600 / 375} />
+					<ResponsiveImage source={images.three} width={700} />
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Your Portfolio</Text> – Track your balances, staked assets, and earnings in
 							real-time.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Transaction History</Text> – Review past deposits, claims, and withdrawals.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">BTX Points</Text> – Monitor your earned{" "}
 							<Text className="font-bold text-textWhite">BTX governance points and BGT staking rewards (coming soon).</Text>
 						</Text>
@@ -227,19 +235,19 @@ export const UserGuide = () => {
 					<Text className={paragraphStyle}>Each vault displays:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Supported Assets</Text> – (e.g., BERA or HONEY)
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Current APY</Text> – (estimated yield on our vaults)
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Bonus Rewards</Text> – (e.g., BGT emissions, partner incentives)
 						</Text>
 					</BulletPoint>
@@ -247,39 +255,41 @@ export const UserGuide = () => {
 					<Text className={subTitleStyle}>Step 2: Depositing Funds</Text>
 
 					<BulletPoint icon={<CircleOneIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Tap on a vault</Text> to see details and performance history.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CircleTwoIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Select your deposit asset</Text> (BeraTrax will auto-convert unsupported assets).
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CircleThreeIcon />}>
-						<Text className="font-bold text-textWhite">Enter the amount you want to stake.</Text>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite">Enter the amount you want to stake.</Text>
+						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CircleFourIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Confirm your deposit</Text> — BeraTrax automates swaps, LP creation, and vault
 							deposits for you!
 						</Text>
 					</BulletPoint>
 
-					<ResponsiveImage source={images.five} aspectRatio={400 / 730} />
+					<ResponsiveImage source={images.five} aspectRatio={400 / 730} width={400} />
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Auto-compounding is enabled by default</Text> — your rewards are continuously
 							reinvested to maximize yield.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Deposits are gas-free</Text> — BeraTrax covers transaction costs for you.
 						</Text>
 					</BulletPoint>
@@ -289,24 +299,34 @@ export const UserGuide = () => {
 				<>
 					<Text className={sectionTitleStyle}>Withdrawing &amp; Managing Funds</Text>
 					<Text className={subTitleStyle}>Step 1: Withdrawing from a Vault</Text>
-					<ResponsiveImage source={images.six} aspectRatio={700 / 150} />
+					<ResponsiveImage source={images.six} aspectRatio={700 / 150} width={900} />
 
-					<Text className={paragraphStyle}>
-						Go to <Text className="font-bold">"My Vaults"</Text> on the Dashboard.
-					</Text>
+					<BulletPoint icon={<CircleOneIcon />}>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							Go to <Text className="font-bold">"My Vaults"</Text> on the Dashboard.
+						</Text>
+					</BulletPoint>
 
-					<Text className={paragraphStyle}>
-						Click the <Text className="font-bold">Withdraw</Text> button next to your staked position.
-					</Text>
+					<BulletPoint icon={<CircleTwoIcon />}>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							Click the <Text className="font-bold">Withdraw</Text> button next to your staked position.
+						</Text>
+					</BulletPoint>
 
-					<Text className={paragraphStyle}>
-						Choose to withdraw <Text className="font-bold">partial or full </Text>funds.
-					</Text>
+					<BulletPoint icon={<CircleThreeIcon />}>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							Choose to withdraw <Text className="font-bold">partial or full </Text>funds.
+						</Text>
+					</BulletPoint>
 
-					<Text className={paragraphStyle}>Confirm the transaction — your assets will be unstaked and sent to your wallet.</Text>
+					<BulletPoint icon={<CircleFourIcon />}>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							Confirm the transaction — your assets will be unstaked and sent to your wallet.
+						</Text>
+					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">BGT &amp; BTX rewards remain in your account</Text>, even after withdrawal.
 						</Text>
 					</BulletPoint>
@@ -322,21 +342,21 @@ export const UserGuide = () => {
 					</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">All vault fees are pooled and used to bribe validators</Text>, increasing BGT
 							emissions for staked users.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							Users can <Text className="font-bold text-textWhite">opt-in to auto-convert BGT into iBGT</Text>, earning{" "}
 							<Text className="font-bold">boosted validator rewards</Text> without extra steps.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">iBGT is liquid</Text>—users can swap, stake, or hold for further rewards.
 						</Text>
 					</BulletPoint>
@@ -353,14 +373,14 @@ export const UserGuide = () => {
 					<Text className={sectionTitleStyle}>Earning BTX Points by Staking &amp; Referring</Text>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">BTX Points</Text>: Earn points for staking in vaults—these points determine your
 							share of the upcoming BeraTrax token airdrop.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
-						<Text className="text-textWhite">
+						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Referrals</Text>: Grab your unique referral link from the Dashboard. Earn the same
 							BTX points as every user you bring into BeraTrax!
 						</Text>
@@ -375,7 +395,9 @@ export const UserGuide = () => {
 					<Text className={sectionTitleStyle}>Frequently Asked Questions (FAQ)</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
-						<Text className="font-bold text-textWhite">What makes BeraTrax different from other DeFi platforms?</Text>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite">What makes BeraTrax different from other DeFi platforms?</Text>
+						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
@@ -385,7 +407,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
-						<Text className="font-bold text-textWhite">Do I need BERA tokens for gas?</Text>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite">Do I need BERA tokens for gas?</Text>
+						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
@@ -393,7 +417,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
-						<Text className="font-bold text-textWhite">How do I claim my BGT and iBGT rewards?</Text>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite">How do I claim my BGT and iBGT rewards?</Text>
+						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
@@ -403,7 +429,9 @@ export const UserGuide = () => {
 					</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
-						<Text className="font-bold text-textWhite">Is BeraTrax safe?</Text>
+						<Text className="text-textWhite text-xl font-league-spartan">
+							<Text className="font-bold text-textWhite">Is BeraTrax safe?</Text>
+						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>

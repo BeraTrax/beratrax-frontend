@@ -161,9 +161,6 @@ export default defineConfig(({ mode }) => {
 				transformMixedEsModules: true,
 				include: [/node_modules/],
 			},
-			rollupOptions: {
-				external: excludeFromWeb.slice(0, 2), // Only the first two items (not expo-router)
-			},
 		},
 		define: {
 			"process.env": JSON.stringify(env),

@@ -3,7 +3,11 @@ import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { isStagging, RAMP_TRANSAK_API_KEY } from "@beratrax/core/src/config/constants";
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
-import { WebView } from "react-native-webview";
+
+// Transak React Native SDK is only available on mobile platforms.
+// Conditionally imported to avoid breaking the Vite web build which can't parse native-only modules.
+const TransakSDK = Platform.OS !== "web" ? require("@transak/react-native-sdk") : null;
+const { Environments, EventTypes, Order, TransakConfig, Events, TransakWebView } = TransakSDK || {};
 
 /**
  * Transak Widget Component that renders conditionally for web and mobile.
@@ -17,9 +21,17 @@ interface TransakWidgetProps {
 	transakUrl: string;
 	displayAmount: string;
 	address: string | undefined;
+	onTransakEventHandler: ((event: typeof EventTypes, data: typeof Order) => void) | null;
 }
 
-const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address }: TransakWidgetProps): JSX.Element | null => {
+const TransakWidget = ({
+	isVisible,
+	onClose,
+	transakUrl,
+	displayAmount,
+	address,
+	onTransakEventHandler,
+}: TransakWidgetProps): JSX.Element | null => {
 	if (!isVisible) return null;
 
 	return (
@@ -46,7 +58,24 @@ const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address 
 							/>
 						</View>
 					) : (
-						<WebView source={{ uri: transakUrl }} enableApplePay allowsInlineMediaPlayback mediaPlaybackRequiresUserAction={false} />
+						TransakWebView && (
+							<TransakWebView
+								transakConfig={
+									{
+										apiKey: RAMP_TRANSAK_API_KEY,
+										environment: Environments.PRODUCTION,
+										cryptoCurrencyCode: "BERA",
+										network: "berachain",
+										defaultFiatCurrency: "USD",
+										walletAddress: address,
+										fiatAmount: displayAmount,
+									} as typeof TransakConfig
+								}
+								onTransakEvent={onTransakEventHandler}
+								mediaPlaybackRequiresUserAction={false}
+								style={{ marginBottom: 50 }}
+							/>
+						)
 					)}
 				</View>
 			</View>
@@ -61,6 +90,25 @@ const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address 
  */
 export const Buy = (): React.JSX.Element => {
 	const { address } = useAccount();
+
+	const onTransakEventHandler =
+		Platform.OS !== "web"
+			? (event: typeof EventTypes, data: typeof Order) => {
+					switch (event) {
+						case Events.ORDER_CREATED:
+							console.log(event, data);
+							break;
+						case Events.ORDER_PROCESSING:
+							console.log(event, data);
+							break;
+						case Events.ORDER_COMPLETED:
+							console.log(event, data);
+							break;
+						default:
+							console.log(event, data);
+					}
+				}
+			: null;
 
 	const presetAmounts = ["20", "50", "100"];
 	const [amount, setAmount] = useState("10");
@@ -115,6 +163,7 @@ export const Buy = (): React.JSX.Element => {
 					transakUrl={transakUrl}
 					displayAmount={displayAmount}
 					address={address}
+					onTransakEventHandler={onTransakEventHandler}
 				/>
 
 				{/* Amount Selection Card */}

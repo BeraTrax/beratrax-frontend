@@ -22,7 +22,7 @@ const optimizeIncludes = [
 ];
 
 // Native-only modules to exclude from web build
-const excludeFromWeb = ["@transak/react-native-sdk", "react-native-inappbrowser-reborn", "expo-router"];
+const excludeFromWeb = ["expo-router"];
 
 // Web-compatible mock for expo-router using react-router-dom
 const createExpoRouterMock = () => `

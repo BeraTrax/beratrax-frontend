@@ -49,15 +49,6 @@ export default {
 					backgroundColor: "#ffffff",
 				},
 			],
-			[
-				"expo-build-properties",
-				{
-					android: {
-						compileSdkVersion: 36,
-						targetSdkVersion: 36,
-					},
-				},
-			],
 			"./queries.js",
 		],
 		experiments: {

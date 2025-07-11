@@ -75,6 +75,66 @@ export interface PoolDef {
 	}[];
 }
 
+// Hardcoded ETF Vault data
+export const ETF_VAULTS: PoolDef[] = [
+	{
+		id: 1004,
+		chainId: CHAIN_ID.BERACHAIN,
+		token_type: "Token",
+		synthetic: true,
+		name: "wBera-Honey-USDT-Honey",
+		url_name: "BTX-TRAX",
+		originPlatform: FarmOriginPlatform.BeraTrax.name,
+		platform: "BeraTrax",
+		platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx-logo.png",
+		secondary_platform_logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/trax-logo.png",
+		source: "#",
+		name1: "BTX",
+		name2: "TRAX",
+		description: "BTX + TRAX ETF vault for exposure to BeraTrax’s core growth.",
+		stableCoin: false,
+		platform_alt: "BeraTrax logo",
+		total_apy: 41.3,
+		rewards_apy: 0,
+		pair1: "BTX",
+		pair2: "TRAX",
+		token1: "0x1234567890123456789012345678901234567890" as any,
+		token2: "0xdddddddddddddddddddddddddddddddddddddddd" as any,
+		zapper_addr: zeroAddress as any,
+		alt1: "BTX logo",
+		alt2: "TRAX logo",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
+		logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
+		logo3: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
+		logo4: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
+		rewards1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx-logo.png",
+		rewards1_alt: "BTX logo",
+		isDeprecated: false,
+		isUpgradable: false,
+		isAutoCompounded: true,
+		isBoosted: true,
+		isCurrentWeeksRewardsVault: false,
+		lp_address: zeroAddress as any,
+		vault_addr: zeroAddress as any,
+		decimals: 18,
+		zap_symbol: "HONEY",
+		createdAt: Math.floor(Date.now() / 1000),
+		priorityOrder: 1,
+		zap_currencies: [
+			{
+				symbol: "HONEY",
+				address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce" as any,
+				decimals: 18,
+			},
+			{
+				symbol: "BERA",
+				address: zeroAddress as any,
+				decimals: 18,
+			},
+		],
+	},
+];
+
 const pools_json: PoolDef[] = [
 	{
 		id: 30,

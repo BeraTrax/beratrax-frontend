@@ -54,7 +54,7 @@ const useAirdrop = (config: AirdropHookConfig): AirdropHookReturn => {
 		} catch (error: any) {
 			console.error(`Failed to fetch ${config.type} airdrop data:`, error);
 		}
-	}, [currentWallet, getClients, dispatch, config.type]);
+	}, [currentWallet, getClients, dispatch, config.type, isSocial]);
 
 	useEffect(() => {
 		fetchData();

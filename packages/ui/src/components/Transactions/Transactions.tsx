@@ -98,7 +98,8 @@ const TransactionDetailsContent: FC<{
 	decimals: any;
 	isMobile?: boolean;
 }> = ({ tx, farm, prices, decimals, isMobile = false }) => {
-	const { type, amountInWei, token, vaultPrice, tokenPrice, netAmount, actualSlippage, fee, returnedAssets, vaultShares } = tx;
+	const { type, amountInWei, token, vaultPrice, tokenPrice, netAmount, actualSlippage, fee, returnedAssets, vaultShares, lpTokenPrice } =
+		tx;
 
 	const filteredReturnedAssets = useMemo(() => {
 		if (!returnedAssets) return [];
@@ -172,15 +173,15 @@ const TransactionDetailsContent: FC<{
 			)}
 
 			{/* LP Received */}
-			{tx.vaultShares !== undefined && (
+			{tx.lpTokens !== undefined && (
 				<View className={`flex flex-row justify-between items-center ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
 					<Text className={`text-textSecondary ${labelClass}`}>LP Received:</Text>
 					<View className="flex flex-col items-end">
 						<Text className={`${valueClass} text-textWhite`}>
-							$ {formatCurrency(Number(toEth(BigInt(tx.vaultShares), decimals[farm.chainId][farm.lp_address])) * (vaultPrice || 0))}
+							$ {formatCurrency(Number(toEth(BigInt(tx.lpTokens), decimals[farm.chainId][farm.lp_address])) * (lpTokenPrice || 0))}
 						</Text>
 						<Text className={`${isMobile ? "text-sm" : "text-xs"} text-textSecondary`}>
-							{formatCurrency(Number(toEth(BigInt(tx.vaultShares), decimals[farm.chainId][farm.lp_address])))} {farm.name}
+							{formatCurrency(Number(toEth(BigInt(tx.lpTokens), decimals[farm.chainId][farm.lp_address])))} {farm.name}
 						</Text>
 					</View>
 				</View>
@@ -190,7 +191,7 @@ const TransactionDetailsContent: FC<{
 			<View className={`flex flex-row justify-between items-start ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
 				<Text className={`text-textSecondary ${labelClass}`}>LP Price:</Text>
 				<View className="flex flex-col items-end">
-					<Text className={`${valueClass} text-textWhite`}>$ {formatCurrency(vaultPrice || 0)}</Text>
+					<Text className={`${valueClass} text-textWhite`}>$ {formatCurrency(lpTokenPrice || 0)}</Text>
 				</View>
 			</View>
 

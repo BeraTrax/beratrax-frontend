@@ -1,34 +1,38 @@
-import { View, TextInput, Text, Pressable, ScrollView, Platform, Image, ImageSourcePropType } from "react-native";
-import { useMemo, useState } from "react";
+import { View, TextInput, Text, Pressable, ScrollView, Platform, Image, ImageSourcePropType, Linking } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
-import { isStagging, RAMP_TRANSAK_API_KEY } from "@beratrax/core/src/config/constants";
+import { getOnrampBuyUrl, fetchOnrampOptions } from "@coinbase/onchainkit/fund";
+import { defaultNetworkName } from "@beratrax/core/src/config/constants";
+import { isStagging, RAMP_TRANSAK_API_KEY, onchainkitProjectId } from "@beratrax/core/src/config/constants";
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
+import coinbaseLogo from "@beratrax/core/src/assets/images/coinbaselogo.png";
 import { WebView } from "react-native-webview";
 
-/**
- * Transak Widget Component that renders conditionally for web and mobile.
- *
- * - On web: Displays Transak iframe using the provided API URL.
- * - On mobile: Embeds the Transak React Native SDK WebView.
- */
-interface TransakWidgetProps {
+interface Service {
+	id: string;
+	name: string;
+	url: string;
+	icon: ImageSourcePropType;
+}
+
+interface OnRampProps {
 	isVisible: boolean;
 	onClose: () => void;
-	transakUrl: string;
+	service: Service | undefined;
 	displayAmount: string;
 	address: string | undefined;
 }
 
-const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address }: TransakWidgetProps): JSX.Element | null => {
-	if (!isVisible) return null;
+const OnRamp = ({ isVisible, onClose, service, displayAmount, address }: OnRampProps): JSX.Element | null => {
+	if (!isVisible || !service) return null;
 
 	return (
 		<View className="mb-6 w-full">
 			<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-4 h-[75vh] w-full">
 				<View className="flex-row justify-between items-center mb-4">
 					<View className="flex-row items-center gap-2">
-						<Image source={transaklogo as ImageSourcePropType} style={{ width: 28, height: 28, borderRadius: 14 }} />
-						<Text className="text-textWhite font-medium">Transak Onramp</Text>
+						<Image source={service.icon as ImageSourcePropType} style={{ width: 28, height: 28 }} />
+						<Text className="text-textWhite font-medium">{service.name}</Text>
 					</View>
 					<Pressable onPress={onClose}>
 						<Text className="text-textWhite">✕</Text>
@@ -39,14 +43,14 @@ const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address 
 					{Platform.OS === "web" ? (
 						<View className="w-full h-full">
 							<iframe
-								title="Transak OnRamp"
-								src={transakUrl}
+								title={service.name}
+								src={service.url}
 								allowFullScreen={true}
 								className="border-none rounded-lg w-full h-full bg-white"
 							/>
 						</View>
 					) : (
-						<WebView source={{ uri: transakUrl }} enableApplePay allowsInlineMediaPlayback mediaPlaybackRequiresUserAction={false} />
+						<WebView source={{ uri: service.url }} enableApplePay allowsInlineMediaPlayback mediaPlaybackRequiresUserAction={false} />
 					)}
 				</View>
 			</View>
@@ -54,13 +58,23 @@ const TransakWidget = ({ isVisible, onClose, transakUrl, displayAmount, address 
 	);
 };
 
-/**
- * A cross-platform UI for buying tokens using the Transak fiat on-ramp.
- *
- * @returns {React.JSX.Element} The Buy component.
- */
 export const Buy = (): React.JSX.Element => {
 	const { address } = useAccount();
+	const [userCountryCode, setUserCountryCode] = useState<string>("");
+	const [userSubDivisionCode, setUserSubDivisionCode] = useState<string>("");
+	const [onrampOptions, setOnrampOptions] = useState<any>(null);
+
+	useEffect(() => {
+		fetch("http://ip-api.com/json")
+			.then((res) => res.json())
+			.then((data) => {
+				setUserCountryCode(data.countryCode);
+				setUserSubDivisionCode(data.region);
+			})
+			.catch((err) => {
+				console.log("Error fetching user country", err);
+			});
+	}, []);
 
 	const presetAmounts = ["20", "50", "100"];
 	const [amount, setAmount] = useState("10");
@@ -75,16 +89,45 @@ export const Buy = (): React.JSX.Element => {
 
 	const convertedAmount = displayAmount; // 1:1 ratio for simplicity
 
-	// Amount limits
+	const onrampBuyUrl = useMemo(() => {
+		return getOnrampBuyUrl({
+			projectId: onchainkitProjectId,
+			addresses: { [address?.toString() || ""]: [defaultNetworkName] },
+			assets: ["USDC"],
+			presetFiatAmount: parseFloat(displayAmount) || 10,
+			fiatCurrency: "USD",
+		});
+	}, [address, displayAmount]);
+
+	const services = useMemo(
+		() => [
+			{
+				id: "coinbase",
+				name: "Coinbase",
+				url: onrampBuyUrl,
+				icon: coinbaseLogo,
+			},
+			{
+				id: "transak",
+				name: "Transak",
+				url: `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`,
+				icon: transaklogo,
+			},
+		],
+		[address, displayAmount, isStagging, onrampBuyUrl]
+	);
+
+	const [selectedServiceId, setSelectedServiceId] = useState<string>(services[0].id);
+	const selectedService = services.find((service) => service.id === selectedServiceId);
+
 	const { minAmount, maxAmount } = useMemo(
 		() => ({
 			minAmount: 10,
-			maxAmount: 999999999999999,
+			maxAmount: 3000,
 		}),
 		[]
 	);
 
-	// Handle custom input
 	const handleCustomInputChange = (text: string) => {
 		if (text === "" || /^\d*\.?\d*$/.test(text)) {
 			setCustomAmount(text);
@@ -92,7 +135,6 @@ export const Buy = (): React.JSX.Element => {
 		}
 	};
 
-	// Handle preset selection
 	const handlePresetClick = (value: string) => {
 		setAmount(value);
 		setCustomAmount(value);
@@ -101,23 +143,58 @@ export const Buy = (): React.JSX.Element => {
 
 	const isValidAmount = displayAmount !== "" && displayAmount !== "0" && parseFloat(displayAmount) >= minAmount;
 
-	const transakUrl = `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`;
+	const handleBuyClick = async () => {
+		if (selectedService?.id === "coinbase" && userCountryCode && userSubDivisionCode) {
+			console.log("User Country Code", userCountryCode);
+			console.log("User SubDivision Code", userSubDivisionCode);
+			try {
+				const config = await fetchOnrampOptions({
+					country: userCountryCode,
+					subdivision: userSubDivisionCode,
+					apiKey: "r84JysipaN1nF2Wd46D27d874Kffr9Wa",
+				});
+				setOnrampOptions(config);
+				// For simplicity, proceed to URL after fetching options; you could add selection logic here
+				if (Platform.OS === "web") {
+					window.open(selectedService.url, "_blank");
+				} else {
+					Linking.openURL(selectedService.url);
+				}
+			} catch (error) {
+				console.error("Error fetching onramp options", error);
+			}
+		} else {
+			setIsWebViewVisible(true);
+		}
+	};
 
 	return (
 		<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
 			<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
 				<Text className="font-arame-mono text-2xl font-bold mb-6 text-center text-textWhite uppercase">BUY CRYPTO</Text>
 
-				{/* Transak Widget */}
-				<TransakWidget
+				<View className="flex-row mb-4 w-full">
+					{services.map((service) => (
+						<Pressable
+							key={service.id}
+							onPress={() => setSelectedServiceId(service.id)}
+							className={`flex-1 py-3 px-4 rounded-lg border border-borderDark flex-row items-center justify-center gap-2
+                            ${selectedServiceId === service.id ? "bg-buttonPrimary" : "bg-bgSecondary"}`}
+						>
+							<Image source={service.icon as ImageSourcePropType} style={{ width: 28, height: 28, borderRadius: 14 }} />
+							<Text className="text-textWhite text-xl">{service.name}</Text>
+						</Pressable>
+					))}
+				</View>
+
+				<OnRamp
 					isVisible={isWebViewVisible}
 					onClose={() => setIsWebViewVisible(false)}
-					transakUrl={transakUrl}
 					displayAmount={displayAmount}
 					address={address}
+					service={selectedService as Service}
 				/>
 
-				{/* Amount Selection Card */}
 				{!isWebViewVisible && (
 					<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-6 mb-4 w-full">
 						<View className="mb-6">
@@ -132,7 +209,6 @@ export const Buy = (): React.JSX.Element => {
 							</View>
 						</View>
 
-						{/* Custom Amount Input */}
 						<View className="mb-6">
 							<Text className="font-league-spartan text-textWhite text-sm font-medium mb-2">
 								Enter Amount (${minAmount} - ${maxAmount})
@@ -146,7 +222,6 @@ export const Buy = (): React.JSX.Element => {
 							/>
 						</View>
 
-						{/* Preset Amount Buttons */}
 						<View className="mb-6">
 							<Text className="font-league-spartan text-textWhite text-sm font-medium mb-3">Quick Select</Text>
 							<View className="flex-row gap-3">
@@ -170,9 +245,14 @@ export const Buy = (): React.JSX.Element => {
 							</View>
 						</View>
 
-						{/* Buy Button */}
+						{selectedService?.id === "coinbase" && (
+							<Text className="text-textSecondary text-xs text-center mb-4">
+								Using Coinbase will open an external link to complete your purchase.
+							</Text>
+						)}
+
 						<Pressable
-							onPress={() => setIsWebViewVisible(true)}
+							onPress={handleBuyClick}
 							disabled={!isValidAmount}
 							className={`w-full py-4 rounded-lg font-semibold text-lg ${
 								isValidAmount ? "bg-buttonPrimary text-bgDark" : "bg-buttonDisabled text-textBlack"
@@ -180,6 +260,29 @@ export const Buy = (): React.JSX.Element => {
 						>
 							<Text className="font-league-spartan text-center text-textWhite text-lg font-semibold">Buy</Text>
 						</Pressable>
+
+						{onrampOptions && (
+							<View className="mt-4">
+								<Text className="text-textWhite text-lg font-medium mb-2">Available Tokens</Text>
+								{onrampOptions.purchaseCurrencies.map((token: any) => (
+									<View key={token.symbol} className="mb-2">
+										<Text className="text-textWhite">
+											{token.name} ({token.symbol})
+										</Text>
+										{token.networks && token.networks.length > 0 && (
+											<View className="ml-4">
+												<Text className="text-textSecondary">Networks:</Text>
+												{token.networks.map((network: any) => (
+													<Text key={network.id} className="text-textWhite">
+														{network.name}
+													</Text>
+												))}
+											</View>
+										)}
+									</View>
+								))}
+							</View>
+						)}
 					</View>
 				)}
 			</View>

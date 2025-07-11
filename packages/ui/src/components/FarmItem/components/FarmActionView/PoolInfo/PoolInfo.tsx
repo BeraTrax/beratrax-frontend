@@ -323,19 +323,21 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 										</Text>
 									</View>
 								</View>
-								<View className="flex-row border-b border-gray-700">
-									<View className="flex-1 p-4">
-										<View className="flex-row items-center gap-2">
-											<Image source={{ uri: FarmOriginPlatform.Beraborrow.logo }} accessibilityLabel="Beraborrow" className="w-5 h-5" />
-											<Text className="text-textWhite text-base font-league-spartan">Pollen Points (Beraborrow Airdrop)</Text>
+								{farm.id !== 24 && farm.id !== 51 && (
+									<View className="flex-row border-b border-gray-700">
+										<View className="flex-1 p-4">
+											<View className="flex-row items-center gap-2">
+												<Image source={{ uri: FarmOriginPlatform.Beraborrow.logo }} accessibilityLabel="Beraborrow" className="w-5 h-5" />
+												<Text className="text-textWhite text-base font-league-spartan">Pollen Points (Beraborrow Airdrop)</Text>
+											</View>
+										</View>
+										<View className="p-4">
+											<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">
+												4x Pollen Points (Future Claim)
+											</Text>
 										</View>
 									</View>
-									<View className="p-4">
-										<Text className="text-gradientPrimary font-bold text-right text-base font-league-spartan">
-											4x Pollen Points (Future Claim)
-										</Text>
-									</View>
-								</View>
+								)}
 							</>
 						)}
 

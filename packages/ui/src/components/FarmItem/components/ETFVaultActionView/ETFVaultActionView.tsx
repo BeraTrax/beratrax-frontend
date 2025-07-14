@@ -15,6 +15,7 @@ import { VolumeIcon } from "@beratrax/ui/src/icons/Volume";
 import { CreatedIcon } from "@beratrax/ui/src/icons/Created";
 import { TrendUpIcon } from "@beratrax/ui/src/icons/TrendUp";
 import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
+import { ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
 
 const ActionButton = memo(
 	({
@@ -50,60 +51,6 @@ const StatInfo = ({ iconUrl, title, value }: { iconUrl: React.ReactNode; title: 
 			<Text className="text-textWhite text-lg font-medium font-league-spartan">{value}</Text>
 		</View>
 	);
-};
-
-// Hardcoded ETF vault data
-const ETF_VAULT_DATA = {
-	name: "wBera-Honey-USDT-styBgt Price",
-	currentPrice: "$1.24",
-	marketCap: "$2,450,000",
-	totalSupply: "1,975,806",
-	vaultLiquidity: "$1,240,000",
-	underlyingAPR: "240.1%",
-	apy: "240.1%",
-	createdOn: "June 16, 2025",
-	composition: [
-		{
-			name: "wBera",
-			targetPercentage: "40%",
-			currentPercentage: "41.52%",
-			currentPrice: "$100",
-			totalLiquidity: "$504.62k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-		},
-		{
-			name: "HONEY",
-			targetPercentage: "30%",
-			currentPercentage: "30.93%",
-			currentPrice: "$100",
-			totalLiquidity: "$303.19k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
-		},
-		{
-			name: "USDT",
-			targetPercentage: "20%",
-			currentPercentage: "19.80%",
-			currentPrice: "$100",
-			totalLiquidity: "$370.38k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
-		},
-		{
-			name: "styBgt",
-			targetPercentage: "10%",
-			currentPercentage: "9.75%",
-			currentPrice: "$3,031.72",
-			totalLiquidity: "$117m",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png",
-		},
-	],
-	alt1: "wBera logo",
-	alt2: "Honey logo",
-	alt3: "USDT logo",
-	alt4: "styBgt logo",
-	logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-	logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
-	logo3: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
-	logo4: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png",
 };
 
 export const ETFVaultActionView: React.FC = () => {
@@ -162,9 +109,9 @@ export const ETFVaultActionView: React.FC = () => {
 							<View className="rounded-3xl p-6 mb-4">
 								<View className="flex flex-row justify-between">
 									<View>
-										<Text className="text-textWhite mt-3 text-xl font-bold">{ETF_VAULT_DATA.name}</Text>
+										<Text className="text-textWhite mt-3 text-xl font-bold">{ETF_VAULTS.name}</Text>
 										<View className="mt-2">
-											<Text className="text-textWhite text-5xl font-bold">{ETF_VAULT_DATA.currentPrice}</Text>
+											<Text className="text-textWhite text-5xl font-bold">{ETF_VAULTS.currentPrice}</Text>
 											<View className="flex gap-2 items-center justify-center text-[16px]">
 												{/* Future: Add price trend indicators here */}
 											</View>
@@ -175,22 +122,27 @@ export const ETFVaultActionView: React.FC = () => {
 											<View className="bg-gradientPrimary px-3 py-1 rounded-full">
 												<Text className="text-black font-bold">BeraTrax ETF</Text>
 											</View>
+											<Image
+												className="w-4 h-4 rounded-full border border-bgDark"
+												source={{ uri: `${ETF_VAULTS.platform_logo}` }}
+												style={{ width: 16, height: 16 }}
+											/>
 										</View>
 										<View className="flex flex-row items-center">
-											{ETF_VAULT_DATA.logo1 ? (
-												<Image alt={ETF_VAULT_DATA.alt1} className="w-16 h-16 rounded-full" source={{ uri: ETF_VAULT_DATA.logo1 }} />
+											{ETF_VAULTS.logo1 ? (
+												<Image alt={ETF_VAULTS.alt1} className="w-16 h-16 rounded-full" source={{ uri: ETF_VAULTS.logo1 }} />
 											) : null}
 
-											{ETF_VAULT_DATA.logo2 ? (
-												<Image alt={ETF_VAULT_DATA.alt2} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULT_DATA.logo2 }} />
+											{ETF_VAULTS.logo2 ? (
+												<Image alt={ETF_VAULTS.alt2} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo2 }} />
 											) : null}
 
-											{ETF_VAULT_DATA.logo3 ? (
-												<Image alt={ETF_VAULT_DATA.alt3} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULT_DATA.logo3 }} />
+											{ETF_VAULTS.logo3 ? (
+												<Image alt={ETF_VAULTS.alt3} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo3 }} />
 											) : null}
 
-											{ETF_VAULT_DATA.logo4 ? (
-												<Image alt={ETF_VAULT_DATA.alt4} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULT_DATA.logo4 }} />
+											{ETF_VAULTS.logo4 ? (
+												<Image alt={ETF_VAULTS.alt4} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo4 }} />
 											) : null}
 										</View>
 									</View>
@@ -221,7 +173,7 @@ export const ETFVaultActionView: React.FC = () => {
 								</View>
 
 								{/* Table Rows */}
-								{ETF_VAULT_DATA.composition.map((token, index) => (
+								{ETF_VAULTS.composition.map((token, index) => (
 									<View key={index} className="flex flex-row items-center py-4 border-b last:border-b-0 bg-bgDark pl-6 rounded-3xl m-2">
 										{/* Name Column */}
 										<View className="flex-1 min-w-[80px]">
@@ -255,11 +207,11 @@ export const ETFVaultActionView: React.FC = () => {
 							</View>
 							{/* Pool Info Section */}
 							<View className="mt-4 flex flex-col gap-2">
-								<StatInfo iconUrl={<MarketCapIcon />} title="Market Cap" value={ETF_VAULT_DATA.marketCap} />
-								<StatInfo iconUrl={<VolumeIcon />} title="Vault Liquidity" value={ETF_VAULT_DATA.vaultLiquidity} />
-								<StatInfo iconUrl={<TrendUpIcon />} title="Underlying APR" value={ETF_VAULT_DATA.underlyingAPR} />
-								<StatInfo iconUrl={<RocketIcon />} title="Beratrax Auto-Compounded APY" value={ETF_VAULT_DATA.apy} />
-								<StatInfo iconUrl={<CreatedIcon />} title="Created On" value={ETF_VAULT_DATA.createdOn} />
+								<StatInfo iconUrl={<MarketCapIcon />} title="Market Cap" value={ETF_VAULTS.marketCap} />
+								<StatInfo iconUrl={<VolumeIcon />} title="Vault Liquidity" value={ETF_VAULTS.vaultLiquidity} />
+								<StatInfo iconUrl={<TrendUpIcon />} title="Underlying APR" value={ETF_VAULTS.underlyingAPR} />
+								<StatInfo iconUrl={<RocketIcon />} title="Beratrax Auto-Compounded APY" value={ETF_VAULTS.apy} />
+								<StatInfo iconUrl={<CreatedIcon />} title="Created On" value={ETF_VAULTS.createdOn} />
 							</View>
 						</View>
 					</ScrollView>

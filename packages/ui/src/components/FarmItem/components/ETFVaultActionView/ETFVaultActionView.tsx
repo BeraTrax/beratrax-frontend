@@ -16,6 +16,7 @@ import { CreatedIcon } from "@beratrax/ui/src/icons/Created";
 import { TrendUpIcon } from "@beratrax/ui/src/icons/TrendUp";
 import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
 import { ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
+import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
 
 const ActionButton = memo(
 	({
@@ -105,49 +106,8 @@ export const ETFVaultActionView: React.FC = () => {
 					<ScrollView className="pt-14">
 						<BackButton onClick={handleGoBack} />
 						<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
-							{/* Token Price and Graph Section */}
-							<View className="rounded-3xl p-6 mb-4">
-								<View className="flex flex-row justify-between">
-									<View>
-										<Text className="text-textWhite mt-3 text-xl font-bold">{ETF_VAULTS.name}</Text>
-										<View className="mt-2">
-											<Text className="text-textWhite text-5xl font-bold">{ETF_VAULTS.currentPrice}</Text>
-											<View className="flex gap-2 items-center justify-center text-[16px]">
-												{/* Future: Add price trend indicators here */}
-											</View>
-										</View>
-									</View>
-									<View className="flex flex-col mt-2 mr-3">
-										<View className="flex flex-row items-center gap-2 mb-2 justify-end">
-											<View className="bg-gradientPrimary px-3 py-1 rounded-full">
-												<Text className="text-black font-bold">BeraTrax ETF</Text>
-											</View>
-											<Image
-												className="w-4 h-4 rounded-full border border-bgDark"
-												source={{ uri: `${ETF_VAULTS.platform_logo}` }}
-												style={{ width: 16, height: 16 }}
-											/>
-										</View>
-										<View className="flex flex-row items-center">
-											{ETF_VAULTS.logo1 ? (
-												<Image alt={ETF_VAULTS.alt1} className="w-16 h-16 rounded-full" source={{ uri: ETF_VAULTS.logo1 }} />
-											) : null}
-
-											{ETF_VAULTS.logo2 ? (
-												<Image alt={ETF_VAULTS.alt2} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo2 }} />
-											) : null}
-
-											{ETF_VAULTS.logo3 ? (
-												<Image alt={ETF_VAULTS.alt3} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo3 }} />
-											) : null}
-
-											{ETF_VAULTS.logo4 ? (
-												<Image alt={ETF_VAULTS.alt4} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo4 }} />
-											) : null}
-										</View>
-									</View>
-								</View>
-							</View>
+							{/* ETF Price and Graph Section */}
+							<ETFPriceAndGraph />
 
 							{/* ETF Composition Section */}
 							<View className="rounded-3xl mb-4">

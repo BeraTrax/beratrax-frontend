@@ -11,6 +11,7 @@ export * from "./Leaderboard/Leaderboard";
 export * from "./UserGuide";
 export * from "./FarmItem/components/FarmActionView/FarmActionView";
 export * from "./FarmItem/components/ETFVaultActionView/ETFVaultActionView";
+export { default as ETFPriceAndGraph } from "./FarmItem/components/ETFVaultActionView/ETFPriceAndGraph/ETFPriceAndGraph";
 export * from "./FarmView/FarmView";
 export * from "./Buy";
 export * from "./ClaimAirdrop";

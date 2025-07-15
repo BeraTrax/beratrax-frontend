@@ -200,7 +200,7 @@ export const TraxSeason3AirdropVault = () => {
 					<Svg
 						height="100%"
 						width="100%"
-						viewBox="0 0 400 300"
+						viewBox="0 0 430 300"
 						style={{
 							position: "absolute",
 							top: 0,

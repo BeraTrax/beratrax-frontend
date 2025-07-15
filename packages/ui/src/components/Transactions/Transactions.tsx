@@ -468,7 +468,7 @@ const TransactionRow = memo(
 						>
 							{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
 						</Text>
-						{retryButton}
+						{/* {retryButton} */}
 						{extraInfoSection}
 					</View>
 					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">{moment(date).fromNow()}</Text>

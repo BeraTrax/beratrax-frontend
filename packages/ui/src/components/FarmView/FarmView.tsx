@@ -93,10 +93,9 @@ export function FarmView() {
 	const combinedData = useMemo(() => {
 		const data: SectionItem[] = [];
 
-		// Add ETF vaults
-		ETF_VAULTS.forEach((vault) => {
-			data.push({ type: "etf", data: vault });
-		});
+		// Add ETF vault (single object)
+		// @ts-ignore
+		data.push({ type: "etf", data: ETF_VAULTS });
 
 		// Add regular farms
 		filteredFarms.forEach((farm) => {

@@ -27,7 +27,7 @@ import {
 } from "@beratrax/core/src/state/transactions/types";
 import { noExponents, toWei } from "@beratrax/core/src/utils/common";
 import CurrencyInput from "react-currency-input-field";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { ConfirmWithdraw } from "ui/src/components/modals/ConfirmWithdraw/ConfirmWithdraw";
 import { OneTimeZapping } from "ui/src/components/modals/OneTimeZapping/OneTimeZapping";
 import { SlippageNotCalculate } from "ui/src/components/modals/SlippageNotCalculate/SlippageNotCalculate";
@@ -35,7 +35,7 @@ import { SlippageWarning } from "ui/src/components/modals/SlippageWarning/Slippa
 import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import ConfirmFarmActionModal from "ui/src/components/FarmItem/components/FarmActionView/ConfirmFarmActionModal/ConfirmFarmActionModal";
 import FarmDetailsStyles from "./FarmActionModal.module.css"; //deliberate need to add this, tailwind, or inline styling wasn't working
-import { Text, Pressable, View, Dimensions, Platform } from "react-native";
+import { Text, Pressable, View, Dimensions, Platform, Linking } from "react-native";
 import { SvgImage } from "@beratrax/ui/src/components/SvgImage/SvgImage";
 
 interface FarmActionModalProps {
@@ -412,9 +412,9 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 					<View>
 						<Text className="text-textWhite text-center text-[16px] leading-[20px]">
 							{transactionType} {transactionType === FarmTransactionType.Deposit ? "into" : "from"} the{" "}
-							<Link href={farm.source} target="_blank" className="text-gradientPrimary span ">
-								{farm.url_name}
-							</Link>{" "}
+							<Pressable onPress={() => Linking.openURL(farm.source)} className="text-gradientPrimary span ">
+								<Text className="text-gradientPrimary">{farm.url_name}</Text>
+							</Pressable>{" "}
 							{isAutoCompounding ? "auto-compounding" : ""} liquidity pool.
 							{currencySymbol === "BERA" ? ` "Max" excludes a little BERA for gas.` : ""}
 						</Text>

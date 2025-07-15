@@ -8,7 +8,6 @@ import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { formatUnits, zeroAddress } from "viem";
 import styles from "./TransactionDetails.module.css";
 import { View, Text, Image, Platform, ActivityIndicator } from "react-native";
-import Colors from "@beratrax/typescript-config/Colors";
 import CheckMarkSvg from "@beratrax/core/src/assets/images/checkmark.svg";
 import { SvgImage } from "../../../SvgImage/SvgImage";
 
@@ -73,7 +72,9 @@ function getStep(name: string, status: TransactionStepStatus, value: number, tok
 		<View>
 			<View className="flex flex-row gap-x-2">
 				{status === TransactionStepStatus.COMPLETED ? (
-					<SvgImage source={CheckMarkSvg} />
+					<View className="w-6 h-5">
+						<SvgImage source={CheckMarkSvg} />
+					</View>
 				) : status === TransactionStepStatus.FAILED ? (
 					<CancelOutlineIcon color="red" />
 				) : status === TransactionStepStatus.PENDING ? (

@@ -27,32 +27,25 @@
     "start:web:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run start --filter=@beratrax/web",
     "start:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run start --filter=@beratrax/web",
     "start:web:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run start --filter=@beratrax/web",
-
     "build:web": "EXPO_PUBLIC_NODE_ENV=development turbo run build --filter=@beratrax/web --force",
     "build:web:exp": "EXPO_PUBLIC_NODE_ENV=experimental turbo run build --filter=@beratrax/web",
     "build:web:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run build --filter=@beratrax/web",
     "build:web:production": "EXPO_PUBLIC_NODE_ENV=production turbo run build --filter=@beratrax/web",
     "build:web:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run build --filter=@beratrax/web",
-
     "add:web": "yarn --cwd apps/web add",
     "remove:web": "yarn --cwd apps/web remove",
-    
     "start:mobile": "EXPO_PUBLIC_NODE_ENV=development turbo run start:mobile --filter=@beratrax/mobile",
     "start:mobile:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run start:mobile --filter=@beratrax/mobile",
     "start:mobile:production": "EXPO_PUBLIC_NODE_ENV=production turbo run start:mobile --filter=@beratrax/mobile",
     "start:mobile:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run start:mobile --filter=@beratrax/mobile",
-
     "build:mobile": "EXPO_PUBLIC_NODE_ENV=development turbo run build:mobile --filter=@beratrax/mobile",
     "build:mobile:staging": "EXPO_PUBLIC_NODE_ENV=staging turbo run build:mobile --filter=@beratrax/mobile",
     "build:mobile:production": "EXPO_PUBLIC_NODE_ENV=production turbo run build:mobile --filter=@beratrax/mobile",
     "build:mobile:legacy": "EXPO_PUBLIC_NODE_ENV=legacy turbo run build:mobile --filter=@beratrax/mobile",
-
     "add:mobile": "echo yarn --cwd apps/mobile add $* && yarn --cwd apps/mobile add",
     "remove:mobile": "yarn --cwd apps/mobile remove",
-    
     "build:ui": "turbo run build:ui --filter=@beratrax/ui",
     "build:core": "turbo run build:core --filter=@beratrax/core",
-    
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
@@ -60,10 +53,11 @@
     "bootstrap": "find . -name 'node_modules' -type d -not -path './node_modules' -prune -exec rm -rf '{}' + && rm -rf node_modules yarn.lock && yarn install"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "eslint": "^8.57.0",
+    "patch-package": "^8.0.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.10.4",
-    "patch-package": "^8.0.0"
+    "turbo": "^1.10.4"
   },
   "workspaces": [
     "./apps/*",
@@ -79,4 +73,3 @@
     "npm": "please-use-yarn"
   }
 }
-

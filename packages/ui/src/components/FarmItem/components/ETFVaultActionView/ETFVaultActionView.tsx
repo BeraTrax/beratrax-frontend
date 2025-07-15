@@ -17,6 +17,7 @@ import { TrendUpIcon } from "@beratrax/ui/src/icons/TrendUp";
 import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
 import { ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
 import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
+import CorePairs from "./CorePairs/CorePairs";
 
 const ActionButton = memo(
 	({
@@ -108,6 +109,9 @@ export const ETFVaultActionView: React.FC = () => {
 						<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
 							{/* ETF Price and Graph Section */}
 							<ETFPriceAndGraph />
+
+							{/* Core Pairs Section */}
+							<CorePairs />
 
 							{/* ETF Composition Section */}
 							<View className="rounded-3xl mb-4">

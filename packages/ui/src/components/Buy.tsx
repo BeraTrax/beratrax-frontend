@@ -1,6 +1,7 @@
 import { View, TextInput, Text, Pressable, ScrollView, Platform, Image, ImageSourcePropType, Linking } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
+import { setOnchainKitConfig } from "@coinbase/onchainkit";
 import { getOnrampBuyUrl, fetchOnrampOptions } from "@coinbase/onchainkit/fund";
 import { defaultNetworkName } from "@beratrax/core/src/config/constants";
 import { isStagging, RAMP_TRANSAK_API_KEY, onchainkitProjectId } from "@beratrax/core/src/config/constants";
@@ -21,6 +22,13 @@ interface OnRampProps {
 	service: Service | undefined;
 	displayAmount: string;
 	address: string | undefined;
+}
+
+interface SupportedToken {
+	symbol: string;
+	name: string;
+	iconUrl?: string;
+	networks: Array<{ id: string; name: string }>;
 }
 
 const OnRamp = ({ isVisible, onClose, service, displayAmount, address }: OnRampProps): JSX.Element | null => {
@@ -63,6 +71,8 @@ export const Buy = (): React.JSX.Element => {
 	const [userCountryCode, setUserCountryCode] = useState<string>("");
 	const [userSubDivisionCode, setUserSubDivisionCode] = useState<string>("");
 	const [onrampOptions, setOnrampOptions] = useState<any>(null);
+	const [selectedToken, setSelectedToken] = useState<SupportedToken | null>(null);
+	const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
 
 	useEffect(() => {
 		fetch("http://ip-api.com/json")
@@ -75,6 +85,29 @@ export const Buy = (): React.JSX.Element => {
 				console.log("Error fetching user country", err);
 			});
 	}, []);
+
+	useEffect(() => {
+		const fetchOptions = async () => {
+			if (userCountryCode && userSubDivisionCode) {
+				try {
+					// Set global config for OnchainKit
+					setOnchainKitConfig({
+						apiKey: "r84JysipaN1nF2Wd46D27d874Kffr9Wa",
+					});
+
+					const config = await fetchOnrampOptions({
+						country: userCountryCode,
+						subdivision: userSubDivisionCode,
+					});
+					setOnrampOptions(config);
+				} catch (error) {
+					console.error("Error fetching onramp options", error);
+				}
+			}
+		};
+
+		fetchOptions();
+	}, [userCountryCode, userSubDivisionCode]);
 
 	const presetAmounts = ["20", "50", "100"];
 	const [amount, setAmount] = useState("10");
@@ -89,15 +122,33 @@ export const Buy = (): React.JSX.Element => {
 
 	const convertedAmount = displayAmount; // 1:1 ratio for simplicity
 
+	// Filter supported tokens (BERA only)
+	const supportedTokens = useMemo(() => {
+		if (!onrampOptions?.purchaseCurrencies) return [];
+
+		return onrampOptions.purchaseCurrencies.filter((token: any) => {
+			return token.symbol === "BERA";
+		});
+	}, [onrampOptions]);
+
+	// Auto-select first supported token when available
+	useEffect(() => {
+		if (supportedTokens.length > 0 && !selectedToken) {
+			setSelectedToken(supportedTokens[0]);
+		}
+	}, [supportedTokens, selectedToken]);
+
 	const onrampBuyUrl = useMemo(() => {
+		const assets = selectedToken ? [selectedToken.symbol] : ["USDC"];
 		return getOnrampBuyUrl({
 			projectId: onchainkitProjectId,
 			addresses: { [address?.toString() || ""]: [defaultNetworkName] },
-			assets: ["USDC"],
+			assets,
+			defaultNetwork: defaultNetworkName,
 			presetFiatAmount: parseFloat(displayAmount) || 10,
 			fiatCurrency: "USD",
 		});
-	}, [address, displayAmount]);
+	}, [address, displayAmount, selectedToken]);
 
 	const services = useMemo(
 		() => [
@@ -144,24 +195,11 @@ export const Buy = (): React.JSX.Element => {
 	const isValidAmount = displayAmount !== "" && displayAmount !== "0" && parseFloat(displayAmount) >= minAmount;
 
 	const handleBuyClick = async () => {
-		if (selectedService?.id === "coinbase" && userCountryCode && userSubDivisionCode) {
-			console.log("User Country Code", userCountryCode);
-			console.log("User SubDivision Code", userSubDivisionCode);
-			try {
-				const config = await fetchOnrampOptions({
-					country: userCountryCode,
-					subdivision: userSubDivisionCode,
-					apiKey: "r84JysipaN1nF2Wd46D27d874Kffr9Wa",
-				});
-				setOnrampOptions(config);
-				// For simplicity, proceed to URL after fetching options; you could add selection logic here
-				if (Platform.OS === "web") {
-					window.open(selectedService.url, "_blank");
-				} else {
-					Linking.openURL(selectedService.url);
-				}
-			} catch (error) {
-				console.error("Error fetching onramp options", error);
+		if (selectedService?.id === "coinbase") {
+			if (Platform.OS === "web") {
+				window.open(selectedService.url, "_blank");
+			} else {
+				Linking.openURL(selectedService.url);
 			}
 		} else {
 			setIsWebViewVisible(true);
@@ -204,7 +242,7 @@ export const Buy = (): React.JSX.Element => {
 							<View className="flex-row justify-center items-center gap-2 text-textSecondary">
 								<Text className="text-sm text-textWhite">⟷</Text>
 								<Text className="text-sm text-textWhite">
-									{convertedAmount} {currencyType === "USD" ? "USDC" : "USD"}
+									{convertedAmount} {selectedToken?.symbol || (currencyType === "USD" ? "USDC" : "USD")}
 								</Text>
 							</View>
 						</View>
@@ -245,6 +283,71 @@ export const Buy = (): React.JSX.Element => {
 							</View>
 						</View>
 
+						{/* Token Selection Dropdown - Before Buy Button */}
+						{selectedService?.id === "coinbase" && onrampOptions && (
+							<View className="mb-6 relative z-50">
+								<Text className="font-league-spartan text-textWhite text-sm font-medium mb-2">Select Token</Text>
+								{supportedTokens.length > 0 ? (
+									<View className="relative">
+										<Pressable
+											onPress={() => setIsTokenDropdownOpen(!isTokenDropdownOpen)}
+											className="w-full px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg flex-row items-center justify-between"
+										>
+											<View className="flex-row items-center gap-2">
+												{selectedToken?.iconUrl && (
+													<Image source={{ uri: selectedToken.iconUrl }} style={{ width: 24, height: 24, borderRadius: 12 }} />
+												)}
+												<Text className="text-textWhite font-medium">
+													{selectedToken?.name} ({selectedToken?.symbol})
+												</Text>
+											</View>
+											<Text className="text-textWhite">{isTokenDropdownOpen ? "▲" : "▼"}</Text>
+										</Pressable>
+
+										{isTokenDropdownOpen && (
+											<View
+												className="absolute top-full left-0 right-0 mt-2 bg-bgDark border-2 border-borderDark rounded-lg shadow-2xl z-50"
+												style={{
+													shadowColor: "#000",
+													shadowOffset: { width: 0, height: 4 },
+													shadowOpacity: 0.3,
+													shadowRadius: 8,
+													elevation: 8,
+													backgroundColor: "#1a1a1a",
+												}}
+											>
+												{supportedTokens.map((token: SupportedToken, index: number) => (
+													<Pressable
+														key={token.symbol}
+														onPress={() => {
+															setSelectedToken(token);
+															setIsTokenDropdownOpen(false);
+														}}
+														className={`px-4 py-4 flex-row items-center gap-3 hover:bg-bgSecondary ${
+															index === supportedTokens.length - 1 ? "" : "border-b border-borderDark"
+														}`}
+														style={{
+															backgroundColor: index % 2 === 0 ? "#1a1a1a" : "#222222",
+														}}
+													>
+														{token.iconUrl && <Image source={{ uri: token.iconUrl }} style={{ width: 28, height: 28, borderRadius: 14 }} />}
+														<View className="flex-1">
+															<Text className="text-textWhite font-medium text-base">{token.name}</Text>
+															<Text className="text-textSecondary text-sm">{token.symbol}</Text>
+														</View>
+													</Pressable>
+												))}
+											</View>
+										)}
+									</View>
+								) : (
+									<View className="px-4 py-3 bg-bgSecondary border border-borderDark rounded-lg">
+										<Text className="text-textSecondary text-center">No supported tokens available for purchase</Text>
+									</View>
+								)}
+							</View>
+						)}
+
 						{selectedService?.id === "coinbase" && (
 							<Text className="text-textSecondary text-xs text-center mb-4">
 								Using Coinbase will open an external link to complete your purchase.
@@ -253,36 +356,18 @@ export const Buy = (): React.JSX.Element => {
 
 						<Pressable
 							onPress={handleBuyClick}
-							disabled={!isValidAmount}
+							// disable buy if invalid amount or no tokens available for coinbase in available country
+							disabled={!isValidAmount || (selectedService?.id === "coinbase" && supportedTokens.length === 0)}
 							className={`w-full py-4 rounded-lg font-semibold text-lg ${
-								isValidAmount ? "bg-buttonPrimary text-bgDark" : "bg-buttonDisabled text-textBlack"
+								isValidAmount && !(selectedService?.id === "coinbase" && supportedTokens.length === 0)
+									? "bg-buttonPrimary text-bgDark"
+									: "bg-buttonDisabled text-textBlack"
 							}`}
 						>
-							<Text className="font-league-spartan text-center text-textWhite text-lg font-semibold">Buy</Text>
+							<Text className="font-league-spartan text-center text-textWhite text-lg font-semibold">
+								{selectedService?.id === "coinbase" && supportedTokens.length === 0 ? "No tokens available" : "Buy"}
+							</Text>
 						</Pressable>
-
-						{onrampOptions && (
-							<View className="mt-4">
-								<Text className="text-textWhite text-lg font-medium mb-2">Available Tokens</Text>
-								{onrampOptions.purchaseCurrencies.map((token: any) => (
-									<View key={token.symbol} className="mb-2">
-										<Text className="text-textWhite">
-											{token.name} ({token.symbol})
-										</Text>
-										{token.networks && token.networks.length > 0 && (
-											<View className="ml-4">
-												<Text className="text-textSecondary">Networks:</Text>
-												{token.networks.map((network: any) => (
-													<Text key={network.id} className="text-textWhite">
-														{network.name}
-													</Text>
-												))}
-											</View>
-										)}
-									</View>
-								))}
-							</View>
-						)}
 					</View>
 				)}
 			</View>

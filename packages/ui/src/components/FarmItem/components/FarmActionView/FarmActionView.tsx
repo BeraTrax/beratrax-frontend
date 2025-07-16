@@ -171,7 +171,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 										<ActionButton
 											onPress={handleDepositPress}
 											text={depositButtonText}
-											className="bg-buttonPrimaryLight w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+											className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
 										/>
 
 										{Number(withdrawable?.amount || "0") > 0 && (

@@ -4,7 +4,7 @@ import { useWallet } from "@beratrax/core/src/hooks";
 import { useAppSelector } from "@beratrax/core/src/state";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useState, useCallback, useMemo, memo } from "react";
+import { useState, useCallback, useMemo, memo, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
@@ -41,31 +41,112 @@ const ActionButton = memo(
 // Similar as in PoolInfo.tsx component
 const StatInfo = ({ iconUrl, title, value }: { iconUrl: React.ReactNode; title: string; value: number | string }) => {
 	return (
-		<View className="flex flex-row items-center gap-4 bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg">
+		<View className="flex flex-row items-center gap-2 sm:gap-4 bg-bgDark py-3 sm:py-4 px-3 sm:px-4 mt-2 rounded-2xl backdrop-blur-lg">
 			{typeof iconUrl === "string" ? (
-				<Image source={{ uri: iconUrl }} accessibilityLabel={title} className="flex-shrink-0 flex-grow-0 w-10 h-10" />
+				<Image source={{ uri: iconUrl }} accessibilityLabel={title} className="flex-shrink-0 flex-grow-0 w-8 h-8 sm:w-10 sm:h-10" />
 			) : (
 				iconUrl
 			)}
 			<View className={"flex-1"}>
-				<Text className="text-textWhite text-lg font-medium font-league-spartan">{title}</Text>
+				<Text className="text-textWhite text-base sm:text-lg font-medium font-league-spartan">{title}</Text>
 			</View>
-			<Text className="text-textWhite text-lg font-medium font-league-spartan">{value}</Text>
+			<Text className="text-textWhite text-base sm:text-lg font-medium font-league-spartan">{value}</Text>
 		</View>
 	);
 };
+
+// Asset composition on Mobile
+const AssetMobile = ({ token, index }: { token: any; index: number }) => (
+	<View key={index} className="bg-bgDark rounded-2xl p-4 mb-3">
+		{/* Header with name and logo */}
+		<View className="flex flex-row items-center justify-between mb-3">
+			<View className="flex flex-row items-center">
+				<Image source={{ uri: token.logo }} className="w-6 h-6 rounded-full mr-2" />
+				<Text className="text-white text-base font-league-spartan font-medium">{token.name}</Text>
+			</View>
+			<Text className="text-white text-base font-league-spartan font-bold">{token.currentPrice}</Text>
+		</View>
+
+		{/* Stats grid */}
+		<View className="space-y-2">
+			<View className="flex flex-row justify-between">
+				<Text className="text-textSecondary text-sm font-league-spartan">Total Liquidity</Text>
+				<Text className="text-white text-sm font-league-spartan">{token.totalLiquidity}</Text>
+			</View>
+			<View className="flex flex-row justify-between">
+				<Text className="text-textSecondary text-sm font-league-spartan">Target Composition</Text>
+				<Text className="text-white text-sm font-league-spartan">{token.targetPercentage}</Text>
+			</View>
+			<View className="flex flex-row justify-between">
+				<Text className="text-textSecondary text-sm font-league-spartan">Current Composition</Text>
+				<Text className="text-white text-sm font-league-spartan">{token.currentPercentage}</Text>
+			</View>
+		</View>
+	</View>
+);
+
+// Desktop table row component
+const CompositionRowDesktop = ({ token, index }: { token: any; index: number }) => (
+	<View key={index} className="flex flex-row items-center py-4 border-b last:border-b-0 bg-bgDark pl-6 rounded-3xl m-2">
+		{/* Name Column */}
+		<View className="flex-1 min-w-[80px]">
+			<View className="flex flex-row items-center">
+				<Image source={{ uri: token.logo }} className="w-6 h-6 rounded-full mr-2" />
+				<Text className="text-white text-base font-league-spartan">{token.name}</Text>
+			</View>
+		</View>
+
+		{/* Current Price Column */}
+		<View className="flex-1 min-w-[80px]">
+			<Text className="text-white text-base font-league-spartan">{token.currentPrice}</Text>
+		</View>
+
+		{/* Total Liquidity Column */}
+		<View className="flex-1 min-w-[80px]">
+			<Text className="text-white text-base font-league-spartan">{token.totalLiquidity}</Text>
+		</View>
+
+		{/* Target Composition Column */}
+		<View className="flex-1 min-w-[80px]">
+			<Text className="text-white text-base font-league-spartan">{token.targetPercentage}</Text>
+		</View>
+
+		{/* Current Composition Column */}
+		<View className="flex-1 min-w-[80px]">
+			<Text className="text-white text-base font-league-spartan">{token.currentPercentage}</Text>
+		</View>
+	</View>
+);
 
 export const ETFVaultActionView: React.FC = () => {
 	const { lastVisitedPage } = useAppSelector((state) => state.account);
 	const { currentWallet, isConnecting, connectWallet } = useWallet();
 	const { openConnectModal } = useConnectModal();
 	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [screenWidth, setScreenWidth] = useState(Platform.OS === "web" ? (typeof window !== "undefined" ? window.innerWidth : 800) : 400);
 
 	const router = useRouter();
 	let navigate = null;
 	if (Platform.OS === "web") {
 		navigate = useNavigate();
 	}
+
+	// Handle screen resize for web
+	useEffect(() => {
+		if (Platform.OS === "web" && typeof window !== "undefined") {
+			const handleResize = () => {
+				setScreenWidth(window.innerWidth);
+			};
+
+			window.addEventListener("resize", handleResize);
+			// Set initial value
+			setScreenWidth(window.innerWidth);
+
+			return () => {
+				window.removeEventListener("resize", handleResize);
+			};
+		}
+	}, []);
 
 	const handleGoBack = () => {
 		if (Platform.OS === "web") {
@@ -90,6 +171,8 @@ export const ETFVaultActionView: React.FC = () => {
 		return !currentWallet ? "Sign In/ Up to Deposit" : "Deposit (Coming Soon)";
 	}, [currentWallet]);
 
+	const isSmallScreen = screenWidth <= 640;
+
 	return (
 		<>
 			<View className={`flex-1 w-full bg-bgSecondary relative ${Platform.OS === "web" ? "" : "min-h-screen"}`}>
@@ -103,7 +186,7 @@ export const ETFVaultActionView: React.FC = () => {
 						<Image source={Tokendetailspagestoprightleaves as ImageSourcePropType} height={200} width={200} />
 					)}
 				</View>
-				<View className={`px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
+				<View className={`px-3 sm:px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
 					<ScrollView className="pt-14">
 						<BackButton onClick={handleGoBack} />
 						<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
@@ -115,59 +198,43 @@ export const ETFVaultActionView: React.FC = () => {
 
 							{/* ETF Composition Section */}
 							<View className="rounded-3xl mb-4">
-								<Text className="text-white text-xl font-bold mb-4 pl-6">Assets</Text>
+								<Text className="text-white text-lg sm:text-xl font-bold mb-4 pl-2 sm:pl-6">Assets</Text>
 
-								{/* Table Header */}
-								<View className="flex flex-row items-center py-3 border-b border-gray-600 pl-6">
-									<View className="flex-1 min-w-[80px]">
-										<Text className="text-textSecondary text-base font-league-spartan">Name</Text>
+								{isSmallScreen ? (
+									/* Mobile Layout - Card Style */
+									<View className="px-2">
+										{ETF_VAULTS.composition.map((token, index) => (
+											<AssetMobile key={index} token={token} index={index} />
+										))}
 									</View>
-									<View className="flex-1 min-w-[80px]">
-										<Text className="text-textSecondary text-base font-league-spartan">Current Price</Text>
-									</View>
-									<View className="flex-1 min-w-[80px]">
-										<Text className="text-textSecondary text-base font-league-spartan">Total Liquidity</Text>
-									</View>
-									<View className="flex-1 min-w-[80px]">
-										<Text className="text-textSecondary text-base font-league-spartan">Target Composition</Text>
-									</View>
-									<View className="flex-1 min-w-[80px]">
-										<Text className="text-textSecondary text-base font-league-spartan">Current Composition</Text>
-									</View>
-								</View>
-
-								{/* Table Rows */}
-								{ETF_VAULTS.composition.map((token, index) => (
-									<View key={index} className="flex flex-row items-center py-4 border-b last:border-b-0 bg-bgDark pl-6 rounded-3xl m-2">
-										{/* Name Column */}
-										<View className="flex-1 min-w-[80px]">
-											<View className="flex flex-row items-center">
-												<Image source={{ uri: token.logo }} className="w-6 h-6 rounded-full mr-2" />
-												<Text className="text-white text-base font-league-spartan">{token.name}</Text>
+								) : (
+									/* Desktop Layout - Table Style */
+									<>
+										{/* Table Header */}
+										<View className="flex flex-row items-center py-3 border-b border-gray-600 pl-6">
+											<View className="flex-1 min-w-[80px]">
+												<Text className="text-textSecondary text-base font-league-spartan">Name</Text>
+											</View>
+											<View className="flex-1 min-w-[80px]">
+												<Text className="text-textSecondary text-base font-league-spartan">Current Price</Text>
+											</View>
+											<View className="flex-1 min-w-[80px]">
+												<Text className="text-textSecondary text-base font-league-spartan">Total Liquidity</Text>
+											</View>
+											<View className="flex-1 min-w-[80px]">
+												<Text className="text-textSecondary text-base font-league-spartan">Target Composition</Text>
+											</View>
+											<View className="flex-1 min-w-[80px]">
+												<Text className="text-textSecondary text-base font-league-spartan">Current Composition</Text>
 											</View>
 										</View>
 
-										{/* Current Price Column */}
-										<View className="flex-1 min-w-[80px]">
-											<Text className="text-white text-base font-league-spartan">{token.currentPrice}</Text>
-										</View>
-
-										{/* Total Liquidity Column */}
-										<View className="flex-1 min-w-[80px]">
-											<Text className="text-white text-base font-league-spartan">{token.totalLiquidity}</Text>
-										</View>
-
-										{/* Target Composition Column */}
-										<View className="flex-1 min-w-[80px]">
-											<Text className="text-white text-base font-league-spartan">{token.targetPercentage}</Text>
-										</View>
-
-										{/* Current Composition Column */}
-										<View className="flex-1 min-w-[80px]">
-											<Text className="text-white text-base font-league-spartan">{token.currentPercentage}</Text>
-										</View>
-									</View>
-								))}
+										{/* Table Rows */}
+										{ETF_VAULTS.composition.map((token, index) => (
+											<CompositionRowDesktop key={index} token={token} index={index} />
+										))}
+									</>
+								)}
 							</View>
 							{/* Pool Info Section */}
 							<View className="mt-4 flex flex-col gap-2">
@@ -187,14 +254,14 @@ export const ETFVaultActionView: React.FC = () => {
 						}`}
 					>
 						{isConnecting ? (
-							<View className="bg-buttonPrimaryLight w-full py-5 px-4 rounded-[40px]">
-								<Text className="text-xl font-bold tracking-widest uppercase text-center">Connecting...</Text>
+							<View className="bg-buttonPrimaryLight w-full py-4 sm:py-5 px-4 rounded-[40px]">
+								<Text className="text-lg sm:text-xl font-bold tracking-widest uppercase text-center">Connecting...</Text>
 							</View>
 						) : (
 							<ActionButton
 								onPress={handleDepositPress}
 								text={depositButtonText}
-								className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
+								className="bg-buttonPrimaryLight w-[70%] md:w-full py-4 sm:py-5 px-4 text-lg sm:text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
 							/>
 						)}
 					</View>

@@ -27,7 +27,7 @@ const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick
 	return (
 		<Pressable onPress={onClick}>
 			<Text
-				className={` px-5 py-2 font-light rounded-2xl  text-[16px] font-league-spartan ${
+				className={` px-3 sm:px-5 py-1.5 sm:py-2 font-light rounded-2xl text-sm sm:text-[16px] font-league-spartan ${
 					isSelected ? "bg-gradientSecondary text-textPrimary" : "bg-bgDark text-textWhite"
 				}`}
 			>
@@ -132,8 +132,8 @@ const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: 
 	const buttonStyle = useMemo(
 		() => ({
 			borderRadius: 7,
-			paddingVertical: 8,
-			paddingHorizontal: 16,
+			paddingVertical: 6,
+			paddingHorizontal: 12,
 			fontWeight: "500",
 			color: isActive ? "#FFFFFF" : "#878b82",
 		}),
@@ -144,7 +144,9 @@ const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: 
 
 	return (
 		<Pressable onPress={onPress} style={buttonStyle} className={`${isActive ? "bg-gradientSecondary" : ""}`}>
-			<MemoizedText text={label} color={textColor} />
+			<Text className="text-sm sm:text-base font-league-spartan" style={{ color: textColor }}>
+				{label}
+			</Text>
 		</Pressable>
 	);
 });
@@ -178,14 +180,18 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 	const yDomain = [minValue - padding, maxValue + padding];
 
 	const getTickCount = (width: number) => Math.floor(width / 100);
-	const xAxisTickCount = Math.min(5, getTickCount(screenWidth));
-	const yAxisTickCount = Math.min(5, getTickCount(screenWidth) - 1);
+	const xAxisTickCount = Math.min(screenWidth <= 640 ? 3 : 5, getTickCount(screenWidth));
+	const yAxisTickCount = Math.min(screenWidth <= 640 ? 3 : 5, getTickCount(screenWidth) - 1);
 
 	const chartPadding = useMemo(() => {
-		const leftPadding = screenWidth < 576 ? 50 : 60;
-		const rightPadding = screenWidth < 576 ? 10 : 20;
-		return { top: 40, bottom: 20, left: leftPadding, right: rightPadding };
+		const leftPadding = screenWidth <= 640 ? 45 : screenWidth < 576 ? 50 : 60;
+		const rightPadding = screenWidth <= 640 ? 8 : screenWidth < 576 ? 10 : 20;
+		const topPadding = screenWidth <= 640 ? 30 : 40;
+		const bottomPadding = screenWidth <= 640 ? 15 : 20;
+		return { top: topPadding, bottom: bottomPadding, left: leftPadding, right: rightPadding };
 	}, [screenWidth]);
+
+	const chartHeight = screenWidth <= 640 ? 250 : 300;
 
 	const formatValue = (value: number) => {
 		if (type === "price" || type === "underlying-price") return `$${value.toFixed(2)}`;
@@ -219,10 +225,10 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 
 	return (
 		<View className="z-10 relative">
-			<View style={{ marginTop: 10, width: "100%", height: 300 }}>
+			<View style={{ marginTop: 10, width: "100%", height: chartHeight }}>
 				<VictoryChart
 					width={screenWidth}
-					height={300}
+					height={chartHeight}
 					theme={VictoryTheme.clean}
 					padding={chartPadding}
 					animate={false}
@@ -236,8 +242,8 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 							labels={({ datum }) => getTooltipLabel(datum, datum.poolName)}
 							labelComponent={
 								<VictoryTooltip
-									flyoutWidth={160}
-									flyoutHeight={70}
+									flyoutWidth={screenWidth <= 640 ? 140 : 160}
+									flyoutHeight={screenWidth <= 640 ? 60 : 70}
 									cornerRadius={8}
 									pointerLength={10}
 									flyoutStyle={{
@@ -246,7 +252,7 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 										strokeWidth: 1,
 										filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))",
 									}}
-									style={[{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }]}
+									style={[{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }]}
 									dy={-10}
 									centerOffset={{ x: 0 }}
 									constrainToVisibleArea
@@ -259,7 +265,7 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 						style={{
 							axis: { stroke: "#888" },
 							grid: { stroke: "#444", strokeDasharray: "4,8" },
-							tickLabels: { fill: "#ccc", fontSize: screenWidth < 576 ? 8 : 10, padding: 5 },
+							tickLabels: { fill: "#ccc", fontSize: screenWidth <= 640 ? 7 : screenWidth < 576 ? 8 : 10, padding: 5 },
 						}}
 						tickCount={xAxisTickCount}
 					/>
@@ -268,7 +274,7 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 						style={{
 							axis: { stroke: "#888" },
 							grid: { stroke: "#444", strokeDasharray: "4,8" },
-							tickLabels: { fill: "#ccc", fontSize: screenWidth < 576 ? 8 : 10, padding: 5 },
+							tickLabels: { fill: "#ccc", fontSize: screenWidth <= 640 ? 7 : screenWidth < 576 ? 8 : 10, padding: 5 },
 						}}
 						tickFormat={(y) => formatValue(y)}
 						tickCount={yAxisTickCount}
@@ -386,39 +392,51 @@ export const ETFPriceAndGraph: React.FC = () => {
 		<View className="relative">
 			<View className="z-10">
 				<View className="flex flex-row justify-between">
-					<View>
-						<Text className="text-textWhite mt-3 text-xl font-bold">{ETF_VAULTS.name}</Text>
+					<View className="flex-1 pr-2">
+						<Text className="text-textWhite mt-3 text-lg sm:text-xl font-bold">{ETF_VAULTS.name}</Text>
 						<View className="mt-2">
-							<Text className="text-textWhite text-5xl font-bold">{ETF_VAULTS.currentPrice}</Text>
+							<Text className="text-textWhite text-3xl sm:text-5xl font-bold">{ETF_VAULTS.currentPrice}</Text>
 						</View>
 					</View>
-					<View className="flex flex-col mt-2 mr-3">
-						<View className="flex flex-row items-center gap-2 mb-2 justify-end">
+					<View className="flex flex-col mt-2 mr-1 sm:mr-3">
+						<View className="flex flex-row items-center gap-1 sm:gap-2 mb-2 justify-end">
 							<FarmRowChip text="BeraTrax ETF" color="invert" />
 							<Image
-								className="w-4 h-4 rounded-full border border-bgDark"
+								className="w-3 h-3 sm:w-4 sm:h-4 rounded-full border border-bgDark"
 								source={{ uri: `${ETF_VAULTS.platform_logo}` }}
-								style={{ width: 16, height: 16 }}
+								style={{ width: 12, height: 12 }}
 							/>
 						</View>
 						<View className="flex flex-row items-center">
 							{ETF_VAULTS.logo1 ? (
-								<Image alt={ETF_VAULTS.alt1} className="w-16 h-16 rounded-full" source={{ uri: ETF_VAULTS.logo1 }} />
+								<Image alt={ETF_VAULTS.alt1} className="w-12 h-12 sm:w-16 sm:h-16 rounded-full" source={{ uri: ETF_VAULTS.logo1 }} />
 							) : null}
 							{ETF_VAULTS.logo2 ? (
-								<Image alt={ETF_VAULTS.alt2} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo2 }} />
+								<Image
+									alt={ETF_VAULTS.alt2}
+									className="w-12 h-12 sm:w-16 sm:h-16 rounded-full -ml-6 sm:-ml-8"
+									source={{ uri: ETF_VAULTS.logo2 }}
+								/>
 							) : null}
 							{ETF_VAULTS.logo3 ? (
-								<Image alt={ETF_VAULTS.alt3} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo3 }} />
+								<Image
+									alt={ETF_VAULTS.alt3}
+									className="w-12 h-12 sm:w-16 sm:h-16 rounded-full -ml-6 sm:-ml-8"
+									source={{ uri: ETF_VAULTS.logo3 }}
+								/>
 							) : null}
 							{ETF_VAULTS.logo4 ? (
-								<Image alt={ETF_VAULTS.alt4} className="w-16 h-16 rounded-full -ml-8" source={{ uri: ETF_VAULTS.logo4 }} />
+								<Image
+									alt={ETF_VAULTS.alt4}
+									className="w-12 h-12 sm:w-16 sm:h-16 rounded-full -ml-6 sm:-ml-8"
+									source={{ uri: ETF_VAULTS.logo4 }}
+								/>
 							) : null}
 						</View>
 					</View>
 				</View>
 			</View>
-			<View className="flex flex-row gap-2 mt-6 mb-4 flex-wrap">
+			<View className="flex flex-row gap-1 sm:gap-2 mt-4 sm:mt-6 mb-3 sm:mb-4 flex-wrap">
 				{tabs.map((tab) => (
 					<TabButton key={tab.id} id={tab.id} label={tab.label} isActive={activeTab === tab.id} onPress={tabHandlers[tab.id]} />
 				))}
@@ -426,13 +444,13 @@ export const ETFPriceAndGraph: React.FC = () => {
 
 			<View>
 				<ETFGraph type={activeTab} filter={graphFilter} />
-				<View className="flex flex-row justify-around pt-2 sm:justify-center sm:gap-4">
+				<View className="flex flex-row justify-center gap-2 sm:gap-4 pt-2">
 					{graphFiltersList.map((filter, index) => (
 						<GraphFilter key={index} text={filter.text} isSelected={graphFilter === filter.type} onClick={filterCallbacks[filter.type]} />
 					))}
 				</View>
 				<View>
-					<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
+					<Text className="text-xs sm:text-sm text-textSecondary text-center my-3 sm:my-4 font-league-spartan px-4">
 						Historical{" "}
 						{activeTab === "price"
 							? "price"

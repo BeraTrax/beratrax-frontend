@@ -21,7 +21,7 @@ const { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryArea, Victo
 	Platform.OS === "web" ? Victory : VictoryNative;
 
 type GraphFilterType = "hour" | "day" | "week" | "month";
-type TabType = "price" | "tvl" | "liquidity" | "underlying" | "volume";
+type TabType = "price" | "underlying-price" | "tvl" | "underlying-tvl" | "volume";
 
 const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick?: () => void; isSelected?: boolean }) => {
 	return (
@@ -36,6 +36,14 @@ const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick
 		</Pressable>
 	);
 });
+
+// Define underlying pools for the ETF
+const UNDERLYING_POOLS = [
+	{ name: "wBERA/Honey", color: Colors.buttonPrimary, weight: 0.4 },
+	{ name: "Honey/USDT", color: "#4FC3F7", weight: 0.3 },
+	{ name: "USDT/styBGT", color: "#1976D2", weight: 0.2 },
+	{ name: "styBGT/wBERA", color: "#64B5F6", weight: 0.1 },
+];
 
 const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	const date = new Date(timestamp * 1000);
@@ -70,16 +78,38 @@ const generateMockData = (type: TabType, filter: GraphFilterType) => {
 
 	const baseValues = {
 		price: 1.24,
+		"underlying-price": 1.24,
 		tvl: 2450000,
-		liquidity: 1240000,
-		underlying: 980000,
+		"underlying-tvl": 2450000,
 		volume: 156000,
 	};
 
+	// For underlying tabs, generate data for multiple pools
+	if (type === "underlying-price" || type === "underlying-tvl") {
+		return UNDERLYING_POOLS.map((pool) => {
+			const data = [];
+			const baseValue = type === "underlying-price" ? 1.24 * pool.weight * 2.5 : baseValues.tvl * pool.weight;
+
+			for (let i = dataPoints - 1; i >= 0; i--) {
+				const timestamp = Math.floor((now - i * interval) / 1000);
+				// Adding some realistic variation per pool
+				const variation = 1 + Math.sin(i * 0.5 + pool.weight * 10) * 0.15 + (Math.random() * 0.1 - 0.05);
+				const value = baseValue * variation;
+
+				data.push({
+					x: formatDate(timestamp, filter),
+					y: Number(value.toFixed(2)),
+				});
+			}
+			return { name: pool.name, color: pool.color, data };
+		});
+	}
+
+	// Single line data for regular tabs
 	const data = [];
+	const baseValue = baseValues[type];
 	for (let i = dataPoints - 1; i >= 0; i--) {
 		const timestamp = Math.floor((now - i * interval) / 1000);
-		const baseValue = baseValues[type];
 		// Adding some realistic variation
 		const variation = 1 + Math.sin(i * 0.5) * 0.1 + (Math.random() * 0.1 - 0.05);
 		const value = baseValue * variation;
@@ -123,8 +153,27 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 	const screenWidth = Dimensions.get("window").width;
 	const chartData = useMemo(() => generateMockData(type, filter), [type, filter]);
 
-	const minValue = Math.min(...chartData.map((d) => d.y));
-	const maxValue = Math.max(...chartData.map((d) => d.y));
+	// Handle both single line data and multiple line data
+	const isMultiLine = type === "underlying-price" || type === "underlying-tvl";
+
+	// Calculate domain for both single and multi-line data
+	const { minValue, maxValue } = useMemo(() => {
+		if (isMultiLine && Array.isArray(chartData)) {
+			const allValues = chartData.flatMap((pool: any) => pool.data.map((d: any) => d.y));
+			return {
+				minValue: Math.min(...allValues),
+				maxValue: Math.max(...allValues),
+			};
+		} else if (!isMultiLine && Array.isArray(chartData)) {
+			const values = chartData.map((d: any) => d.y);
+			return {
+				minValue: Math.min(...values),
+				maxValue: Math.max(...values),
+			};
+		}
+		return { minValue: 0, maxValue: 1 };
+	}, [chartData, isMultiLine]);
+
 	const padding = (maxValue - minValue) * 0.1;
 	const yDomain = [minValue - padding, maxValue + padding];
 
@@ -139,7 +188,7 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 	}, [screenWidth]);
 
 	const formatValue = (value: number) => {
-		if (type === "price") return `$${value.toFixed(2)}`;
+		if (type === "price" || type === "underlying-price") return `$${value.toFixed(2)}`;
 		if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
 		if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
 		return `$${value.toFixed(0)}`;
@@ -149,17 +198,23 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 		switch (type) {
 			case "price":
 				return "ETF Price";
+			case "underlying-price":
+				return "Underlying Price";
 			case "tvl":
 				return "Total Value Locked";
-			case "liquidity":
-				return "ETF Liquidity";
-			case "underlying":
-				return "Underlying Liquidity";
+			case "underlying-tvl":
+				return "Underlying TVL";
 			case "volume":
 				return "Trading Volume";
 			default:
 				return "ETF Data";
 		}
+	};
+
+	// Generate tooltip labels based on data type
+	const getTooltipLabel = (datum: any, poolName?: string) => {
+		const title = poolName ? `${poolName}` : getTitle();
+		return `${datum.x}\n${title}: ${formatValue(datum.y)}`;
 	};
 
 	return (
@@ -177,8 +232,8 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 					containerComponent={
 						<VoronoiContainer
 							voronoiDimension="x"
-							voronoiBlacklist={["etfArea"]}
-							labels={({ datum }) => `${datum.x}\n${getTitle()}: ${formatValue(datum.y)}`}
+							voronoiBlacklist={isMultiLine ? UNDERLYING_POOLS.map((_, i) => `etfArea-${i}`) : ["etfArea"]}
+							labels={({ datum }) => getTooltipLabel(datum, datum.poolName)}
 							labelComponent={
 								<VictoryTooltip
 									flyoutWidth={160}
@@ -219,16 +274,34 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 						tickCount={yAxisTickCount}
 					/>
 
-					<VictoryLine
-						name="etfLine"
-						data={chartData}
-						style={{
-							data: {
-								stroke: Colors.buttonPrimary,
-								strokeWidth: 2,
-							},
-						}}
-					/>
+					{isMultiLine && Array.isArray(chartData) ? (
+						// Render multiple lines for underlying tabs
+						chartData.map((pool: any, index: number) => (
+							<VictoryLine
+								key={`line-${index}`}
+								name={`etfLine-${index}`}
+								data={pool.data.map((d: any) => ({ ...d, poolName: pool.name }))}
+								style={{
+									data: {
+										stroke: pool.color,
+										strokeWidth: 2,
+									},
+								}}
+							/>
+						))
+					) : (
+						// Render single line for regular tabs
+						<VictoryLine
+							name="etfLine"
+							data={chartData as any}
+							style={{
+								data: {
+									stroke: Colors.buttonPrimary,
+									strokeWidth: 2,
+								},
+							}}
+						/>
+					)}
 
 					<VictoryDefsWrapper>
 						<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -237,16 +310,18 @@ const ETFGraph = memo(({ type, filter }: { type: TabType; filter: GraphFilterTyp
 						</LinearGradient>
 					</VictoryDefsWrapper>
 
-					<VictoryArea
-						name="etfArea"
-						data={chartData}
-						style={{
-							data: {
-								fill: "url(#areaGradient)",
-								strokeWidth: 0,
-							},
-						}}
-					/>
+					{!isMultiLine && (
+						<VictoryArea
+							name="etfArea"
+							data={chartData}
+							style={{
+								data: {
+									fill: "url(#areaGradient)",
+									strokeWidth: 0,
+								},
+							}}
+						/>
+					)}
 				</VictoryChart>
 			</View>
 		</View>
@@ -268,9 +343,9 @@ export const ETFPriceAndGraph: React.FC = () => {
 	const tabHandlers = useMemo(
 		() => ({
 			price: () => handleTabPress("price"),
+			"underlying-price": () => handleTabPress("underlying-price"),
 			tvl: () => handleTabPress("tvl"),
-			liquidity: () => handleTabPress("liquidity"),
-			underlying: () => handleTabPress("underlying"),
+			"underlying-tvl": () => handleTabPress("underlying-tvl"),
 			volume: () => handleTabPress("volume"),
 		}),
 		[handleTabPress]
@@ -279,9 +354,9 @@ export const ETFPriceAndGraph: React.FC = () => {
 	const tabs = useMemo(
 		() => [
 			{ id: "price" as TabType, label: "Price" },
+			{ id: "underlying-price" as TabType, label: "Underlying Price" },
 			{ id: "tvl" as TabType, label: "TVL" },
-			{ id: "liquidity" as TabType, label: "Liquidity" },
-			{ id: "underlying" as TabType, label: "Underlying Liquidity" },
+			{ id: "underlying-tvl" as TabType, label: "Underlying TVL" },
 			{ id: "volume" as TabType, label: "Volume" },
 		],
 		[]
@@ -361,12 +436,12 @@ export const ETFPriceAndGraph: React.FC = () => {
 						Historical{" "}
 						{activeTab === "price"
 							? "price"
-							: activeTab === "tvl"
-								? "total value locked"
-								: activeTab === "liquidity"
-									? "liquidity"
-									: activeTab === "underlying"
-										? "underlying liquidity"
+							: activeTab === "underlying-price"
+								? "underlying asset prices"
+								: activeTab === "tvl"
+									? "total value locked"
+									: activeTab === "underlying-tvl"
+										? "underlying asset TVL"
 										: "trading volume"}{" "}
 						of the ETF
 					</Text>

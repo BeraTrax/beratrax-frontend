@@ -1,4 +1,4 @@
-import logo from "@beratrax/core/src/assets/images/logo.png";
+import logo from "@beratrax/core/src/assets/images/logo-trax-white.png";
 import { RoutesPaths, isDev } from "@beratrax/core/src/config/constants";
 import { AiOutlineExport } from "react-icons/ai";
 import { HiDocumentText } from "react-icons/hi";
@@ -70,7 +70,7 @@ function Sidebar() {
 
 	return (
 		<div className="flex h-screen flex-col border-r border-borderDark p-4 pt-5 uppercase text-sm font-medium tracking-wide	">
-			<img src={logo} alt="beratrax-logo" className="w-[90%] mb-6 mx-auto" />
+			<img src={logo} alt="beratrax-logo" className="w-[90%] mx-auto" />
 
 			<div className="mt-6 flex flex-col flex-1">
 				{routes

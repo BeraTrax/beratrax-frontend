@@ -229,7 +229,7 @@ export const TraxSeason3AirdropVault = () => {
 						<Image
 							className="w-9 h-9 rounded-full"
 							alt="TRAX"
-							source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png" }}
+							source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/trax/logo.png" }}
 						/>
 					</View>
 					<View className="flex items-center gap-2">

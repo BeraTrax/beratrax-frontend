@@ -154,7 +154,7 @@ export const TraxAirdropVault = () => {
                 min-w-[calc(25%-12px)]
                 max-[2000px]:min-w-[calc(33.33%-10.66px)]
                 max-[1300px]:min-w-[calc(50%-8px)]
-                max-[768px]:min-w-full
+								max-[786px]:w-[100%]
             `}
 			style={{
 				position: "relative",
@@ -184,7 +184,7 @@ export const TraxAirdropVault = () => {
 					style={{
 						position: "absolute",
 						top: 0,
-						left: -15,
+						left: -25,
 						right: 0,
 						bottom: 0,
 						borderRadius: 24,
@@ -195,7 +195,7 @@ export const TraxAirdropVault = () => {
 					<Svg
 						height="100%"
 						width="100%"
-						viewBox="0 0 400 300"
+						viewBox="0 0 430 300"
 						style={{
 							position: "absolute",
 							top: 0,
@@ -224,7 +224,7 @@ export const TraxAirdropVault = () => {
 						<Image
 							className="w-9 h-9 rounded-full"
 							alt="TRAX"
-							source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png" }}
+							source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/trax/logo.png" }}
 						/>
 					</View>
 					<View className="flex items-center gap-2">
@@ -295,41 +295,28 @@ export const TraxAirdropVault = () => {
 			</View>
 
 			{/* Bottom Section - Withdraw Button and Your Stake */}
-			<View className="flex flex-row justify-between items-center">
+			<View className="flex flex-row justify-between items-center gap-2">
 				{/* Withdraw Button - Left Side */}
 				<Pressable
 					onPress={showWithdrawWarning}
 					disabled={isWithdrawLoading || !currentWallet}
-					className={`px-4 py-2 rounded-md transition-all transform duration-200 flex items-center justify-center gap-2 min-w-[140px] ${
+					className={`px-3 py-2 rounded-md transition-all transform duration-200 flex items-center justify-center gap-1 flex-shrink-0 ${
 						isWithdrawLoading || !currentWallet
 							? "bg-buttonDisabled cursor-not-allowed"
 							: "bg-red-600 hover:bg-red-700 hover:scale-105 active:scale-95"
 					} text-white`}
 				>
-					{isWithdrawLoading && <CgSpinner className="animate-spin text-xl" />}
-					<Text>{isWithdrawLoading ? "Processing..." : "Withdraw Early"}</Text>
+					{isWithdrawLoading && <CgSpinner className="animate-spin text-lg" />}
+					<Text className="text-sm">{isWithdrawLoading ? "Processing..." : "Withdraw Early"}</Text>
 				</Pressable>
 
 				{/* Your Stake - Right Side */}
-				<View className="inline-flex flex-row items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-3">
-					<View className="uppercase font-arame-mono text-textPrimary text-md">
-						<Text className="text-textPrimary text-md font-arame-mono uppercase">Your Stake</Text>
-					</View>
-					<View className="text-textWhite text-md font-league-spartan">
-						<Text className="text-textWhite text-md font-league-spartan">
-							$
-							{customCommify(stakeUsdValue, {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-								showDollarSign: false,
-							})}{" "}
-							(
-							{customCommify(stakeAmountFormatted, {
-								minimumFractionDigits: 0,
-								maximumFractionDigits: 0,
-								showDollarSign: false,
-							})}{" "}
-							TRAX)
+				<View className="flex flex-col items-end flex-1 min-w-0">
+					<View className="bg-white/5 backdrop-blur-sm rounded-lg p-2 flex flex-row gap-x-1">
+						<Text className="text-textPrimary text-xs font-arame-mono uppercase">Your Stake</Text>
+						<Text className="text-textWhite text-xs font-league-spartan text-right" numberOfLines={1} ellipsizeMode="tail">
+							${customCommify(stakeUsdValue, { minimumFractionDigits: 2, maximumFractionDigits: 2, showDollarSign: false })} (
+							{customCommify(stakeAmountFormatted, { minimumFractionDigits: 0, maximumFractionDigits: 0, showDollarSign: false })} TRAX)
 						</Text>
 					</View>
 				</View>

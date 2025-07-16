@@ -52,7 +52,7 @@ export const ReferralLink: React.FC<IProps> = () => {
 								</Text>
 							</View>
 
-							<View className="flex flex-row items-center">
+							<View className="flex flex-row items-center relative">
 								<TwitterIcon
 									onPress={shareOnTwitter}
 									className={`icon-tabler-brand-x text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity`}
@@ -61,6 +61,11 @@ export const ReferralLink: React.FC<IProps> = () => {
 									onPress={copy}
 									className={`icon-tabler-copy text-white ml-4 cursor-pointer hover:opacity-80 transition-opacity ${copied ? "text-textPrimary" : ""}`}
 								/>
+								{copied && (
+									<View className="absolute top-full mt-1 left-1/2 -translate-x-1/2 bg-bgPrimary text-white px-2 py-1 rounded text-xs text-center whitespace-nowrap">
+										<Text className="text-white whitespace-nowrap">{Platform.OS === "web" ? "Link copied!" : "Code copied!"}</Text>
+									</View>
+								)}
 							</View>
 						</View>
 					</View>

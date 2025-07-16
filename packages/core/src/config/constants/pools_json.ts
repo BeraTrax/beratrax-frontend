@@ -890,7 +890,7 @@ const pools_json: PoolDef[] = [
 		token1: "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8",
 		zapper_addr: "0x58bfBF62262b914AB587A4bD4e2946C46eD9145c",
 		alt1: "TRAX logo",
-		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/btx/logo.png",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/trax/logo.png",
 		rewards1: FarmOriginPlatform.BeraTrax.logo,
 		rewards1_alt: `${FarmOriginPlatform.BeraTrax.name} logo`,
 		isDeprecated: false,

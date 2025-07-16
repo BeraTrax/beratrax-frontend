@@ -98,7 +98,8 @@ const TransactionDetailsContent: FC<{
 	decimals: any;
 	isMobile?: boolean;
 }> = ({ tx, farm, prices, decimals, isMobile = false }) => {
-	const { type, amountInWei, token, vaultPrice, tokenPrice, netAmount, actualSlippage, fee, returnedAssets, vaultShares } = tx;
+	const { type, amountInWei, token, vaultPrice, tokenPrice, netAmount, actualSlippage, fee, returnedAssets, vaultShares, lpTokenPrice } =
+		tx;
 
 	const filteredReturnedAssets = useMemo(() => {
 		if (!returnedAssets) return [];
@@ -172,15 +173,15 @@ const TransactionDetailsContent: FC<{
 			)}
 
 			{/* LP Received */}
-			{tx.vaultShares !== undefined && (
+			{tx.lpTokens !== undefined && (
 				<View className={`flex flex-row justify-between items-center ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
 					<Text className={`text-textSecondary ${labelClass}`}>LP Received:</Text>
 					<View className="flex flex-col items-end">
 						<Text className={`${valueClass} text-textWhite`}>
-							$ {formatCurrency(Number(toEth(BigInt(tx.vaultShares), decimals[farm.chainId][farm.lp_address])) * (vaultPrice || 0))}
+							$ {formatCurrency(Number(toEth(BigInt(tx.lpTokens), decimals[farm.chainId][farm.lp_address])) * (lpTokenPrice || 0))}
 						</Text>
 						<Text className={`${isMobile ? "text-sm" : "text-xs"} text-textSecondary`}>
-							{formatCurrency(Number(toEth(BigInt(tx.vaultShares), decimals[farm.chainId][farm.lp_address])))} {farm.name}
+							{formatCurrency(Number(toEth(BigInt(tx.lpTokens), decimals[farm.chainId][farm.lp_address])))} {farm.name}
 						</Text>
 					</View>
 				</View>
@@ -190,7 +191,7 @@ const TransactionDetailsContent: FC<{
 			<View className={`flex flex-row justify-between items-start ${isMobile ? "p-4 bg-[#2A2A2A] rounded-lg mb-4" : ""}`}>
 				<Text className={`text-textSecondary ${labelClass}`}>LP Price:</Text>
 				<View className="flex flex-col items-end">
-					<Text className={`${valueClass} text-textWhite`}>$ {formatCurrency(vaultPrice || 0)}</Text>
+					<Text className={`${valueClass} text-textWhite`}>$ {formatCurrency(lpTokenPrice || 0)}</Text>
 				</View>
 			</View>
 
@@ -397,8 +398,8 @@ const TransactionRow = memo(
 		// Memoize the price and balance section
 		const priceAndBalance = useMemo(
 			() => (
-				<View className="flex-shrink-0 flex flex-col items-end">
-					<Text className="font-league-spartan font-medium text-lg leading-5 text-textWhite">
+				<View className="flex-shrink-0 flex flex-col items-end" style={{ minWidth: 120 }}>
+					<Text className="font-league-spartan font-medium text-lg leading-5 text-textWhite" numberOfLines={1} ellipsizeMode="tail">
 						$
 						{(
 							Number(
@@ -411,7 +412,7 @@ const TransactionRow = memo(
 								: (tokenPrice || prices[chainId][token])!)
 						).toLocaleString()}
 					</Text>
-					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">
+					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5" numberOfLines={1} ellipsizeMode="tail">
 						{netAmount ? Number(formatUnits(BigInt(netAmount), decimals[chainId][token])).toLocaleString() : tokenAmount.toLocaleString()}{" "}
 						{tokenNamesAndImages[token].name}
 					</Text>
@@ -455,20 +456,24 @@ const TransactionRow = memo(
 		// Memoize the vault name and type section
 		const vaultNameAndType = useMemo(
 			() => (
-				<View className="flex-grow flex flex-col">
+				<View className="flex-1 flex flex-col min-w-0 pr-2">
 					<View className="flex flex-row items-center gap-1.5">
-						<Text className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-blue-400" : "text-red-400"}`}>
+						<Text
+							className={`font-league-spartan font-medium text-lg leading-6 ${type === "deposit" ? "text-blue-400" : "text-red-400"}`}
+							numberOfLines={1}
+							ellipsizeMode="tail"
+							style={{ maxWidth: "60%" }}
+						>
 							{farm.name}
 						</Text>
 						<Text
-							className={`text-xs px-1.5 py-0.5 rounded ${
+							className={`text-xs px-1.5 py-0.5 rounded flex-shrink-0 ${
 								type === "deposit" ? "bg-blue-900/50 text-blue-400" : "bg-red-900/50 text-red-400"
 							}`}
 						>
 							{type === "deposit" ? "ZAP IN" : "ZAP OUT"}
 						</Text>
-						{retryButton}
-						{extraInfoSection}
+						<View className="flex-shrink-0">{extraInfoSection}</View>
 					</View>
 					<Text className="font-league-spartan font-light text-base text-textSecondary leading-5">{moment(date).fromNow()}</Text>
 				</View>

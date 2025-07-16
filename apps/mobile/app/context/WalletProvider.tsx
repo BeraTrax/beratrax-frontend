@@ -78,6 +78,8 @@ const WalletProvider: React.FC<IProps> = ({
 				// Check if user is already logged in
 				if (web3authInstance.privKey) {
 					setIsConnecting(true);
+					setIsSocial(true); // Set this early
+
 					try {
 						// Use wagmi's connectAsync to inform wagmi about the restored session
 						const { accounts } = await connectAsync({
@@ -85,16 +87,14 @@ const WalletProvider: React.FC<IProps> = ({
 						});
 
 						setCurrentWallet(accounts[0]);
-						setIsSocial(true);
 					} catch (error) {
 						console.error("Error restoring session:", error);
 						// If there's an error restoring the session, log out
 						await web3authInstance.logout();
+						setIsSocial(false);
 					} finally {
 						setIsConnecting(false);
 					}
-				} else {
-					console.log("No existing session found");
 				}
 			} catch (error) {
 				console.error("Error initializing Web3Auth:", error);
@@ -131,6 +131,7 @@ const WalletProvider: React.FC<IProps> = ({
 				setIsSocial(true);
 			} catch (error) {
 				console.error("Login error:", error);
+				setIsSocial(false);
 				throw error;
 			} finally {
 				setIsConnecting(false);
@@ -191,26 +192,49 @@ const WalletProvider: React.FC<IProps> = ({
 				const chain = supportedChains.find((item) => item.id === chainId);
 				if (!chain) throw new Error("chain not found");
 
+				// Check if we're using Web3Auth - multiple ways to detect this
+				const isUsingWeb3Auth = isSocial || web3auth?.privKey || connector?.id === "web3Auth";
+
 				let client: IClients["wallet"];
-				if (isSocial) {
+				if (isUsingWeb3Auth) {
+					// If we detect Web3Auth but don't have the private key yet, it might be a timing issue
 					if (!web3auth || !web3auth.privKey) {
-						throw new Error("Web3Auth not initialized or user not logged in");
+						// If wagmi thinks we're connected but Web34Auth isn't ready, this might be a timing issue
+						// Try to fall back to external wallet logic if available
+						if (getWalletClientHook && connector?.id !== "web3Auth") {
+							client = getWalletClientHook as any;
+						} else {
+							throw new Error("Web3Auth detected but private key not available. This might be a timing issue - please try again.");
+						}
+					} else {
+						// Format the private key properly - same logic as in getPkey
+						const cleanPrivateKey = web3auth.privKey.startsWith("0x") ? web3auth.privKey.slice(2) : web3auth.privKey;
+						const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
+						await ethereumPrivateKeyProvider.setupProvider(web3auth.privKey);
+
+						client = createWalletClient({
+							transport: custom(ethereumPrivateKeyProvider as EIP1193Provider),
+							chain,
+							account: privateKeyToAccount(formattedPrivateKey),
+						});
+					}
+				} else {
+					// For external wallets, use the wagmi client but skip chain switching for now
+					if (!getWalletClientHook) {
+						throw new Error("External wallet client not available - no wagmi wallet client found");
 					}
 
-					// Format the private key properly - same logic as in getPkey
-					const cleanPrivateKey = web3auth.privKey.startsWith("0x") ? web3auth.privKey.slice(2) : web3auth.privKey;
-					const formattedPrivateKey = `0x${cleanPrivateKey}` as Hex;
-					await ethereumPrivateKeyProvider.setupProvider(web3auth.privKey);
+					// For external wallets, try to switch chain but don't fail if it doesn't work
+					try {
+						await switchChainAsyncHook({ chainId });
+					} catch (error) {
+						console.warn("Chain switching failed for external wallet:", error);
+						// Continue with current chain
+					}
 
-					client = createWalletClient({
-						transport: custom(ethereumPrivateKeyProvider as EIP1193Provider),
-						chain,
-						account: privateKeyToAccount(formattedPrivateKey),
-					});
-				} else {
-					// @ts-ignore
-					client = getWalletClientHook;
-					await switchChainAsyncHook({ chainId });
+					// Use the wagmi client directly and cast it to our interface
+					// This works because both implement the same wallet client interface
+					client = getWalletClientHook as any;
 				}
 
 				client = client.extend((client) => ({
@@ -261,7 +285,7 @@ const WalletProvider: React.FC<IProps> = ({
 				throw error;
 			}
 		},
-		[address, isSocial, getWalletClientHook, switchChainAsyncHook, web3auth]
+		[address, isSocial, getWalletClientHook, switchChainAsyncHook, web3auth, connector, hasInitialized]
 	);
 
 	const estimateTxGas = async (args: EstimateTxGasArgs) => {
@@ -314,11 +338,17 @@ const WalletProvider: React.FC<IProps> = ({
 			setIsReconnectingTimeout(false);
 			setCurrentWallet(undefined);
 			setIsSocial(false);
+			// Don't reset isWeb3AuthReady here - Web3Auth itself might still be ready
 		} else if (status === "connected" && address) {
 			// Sync wagmi address with local state
 			setCurrentWallet(address);
+
+			// Re-set isSocial flag if this is a Web3Auth connection
+			if (connector?.id === "web3Auth" || web3auth?.privKey) {
+				setIsSocial(true);
+			}
 		}
-	}, [status, address]);
+	}, [status, address, connector, web3auth]);
 
 	const getPkey = async (): Promise<Hex | undefined> => {
 		try {

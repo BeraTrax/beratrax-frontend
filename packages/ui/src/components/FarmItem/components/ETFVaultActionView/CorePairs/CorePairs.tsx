@@ -1,9 +1,9 @@
 import React from "react";
 import { View } from "react-native";
-import ChordDiagram from "./ChordDiagram";
+import DonutETF from "./DonutETF";
 
 const CorePairs: React.FC = () => {
-	// Dynamic data - changing this array will result in differing shapes of the chord
+	// Dynamic data - changing this array will result in differing shapes of the donut
 	const corePairs = [
 		{ name: "wBera/Honey", volume: 45000000, swaps: 10000, color: "#8c4545" },
 		{ name: "Honey/USDT", volume: 32000000, swaps: 4000, color: "#3a6275" },
@@ -13,7 +13,7 @@ const CorePairs: React.FC = () => {
 
 	return (
 		<View>
-			<ChordDiagram data={corePairs} />
+			<DonutETF data={corePairs} />
 		</View>
 	);
 };

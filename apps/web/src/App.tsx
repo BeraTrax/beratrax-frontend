@@ -16,7 +16,7 @@ import "./styles/global.css";
 import { initGA, trackDailyDAppVisit, trackLanguage } from "@beratrax/core/src/utils/analytics";
 import { rainbowConfig } from "./config/walletConfig";
 import { WagmiProvider } from "wagmi";
-import OnChainKitProvider from "@beratrax/core/src/context/OnChainKitProvider";
+// import OnChainKitProvider from "@beratrax/core/src/context/OnChainKitProvider";
 setHook("notifications", useNotifications);
 
 function App() {
@@ -43,12 +43,12 @@ function App() {
 					appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
 				>
 					<WalletProvider>
-						<OnChainKitProvider>
-							<Router>
-								<Body />
-							</Router>
-							<ReactHooksWrapper />
-						</OnChainKitProvider>
+						{/* <OnChainKitProvider> */}
+						<Router>
+							<Body />
+						</Router>
+						<ReactHooksWrapper />
+						{/* </OnChainKitProvider> */}
 					</WalletProvider>
 				</RainbowKitProvider>
 			</WagmiProvider>

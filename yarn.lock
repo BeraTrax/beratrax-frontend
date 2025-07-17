@@ -884,23 +884,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@coinbase/onchainkit@^0.37.8":
-  version "0.37.8"
-  resolved "https://registry.yarnpkg.com/@coinbase/onchainkit/-/onchainkit-0.37.8.tgz#2c69233878e5b17664fb7cacc78abd48c2f97038"
-  integrity sha512-XuY364nz9GZY++l0Zqd8KcmL2xeRzmYRxHBhf2xyi1QoXm0n2bM6xz3rIZFFCdw0Hr0qpPak/lAp5GhE2siwKA==
-  dependencies:
-    "@farcaster/frame-sdk" "^0.0.28"
-    "@farcaster/frame-wagmi-connector" "^0.0.16"
-    "@tanstack/react-query" "^5"
-    clsx "^2.1.1"
-    graphql "^14 || ^15 || ^16"
-    graphql-request "^6.1.0"
-    qrcode "^1.5.4"
-    tailwind-merge "^2.3.0"
-    tailwindcss-animate "^1.0.7"
-    viem "^2.23.0"
-    wagmi "^2.14.11"
-
 "@coinbase/wallet-sdk@4.0.4":
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-4.0.4.tgz#634cd89bac93eeaf381a1f026476794e53431ed6"
@@ -2174,29 +2157,6 @@
     find-up "^5.0.0"
     js-yaml "^4.1.0"
 
-"@farcaster/frame-core@0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-core/-/frame-core-0.0.26.tgz#d838039060e50f4331716c8ec874a621c978dd93"
-  integrity sha512-DqBsi+lz7WBlqcxJfYv8ZiU8+Th4Y49euq13kCxVOn6YU/rKR7Wq6E6N1bgeb625wyoIrlC3NnPRXf5SoRxNhA==
-  dependencies:
-    ox "^0.4.4"
-    zod "^3.24.1"
-
-"@farcaster/frame-sdk@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-sdk/-/frame-sdk-0.0.28.tgz#0318c46e87280a893563598dbc7bc717e4031339"
-  integrity sha512-raxJkwy9oNDTodyfcY8DNvQNkt/9wdWGIqGnXW70biBPfVxfdG9WAqy1Bm552KSynd0+hGzcrQVwkMNzvpSZBg==
-  dependencies:
-    "@farcaster/frame-core" "0.0.26"
-    comlink "^4.4.2"
-    eventemitter3 "^5.0.1"
-    ox "^0.4.4"
-
-"@farcaster/frame-wagmi-connector@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@farcaster/frame-wagmi-connector/-/frame-wagmi-connector-0.0.16.tgz#8c58d479e4819fcd0de2bba3ba081641fc2cfb39"
-  integrity sha512-9ymoD49f8mT7itHdZnnXWqt6MQKqaxG/1QzOr+0MBnSPL+BTBpbKFGCUMbhLdEE2XDool139oM5uMxlPEOOP2A==
-
 "@floating-ui/core@^1.7.2":
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.7.2.tgz#3d1c35263950b314b6d5a72c8bfb9e3c1551aefd"
@@ -2216,11 +2176,6 @@
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.10.tgz#a2a1e3812d14525f725d011a73eceb41fef5bc1c"
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
-
-"@graphql-typed-document-node/core@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
-  integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
 "@holyheld/sdk@^4.0.5":
   version "4.0.5"
@@ -4264,7 +4219,7 @@
   dependencies:
     "@tanstack/query-devtools" "5.81.2"
 
-"@tanstack/react-query@^5", "@tanstack/react-query@^5.51.23", "@tanstack/react-query@^5.67.3":
+"@tanstack/react-query@^5.51.23", "@tanstack/react-query@^5.67.3":
   version "5.81.5"
   resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.81.5.tgz#660dba8bb35f24c4cf3617b299a1e3990a3bb49e"
   integrity sha512-lOf2KqRRiYWpQT86eeeftAGnjuTR35myTP8MXyvHa81VlomoAWNEd8x5vkcAfQefu0qtYCvyqLropFZqgI2EQw==
@@ -7454,7 +7409,7 @@ clone@^1.0.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==
 
-clsx@2.1.1, clsx@^2.0.0, clsx@^2.1.1:
+clsx@2.1.1, clsx@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
@@ -7525,11 +7480,6 @@ combined-stream@^1.0.8:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
-
-comlink@^4.4.2:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.4.2.tgz#cbbcd82742fbebc06489c28a183eedc5c60a2bca"
-  integrity sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==
 
 commander@^12.0.0, commander@^12.1.0:
   version "12.1.0"
@@ -10098,19 +10048,6 @@ graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
-
-graphql-request@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-6.1.0.tgz#f4eb2107967af3c7a5907eb3131c671eac89be4f"
-  integrity sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    cross-fetch "^3.1.5"
-
-"graphql@^14 || ^15 || ^16":
-  version "16.11.0"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.11.0.tgz#96d17f66370678027fdf59b2d4c20b4efaa8a633"
-  integrity sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==
 
 h3@^1.15.2:
   version "1.15.3"
@@ -13055,19 +12992,6 @@ ox@0.8.1:
     abitype "^1.0.8"
     eventemitter3 "5.0.1"
 
-ox@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.4.4.tgz#9d1757c026406e60097680d98ffedf9e3bc1fa0b"
-  integrity sha512-oJPEeCDs9iNiPs6J0rTx+Y0KGeCGyCAA3zo94yZhm8G5WpOxrwUtn2Ie/Y8IyARSqqY/j9JTKA3Fc1xs1DvFnw==
-  dependencies:
-    "@adraffy/ens-normalize" "^1.10.1"
-    "@noble/curves" "^1.6.0"
-    "@noble/hashes" "^1.5.0"
-    "@scure/bip32" "^1.5.0"
-    "@scure/bip39" "^1.4.0"
-    abitype "^1.0.6"
-    eventemitter3 "5.0.1"
-
 p-cancelable@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-2.1.1.tgz#aab7fbd416582fa32a3db49859c122487c5ed2cf"
@@ -13740,15 +13664,6 @@ qrcode@1.5.3:
   dependencies:
     dijkstrajs "^1.0.1"
     encode-utf8 "^1.0.3"
-    pngjs "^5.0.0"
-    yargs "^15.3.1"
-
-qrcode@^1.5.4:
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/qrcode/-/qrcode-1.5.4.tgz#5cb81d86eb57c675febb08cf007fff963405da88"
-  integrity sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==
-  dependencies:
-    dijkstrajs "^1.0.1"
     pngjs "^5.0.0"
     yargs "^15.3.1"
 
@@ -15696,12 +15611,12 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-tailwind-merge@^2.3.0, tailwind-merge@^2.5.5:
+tailwind-merge@^2.5.5:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-2.6.0.tgz#ac5fb7e227910c038d458f396b7400d93a3142d5"
   integrity sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==
 
-tailwindcss-animate@1.0.7, tailwindcss-animate@^1.0.7:
+tailwindcss-animate@1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/tailwindcss-animate/-/tailwindcss-animate-1.0.7.tgz#318b692c4c42676cc9e67b19b78775742388bef4"
   integrity sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==
@@ -16890,20 +16805,6 @@ viem@>=2.29.0, viem@^2.1.1, viem@^2.19.4, viem@^2.23.10, viem@^2.23.2, viem@^2.2
     ox "0.8.1"
     ws "8.18.2"
 
-viem@^2.23.0:
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.32.0.tgz#6994fce43c5feed21367c80dd488a755838101da"
-  integrity sha512-pHwKXQSyEWX+8ttOQJdU5dSBfYd6L9JxARY/Sx0MBj3uF/Zaiqt6o1SbzjFjQXkNzWSgtxK7H89ZI1SMIA2iLQ==
-  dependencies:
-    "@noble/curves" "1.9.2"
-    "@noble/hashes" "1.8.0"
-    "@scure/bip32" "1.7.0"
-    "@scure/bip39" "1.6.0"
-    abitype "1.0.8"
-    isows "1.0.7"
-    ox "0.8.1"
-    ws "8.18.2"
-
 vite-plugin-node-polyfills@^0.23.0:
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-node-polyfills/-/vite-plugin-node-polyfills-0.23.0.tgz#99d0d1524fa75ce5c7bb1fc8af30283379e9c684"
@@ -16975,7 +16876,7 @@ wagmi@2.12.11:
     "@wagmi/core" "2.13.5"
     use-sync-external-store "1.2.0"
 
-wagmi@^2.12.11, wagmi@^2.14.11, wagmi@^2.14.15:
+wagmi@^2.12.11, wagmi@^2.14.15:
   version "2.15.6"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.15.6.tgz#eaad3576f29f383bb082cac53694fae3a9075393"
   integrity sha512-tR4tm+7eE0UloQe1oi4hUIjIDyjv5ImQlzq/QcvvfJYWF/EquTfGrmht6+nTYGCIeSzeEvbK90KgWyNqa+HD7Q==
@@ -17385,11 +17286,6 @@ zod@3.22.4:
   version "3.22.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
-
-zod@^3.24.1:
-  version "3.25.67"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.67.tgz#62987e4078e2ab0f63b491ef0c4f33df24236da8"
-  integrity sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==
 
 zustand@4.4.1:
   version "4.4.1"

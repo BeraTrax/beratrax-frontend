@@ -1,8 +1,8 @@
 import { View, TextInput, Text, Pressable, ScrollView, Platform, Image, ImageSourcePropType, Linking } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
-import { setOnchainKitConfig } from "@coinbase/onchainkit";
-import { getOnrampBuyUrl, fetchOnrampOptions } from "@coinbase/onchainkit/fund";
+// import { setOnchainKitConfig } from "@coinbase/onchainkit";
+// import { getOnrampBuyUrl, fetchOnrampOptions } from "@coinbase/onchainkit/fund";
 import { defaultNetworkName } from "@beratrax/core/src/config/constants";
 import { isStagging, RAMP_TRANSAK_API_KEY, onchainkitProjectId } from "@beratrax/core/src/config/constants";
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
@@ -86,28 +86,28 @@ export const Buy = (): React.JSX.Element => {
 			});
 	}, []);
 
-	useEffect(() => {
-		const fetchOptions = async () => {
-			if (userCountryCode && userSubDivisionCode) {
-				try {
-					// Set global config for OnchainKit
-					setOnchainKitConfig({
-						apiKey: "r84JysipaN1nF2Wd46D27d874Kffr9Wa",
-					});
+	// useEffect(() => {
+	// 	const fetchOptions = async () => {
+	// 		if (userCountryCode && userSubDivisionCode) {
+	// 			try {
+	// 				// Set global config for OnchainKit
+	// 				setOnchainKitConfig({
+	// 					apiKey: "r84JysipaN1nF2Wd46D27d874Kffr9Wa",
+	// 				});
 
-					const config = await fetchOnrampOptions({
-						country: userCountryCode,
-						subdivision: userSubDivisionCode,
-					});
-					setOnrampOptions(config);
-				} catch (error) {
-					console.error("Error fetching onramp options", error);
-				}
-			}
-		};
+	// 				const config = await fetchOnrampOptions({
+	// 					country: userCountryCode,
+	// 					subdivision: userSubDivisionCode,
+	// 				});
+	// 				setOnrampOptions(config);
+	// 			} catch (error) {
+	// 				console.error("Error fetching onramp options", error);
+	// 			}
+	// 		}
+	// 	};
 
-		fetchOptions();
-	}, [userCountryCode, userSubDivisionCode]);
+	// 	fetchOptions();
+	// }, [userCountryCode, userSubDivisionCode]);
 
 	const presetAmounts = ["20", "50", "100"];
 	const [amount, setAmount] = useState("10");
@@ -132,32 +132,32 @@ export const Buy = (): React.JSX.Element => {
 	}, [onrampOptions]);
 
 	// Auto-select first supported token when available
-	useEffect(() => {
-		if (supportedTokens.length > 0 && !selectedToken) {
-			setSelectedToken(supportedTokens[0]);
-		}
-	}, [supportedTokens, selectedToken]);
+	// useEffect(() => {
+	// 	if (supportedTokens.length > 0 && !selectedToken) {
+	// 		setSelectedToken(supportedTokens[0]);
+	// 	}
+	// }, [supportedTokens, selectedToken]);
 
-	const onrampBuyUrl = useMemo(() => {
-		const assets = selectedToken ? [selectedToken.symbol] : ["USDC"];
-		return getOnrampBuyUrl({
-			projectId: onchainkitProjectId,
-			addresses: { [address?.toString() || ""]: [defaultNetworkName] },
-			assets,
-			defaultNetwork: defaultNetworkName,
-			presetFiatAmount: parseFloat(displayAmount) || 10,
-			fiatCurrency: "USD",
-		});
-	}, [address, displayAmount, selectedToken]);
+	// const onrampBuyUrl = useMemo(() => {
+	// 	const assets = selectedToken ? [selectedToken.symbol] : ["USDC"];
+	// 	return getOnrampBuyUrl({
+	// 		projectId: onchainkitProjectId,
+	// 		addresses: { [address?.toString() || ""]: [defaultNetworkName] },
+	// 		assets,
+	// 		defaultNetwork: defaultNetworkName,
+	// 		presetFiatAmount: parseFloat(displayAmount) || 10,
+	// 		fiatCurrency: "USD",
+	// 	});
+	// }, [address, displayAmount, selectedToken]);
 
 	const services = useMemo(
 		() => [
-			{
-				id: "coinbase",
-				name: "Coinbase",
-				url: onrampBuyUrl,
-				icon: coinbaseLogo,
-			},
+			// {
+			// 	id: "coinbase",
+			// 	name: "Coinbase",
+			// 	url: onrampBuyUrl,
+			// 	icon: coinbaseLogo,
+			// },
 			{
 				id: "transak",
 				name: "Transak",
@@ -165,7 +165,7 @@ export const Buy = (): React.JSX.Element => {
 				icon: transaklogo,
 			},
 		],
-		[address, displayAmount, isStagging, onrampBuyUrl]
+		[address, displayAmount, isStagging]
 	);
 
 	const [selectedServiceId, setSelectedServiceId] = useState<string>(services[0].id);

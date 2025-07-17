@@ -29,11 +29,11 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 22.10.0
+      nodejs: 22.15.0
   pre_build:
     commands:
       - echo Pre build commands started...
-      - yarn set version 3.4.1
+      - yarn set version 1.22.22
       - echo yarn install started.
       - yarn install
       - echo Finished installing packages.

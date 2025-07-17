@@ -29,7 +29,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 22.10.0
+      nodejs: 22.15.0
   pre_build:
     commands:
       - echo Pre build commands started...
@@ -40,7 +40,7 @@ phases:
   build:
     commands:
       - echo Generating build directory for react.
-      - yarn build:web
+      - yarn build:web:production
       - echo Finished generating build directory.
 
   post_build:

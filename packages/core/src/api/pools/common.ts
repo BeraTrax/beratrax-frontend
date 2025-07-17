@@ -519,6 +519,7 @@ export const slippageIn: SlippageInBaseFn = async (args) => {
 		if (token === zeroAddress) {
 			// use weth address as tokenId, but in case of some farms (e.g: hop)
 			// we need the token of liquidity pair, so use tokenIn if provided
+			
 			token = tokenIn ?? wberaAddress;
 			const { result: vaultBalance } = await publicClient.simulateContract({
 				abi: zapperAbi,

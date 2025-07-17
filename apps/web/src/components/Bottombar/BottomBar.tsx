@@ -43,12 +43,12 @@ function BottomBar() {
 		// 	nonActiveIcon: LeaderboardNonActiveIcon,
 		// 	title: "Leaderboard",
 		// },
-		{
-			route: RoutesPaths.Buy,
-			activeIcon: CoinsActiveIcon,
-			nonActiveIcon: CoinsNonActiveIcon,
-			title: "Buy",
-		},
+		// {
+		// 	route: RoutesPaths.Buy,
+		// 	activeIcon: CoinsActiveIcon,
+		// 	nonActiveIcon: CoinsNonActiveIcon,
+		// 	title: "Buy",
+		// },
 		{
 			route: RoutesPaths.UserGuide,
 			activeIcon: UserGuideActiveIcon,

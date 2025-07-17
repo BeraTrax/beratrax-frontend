@@ -1,36 +1,36 @@
 {
-  "name": "@beratrax/ui",
-  "private": true,
-  "version": "0.0.1",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./src/*": "./src/*",
-    "./global.css": "./global.css"
-  },
-  "license": "MIT",
-  "scripts": {
-    "lint": "eslint \"**/*.ts\""
-  },
-  "dependencies": {
-    "@beratrax/core": "*",
-    "nativewind": "4.1.23",
-    "react": "^18.2.0",
-    "react-dom": "^19.1.0",
-    "react-native": "0.76.9",
-    "react-native-svg": "^15.11.2",
-    "react-native-svg-transformer": "^1.5.0",
-    "react-native-web": "^0.19.13",
-    "tailwindcss": "^3.4.1",
-    "wagmi": "^2.14.15"
-  },
-  "devDependencies": {
-    "@beratrax/eslint-config": "*",
-    "@beratrax/typescript-config": "*",
-    "autoprefixer": "^10.4.17",
-    "eslint": "^8.57.0",
-    "typescript": "5.5.4"
-  }
+	"name": "@beratrax/ui",
+	"private": true,
+	"version": "0.0.1",
+	"main": "src/index.ts",
+	"module": "src/index.ts",
+	"types": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./src/*": "./src/*",
+		"./global.css": "./global.css"
+	},
+	"license": "MIT",
+	"scripts": {
+		"lint": "eslint \"**/*.ts\""
+	},
+	"dependencies": {
+		"@beratrax/core": "*",
+		"nativewind": "4.1.23",
+		"react": "^18.2.0",
+		"react-dom": "^19.1.0",
+		"react-native": "0.76.9",
+		"react-native-svg": "^15.11.2",
+		"react-native-svg-transformer": "^1.5.0",
+		"react-native-web": "^0.19.13",
+		"tailwindcss": "^3.4.1",
+		"wagmi": "^2.12.11"
+	},
+	"devDependencies": {
+		"@beratrax/eslint-config": "*",
+		"@beratrax/typescript-config": "*",
+		"autoprefixer": "^10.4.17",
+		"eslint": "^8.57.0",
+		"typescript": "5.5.4"
+	}
 }

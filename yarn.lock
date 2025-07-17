@@ -16876,7 +16876,7 @@ wagmi@2.12.11:
     "@wagmi/core" "2.13.5"
     use-sync-external-store "1.2.0"
 
-wagmi@^2.12.11, wagmi@^2.14.15:
+wagmi@^2.12.11:
   version "2.15.6"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.15.6.tgz#eaad3576f29f383bb082cac53694fae3a9075393"
   integrity sha512-tR4tm+7eE0UloQe1oi4hUIjIDyjv5ImQlzq/QcvvfJYWF/EquTfGrmht6+nTYGCIeSzeEvbK90KgWyNqa+HD7Q==

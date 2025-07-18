@@ -92,7 +92,7 @@ const pools_json: PoolDef[] = [
 		name1: "LBGT",
 		name2: "wBERA",
 		description:
-			"This vault is built on Kodiak's LBGT-wBERA vault. Your deposit is automatically converted into the LBGT-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in LBGT-wBERA LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's LBGT-wBERA vault. Your deposit is automatically converted into the LBGT-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in LBGT-wBERA LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -146,7 +146,7 @@ const pools_json: PoolDef[] = [
 		name1: "rUSD",
 		name2: "HONEY",
 		description:
-			"This vault is built on Kodiak's rUSD-HONEY vault. Your deposit is automatically converted into the rUSD-HONEY LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in rUSD-HONEY LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's rUSD-HONEY vault. Your deposit is automatically converted into the rUSD-HONEY LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in rUSD-HONEY LP, not your starting token before zapping.)",
 		stableCoin: true,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -200,7 +200,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "HONEY",
 		description:
-			"This vault is built on Kodiak's wBERA-HONEY vault. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-HONEY LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's wBERA-HONEY vault. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-HONEY LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -254,7 +254,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wBTC",
 		description:
-			"This vault is built on Kodiak's wBERA-wBTC vault. Your deposit is automatically converted into the wBERA-wBTC LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wBTC LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's wBERA-wBTC vault. Your deposit is automatically converted into the wBERA-wBTC LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wBTC LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -309,7 +309,7 @@ const pools_json: PoolDef[] = [
 		name1: "wETH",
 		name2: "wBERA",
 		description:
-			"This vault is built on Kodiak's wBERA-wETH vault. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wETH LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's wBERA-wETH vault. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wETH LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -363,7 +363,7 @@ const pools_json: PoolDef[] = [
 		name1: "iBGT",
 		name2: "wBERA",
 		description:
-			"This vault is built on Kodiak's iBGT-wBERA vault. Your deposit is automatically converted into the iBGT-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBGT-wBERA LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's iBGT-wBERA vault. Your deposit is automatically converted into the iBGT-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBGT-wBERA LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -417,7 +417,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "BR",
 		description:
-			"This vault is built on Kodiak's BR-wBERA vault. Your deposit is automatically converted into the BR-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in BR-wBERA LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's BR-wBERA vault. Your deposit is automatically converted into the BR-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in BR-wBERA LP, not your starting token before zapping.)",
 		stableCoin: true,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -471,7 +471,7 @@ const pools_json: PoolDef[] = [
 		name1: "SolvBtc",
 		name2: "SolvBTC.BBN",
 		description:
-			"This vault is built on Kodiak's SolvBtcXSolvBtc vault. Your deposit is automatically converted into the SolvBtcXSolvBtc LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in SolvBtcXSolvBtc LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's SolvBtcXSolvBtc vault. Your deposit is automatically converted into the SolvBtcXSolvBtc LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in SolvBtcXSolvBtc LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -525,7 +525,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBTC",
 		name2: "SolvBTC",
 		description:
-			"This vault is built on Kodiak's wBTC-SolvBTC vault. Your deposit is automatically converted into the wBTC-SolvBTC LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBTC-SolvBTC LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's wBTC-SolvBTC vault. Your deposit is automatically converted into the wBTC-SolvBTC LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBTC-SolvBTC LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -579,7 +579,7 @@ const pools_json: PoolDef[] = [
 		name1: "iBERA",
 		name2: "wBERA",
 		description:
-			"This vault is built on Kodiak's iBERA-wBERA vault. Your deposit is automatically converted into the iBERA-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA-wBERA LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's iBERA-wBERA vault. Your deposit is automatically converted into the iBERA-wBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA-wBERA LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -633,7 +633,7 @@ const pools_json: PoolDef[] = [
 		name1: "iBERA",
 		name2: "osBGT",
 		description:
-			"This vault is built on Kodiak's osBGT-iBERA vault. Your deposit is automatically converted into the osBGT-iBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in osBGT-iBERA LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's osBGT-iBERA vault. Your deposit is automatically converted into the osBGT-iBERA LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in osBGT-iBERA LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -687,7 +687,7 @@ const pools_json: PoolDef[] = [
 		name1: "sUSDa",
 		name2: "USDa",
 		description:
-			"This vault is built on Kodiak's sUSDa-USDa vault. Your deposit is automatically converted into the sUSDa-USDa LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in sUSDa-USDa LP, not your starting token before zapping.)",
+			"This vault is built on Kodiak's sUSDa-USDa vault. Your deposit is automatically converted into the sUSDa-USDa LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in sUSDa-USDa LP, not your starting token before zapping.)",
 		stableCoin: true,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -738,7 +738,7 @@ const pools_json: PoolDef[] = [
 		source: "https://infrared.finance/ibera",
 		name1: "iBERA",
 		description:
-			"This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBERA or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA, not your starting token before zapping.) ",
+			"This vault is built on Infared's iBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBERA or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBERA, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 36.477,
@@ -785,7 +785,7 @@ const pools_json: PoolDef[] = [
 		source: "https://www.berapaw.com/stake",
 		name1: "stLBGT",
 		description:
-			"This vault is built on BeraPaw's stLBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with stLBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in stLBGT, not your starting token before zapping.) ",
+			"This vault is built on BeraPaw's stLBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with stLBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in stLBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.BeraPaw.name} logo`,
 		total_apy: 36.477,
@@ -831,7 +831,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "LBGT",
 		description:
-			"This vault is built on BeraPaw's wBERA-LBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with wBERA-LBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-LBGT, not your starting token before zapping.) ",
+			"This vault is built on BeraPaw's wBERA-LBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with wBERA-LBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-LBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.BeraPaw.name} logo`,
 		total_apy: 36.477,
@@ -881,7 +881,7 @@ const pools_json: PoolDef[] = [
 		source: "https://hub.berachain.com/pools/0x705fc16ba5a1eb67051934f2fb17eacae660f6c70002000000000000000000d5/details/",
 		name1: "TRAX",
 		description:
-			"This vault is built on Beratrax's TRAX Staking Vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
+			"This vault is built on Trax's TRAX Staking Vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with TRAX or zap in using HONEY or BERA. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in TRAX, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.BeraTrax.name} logo`,
 		total_apy: 550,
@@ -928,7 +928,7 @@ const pools_json: PoolDef[] = [
 		name1: "yBERA",
 		name2: "yBGT",
 		description:
-			"This vault is built on Kodiak's yBERA-yBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with yBERA-yBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in yBERA-yBGT, not your starting token before zapping.) ",
+			"This vault is built on Kodiak's yBERA-yBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with yBERA-yBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in yBERA-yBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -978,7 +978,7 @@ const pools_json: PoolDef[] = [
 		source: "https://bearn.sucks/ybgt",
 		name1: "styBGT",
 		description:
-			"This vault is built on Bearn's styBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styBGT, not your starting token before zapping.) ",
+			"This vault is built on Bearn's styBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Bearn.name} logo`,
 		total_apy: 36.477,
@@ -1024,7 +1024,7 @@ const pools_json: PoolDef[] = [
 		source: "https://bearn.sucks/ybera",
 		name1: "styBERA",
 		description:
-			"This vault is built on Bearn's styBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styBERA or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styBERA, not your starting token before zapping.) ",
+			"This vault is built on Bearn's styBERA vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styBERA or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styBERA, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Bearn.name} logo`,
 		total_apy: 36.477,
@@ -1070,7 +1070,7 @@ const pools_json: PoolDef[] = [
 		source: "https://bearn.sucks/yhoney",
 		name1: "styHONEY",
 		description:
-			"This vault is built on Bearn's styHONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styHONEY or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styHONEY, not your starting token before zapping.) ",
+			"This vault is built on Bearn's styHONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with styHONEY or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in styHONEY, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Bearn.name} logo`,
 		total_apy: 36.477,
@@ -1119,7 +1119,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "RAMEN",
 		description:
-			"This vault is built on Kodiak's wBERA-RAMEN vault. Your deposit is automatically converted into the wBERA-RAMEN LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-RAMEN, not your starting token before zapping.) ",
+			"This vault is built on Kodiak's wBERA-RAMEN vault. Your deposit is automatically converted into the wBERA-RAMEN LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-RAMEN, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -1173,7 +1173,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "BM",
 		description:
-			"This vault is built on Kodiak's wBERA-BM vault. Your deposit is automatically converted into the wBERA-BM LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-BM not your starting token before zapping.) ",
+			"This vault is built on Kodiak's wBERA-BM vault. Your deposit is automatically converted into the wBERA-BM LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-BM not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -1227,7 +1227,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "NAV",
 		description:
-			"This vault is built on Kodiak's wBERA-NAV vault. Your deposit is automatically converted into the wBERA-NAV LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-NAV, not your starting token before zapping.) ",
+			"This vault is built on Kodiak's wBERA-NAV vault. Your deposit is automatically converted into the wBERA-NAV LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-NAV, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -1281,7 +1281,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "stBGT",
 		description:
-			"This vault is built on Kodiak's wBERA-stBGT vault. Your deposit is automatically converted into the wBERA-stBGT LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-stBGT, not your starting token before zapping.) ",
+			"This vault is built on Kodiak's wBERA-stBGT vault. Your deposit is automatically converted into the wBERA-stBGT LP and deposited for you. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-stBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 36.477,
@@ -1333,7 +1333,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wgBERA",
 		description:
-			"This vault is built on Burrbear's wBERA-wgBERA vault. Your deposit is automatically converted into the wBERA-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wgBERA, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's wBERA-wgBERA vault. Your deposit is automatically converted into the wBERA-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wgBERA, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Burrbear.name} logo`,
 		total_apy: 154.43,
@@ -1383,7 +1383,7 @@ const pools_json: PoolDef[] = [
 		source: "https://infrared.finance/ibgt",
 		name1: "iBGT",
 		description:
-			"This vault is built on Infared's iBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBGT, not your starting token before zapping.) ",
+			"This vault is built on Infared's iBGT vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in iBGT, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 10.16,
@@ -1434,7 +1434,7 @@ const pools_json: PoolDef[] = [
 		name1: "Nect",
 		name2: "wgBERA",
 		description:
-			"This vault is built on Burrbear's Nect-wgBERA vault. Your deposit is automatically converted into the Nect-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wgBERA, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's Nect-wgBERA vault. Your deposit is automatically converted into the Nect-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBERA-wgBERA, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Burrbear.name} logo`,
 		total_apy: 154.43,
@@ -1487,7 +1487,7 @@ const pools_json: PoolDef[] = [
 		name2: "USDC",
 		name3: "HONEY",
 		description:
-			"This vault is built on Burrbear's Nect-USDCe-Honey vault. Your deposit is automatically converted into the Nect-USDCe-Honey LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDCe-Honey, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's Nect-USDCe-Honey vault. Your deposit is automatically converted into the Nect-USDCe-Honey LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDCe-Honey, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Burrbear.name} logo`,
 		total_apy: 36.477,
@@ -1543,7 +1543,7 @@ const pools_json: PoolDef[] = [
 		name2: "SolvBTC",
 		name3: "xSolvBTC",
 		description:
-			"This vault is built on Burrbear's wBTC-SolvBTC-xSolvBTC vault. Your deposit is automatically converted into the wBTC-SolvBTC-xSolvBTC LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBTC-SolvBTC-xSolvBTC, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's wBTC-SolvBTC-xSolvBTC vault. Your deposit is automatically converted into the wBTC-SolvBTC-xSolvBTC LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in wBTC-SolvBTC-xSolvBTC, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: "Burrbear logo",
 		total_apy: 36.477,
@@ -1600,7 +1600,7 @@ const pools_json: PoolDef[] = [
 		name1: "Burr",
 		name2: "wgBERA",
 		description:
-			"This vault is built on Burrbear's Burr-wgBERA vault. Your deposit is automatically converted into the Burr-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Burr-wgBERA, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's Burr-wgBERA vault. Your deposit is automatically converted into the Burr-wgBERA LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Burr-wgBERA, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: "Burrbear logo",
 		total_apy: 36.477,
@@ -1655,7 +1655,7 @@ const pools_json: PoolDef[] = [
 		name3: "USDT0",
 		name4: "HONEY",
 		description:
-			"This vault is built on Burrbear's Nect-USDCe-USDT0-HONEY vault. Your deposit is automatically converted into the Nect-USDCe-USDT0-HONEY LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDCe-USDT0-HONEY, not your starting token before zapping.) ",
+			"This vault is built on Burrbear's Nect-USDCe-USDT0-HONEY vault. Your deposit is automatically converted into the Nect-USDCe-USDT0-HONEY LP and deposited for you. You'll earn WBERA, which is claimed and compounded once a minute. You can zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in Nect-USDCe-USDT0-HONEY, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: "Burrbear logo",
 		total_apy: 36.477,
@@ -1718,7 +1718,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you'll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-HONEY vault on Infared. Your deposit is automatically converted into the wBERA-HONEY LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT (thoon) at anytime. Additionally, you'll accumulate BTX points for our future airdrop. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 14,
@@ -1773,7 +1773,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wBERA-HONEY vault on Wasabee, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-HONEY vault on Wasabee, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -1822,7 +1822,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wBTC",
 		description:
-			"This vault is built on the wBERA-wBTC vault on Infared. Your deposit is automatically converted into the wBERA-wBTC LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT at anytime. Additionally, you'll accumulate BTX points for our future airdrop. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-wBTC vault on Infared. Your deposit is automatically converted into the wBERA-wBTC LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT at anytime. Additionally, you'll accumulate BTX points for our future airdrop. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 14,
@@ -1877,7 +1877,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wETH",
 		description:
-			"This vault is built on the wBERA-wETH vault on Infared. Your deposit is automatically converted into the wBERA-wETH LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT at anytime. Additionally, you'll accumulate BTX points for our future airdrop, as well as any aidrops any of the underlying. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-wETH vault on Infared. Your deposit is automatically converted into the wBERA-wETH LP and deposited on BEX, then staked on Infared. You'll earn iBGT, which is claimed and compounded once a minute. You can withdraw some or all of your position as BERA, HONEY, or iBGT at anytime. Additionally, you'll accumulate BTX points for our future airdrop, as well as any aidrops any of the underlying. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 14,
@@ -1932,7 +1932,7 @@ const pools_json: PoolDef[] = [
 		name1: "HONEY",
 		name2: "BYUSD",
 		description:
-			"This vault is built on Infared's HONEY-BYUSD vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in HONEY-BYUSD, not your starting token before zapping.) ",
+			"This vault is built on Infared's HONEY-BYUSD vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in HONEY-BYUSD, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 10.16,
@@ -1988,7 +1988,7 @@ const pools_json: PoolDef[] = [
 		name1: "USDC",
 		name2: "HONEY",
 		description:
-			"This vault is built on Infared's USDC-HONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in USDC-HONEY, not your starting token before zapping.) ",
+			"This vault is built on Infared's USDC-HONEY vault. Your deposit is automatically staked, and all rewards are claimed and auto-compounded every minute. You can deposit directly with iBGT or zap in using HONEY or BERA. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third party slippage applies for zaps. Your actual deposit is in USDC-HONEY, not your starting token before zapping.) ",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Infrared.name} logo`,
 		total_apy: 10.16,
@@ -2043,7 +2043,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wBERA-HONEY vault on Kodiak. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-HONEY vault on Kodiak. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 14,
@@ -2091,7 +2091,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wETH",
 		description:
-			"This vault is built on the wBERA-wETH vault on Kodiak. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-wETH vault on Kodiak. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 14,
@@ -2139,7 +2139,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "YEET",
 		description:
-			"This vault is built on the wBERA-YEET vault on Kodiak. Your deposit is automatically converted into the wBERA-YEET LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-YEET vault on Kodiak. Your deposit is automatically converted into the wBERA-YEET LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 14,
@@ -2187,7 +2187,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "RAMEN",
 		description:
-			"This vault is built on the wBERA-RAMEN vault on Kodiak. Your deposit is automatically converted into the wBERA-RAMEN LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-RAMEN vault on Kodiak. Your deposit is automatically converted into the wBERA-RAMEN LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 14,
@@ -2235,7 +2235,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wBTC",
 		description:
-			"This vault is built on the wBERA-wBTC vault on Kodiak. Your deposit is automatically converted into the wBERA-wBTC LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-wBTC vault on Kodiak. Your deposit is automatically converted into the wBERA-wBTC LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Kodiak.name} logo`,
 		total_apy: 14,
@@ -2284,7 +2284,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wBERA-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -2333,7 +2333,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBERA",
 		name2: "wETH",
 		description:
-			"This vault is built on the wBERA-wETH vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBERA-wETH vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBERA-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -2382,7 +2382,7 @@ const pools_json: PoolDef[] = [
 		name1: "wETH",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wETH-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wETH-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wETH-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wETH-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -2431,7 +2431,7 @@ const pools_json: PoolDef[] = [
 		name1: "USDC",
 		name2: "HONEY",
 		description:
-			"This vault is built on the USDC-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the USDC-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the USDC-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the USDC-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -2480,7 +2480,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBTC",
 		name2: "HONEY",
 		description:
-			"This vault is built on the wBTC-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBTC-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBTC-HONEY vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBTC-HONEY LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,
@@ -2529,7 +2529,7 @@ const pools_json: PoolDef[] = [
 		name1: "wBTC",
 		name2: "wETH",
 		description:
-			"This vault is built on the wBTC-wETH vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBTC-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although BeraTrax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
+			"This vault is built on the wBTC-wETH vault on Kodiak, which is rebalanced for a higher APY with Steer. Your deposit is automatically converted into the wBTC-wETH LP and deposited for you. You can withdraw some or all of your position as BERA or HONEY at any time. Additionally, you'll accumulate BTX points for our future airdrop, and keep any airdrops to any of the underlying vaults. (Note: Although Trax does not have a deposit/withdraw fee, third-party slippage applies for zaps. Your actual deposit is in the LP, not your starting token before zapping.)",
 		stableCoin: false,
 		platform_alt: `${FarmOriginPlatform.Steer.name} logo`,
 		total_apy: 14,

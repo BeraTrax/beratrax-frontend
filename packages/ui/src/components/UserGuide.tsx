@@ -93,23 +93,23 @@ export const UserGuide = () => {
 				<Text
 					className={`font-league-spartan font-bold ${isPlatformWeb() ? "text-4xl" : "text-2xl"} leading-none uppercase text-textWhite`}
 				>
-					💰 BeraTrax User Guide: Your Gateway to Seamless DeFi on Berachain
+					💰 Trax User Guide: Your Gateway to Seamless DeFi on Berachain
 				</Text>
 				<Text className={paragraphStyle}>
-					Welcome to <Text className="font-bold">BeraTrax</Text>, the easiest way to access{" "}
+					Welcome to <Text className="font-bold"> Trax</Text>, the easiest way to access{" "}
 					<Text className="font-bold">
 						yield-earning vaults, auto-compounded rewards, and Berachain's Proof of Liquidity system—all through your phone.
 					</Text>
-					Whether you're new to DeFi or a seasoned yield farmer, BeraTrax is built to{" "}
-					<Text className="font-bold">remove the complexity</Text> and help you maximize your returns.
+					Whether you're new to DeFi or a seasoned yield farmer, Trax is built to <Text className="font-bold">remove the complexity</Text>{" "}
+					and help you maximize your returns.
 				</Text>
 				<HorizontalLine />
 
 				{/* SECTION 1 GETTING STARTED*/}
 				<>
-					<Text className={sectionTitleStyle}>Getting Started with BeraTrax</Text>
+					<Text className={sectionTitleStyle}>Getting Started with Trax</Text>
 					<Text className={subTitleStyle}>Step 1: Signing In</Text>
-					<Text className={`${paragraphStyle} my-4`}>BeraTrax offers two ways to get started:</Text>
+					<Text className={`${paragraphStyle} my-4`}> Trax offers two ways to get started:</Text>
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className={`font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"} text-textWhite`}>
@@ -128,7 +128,7 @@ export const UserGuide = () => {
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className={`font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"} text-textWhite`}>
 							<Text className="font-bold">First-time users? </Text>
-							If signing in via social login, BeraTrax will
+							If signing in via social login, Trax will
 							<Text className="font-bold"> automatically create a wallet</Text> for you on Berachain's mainnet.
 						</Text>
 					</BulletPoint>
@@ -136,7 +136,7 @@ export const UserGuide = () => {
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className={`font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"} text-textWhite`}>
 							<Text className="font-bold">Gas money? </Text>
-							All transactions are covered on BeraTrax so you don't need to have BERA to use it.
+							All transactions are covered on Trax so you don't need to have BERA to use it.
 						</Text>
 					</BulletPoint>
 
@@ -146,7 +146,7 @@ export const UserGuide = () => {
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							BeraTrax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
+							Trax will soon have fiat onramps for you to purchase BERA directly to deposit into vaults
 						</Text>
 					</BulletPoint>
 
@@ -198,7 +198,7 @@ export const UserGuide = () => {
 				<>
 					<Text className={sectionTitleStyle}>Exploring the Dashboard</Text>
 					<Text className={paragraphStyle}>
-						After signing in, you'll land on the <Text className="font-bold">BeraTrax Dashboard.</Text>
+						After signing in, you'll land on the <Text className="font-bold"> Trax Dashboard.</Text>
 					</Text>
 					<Text className={paragraphStyle}>Here's what you'll see:</Text>
 					<ResponsiveImage source={images.three} width={700} />
@@ -262,7 +262,7 @@ export const UserGuide = () => {
 
 					<BulletPoint icon={<CircleTwoIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							<Text className="font-bold text-textWhite">Select your deposit asset</Text> (BeraTrax will auto-convert unsupported assets).
+							<Text className="font-bold text-textWhite">Select your deposit asset</Text> ( Trax will auto-convert unsupported assets).
 						</Text>
 					</BulletPoint>
 
@@ -274,8 +274,8 @@ export const UserGuide = () => {
 
 					<BulletPoint icon={<CircleFourIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							<Text className="font-bold text-textWhite">Confirm your deposit</Text> — BeraTrax automates swaps, LP creation, and vault
-							deposits for you!
+							<Text className="font-bold text-textWhite">Confirm your deposit</Text> — Trax automates swaps, LP creation, and vault deposits
+							for you!
 						</Text>
 					</BulletPoint>
 
@@ -290,7 +290,7 @@ export const UserGuide = () => {
 
 					<BulletPoint icon={<CheckCircleIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							<Text className="font-bold text-textWhite">Deposits are gas-free</Text> — BeraTrax covers transaction costs for you.
+							<Text className="font-bold text-textWhite">Deposits are gas-free</Text> — Trax covers transaction costs for you.
 						</Text>
 					</BulletPoint>
 				</>
@@ -337,7 +337,7 @@ export const UserGuide = () => {
 				<>
 					<Text className={sectionTitleStyle}>Maximizing Rewards with the BGT Flywheel</Text>
 					<Text className={paragraphStyle}>
-						BeraTrax <Text className="font-bold">automatically optimizes yield</Text> using Berachain's{" "}
+						Trax <Text className="font-bold">automatically optimizes yield</Text> using Berachain's{" "}
 						<Text className="font-bold text-textWhite">Proof of Liquidity (PoL)</Text> mechanism:
 					</Text>
 
@@ -375,14 +375,14 @@ export const UserGuide = () => {
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">BTX Points</Text>: Earn points for staking in vaults—these points determine your
-							share of the upcoming BeraTrax token airdrop.
+							share of the upcoming Trax token airdrop.
 						</Text>
 					</BulletPoint>
 
 					<BulletPoint icon={<DiamondFillIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
 							<Text className="font-bold text-textWhite">Referrals</Text>: Grab your unique referral link from the Dashboard. Earn the same
-							BTX points as every user you bring into BeraTrax!
+							BTX points as every user you bring into Trax!
 						</Text>
 					</BulletPoint>
 
@@ -396,12 +396,12 @@ export const UserGuide = () => {
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							<Text className="font-bold text-textWhite">What makes BeraTrax different from other DeFi platforms?</Text>
+							<Text className="font-bold text-textWhite">What makes Trax different from other DeFi platforms?</Text>
 						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
-						BeraTrax <Text className="font-bold text-textWhite">removes complexity</Text>—one-click deposits, gas-free transactions,
+						Trax <Text className="font-bold text-textWhite">removes complexity</Text>—one-click deposits, gas-free transactions,
 						auto-compounding, and built-in PoL participation make it{" "}
 						<Text className="font-bold text-textWhite">the easiest way to earn yield on Berachain</Text>.
 					</Text>
@@ -413,7 +413,7 @@ export const UserGuide = () => {
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
-						No! <Text className="font-bold text-textWhite">BeraTrax covers all transaction fees</Text>, so you don't need BERA for gas.
+						No! <Text className="font-bold text-textWhite"> Trax covers all transaction fees</Text>, so you don't need BERA for gas.
 					</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
@@ -423,19 +423,19 @@ export const UserGuide = () => {
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
-						Your earned rewards can be viewed on the <Text className="font-bold">Dashboard</Text> and claimed at any time. BeraTrax{" "}
+						Your earned rewards can be viewed on the <Text className="font-bold">Dashboard</Text> and claimed at any time. Trax{" "}
 						<Text className="font-bold">auto-compounds</Text> your rewards so that they are continuously reinvested for higher APY. BGT and
 						iBGT earning opportunities are coming soon.
 					</Text>
 
 					<BulletPoint icon={<QuestionIcon stroke="maroon" strokeWidth={3} />}>
 						<Text className="text-textWhite text-xl font-league-spartan">
-							<Text className="font-bold text-textWhite">Is BeraTrax safe?</Text>
+							<Text className="font-bold text-textWhite">Is Trax safe?</Text>
 						</Text>
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
-						Security is a top priority. BeraTrax only utilizes <Text className="font-bold">audited smart contracts</Text> and Berachain's{" "}
+						Security is a top priority. Trax only utilizes <Text className="font-bold">audited smart contracts</Text> and Berachain's{" "}
 						<Text className="font-bold">native PoL</Text> system to ensure safe, trustless yield farming. We even protect against any
 						unknown exploits using Spherex's zero day exploit protection on every one of our contracts!
 					</Text>
@@ -443,7 +443,7 @@ export const UserGuide = () => {
 				<HorizontalLine />
 				{/* SECTION 8 JOIN BERATRAX COMMUNITY */}
 				<>
-					<Text className={sectionTitleStyle}>Join the BeraTrax Community</Text>
+					<Text className={sectionTitleStyle}>Join the Trax Community</Text>
 					<Text className={paragraphStyle}>Want to stay updated and get involved? Follow us here:</Text>
 
 					<BulletPoint icon={<WebsiteIcon stroke={Colors.gradientLight} />} className="items-center">
@@ -467,11 +467,11 @@ export const UserGuide = () => {
 								Twitter:{" "}
 							</Text>
 							<Pressable
-								onPress={() => Linking.openURL("https://twitter.com/BeraTrax")}
+								onPress={() => Linking.openURL("https://twitter.com/ Trax")}
 								hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 								style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
 							>
-								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>@BeraTrax</Text>
+								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>@ Trax</Text>
 							</Pressable>
 						</View>
 					</BulletPoint>

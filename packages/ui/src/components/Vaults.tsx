@@ -149,7 +149,7 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 
 			<ScrollView horizontal={false} className="w-full" contentContainerStyle={{ flexGrow: 1 }}>
 				{!isLoading ? (
-					vaults.length > 0 ? (
+					vaults.length > 0 || hasStakedTrax || hasStakedAdditionalTrax ? (
 						<View className="flex flex-wrap flex-row gap-4">
 							{hasStakedTrax && <TraxAirdropVault />}
 							{hasStakedAdditionalTrax && <TraxSeason3AirdropVault />}

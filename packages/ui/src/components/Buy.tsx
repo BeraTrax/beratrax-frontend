@@ -8,6 +8,7 @@ import { isStagging, RAMP_TRANSAK_API_KEY, onchainkitProjectId } from "@beratrax
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 import coinbaseLogo from "@beratrax/core/src/assets/images/coinbaselogo.png";
 import { WebView } from "react-native-webview";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Service {
 	id: string;
@@ -29,6 +30,89 @@ interface SupportedToken {
 	name: string;
 	iconUrl?: string;
 	networks: Array<{ id: string; name: string }>;
+}
+
+/**
+ * Type representing IP-based location info.
+ */
+type Location = { country_code: string; region_code: string };
+
+const CACHE_KEY = "USER_LOCATION_CACHE";
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * Read the cached location from AsyncStorage if it's still valid.
+ *
+ * @returns {Promise<Location | null>} The cached location data or null if expired/missing.
+ */
+async function readCachedLocation(): Promise<Location | null> {
+	const json = await AsyncStorage.getItem(CACHE_KEY);
+	if (!json) return null;
+
+	try {
+		const { timestamp, data }: { timestamp: number; data: Location } = JSON.parse(json);
+		if (Date.now() - timestamp < CACHE_TTL_MS) {
+			return data; // cache hit
+		}
+		await AsyncStorage.removeItem(CACHE_KEY);
+	} catch {
+		// parse error or unexpected shape
+		await AsyncStorage.removeItem(CACHE_KEY);
+	}
+	return null; // cache miss
+}
+
+/**
+ * Write the user's location data to AsyncStorage with a timestamp.
+ *
+ * @param {Location} location - The location data to cache.
+ */
+async function writeCachedLocation(location: Location): Promise<void> {
+	try {
+		const cacheData = {
+			timestamp: Date.now(),
+			data: location,
+		};
+		await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+	} catch (error) {
+		console.warn("Failed to cache location data:", error);
+	}
+}
+
+/**
+ * Fetch the user's location based on IP address using the API.
+ * Uses cached value if present and valid. If not, fetches from API and writes to the cache,
+ *
+ * @returns {Promise<Location | null>} Location data from cache or API.
+ */
+async function fetchUserLocation(): Promise<Location | null> {
+	// First check cache
+	const cachedLocation = await readCachedLocation();
+	if (cachedLocation) {
+		console.log("Using cached location data");
+		return cachedLocation;
+	}
+
+	// Cache miss - fetch from API
+	try {
+		const response = await fetch("https://ipwho.is/");
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		const location: Location = {
+			country_code: data.country_code,
+			region_code: data.region_code,
+		};
+
+		// Cache the result
+		await writeCachedLocation(location);
+		return location;
+	} catch (error) {
+		console.error("Error fetching user location:", error);
+		return null;
+	}
 }
 
 const OnRamp = ({ isVisible, onClose, service, displayAmount, address }: OnRampProps): JSX.Element | null => {
@@ -75,15 +159,12 @@ export const Buy = (): React.JSX.Element => {
 	const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
 
 	useEffect(() => {
-		fetch("http://ip-api.com/json")
-			.then((res) => res.json())
-			.then((data) => {
-				setUserCountryCode(data.countryCode);
-				setUserSubDivisionCode(data.region);
-			})
-			.catch((err) => {
-				console.log("Error fetching user country", err);
-			});
+		fetchUserLocation().then((location) => {
+			if (location) {
+				setUserCountryCode(location.country_code);
+				setUserSubDivisionCode(location.region_code);
+			}
+		});
 	}, []);
 
 	useEffect(() => {

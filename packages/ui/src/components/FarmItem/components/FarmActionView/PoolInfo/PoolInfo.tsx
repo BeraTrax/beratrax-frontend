@@ -87,16 +87,16 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 		return farmApys.pointsApr > 0 ? customCommify(_underlyingApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%" : 0;
 	}, [farmApys, _underlyingApy]);
 
-	const _beratraxApy = useMemo(() => {
+	const _traxApy = useMemo(() => {
 		return toFixedFloor((farm.isUpcoming ? farm.total_apy : farmApys?.apy) || 0, 2);
 	}, [farmApys, farm.isCurrentWeeksRewardsVault, farm.isUpcoming, farm.total_apy]);
 
-	const beraTraxApy = useMemo(() => {
-		return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_beratraxApy, { minimumFractionDigits: 0 });
-	}, [farm.isCurrentWeeksRewardsVault, _beratraxApy]);
-	const beraTraxApyWithPoints = useMemo(() => {
-		return farmApys.pointsApr > 0 ? customCommify(_beratraxApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%" : 0;
-	}, [farmApys, _beratraxApy]);
+	const traxApy = useMemo(() => {
+		return farm.isCurrentWeeksRewardsVault ? "??? " : customCommify(_traxApy, { minimumFractionDigits: 0 });
+	}, [farm.isCurrentWeeksRewardsVault, _traxApy]);
+	const traxApyWithPoints = useMemo(() => {
+		return farmApys.pointsApr > 0 ? customCommify(_traxApy + farmApys?.pointsApr, { minimumFractionDigits: 0 }) + "%" : 0;
+	}, [farmApys, _traxApy]);
 
 	const showFlywheelChart = farm.originPlatform === FarmOriginPlatform.Infrared.name && farm.id !== 7;
 
@@ -232,7 +232,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 											<>
 												{farm.id === 45 ? (
 													<>
-														<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
+														<Image source={{ uri: FarmOriginPlatform.Trax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
 														<Text className="text-textWhite text-base font-league-spartan">TRAX</Text>
 													</>
 												) : (
@@ -344,8 +344,8 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 						<View className="flex-row">
 							<View className="flex-1 p-4">
 								<View className="flex-row items-center gap-2">
-									<Image source={{ uri: FarmOriginPlatform.BeraTrax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
-									<Text className="text-textWhite text-base font-league-spartan">BTX Points (BeraTrax Airdrop)</Text>
+									<Image source={{ uri: FarmOriginPlatform.Trax.logo }} accessibilityLabel="BTX" className="w-5 h-5" />
+									<Text className="text-textWhite text-base font-league-spartan">BTX Points (Trax Airdrop)</Text>
 								</View>
 							</View>
 							<View className="p-4">
@@ -363,16 +363,16 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				<StatInfo title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} value={underlyingApy + "%"} iconUrl={<TrendUpIcon />} />
 				{underlyingApyWithPoints ? (
 					<StatInfo
-						title={!isAutoCompounded ? "BeraTrax APY with Points" : "Underlying APR with Points"}
+						title={!isAutoCompounded ? "Trax APY with Points" : "Underlying APR with Points"}
 						value={underlyingApyWithPoints}
 						iconUrl={<TrendUpIcon />}
 					/>
 				) : null}
 
-				{isAutoCompounded ? <StatInfo title="BeraTrax auto-compounded APY" value={beraTraxApy + "%"} iconUrl={<RocketIcon />} /> : null}
+				{isAutoCompounded ? <StatInfo title="Trax auto-compounded APY" value={traxApy + "%"} iconUrl={<RocketIcon />} /> : null}
 
-				{isAutoCompounded && beraTraxApyWithPoints ? (
-					<StatInfo title="BeraTrax APY with Points" value={beraTraxApyWithPoints} iconUrl={<RocketIcon />} />
+				{isAutoCompounded && traxApyWithPoints ? (
+					<StatInfo title="Trax APY with Points" value={traxApyWithPoints} iconUrl={<RocketIcon />} />
 				) : null}
 				{farmApys.merklApr > 0 && (
 					<StatInfo title="Additional Merkl APR" value={farmApys.merklApr?.toFixed(2) || "0" + "%"} iconUrl={<RocketIcon />} />

@@ -47,7 +47,16 @@ export const TRAX_TOKEN_ADDRESS = "0xeaB9814BD2bf57F284368Bcbe9EB5A8394032ca8";
 export const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 // Update environment variable access to use the utility function
-export const [walletConnectProjectId, web3authClientId, productionTransakKey, stagingTransakKey, HOLYHELD_API_KEY, nodeEnv, IS_LEGACY] = [
+export const [
+	walletConnectProjectId,
+	web3authClientId,
+	productionTransakKey,
+	stagingTransakKey,
+	HOLYHELD_API_KEY,
+	nodeEnv,
+	IS_LEGACY,
+	onchainkitProjectId,
+] = [
 	"WALLET_CONNECT_PROJECT_ID",
 	"WEB3AUTH_CLIENT_ID",
 	"RAMP_TRANSAK_API_KEY",
@@ -55,6 +64,7 @@ export const [walletConnectProjectId, web3authClientId, productionTransakKey, st
 	"HOLYHELD_API_KEY",
 	"NODE_ENV",
 	"IS_LEGACY",
+	"ONCHAINKIT_PROJECT_ID",
 ].map(getEnvVar) as Array<string>;
 
 export const isDev = nodeEnv === "development";

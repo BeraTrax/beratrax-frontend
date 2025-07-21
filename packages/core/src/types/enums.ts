@@ -1,3 +1,5 @@
+import traxLogo from "@beratrax/core/src/assets/images/logo-traxsymbol-black-1.png";
+
 export enum FarmTransactionType {
 	Deposit = "Deposit",
 	Withdraw = "Withdraw",
@@ -20,7 +22,7 @@ export const FarmOriginPlatform = {
 	Bex: { name: "Bex", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bex/bex.ico" },
 	Wasabee: { name: "Wasabee", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/wasabee/wasabee.ico" },
 	BeraPaw: { name: "BeraPaw", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico" },
-	BeraTrax: { name: "Trax", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png" },
+	Trax: { name: "Trax", logo: traxLogo },
 	Bearn: { name: "Bearn", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bearn/bearn.ico" },
 	Beraborrow: {
 		name: "Beraborrow",

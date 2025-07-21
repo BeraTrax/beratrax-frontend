@@ -396,7 +396,6 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 											borderRadius: 8,
 											borderWidth: 1,
 											borderColor: "#181818",
-											backgroundColor: "#ffffff",
 										}}
 										resizeMode="contain"
 									/>
@@ -412,7 +411,6 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 											borderWidth: 1,
 											borderColor: "#181818",
 											marginLeft: 4,
-											backgroundColor: "#ffffff",
 										}}
 										resizeMode="contain"
 									/>

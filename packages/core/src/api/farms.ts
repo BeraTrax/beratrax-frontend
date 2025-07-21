@@ -125,7 +125,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 			calculateIBeraEarnings(transactionsByPlatform.iBERA),
 			calculateBerapawEarnings(transactionsByPlatform.BeraPaw),
 			getEarningsForBearn(transactionsByPlatform.Bearn, client, balances),
-			getEarningsForBeraTrax(transactionsByPlatform.BeraTrax, client, balances),
+			getEarningsForBeraTrax(transactionsByPlatform.Trax, client, balances),
 			getApyBasedEarnings(Object.values(transactionsByPlatform).flat()),
 		]);
 
@@ -943,7 +943,7 @@ const getEarningsForBearn = async (bearnPoolsTxs: any, client: PublicClient, bal
 
 const getEarningsForBeraTrax = async (beratraxPoolsTxs: any, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
 	try {
-		const beratraxPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.BeraTrax.name];
+		const beratraxPoolIds = activePoolIdsOfAllPlatforms[FarmOriginPlatform.Trax.name];
 		const beratraxPools = pools_json
 			.filter((pool) => beratraxPoolIds.includes(pool.id))
 			.map((pool) => ({

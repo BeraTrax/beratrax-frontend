@@ -362,8 +362,8 @@ export const UserGuide = () => {
 					</BulletPoint>
 
 					<Text className={paragraphStyle}>
-						You don't need to manually participate in Berachain's PoL system—BeraTrax <Text className="font-bold">does it all for you</Text>{" "}
-						in the background.
+						You don't need to manually participate in Berachain's PoL system—Trax <Text className="font-bold">does it all for you</Text> in
+						the background.
 					</Text>
 				</>
 				<HorizontalLine />
@@ -441,7 +441,7 @@ export const UserGuide = () => {
 					</Text>
 				</>
 				<HorizontalLine />
-				{/* SECTION 8 JOIN BERATRAX COMMUNITY */}
+				{/* SECTION 8 JOIN TRAX COMMUNITY */}
 				<>
 					<Text className={sectionTitleStyle}>Join the Trax Community</Text>
 					<Text className={paragraphStyle}>Want to stay updated and get involved? Follow us here:</Text>
@@ -456,7 +456,7 @@ export const UserGuide = () => {
 								hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 								style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
 							>
-								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>beratrax.com</Text>
+								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>trax.finance</Text>
 							</Pressable>
 						</View>
 					</BulletPoint>
@@ -471,7 +471,7 @@ export const UserGuide = () => {
 								hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 								style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
 							>
-								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>@ Trax</Text>
+								<Text className={`${linkStyle} font-league-spartan ${Platform.OS === "web" ? "text-xl" : "text-base"}`}>@Trax</Text>
 							</Pressable>
 						</View>
 					</BulletPoint>

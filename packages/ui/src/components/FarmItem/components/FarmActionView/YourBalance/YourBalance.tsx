@@ -295,7 +295,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 				farm.originPlatform === FarmOriginPlatform.Burrbear.name ||
 				farm.originPlatform === FarmOriginPlatform.BeraPaw.name ||
 				farm.originPlatform === FarmOriginPlatform.Bearn.name ||
-				farm.originPlatform === FarmOriginPlatform.BeraTrax.name) &&
+				farm.originPlatform === FarmOriginPlatform.Trax.name) &&
 			!farm.isDeprecated ? (
 				<View className="flex flex-col md:flex-row gap-4 pr-4">
 					{renderEarningsSection()}

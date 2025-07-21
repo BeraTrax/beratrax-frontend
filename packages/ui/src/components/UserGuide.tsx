@@ -482,7 +482,7 @@ export const UserGuide = () => {
 								Discord:{" "}
 							</Text>
 							<Pressable
-								onPress={() => Linking.openURL("https://discord.gg/beratrax")}
+								onPress={() => Linking.openURL("https://discord.gg/traxdefi")}
 								hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 								style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
 							>

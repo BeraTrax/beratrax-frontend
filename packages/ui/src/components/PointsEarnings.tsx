@@ -67,8 +67,8 @@ export const PointsEarnings: React.FC<Props> = () => {
 
 			{/* Right Card - Referral */}
 			<View className="flex-1 rounded-3xl border border-borderDark p-2 bg-bgPrimary">
-				<SvgImage source={DailyRateLogo} height={35} width={35} style={{ marginTop: 10, marginLeft: 10 }} />
-				<Text className="font-arame-mono font-normal text-base text-bgDark leading-4 pl-3 mt-2">TOTAL POINTS FROM</Text>
+				<SvgImage source={DailyRateLogo} width={60} style={{ marginTop: 10, marginLeft: 10 }} />
+				<Text className="font-arame-mono font-normal text-base text-bgDark leading-4 pl-3 mt-9">TOTAL POINTS FROM</Text>
 				<Text className="font-arame-mono font-normal text-base leading-4 pl-3">REFERRALS</Text>
 				<Text className="font-league-spartan font-bold text-bgDark text-3xl leading-10 pl-3 pt-2">
 					{customCommify(referralPoints || 0, {

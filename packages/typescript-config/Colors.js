@@ -15,7 +15,7 @@ const Colors = {
 	bgPrimary: "#3B7EE3",
 	bgSecondary: "#151915",
 	bgDark: "#020907",
-	borderDark: "#323D27",
+	borderDark: "#0E1F39",
 	borderLight: "#90BB62",
 	buttonPrimary: "#3B7EE3",
 	buttonPrimaryLight: "#A0FF3B",

@@ -299,7 +299,7 @@ export const UserGuide = () => {
 				<>
 					<Text className={sectionTitleStyle}>Withdrawing &amp; Managing Funds</Text>
 					<Text className={subTitleStyle}>Step 1: Withdrawing from a Vault</Text>
-					<ResponsiveImage source={images.six} aspectRatio={700 / 150} width={900} />
+					<ResponsiveImage source={images.six} aspectRatio={700 / 150} width={1200} />
 
 					<BulletPoint icon={<CircleOneIcon />}>
 						<Text className="text-textWhite text-xl font-league-spartan">

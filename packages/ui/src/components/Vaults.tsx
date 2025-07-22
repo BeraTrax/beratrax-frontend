@@ -14,6 +14,7 @@ import { EmptyComponent } from "./EmptyComponent";
 import { GradientText } from "./GradientText";
 import { useWallet as importedUseWallet } from "@beratrax/core/src/hooks";
 import VaultItem from "./VaultItem";
+import ETFVaultItem from "./ETFVaultItem";
 import { ReloadIcon } from "../icons/Reload";
 import { TraxAirdropVault } from "@beratrax/ui/src/components/TraxAirdrop/TraxAirdropVault";
 import { TraxSeason3AirdropVault } from "@beratrax/ui/src/components/TraxAirdrop/TraxSeason3AirdropVault";
@@ -22,7 +23,7 @@ import { useAppSelector } from "@beratrax/core/src/state";
 export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 	// const dispatch = useAppDispatch();
 	const { reloadFarmData } = useFarmDetails();
-	const { vaults: unsortedVaults, isLoading } = useVaults();
+	const { vaults: unsortedVaults, isLoading, etfVaults } = useVaults();
 
 	const vaults = useMemo(() => {
 		return [...(unsortedVaults || [])].sort((a, b) => {
@@ -153,6 +154,11 @@ export const Vaults: FC<React.PropsWithChildren> = ({}) => {
 						<View className="flex flex-wrap flex-row gap-4">
 							{hasStakedTrax && <TraxAirdropVault />}
 							{hasStakedAdditionalTrax && <TraxSeason3AirdropVault />}
+							{etfVaults
+								.filter((vault) => vault.userVaultBalance > 0)
+								.map((vault) => (
+									<ETFVaultItem key={vault.id} vault={vault} />
+								))}
 							{vaults
 								.filter((vault) => !vault.isUpcoming)
 								.map((vault) => (

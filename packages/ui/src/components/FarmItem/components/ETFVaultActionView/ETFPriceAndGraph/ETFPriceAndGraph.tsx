@@ -6,6 +6,8 @@ import ETFPriceGraph from "../ETFPriceGraph/ETFPriceGraph";
 import ETFUnderlyingPriceGraph from "../ETFUnderlyingPriceGraph/ETFUnderlyingPriceGraph";
 import ETFTvlGraph from "../ETFTvlGraph/ETFTvlGraph";
 import ETFUnderlyingTvlGraph from "../ETFUnderlyingTvlGraph/ETFUnderlyingTvlGraph";
+import { useLp } from "@beratrax/core/src/hooks";
+import { customCommify } from "@beratrax/core/src/utils/common";
 
 type TabType = "price" | "underlying-price" | "tvl" | "underlying-tvl";
 
@@ -39,6 +41,7 @@ const TabButton = memo(({ id, label, isActive, onPress }: { id: TabType; label: 
 });
 
 export const ETFPriceAndGraph: React.FC<{ vault: ETFVaultDef }> = ({ vault }) => {
+	const { lp, isLpPriceLoading } = useLp(vault.id);
 	const [activeTab, setActiveTab] = useState<TabType>("price");
 
 	const underlyingVaultFarms = useMemo(() => {
@@ -76,7 +79,7 @@ export const ETFPriceAndGraph: React.FC<{ vault: ETFVaultDef }> = ({ vault }) =>
 					<View className="flex-1 pr-2">
 						<Text className="text-textWhite mt-3 text-lg sm:text-xl font-bold">{vault.name}</Text>
 						<View className="mt-2">
-							<Text className="text-textWhite text-3xl sm:text-5xl font-bold">{vault.currentPrice}</Text>
+							<Text className="text-textWhite text-5xl font-bold ">${customCommify(lp?.[0]?.lp || 0)}</Text>
 						</View>
 					</View>
 					<View className="flex flex-col mt-2 mr-1 sm:mr-3">
@@ -112,9 +115,9 @@ export const ETFPriceAndGraph: React.FC<{ vault: ETFVaultDef }> = ({ vault }) =>
 			</View>
 
 			<View>
-				{/* {activeTab === "price" && <ETFPriceGraph vault={vault}/>} */}
+				{activeTab === "price" && <ETFPriceGraph vault={vault} />}
 				{activeTab === "underlying-price" && <ETFUnderlyingPriceGraph vault={vault} underlyingFarms={underlyingVaultFarms} />}
-				{/* {activeTab === "tvl" && <ETFTvlGraph vault={vault} underlyingFarms={underlyingVaultFarms} />} */}
+				{activeTab === "tvl" && <ETFTvlGraph vault={vault} />}
 				{activeTab === "underlying-tvl" && <ETFUnderlyingTvlGraph vault={vault} underlyingFarms={underlyingVaultFarms} />}
 			</View>
 		</View>

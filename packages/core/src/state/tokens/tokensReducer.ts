@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress } from "viem";
+import { Address, erc20Abi, formatUnits, getAddress, getContract, parseAbi, zeroAddress, parseEther } from "viem";
 import { getPricesByTime, getTokenPricesBackend } from "./../../api/token";
 import rewardVaultAbi from "./../../assets/abis/rewardVaultAbi";
 import { Common_Chains_State, pools_chain_ids } from "./../../config/constants/pools_json";
@@ -317,6 +317,30 @@ export const fetchTotalSupplies = createAsyncThunk(
 							};
 						})
 					);
+				})
+			);
+
+			// Add ETF vault total supply
+			await Promise.all(
+				farms.map(async (farm) => {
+					if (!farm.isETFVault) return;
+					const tvl = await getContract({
+						address: farm.vault_addr,
+						abi: parseAbi(["function getTVL() view returns (uint256)"]),
+						client: {
+							public: getPublicClient(farm.chainId),
+						},
+					}).read.getTVL();
+					const price = prices[farm.chainId][farm.vault_addr] || 1;
+					const formattedTVLUsd = Number(formatUnits(tvl, 18));
+					const supplyWei = parseEther((formattedTVLUsd / price).toString());
+					totalSupplies[farm.chainId][farm.vault_addr] = {
+						supplyWei: supplyWei.toString(),
+						supply: Number(formatUnits(supplyWei, 18)),
+						supplyFormatted: formatCurrency(formatUnits(supplyWei, 18)),
+						supplyUsd: Number(formatUnits(supplyWei, 18)) * price,
+						supplyUsdFormatted: formatCurrency(Number(formatUnits(supplyWei, 18)) * price),
+					};
 				})
 			);
 

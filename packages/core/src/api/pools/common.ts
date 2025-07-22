@@ -826,17 +826,18 @@ export const zapInBaseETF: ZapInBaseETFFn = async ({
 			abi: ETFVaultAbi,
 			logs: depositTxn.receipt?.logs ?? [],
 		}) as any[];
-
-		const fee = logs[0].args.fee.toString();
-		const vaultShares = logs[0].args.shares.toString();
-		const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+		const filteredLogs = logs.find((log) => log.address === farm.vault_addr.toLowerCase() && log.eventName === "Deposit");
+		if (!filteredLogs) throw new Error("Deposit log not found");
+		const fee = filteredLogs.args.fee.toString();
+		const vaultShares = filteredLogs.args.shares.toString();
+		const returnedAssets = filteredLogs.args.returnedAssets.map((asset: any) => ({
 			amount: asset.amounts.toString(),
 			token: asset.tokens,
 		}));
 
 		// Calculate total value of returned assets
 		const totalReturnedValue =
-			logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+			filteredLogs.args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
 				const tokenPrice = prices[farm.chainId][tokens];
 				const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
 				return acc + tokenAmount * tokenPrice;
@@ -1120,15 +1121,18 @@ export const zapOutBaseETF: ZapOutBaseETFFn = async ({
 			logs: withdrawTxn.receipt?.logs ?? [],
 		}) as any[];
 
-		const fee = logs[0].args.fee.toString();
-		const vaultShares = logs[0].args.shares.toString();
-		const assetsOut = logs[0].args.tokenOutAmount;
-		const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+		const filteredLogs = logs.find((log) => log.address === farm.vault_addr.toLowerCase() && log.eventName === "Withdraw");
+		if (!filteredLogs) throw new Error("Withdraw log not found");
+
+		const fee = filteredLogs.args.fee.toString();
+		const vaultShares = filteredLogs.args.shares.toString();
+		const assetsOut = filteredLogs.args.tokenOutAmount;
+		const returnedAssets = filteredLogs.args.returnedAssets.map((asset: any) => ({
 			amount: asset.amounts.toString(),
 			token: asset.tokens,
 		}));
 		const returnedAssetsValue =
-			logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+			filteredLogs.args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
 				const tokenPrice = prices[farm.chainId][tokens];
 				const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
 				return acc + tokenAmount * tokenPrice;

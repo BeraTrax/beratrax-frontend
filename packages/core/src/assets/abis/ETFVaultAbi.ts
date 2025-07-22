@@ -165,6 +165,11 @@ const ETFVaultAbi = [
 	},
 	{
 		inputs: [],
+		name: "EmergencyWithdrawDisabled",
+		type: "error",
+	},
+	{
+		inputs: [],
 		name: "FailedInnerCall",
 		type: "error",
 	},
@@ -220,6 +225,11 @@ const ETFVaultAbi = [
 		type: "error",
 	},
 	{
+		inputs: [],
+		name: "ZeroAddress",
+		type: "error",
+	},
+	{
 		anonymous: false,
 		inputs: [
 			{
@@ -254,7 +264,7 @@ const ETFVaultAbi = [
 				type: "address",
 			},
 			{
-				indexed: true,
+				indexed: false,
 				internalType: "uint256[]",
 				name: "vaultIndices",
 				type: "uint256[]",
@@ -316,12 +326,95 @@ const ETFVaultAbi = [
 		inputs: [
 			{
 				indexed: false,
+				internalType: "address[]",
+				name: "assets",
+				type: "address[]",
+			},
+			{
+				indexed: false,
+				internalType: "bool[]",
+				name: "isSingleToken",
+				type: "bool[]",
+			},
+		],
+		name: "SetAssetInfo",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
 				internalType: "uint8",
 				name: "dex",
 				type: "uint8",
 			},
 		],
 		name: "SetDefaultDex",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: "bool",
+				name: "enabled",
+				type: "bool",
+			},
+		],
+		name: "SetEmergencyWithdraw",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: "address",
+				name: "oldGovernance",
+				type: "address",
+			},
+			{
+				indexed: false,
+				internalType: "address",
+				name: "newGovernance",
+				type: "address",
+			},
+		],
+		name: "SetGovernance",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: "address",
+				name: "oldQuoteRouter",
+				type: "address",
+			},
+			{
+				indexed: false,
+				internalType: "address",
+				name: "newQuoteRouter",
+				type: "address",
+			},
+		],
+		name: "SetQuoteRouter",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: "uint256[]",
+				name: "newTargetRatios",
+				type: "uint256[]",
+			},
+		],
+		name: "SetTargetRatios",
 		type: "event",
 	},
 	{
@@ -359,7 +452,7 @@ const ETFVaultAbi = [
 				type: "address",
 			},
 			{
-				indexed: true,
+				indexed: false,
 				internalType: "uint256[]",
 				name: "vaultIndices",
 				type: "uint256[]",
@@ -529,40 +622,6 @@ const ETFVaultAbi = [
 		type: "function",
 	},
 	{
-		inputs: [
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-		],
-		name: "compareDepositWithdraw",
-		outputs: [
-			{
-				internalType: "uint256[]",
-				name: "depositIndices",
-				type: "uint256[]",
-			},
-			{
-				internalType: "uint256[]",
-				name: "depositAmounts",
-				type: "uint256[]",
-			},
-			{
-				internalType: "uint256[]",
-				name: "withdrawIndices",
-				type: "uint256[]",
-			},
-			{
-				internalType: "uint256[]",
-				name: "withdrawAmounts",
-				type: "uint256[]",
-			},
-		],
-		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
 		inputs: [],
 		name: "decimals",
 		outputs: [
@@ -630,6 +689,43 @@ const ETFVaultAbi = [
 	},
 	{
 		inputs: [],
+		name: "emergencyWithdrawEnabled",
+		outputs: [
+			{
+				internalType: "bool",
+				name: "",
+				type: "bool",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "target",
+				type: "address",
+			},
+			{
+				internalType: "bytes",
+				name: "data",
+				type: "bytes",
+			},
+		],
+		name: "execute",
+		outputs: [
+			{
+				internalType: "bytes",
+				name: "response",
+				type: "bytes",
+			},
+		],
+		stateMutability: "payable",
+		type: "function",
+	},
+	{
+		inputs: [],
 		name: "getAllOverallocatedVaults",
 		outputs: [
 			{
@@ -688,19 +784,6 @@ const ETFVaultAbi = [
 			{
 				internalType: "uint256[]",
 				name: "",
-				type: "uint256[]",
-			},
-		],
-		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [],
-		name: "getAllocationPercentages",
-		outputs: [
-			{
-				internalType: "uint256[]",
-				name: "percentages",
 				type: "uint256[]",
 			},
 		],
@@ -871,6 +954,25 @@ const ETFVaultAbi = [
 		type: "function",
 	},
 	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "vaultIdx",
+				type: "uint256",
+			},
+		],
+		name: "getVaultAsset",
+		outputs: [
+			{
+				internalType: "address",
+				name: "",
+				type: "address",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
 		inputs: [],
 		name: "getVaultDeviations",
 		outputs: [
@@ -926,7 +1028,7 @@ const ETFVaultAbi = [
 				type: "address",
 			},
 		],
-		name: "getVaultTokenPriceUSD",
+		name: "getVaultSharePriceUSD",
 		outputs: [
 			{
 				internalType: "uint256",
@@ -935,25 +1037,6 @@ const ETFVaultAbi = [
 			},
 		],
 		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "uint256",
-				name: "vaultIdx",
-				type: "uint256",
-			},
-		],
-		name: "getVaultTokens",
-		outputs: [
-			{
-				internalType: "address",
-				name: "",
-				type: "address",
-			},
-		],
-		stateMutability: "view",
 		type: "function",
 	},
 	{
@@ -972,6 +1055,19 @@ const ETFVaultAbi = [
 	{
 		inputs: [],
 		name: "governance",
+		outputs: [
+			{
+				internalType: "address",
+				name: "",
+				type: "address",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "iBGT",
 		outputs: [
 			{
 				internalType: "address",
@@ -1202,8 +1298,21 @@ const ETFVaultAbi = [
 	{
 		inputs: [
 			{
+				internalType: "bool",
+				name: "enabled",
+				type: "bool",
+			},
+		],
+		name: "setEmergencyWithdraw",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
 				internalType: "address",
-				name: "_governance",
+				name: "newGovernance",
 				type: "address",
 			},
 		],
@@ -1216,11 +1325,24 @@ const ETFVaultAbi = [
 		inputs: [
 			{
 				internalType: "address",
-				name: "_quoteRouter",
+				name: "newQuoteRouter",
 				type: "address",
 			},
 		],
 		name: "setQuoteRouter",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256[]",
+				name: "newTargetRatios",
+				type: "uint256[]",
+			},
+		],
+		name: "setTargetRatios",
 		outputs: [],
 		stateMutability: "nonpayable",
 		type: "function",
@@ -1427,19 +1549,6 @@ const ETFVaultAbi = [
 			},
 		],
 		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [],
-		name: "wrappedNative",
-		outputs: [
-			{
-				internalType: "address",
-				name: "",
-				type: "address",
-			},
-		],
-		stateMutability: "view",
 		type: "function",
 	},
 	{

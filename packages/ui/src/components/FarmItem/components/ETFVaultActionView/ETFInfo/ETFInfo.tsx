@@ -7,11 +7,13 @@ import { TrendUpIcon } from "@beratrax/ui/src/icons/TrendUp";
 import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
 import pools_json, { ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
+import { customCommify } from "@beratrax/core/src/utils/common";
 // Import victory libraries based on platform
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";
 import { useLp } from "@beratrax/core/src/hooks";
 import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
+import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 
 const { VictoryChart, VictoryLine, VictoryTheme, VictoryArea, VictoryAxis } = Platform.OS === "web" ? Victory : VictoryNative;
 
@@ -24,44 +26,107 @@ interface ETFInfoProps {
 const InlineChart = ({ farm }: { farm: any }) => {
 	const { lp, isLpPriceLoading } = useLp(farm.id);
 
+	// Shared data processing function (same as in ETFUnderlyingPriceGraph)
+	const downsampleDataForMonth = useMemo(() => {
+		return (data: any[]) => {
+			if (!data || data.length === 0) return [];
+
+			const filteredData: { date: string; lp: string; timestamp: number }[] = [];
+
+			// Filter and sort entries by timestamp
+			const filteredEntries = data
+				.filter((entry) => entry.timestamp && typeof entry.lp === "number" && entry.lp > 0)
+				.sort((a, b) => a.timestamp - b.timestamp);
+
+			if (filteredEntries.length === 0) return [];
+
+			const now = Date.now() / 1000;
+			const firstValidTimestamp = filteredEntries[0].timestamp;
+
+			// Month filter (30 days)
+			let filterTimestamp = now - 30 * 24 * 60 * 60;
+
+			// Use the later of filterTimestamp or firstValidTimestamp
+			filterTimestamp = Math.max(filterTimestamp, firstValidTimestamp);
+
+			// Make sure we have data in the selected time range
+			const entriesInRange = filteredEntries.filter((entry) => entry.timestamp >= filterTimestamp);
+			if (entriesInRange.length === 0) {
+				// If no entries in range, take the most recent ones for display
+				const recentEntries = filteredEntries.slice(-10);
+				if (recentEntries.length > 0) {
+					const mostRecent = recentEntries[recentEntries.length - 1];
+					filteredData.push({
+						date: new Date(mostRecent.timestamp * 1000).toLocaleDateString(),
+						lp: mostRecent.lp.toFixed(3),
+						timestamp: mostRecent.timestamp,
+					});
+				}
+				return filteredData;
+			}
+
+			// Generate time slots (1 day intervals for month view, same as main chart)
+			const timeSlots: number[] = [];
+			const interval = 24 * 60 * 60; // 1 day for month view
+
+			for (let t = filterTimestamp; t <= now; t += interval) {
+				timeSlots.push(t);
+			}
+
+			// If we don't have any time slots, add at least one
+			if (timeSlots.length === 0) {
+				timeSlots.push(filterTimestamp);
+			}
+
+			// Process entries into appropriate time slots (same averaging logic as main chart)
+			timeSlots.forEach((slotTime) => {
+				const slotEntries = filteredEntries.filter((entry) => entry.timestamp >= slotTime && entry.timestamp < slotTime + interval);
+
+				if (slotEntries.length > 0) {
+					const key = new Date(slotTime * 1000).toLocaleDateString();
+					const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
+					const avgLp = totalLp / slotEntries.length;
+
+					if (avgLp > 0) {
+						filteredData.push({
+							date: key,
+							lp: avgLp.toFixed(3),
+							timestamp: slotTime,
+						});
+					}
+				}
+			});
+
+			return filteredData;
+		};
+	}, []);
+
 	const chartData = useMemo(() => {
 		if (!lp || lp.length === 0) return [];
 
-		// Get last 1 month of data
-		const now = Date.now() / 1000;
-		const monthAgo = now - 30 * 24 * 60 * 60;
+		const processedData = downsampleDataForMonth(lp);
 
-		const filteredData = lp
-			.filter((entry) => entry.timestamp >= monthAgo && typeof entry.lp === "number" && entry.lp > 0)
-			.sort((a, b) => a.timestamp - b.timestamp);
-
-		// Take more points for smoother curves and better differentiation
-		const dataPoints = filteredData.length > 50 ? filteredData.slice(-50) : filteredData;
-
-		// Use actual timestamps for x values to preserve time-based patterns
-		return dataPoints.map((d) => ({
+		// Convert to chart format with actual timestamp for x values to preserve time-based patterns
+		return processedData.map((d) => ({
 			x: d.timestamp,
-			y: d.lp,
+			y: parseFloat(d.lp),
 		}));
-	}, [lp]);
+	}, [lp, downsampleDataForMonth]);
 
-	// Use a more consistent y-domain approach
+	// Use consistent y-domain approach (same logic as main chart)
 	const yDomain = useMemo(() => {
 		if (chartData.length === 0) return [0, 1] as [number, number];
 		const values = chartData.map((d) => d.y);
 		const minY = Math.min(...values);
 		const maxY = Math.max(...values);
 
-		// Add more padding to show variation better
-		const range = maxY - minY;
-		const padding = range * 0.2; // 20% padding
-
-		if (range === 0) {
-			// If flat line, add fixed padding
+		if (minY === maxY) {
+			// If flat line, add fixed padding (same as main chart)
 			return [minY * 0.9, minY * 1.1] as [number, number];
 		}
 
-		return [minY - padding, maxY + padding] as [number, number];
+		// Use same scaling approach as main chart
+		return [minY * 0.7, maxY * 1.1] as [number, number];
 	}, [chartData]);
 
 	// Calculate price change percentage
@@ -261,10 +326,34 @@ const UnderlyingVaultRowDesktop = ({ farm, index }: { farm: any; index: number }
 };
 
 const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
+	const { totalSupplies } = useTokens();
+
 	// Get underlying vault farms by IDs
 	const underlyingVaultFarms = useMemo(() => {
 		return ETF_VAULT.underlyingVaults.map((farmId) => pools_json.find((farm) => farm.id === farmId)).filter(Boolean);
 	}, [ETF_VAULT.underlyingVaults]);
+
+	// Calculate total market cap from underlying vaults LP tokens
+	const totalMarketCap = useMemo(() => {
+		if (!totalSupplies[ETF_VAULT.chainId]) return 0;
+
+		const chainSupplies = totalSupplies[ETF_VAULT.chainId];
+		let totalUsd = 0;
+
+		underlyingVaultFarms.forEach((farm) => {
+			if (farm?.lp_address && chainSupplies[farm.lp_address]) {
+				totalUsd += chainSupplies[farm.lp_address].supplyUsd || 0;
+			}
+		});
+
+		return totalUsd;
+	}, [totalSupplies, ETF_VAULT.chainId, underlyingVaultFarms]);
+
+	// Get ETF vault supply for liquidity display
+	const etfVaultSupply = useMemo(() => {
+		const chainSupplies = totalSupplies[ETF_VAULT.chainId];
+		return chainSupplies?.[ETF_VAULT.vault_addr] || { supplyUsdFormatted: "$0" };
+	}, [totalSupplies, ETF_VAULT.chainId, ETF_VAULT.vault_addr]);
 	return (
 		<View>
 			<Text className="text-white text-lg sm:text-xl font-bold mb-4 pl-2 sm:pl-6">Underlying Vaults</Text>
@@ -306,8 +395,16 @@ const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 			)}
 			{/* Pool Info Section */}
 			<View className="mt-4 flex flex-col gap-2">
-				<StatInfo iconUrl={<MarketCapIcon />} title="Market Cap" value={ETF_VAULT.marketCap} />
-				<StatInfo iconUrl={<VolumeIcon />} title="Vault Liquidity" value={ETF_VAULT.vaultLiquidity} />
+				<StatInfo
+					iconUrl={<MarketCapIcon />}
+					title="Market Cap"
+					value={customCommify(totalMarketCap, { minimumFractionDigits: 0, showDollarSign: true })}
+				/>
+				<StatInfo
+					iconUrl={<VolumeIcon />}
+					title="Vault Liquidity"
+					value={customCommify(etfVaultSupply.supplyUsdFormatted, { minimumFractionDigits: 0, showDollarSign: true })}
+				/>
 				<StatInfo iconUrl={<TrendUpIcon />} title="Underlying APR" value={ETF_VAULT.underlyingAPR} />
 				<StatInfo iconUrl={<RocketIcon />} title="Beratrax Auto-Compounded APY" value={ETF_VAULT.apy} />
 				<StatInfo iconUrl={<CreatedIcon />} title="Created On" value={ETF_VAULT.createdOn} />

@@ -1,13 +1,14 @@
 import { useMemo } from "react";
-import { Vault } from "./../types";
+import { Vault, ETFVault } from "./../types";
 import { useFarmApys } from "../state/farms/hooks/useFarmApy";
 import useFarms from "../state/farms/hooks/useFarms";
 import useTokens from "../state/tokens/useTokens";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSpecificVaultTvl, fetchSpecificVaultApy } from "../api/stats";
 import { isETFVault, isRegularPool } from "../utils/farmTypeGuards";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
-export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: boolean } => {
+export const useVaults = (): { vaults: Vault[]; etfVaults: ETFVault[]; isLoading: boolean; isFetched: boolean } => {
 	const { farms } = useFarms();
 	const {
 		balances: usersVaultBalances,
@@ -22,8 +23,8 @@ export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: b
 
 	const vaults = useMemo(() => {
 		return farms
-			// .filter(isRegularPool)
-			.map((farm) => {
+			.filter(isRegularPool)
+			.map((farm: PoolDef) => {
 				return {
 					...farm,
 					userVaultBalance: usersVaultBalances[farm.chainId]?.[farm.vault_addr]?.value || 0,
@@ -47,6 +48,7 @@ export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: b
 
 	return {
 		vaults,
+		etfVaults,
 		isLoading: isLoadingPricesOfSingleToken || isLoadingApys || isLoadingUserBalances,
 		isFetched: isFetchedPricesOfSingleToken && isFetchedApys && isFetchedUserBalances,
 	};

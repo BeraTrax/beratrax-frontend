@@ -4,6 +4,7 @@ import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/to
 import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useDetailInput, useWallet } from "@beratrax/core/src/hooks";
+import { Transactions } from "@beratrax/ui";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
 import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
@@ -155,6 +156,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 										vaultTvlLoading={isMarketCapAndVaultLoading}
 										farm={farm}
 									/>
+									<Transactions farmId={farm.id} />
 								</View>
 							</ScrollView>
 							<View

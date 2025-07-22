@@ -110,8 +110,8 @@ export const updateEarnings = createAsyncThunk(
 			});
 
 			// Process multicall results
-			for (let i = 0; i < farms.length; i++) {
-				const farm = farms[i];
+			for (let i = 0; i < nonETFVaultFarms.length; i++) {
+				const farm = nonETFVaultFarms[i];
 				const totalAssetsResult = multicallResults[i * 2];
 				const balanceOfVaultResult = multicallResults[i * 2 + 1];
 

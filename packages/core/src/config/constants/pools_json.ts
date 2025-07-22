@@ -81,10 +81,6 @@ export interface ETFVaultDef {
 	isETFVault: boolean;
 	chainId: CHAIN_ID;
 	name: string;
-	currentPrice: string;
-	marketCap: string;
-	totalSupply: string;
-	vaultLiquidity: string;
 	underlyingAPR: string;
 	apy: string;
 	source: string;
@@ -122,11 +118,7 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		id: 1004,
 		isETFVault: true,
 		chainId: CHAIN_ID.BERACHAIN,
-		name: "wBeraLbgt-IbgtWbera-osBGTiBera ETF",
-		currentPrice: "$1.24",
-		marketCap: "$2,450,000",
-		totalSupply: "1,975,806",
-		vaultLiquidity: "$1,240,000",
+		name: "iBGT-StLBGT-StYBGT ETF",
 		underlyingAPR: "240.1%",
 		apy: "240.1%",
 		createdOn: "June 16, 2025",
@@ -134,15 +126,15 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		originPlatform: FarmOriginPlatform.BeraTrax.name,
 		platform_logo: FarmOriginPlatform.BeraTrax.logo,
 		platform_alt: "BeraTrax logo",
-		description: "WberaLbgt + IbgtWbera + osBGTiBera ETF vault for exposure to BeraTrax's core growth.",
-		vault_addr: "0x76B0CbaF690dd99B9AE979d9FFddD85573aEFA9F",
-		lp_address: "0x76B0CbaF690dd99B9AE979d9FFddD85573aEFA9F",
+		description: "iBGT + StLBGT + StYBGT ETF vault for exposure to BeraTrax's core growth.",
+		vault_addr: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
+		lp_address: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
 		isAutoCompounded: true,
 		synthetic: true,
-		underlyingVaults: [44, 35, 40],
+		underlyingVaults: [7, 43, 47],
 		decimals: 18,
-		url_name: "wBeraLbgt-IbgtWbera-osBGTiBera",
-		source: "https://app.beratrax.com/etf-vaults/wBeraLbgt-IbgtWbera-osBGTiBera",
+		url_name: "iBGT-StLBGT-StYBGT",
+		source: "https://app.beratrax.com/etf-vaults/iBGT-StLBGT-StYBGT",
 		alt1: "wBera logo",
 		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
 		zap_currencies: [

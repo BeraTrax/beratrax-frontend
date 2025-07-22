@@ -7,11 +7,13 @@ export const getWithdrawChainForFarm = async (from: Address, farmId: number) => 
 	return res.data.data;
 };
 
-export const getFarmTxHistory = async (farmId?: number, walletAddress?: Address, limit?: number) => {
+export const getFarmTxHistory = async (farmId?: number, walletAddress?: Address, limit?: number, tx?: Transaction) => {
 	if (!walletAddress) return [];
 
 	const res = await backendApi.get<{ data: Transaction[] }>(
-		`transaction/farm-tx-history?${farmId ? `farmId=${farmId}&` : ""}from=${walletAddress}${limit ? `&limit=${limit}` : ""}&sort=-date`
+		`transaction/farm-tx-history?${farmId ? `farmId=${farmId}&` : ""}from=${walletAddress}${limit ? `&limit=${limit}` : ""}&sort=-date${
+			tx ? `&_id[lt]=${tx._id}` : ""
+		}`
 	);
 	return res.data.data;
 };

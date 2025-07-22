@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import useTokens from "../tokens/useTokens";
-import pools_json from "./../../config/constants/pools_json";
+import pools_json, { ETF_VAULTS } from "./../../config/constants/pools_json";
 import { RootState, useAppSelector } from "./../../state";
 
 const selectTransactionById = createSelector(
@@ -13,7 +13,8 @@ const selectTransactionById = createSelector(
 const useTransaction = (transactionId?: string) => {
 	const transaction = useAppSelector((state: RootState) => selectTransactionById(state, transactionId));
 
-	const farm = useMemo(() => pools_json.find((item) => item.id === transaction?.farmId), [transaction?.farmId]);
+	const allFarms = [...pools_json, ...ETF_VAULTS];
+	const farm = useMemo(() => allFarms.find((item) => item.id === transaction?.farmId), [transaction?.farmId]);
 	const { prices } = useTokens();
 	const tx = useMemo(() => {
 		if (!transaction || !farm) return;

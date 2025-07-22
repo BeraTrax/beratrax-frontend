@@ -1,4 +1,4 @@
-import pools_json, { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import pools_json, { ETF_VAULTS, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useZapIn, useZapOut } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
@@ -494,7 +494,8 @@ const TransactionRow = memo(
 );
 
 const Row: FC<{ tx: Transaction }> = memo(({ tx }) => {
-	const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
+	const allFarms = [...pools_json, ...ETF_VAULTS];
+	const farm = useMemo(() => allFarms.find((item) => item.id === tx.farmId), [tx.farmId]);
 	const { prices, decimals } = useTokens();
 	const [open, setOpen] = useState(false);
 	const dispatch = useAppDispatch();

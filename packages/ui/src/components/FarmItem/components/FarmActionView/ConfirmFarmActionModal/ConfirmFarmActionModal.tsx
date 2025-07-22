@@ -1,4 +1,4 @@
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useNotification } from "@beratrax/core/src/state/notification/useNotification";
 import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
@@ -16,7 +16,7 @@ interface DepositInfo {
 }
 
 interface IProps {
-	farm: PoolDef;
+	farm: PoolDef | ETFVaultDef;
 	handleClose: (closeDepositModal?: boolean) => void;
 	txId: string;
 	depositInfo?: DepositInfo;

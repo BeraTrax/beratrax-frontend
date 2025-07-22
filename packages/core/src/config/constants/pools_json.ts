@@ -9,6 +9,7 @@ export interface PoolDef {
 	isStablePool?: boolean;
 	isAutoCompounded?: boolean;
 	isBoosted?: boolean;
+	isETFVault?: boolean;
 	id: number;
 	stableCoin?: boolean;
 	originPlatform: FarmOriginName;
@@ -74,6 +75,82 @@ export interface PoolDef {
 		decimals: number;
 	}[];
 }
+
+export interface ETFVaultDef {
+	id: number;
+	isETFVault: boolean;
+	chainId: CHAIN_ID;
+	name: string;
+	underlyingAPR: string;
+	apy: string;
+	source: string;
+	url_name: string;
+	createdOn: string;
+	originPlatform: FarmOriginName;
+	platform_logo: FarmOriginLogo;
+	platform_alt: string;
+	description: string;
+	vault_addr: Address;
+	isAutoCompounded: boolean;
+	synthetic: boolean;
+	underlyingVaults: number[];
+	decimals: number;
+	lp_address: Address;
+	platform?: string;
+	alt1: string;
+	alt2?: string;
+	alt3?: string;
+	alt4?: string;
+	logo1: string;
+	logo2?: string;
+	logo3?: string;
+	logo4?: string;
+	zap_currencies?: {
+		symbol: string;
+		address: Address;
+		decimals: number;
+	}[];
+}
+
+// Hardcoded ETF Vault data
+export const ETF_VAULTS: ETFVaultDef[] = [
+	{
+		id: 1004,
+		isETFVault: true,
+		chainId: CHAIN_ID.BERACHAIN,
+		name: "iBGT-StLBGT-StYBGT ETF",
+		underlyingAPR: "240.1%",
+		apy: "240.1%",
+		createdOn: "June 16, 2025",
+		platform: FarmOriginPlatform.BeraTrax.name,
+		originPlatform: FarmOriginPlatform.BeraTrax.name,
+		platform_logo: FarmOriginPlatform.BeraTrax.logo,
+		platform_alt: "BeraTrax logo",
+		description: "iBGT + StLBGT + StYBGT ETF vault for exposure to BeraTrax's core growth.",
+		vault_addr: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
+		lp_address: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
+		isAutoCompounded: true,
+		synthetic: true,
+		underlyingVaults: [7, 43, 47],
+		decimals: 18,
+		url_name: "iBGT-StLBGT-StYBGT",
+		source: "https://app.beratrax.com/etf-vaults/iBGT-StLBGT-StYBGT",
+		alt1: "wBera logo",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
+		zap_currencies: [
+			{
+				symbol: "HONEY",
+				address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+				decimals: 18,
+			},
+			{
+				symbol: "BERA",
+				address: zeroAddress,
+				decimals: 18,
+			},
+		],
+	},
+];
 
 const pools_json: PoolDef[] = [
 	{

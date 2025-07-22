@@ -36,14 +36,16 @@ const useEarnPage = () => {
 	const { apys } = useFarmApys();
 
 	const sortFn = (): FarmDataExtended[] => {
-		let data: FarmDataExtended[] = farms.map((ele) => {
-			const queryData = Object.values(farmDetails).find((item) => item?.id === ele.id) as FarmData;
-			return {
-				...ele,
-				...queryData,
-				apy: apys[ele.id]?.apy ?? 0,
-			};
-		});
+		let data: FarmDataExtended[] = farms
+			.filter((ele) => !ele.isETFVault)
+			.map((ele) => {
+				const queryData = Object.values(farmDetails).find((item) => item?.id === ele.id) as FarmData;
+				return {
+					...ele,
+					...queryData,
+					apy: apys[ele.id]?.apy ?? 0,
+				};
+			}) as FarmDataExtended[];
 
 		if (selectedPlatform) {
 			data = data.filter((item) => item.originPlatform === selectedPlatform || item.secondary_platform === selectedPlatform);

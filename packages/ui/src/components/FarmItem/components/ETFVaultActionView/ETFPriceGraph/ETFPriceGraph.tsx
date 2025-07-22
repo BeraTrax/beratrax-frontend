@@ -1,8 +1,8 @@
 import { useMemo, useState, memo, useCallback } from "react";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
 import { LP_Prices } from "@beratrax/core/src/api/stats";
+import { PoolDef, ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useLp } from "@beratrax/core/src/hooks";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { Pressable, Text, View, Platform, Dimensions } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import Colors from "@beratrax/typescript-config/Colors";
@@ -58,7 +58,11 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	}
 };
 
-const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
+interface ETFPriceGraphProps {
+	vault: ETFVaultDef;
+}
+
+const ETFPriceGraph: React.FC<ETFPriceGraphProps> = ({ vault }) => {
 	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
 	const graphFiltersList = useMemo(
@@ -177,7 +181,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		return filteredData;
 	};
 
-	const { lp, isLpPriceLoading } = useLp(farm.id);
+	const { lp, isLpPriceLoading } = useLp(vault.id);
 
 	const newData = useMemo(() => {
 		const result = downsampleData(lp || [], graphFilter);
@@ -252,8 +256,8 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={["priceArea"]}
-										labels={({ datum }) => `${datum.x}\nPrice: $${datum.y.toFixed(2)}`}
+										voronoiBlacklist={["etfPriceArea"]}
+										labels={({ datum }) => `${datum.x}\n \nPrice: $${datum.y.toFixed(2)}`}
 										labelComponent={
 											<VictoryTooltip
 												flyoutWidth={130}
@@ -297,7 +301,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryLine
-									name="priceLine"
+									name="etfPriceLine"
 									data={chartData}
 									style={{
 										data: {
@@ -308,18 +312,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryDefsWrapper>
-									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+									<LinearGradient id="etfPriceGradient" x1="0" y1="0" x2="0" y2="1">
 										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
 										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 
 								<VictoryArea
-									name="priceArea"
+									name="etfPriceArea"
 									data={chartData}
 									style={{
 										data: {
-											fill: "url(#areaGradient)",
+											fill: "url(#etfPriceGradient)",
 											strokeWidth: 0,
 										},
 									}}
@@ -335,11 +339,10 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 				))}
 			</View>
 			<View>
-				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
-				</Text>
+				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">Historical price of the ETF vault</Text>
 			</View>
 		</View>
 	);
 };
-export default FarmLpGraph;
+
+export default ETFPriceGraph;

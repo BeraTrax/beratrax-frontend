@@ -1,8 +1,8 @@
 import { useMemo, useState, memo, useCallback } from "react";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
-import { LP_Prices } from "@beratrax/core/src/api/stats";
-import { useLp } from "@beratrax/core/src/hooks";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import { ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
+import { useSpecificVaultTvl } from "@beratrax/core/src/hooks/useVaults";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import { Pressable, Text, View, Platform, Dimensions } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import Colors from "@beratrax/typescript-config/Colors";
@@ -58,7 +58,11 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	}
 };
 
-const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
+interface ETFTvlGraphProps {
+	vault: ETFVaultDef;
+}
+
+const ETFTvlGraph: React.FC<ETFTvlGraphProps> = ({ vault }) => {
 	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
 	const graphFiltersList = useMemo(
@@ -85,14 +89,14 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		);
 	}, [graphFiltersList, handleFilterClick]);
 
-	const downsampleData = (data: LP_Prices[], filter: GraphFilterType) => {
+	const downsampleData = (data: any[], filter: GraphFilterType) => {
 		if (!data || data.length === 0) return [];
 
-		const filteredData: { date: string; lp: string; timestamp: number }[] = [];
+		const filteredData: { date: string; tvl: string; timestamp: number }[] = [];
 
 		// Filter and sort entries by timestamp
 		const filteredEntries = data
-			.filter((entry) => entry.timestamp && typeof entry.lp === "number" && entry.lp > 0)
+			.filter((entry) => entry.timestamp && typeof entry.tvl === "number" && entry.tvl > 0)
 			.sort((a, b) => a.timestamp - b.timestamp);
 
 		if (filteredEntries.length === 0) return [];
@@ -128,7 +132,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 				const mostRecent = recentEntries[recentEntries.length - 1];
 				filteredData.push({
 					date: formatDate(mostRecent.timestamp, filter),
-					lp: mostRecent.lp.toFixed(3),
+					tvl: mostRecent.tvl.toFixed(2),
 					timestamp: mostRecent.timestamp,
 				});
 			}
@@ -161,13 +165,13 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 
 			if (slotEntries.length > 0) {
 				const key = formatDate(slotTime, filter);
-				const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
-				const avgLp = totalLp / slotEntries.length;
+				const totalTvl = slotEntries.reduce((sum, entry) => sum + (entry.tvl || 0), 0);
+				const avgTvl = totalTvl / slotEntries.length;
 
-				if (avgLp > 0) {
+				if (avgTvl > 0) {
 					filteredData.push({
 						date: key,
-						lp: avgLp.toFixed(3),
+						tvl: avgTvl.toFixed(2),
 						timestamp: slotTime,
 					});
 				}
@@ -177,17 +181,17 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		return filteredData;
 	};
 
-	const { lp, isLpPriceLoading } = useLp(farm.id);
+	const { vaultTvl, isLoading } = useSpecificVaultTvl(vault.id);
 
 	const newData = useMemo(() => {
-		const result = downsampleData(lp || [], graphFilter);
+		const result = downsampleData(vaultTvl || [], graphFilter);
 		return result;
-	}, [lp, graphFilter]);
+	}, [vaultTvl, graphFilter]);
 
 	const chartData = useMemo(() => {
 		const result = newData.map((d) => ({
 			x: d.date,
-			y: parseFloat(d.lp), // ensure y is a number
+			y: parseFloat(d.tvl), // ensure y is a number
 		}));
 		return result;
 	}, [newData]);
@@ -231,7 +235,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 	return (
 		<View className="z-10 relative">
 			<View style={{ marginTop: 10, width: "100%", height: 300 }}>
-				{isLpPriceLoading ? (
+				{isLoading ? (
 					<Skeleton h={300} w={1200} />
 				) : (
 					<>
@@ -252,8 +256,8 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={["priceArea"]}
-										labels={({ datum }) => `${datum.x}\nPrice: $${datum.y.toFixed(2)}`}
+										voronoiBlacklist={["etfTvlArea"]}
+										labels={({ datum }) => `${datum.x}\nTVL: $${customCommify(datum.y.toFixed(2))}`}
 										labelComponent={
 											<VictoryTooltip
 												flyoutWidth={130}
@@ -297,7 +301,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryLine
-									name="priceLine"
+									name="etfTvlLine"
 									data={chartData}
 									style={{
 										data: {
@@ -308,18 +312,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryDefsWrapper>
-									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+									<LinearGradient id="etfTvlGradient" x1="0" y1="0" x2="0" y2="1">
 										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
 										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 
 								<VictoryArea
-									name="priceArea"
+									name="etfTvlArea"
 									data={chartData}
 									style={{
 										data: {
-											fill: "url(#areaGradient)",
+											fill: "url(#etfTvlGradient)",
 											strokeWidth: 0,
 										},
 									}}
@@ -336,10 +340,11 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 			</View>
 			<View>
 				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+					Historical Total Value Locked in the ETF vault
 				</Text>
 			</View>
 		</View>
 	);
 };
-export default FarmLpGraph;
+
+export default ETFTvlGraph;

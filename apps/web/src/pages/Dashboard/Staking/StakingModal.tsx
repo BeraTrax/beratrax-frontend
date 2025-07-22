@@ -17,6 +17,7 @@ import UnStaking from "web/src/components/Staking/UnStaking";
 import { Tabs } from "web/src/components/Tabs/Tabs";
 import { Address, encodeFunctionData, getContract } from "viem";
 import stakingModalStyles from "./StakingModal.module.css";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 interface StakingModalProps {
 	open: boolean;
@@ -89,7 +90,8 @@ const StakingModal = ({ open, setOpen }: StakingModalProps) => {
 				return { proposalAddress, voteCount };
 			})
 		);
-		const vaults = farms
+		const filteredFarms = farms.filter((farm) => !farm.isETFVault) as PoolDef[];
+		const vaults = filteredFarms
 			.filter((farm) => farm.rewardVault && liveVotingVaults.includes(farm.rewardVault))
 			.map((farm) => ({
 				...farm,

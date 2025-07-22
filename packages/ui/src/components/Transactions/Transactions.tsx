@@ -1,10 +1,10 @@
-import pools_json, { tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import pools_json, { ETF_VAULTS, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { useZapIn, useZapOut } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
 import { deleteTransactionDb } from "@beratrax/core/src/state/transactions/transactionsReducer";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
-import useTransactions from "@beratrax/core/src/state/transactions/useTransactions";
+
 import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFarmTransactions";
 import { formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import moment from "moment";
@@ -86,7 +86,7 @@ export const Transactions: FC<TransactionProps> = ({ farmId }) => {
 					initialNumToRender={3}
 				/>
 			</View>
-			{open && <TransactionsModal setOpenModal={setOpen} />}
+			{open && <TransactionsModal setOpenModal={setOpen} farmId={farmId} />}
 		</View>
 	);
 };
@@ -498,7 +498,8 @@ const TransactionRow = memo(
 );
 
 const Row: FC<{ tx: Transaction }> = memo(({ tx }) => {
-	const farm = useMemo(() => pools_json.find((item) => item.id === tx.farmId), [tx.farmId]);
+	const allFarms = [...pools_json, ...ETF_VAULTS];
+	const farm = useMemo(() => allFarms.find((item) => item.id === tx.farmId), [tx.farmId]);
 	const { prices, decimals } = useTokens();
 	const [open, setOpen] = useState(false);
 	const dispatch = useAppDispatch();
@@ -578,9 +579,9 @@ const Row: FC<{ tx: Transaction }> = memo(({ tx }) => {
 	);
 });
 
-const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ setOpenModal }) => {
-	const transactions = useAppSelector((state) => state.transactions.transactions);
-	const { fetchTransactions, isLoading, fetchedAll } = useTransactions();
+const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void; farmId?: number }> = ({ setOpenModal, farmId }) => {
+	// const transactions = useAppSelector((state) => state.transactions.transactions);
+	const { data: transactions, isFetching, fetchTransactions, fetchedAll, isLoading } = useFarmTransactions(farmId);
 	const timeout = useRef<NodeJS.Timeout>();
 
 	const handleEndReached = useCallback(() => {
@@ -595,7 +596,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 	const renderItem = useCallback(({ item }: { item: Transaction }) => <Row tx={item} />, []);
 
 	const renderFooter = useCallback(() => {
-		if (!isLoading) return null;
+		if (!isFetching) return null;
 
 		return (
 			<View className="flex justify-center items-center py-4">
@@ -610,7 +611,7 @@ const TransactionsModal: FC<{ setOpenModal: (value: boolean) => void }> = ({ set
 				/>
 			</View>
 		);
-	}, [isLoading]);
+	}, [isFetching]);
 
 	const keyExtractor = useCallback((item: Transaction) => item._id, []);
 

@@ -5,7 +5,7 @@ import React, { memo, useCallback, useMemo, useRef, useState, useLayoutEffect } 
 import DialPad from "ui/src/components/Dialpad/Dialpad";
 import MobileModalContainer from "ui/src/components/MobileModalContainer/MobileModalContainer";
 import Select from "ui/src/components/Select/Select";
-import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import { ETFVaultDef, PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useWindowSize } from "@beratrax/core/src/hooks";
 import { useDetailInput } from "@beratrax/core/src/hooks/useDetailInput";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
@@ -41,7 +41,7 @@ import { SvgImage } from "@beratrax/ui/src/components/SvgImage/SvgImage";
 interface FarmActionModalProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	farm: PoolDef;
+	farm: PoolDef | ETFVaultDef;
 }
 type QuickDepositType = "25" | "50" | "75" | "MAX" | "";
 

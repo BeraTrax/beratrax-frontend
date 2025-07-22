@@ -127,7 +127,7 @@ export const VaultStatsTable = () => {
 									onClick={() => handleSort("farmId")}
 								>
 									FARM ID {sortColumn === "farmId" && (sortDirection === "asc" ? "↑" : "↓")}
-								</th>{" "}
+								</th>
 								<th className="p-4 whitespace-nowrap min-w-max ">TITLE</th>
 								<th
 									className="p-4 whitespace-nowrap min-w-max cursor-pointer hover:text-textSecondary"
@@ -148,7 +148,7 @@ export const VaultStatsTable = () => {
 									onClick={() => handleSort("harvestStatus")}
 								>
 									HARVEST STATUS {sortColumn === "harvestStatus" && (sortDirection === "asc" ? "↑" : "↓")}
-								</th>{" "}
+								</th>
 								<th
 									className="p-4 whitespace-nowrap min-w-max cursor-pointer hover:text-textSecondary"
 									onClick={() => handleSort("earnStatus")}

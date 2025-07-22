@@ -1,6 +1,6 @@
 import { Address, Chain, createWalletClient, CustomTransport, Hex, HttpTransport, JsonRpcAccount, LocalAccount, PublicClient } from "viem";
 import { FarmDataProcessed } from "./../api/pools/types";
-import { PoolDef } from "./../config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "./../config/constants/pools_json";
 import { Apys } from "./../state/apys/types";
 import { Balances } from "./../state/tokens/types";
 import { FarmType } from "./enums";
@@ -25,6 +25,12 @@ export interface FarmDetails extends PoolDef {
 }
 
 export interface Vault extends PoolDef {
+	userVaultBalance: number;
+	priceOfSingleToken: number;
+	apys: Apys;
+}
+
+export interface ETFVault extends ETFVaultDef {
 	userVaultBalance: number;
 	priceOfSingleToken: number;
 	apys: Apys;

@@ -1,29 +1,24 @@
 import Tokendetailspageleftsideleaves from "@beratrax/core/src/assets/images/tokendetailspageleftsideleaves.svg";
-// import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.svg";
 import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.png";
-import { IS_LEGACY } from "@beratrax/core/src/config/constants";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
-import { useDetailInput, useWallet } from "@beratrax/core/src/hooks";
-import { Transactions } from "@beratrax/ui";
+import { useDetailInput, useTokens, useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
-import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
-import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
-import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import { FarmTransactionType } from "@beratrax/core/src/types/enums";
-import { formatCurrency } from "@beratrax/core/src/utils/common";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
+import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState, useCallback, useMemo, memo } from "react";
+import { useState, useCallback, useMemo, memo, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
-import { Skeleton } from "ui/src/components/Skeleton/Skeleton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
-import FarmActionModal from "./FarmActionModal/FarmActionModal";
-import PoolInfo from "./PoolInfo/PoolInfo";
-import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
-import YourBalance from "./YourBalance/YourBalance";
 import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
+import { ETF_VAULTS as ETF_VAULTS_DATA } from "@beratrax/core/src/config/constants/pools_json";
+import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
+import FarmActionModal from "../FarmActionView/FarmActionModal/FarmActionModal";
+import { Skeleton } from "../../../Skeleton/Skeleton";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import ETFInfo from "./ETFInfo/ETFInfo";
 
 const ActionButton = memo(
 	({
@@ -44,49 +39,48 @@ const ActionButton = memo(
 	)
 );
 
-export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
+export const ETFVaultActionView: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const { lastVisitedPage } = useAppSelector((state) => state.account);
 	const { currentWallet, isConnecting, connectWallet } = useWallet();
 	const { openConnectModal } = useConnectModal();
 	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [screenWidth, setScreenWidth] = useState(Platform.OS === "web" ? (typeof window !== "undefined" ? window.innerWidth : 800) : 400);
+	const ETF_VAULT = ETF_VAULTS_DATA[0];
+	const { withdrawable, isLoadingFarm } = useDetailInput(ETF_VAULT);
 	const {
 		isBalancesLoading: isLoading,
 		prices: {
-			[farm.chainId]: { [farm.vault_addr]: vaultPrice },
+			[ETF_VAULT.chainId]: { [ETF_VAULT.vault_addr]: vaultPrice },
 		},
 		totalSupplies,
 		isTotalSuppliesLoading,
 	} = useTokens();
-	const [marketCap, setMarketCap] = useState<string | null>(null);
-	const [vaultTvl, setVaultTvl] = useState<string | null>(null);
-	const isMarketCapAndVaultLoading = isTotalSuppliesLoading || marketCap === null || vaultTvl === null || marketCap === "0";
+
+	const [openDepositModal, setOpenDepositModal] = useState(false);
 
 	const router = useRouter();
 	let navigate = null;
 	if (Platform.OS === "web") {
 		navigate = useNavigate();
 	}
-	const { withdrawable, isLoadingFarm } = useDetailInput(farm);
 
-	const [openDepositModal, setOpenDepositModal] = useState(false);
-
-	const transactionType = useAppSelector((state) =>
-		IS_LEGACY ? FarmTransactionType.Withdraw : state.farms.farmDetailInputOptions.transactionType
-	);
-
+	// Handle screen resize for web
 	useEffect(() => {
-		(async () => {
-			try {
-				if (Number(vaultPrice) > 0) {
-					setMarketCap(formatCurrency(Number(totalSupplies[farm.chainId][farm.lp_address].supplyUsd)));
-					setVaultTvl(formatCurrency(Number(totalSupplies[farm.chainId][farm.vault_addr].supplyUsd)));
-				}
-			} catch (error) {
-				console.log(error);
-			}
-		})();
-	}, [totalSupplies]);
+		if (Platform.OS === "web" && typeof window !== "undefined") {
+			const handleResize = () => {
+				setScreenWidth(window.innerWidth);
+			};
+
+			window.addEventListener("resize", handleResize);
+			// Set initial value
+			setScreenWidth(window.innerWidth);
+
+			return () => {
+				window.removeEventListener("resize", handleResize);
+			};
+		}
+	}, []);
 
 	const setFarmOptions = useCallback(
 		(opt: Partial<FarmDetailInputOptions>) => {
@@ -121,10 +115,12 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 	}, [setFarmOptions]);
 
 	const depositButtonText = useMemo(() => {
-		return !currentWallet ? "Sign In/ Up to Deposit" : FarmTransactionType.Deposit;
+		return !currentWallet ? "Sign In/ Up to Deposit" : "Deposit";
 	}, [currentWallet]);
 
 	const withdrawButtonText = useMemo(() => FarmTransactionType.Withdraw, []);
+
+	const isSmallScreen = screenWidth <= 640;
 
 	return (
 		<>
@@ -139,7 +135,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 						<Image source={Tokendetailspagestoprightleaves as ImageSourcePropType} height={200} width={200} />
 					)}
 				</View>
-				<View className={`px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
+				<View className={`px-3 sm:px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
 					{openDepositModal ? (
 						<></>
 					) : (
@@ -147,18 +143,13 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 							<ScrollView className="pt-14">
 								<BackButton onClick={handleGoBack} />
 								<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
-									<TokenPriceAndGraph farm={farm} />
-									<YourBalance farm={farm} />
-									<PoolInfo
-										marketCap={`$${marketCap}`}
-										vaultTvl={`$${vaultTvl}`}
-										marketCapLoading={isMarketCapAndVaultLoading}
-										vaultTvlLoading={isMarketCapAndVaultLoading}
-										farm={farm}
-									/>
-									<Transactions farmId={farm.id} />
+									{/* ETF Price and Graph Section */}
+									<ETFPriceAndGraph vault={ETF_VAULT} />
+
+									<ETFInfo ETF_VAULT={ETF_VAULT} isSmallScreen={isSmallScreen} />
 								</View>
 							</ScrollView>
+
 							<View
 								className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
 									Platform.OS === "web"
@@ -191,7 +182,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 					)}
 				</View>
 			</View>
-			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={farm} />
+			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={ETF_VAULT} />
 			{/* Login Modal */}
 			{/* only for mobile app */}
 			{showLoginModal && connectWallet && (

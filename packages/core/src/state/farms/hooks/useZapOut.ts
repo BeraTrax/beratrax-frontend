@@ -2,12 +2,14 @@ import { useIsMutating, useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Address } from "viem";
 import useWallet from "../../../hooks/useWallet";
+import { toWei } from "../../../utils/common";
+import { isETFVault, isRegularPool } from "../../../utils/farmTypeGuards";
 import useTokens from "../../tokens/useTokens";
 import farmFunctions from "./../../../api/pools";
-import { PoolDef } from "./../../../config/constants/pools_json";
+import { ZapOutBaseFn, ZapOutBaseETFFn, SlippageOutBaseFn, SlippageOutBaseETFFn } from "./../../../api/pools/types";
+import { PoolDef, ETFVaultDef } from "./../../../config/constants/pools_json";
 import { FARM_ZAP_OUT } from "./../../../config/constants/query";
 import { useAppDispatch } from "./../../../state";
-import { toWei } from "./../../../utils/common";
 
 export interface ZapOut {
 	withdrawAmt: number;
@@ -17,7 +19,7 @@ export interface ZapOut {
 	txId: string;
 }
 
-const useZapOut = (farm: PoolDef) => {
+const useZapOut = (farm: PoolDef | ETFVaultDef) => {
 	const { currentWallet, getClients, getPublicClient, isSocial, estimateTxGas, getWalletClient } = useWallet();
 	const { reloadBalances, balances, decimals, prices, reloadSupplies } = useTokens();
 	const dispatch = useAppDispatch();
@@ -31,21 +33,44 @@ const useZapOut = (farm: PoolDef) => {
 			amountInWei = toWei(withdrawAmt, farm.decimals);
 		}
 
-		await farmFunctions[farm.id].zapOut({
-			id: txId,
-			amountInWei,
-			getPublicClient,
-			getWalletClient,
-			estimateTxGas,
-			decimals,
-			currentWallet,
-			isSocial,
-			getClients,
-			max,
-			prices,
-			token,
-			bridgeChainId,
-		});
+		if (isRegularPool(farm)) {
+			const zapOutFn = farmFunctions[farm.id].zapOut as ZapOutBaseFn;
+			await zapOutFn({
+				id: txId,
+				amountInWei,
+				getPublicClient,
+				getWalletClient,
+				estimateTxGas,
+				decimals,
+				currentWallet,
+				isSocial,
+				getClients,
+				max,
+				prices,
+				token,
+				bridgeChainId,
+				farm,
+			});
+		} else if (isETFVault(farm)) {
+			const zapOutFn = farmFunctions[farm.id].zapOut as ZapOutBaseETFFn;
+			await zapOutFn({
+				id: txId,
+				amountInWei,
+				getPublicClient,
+				getWalletClient,
+				estimateTxGas,
+				decimals,
+				currentWallet,
+				isSocial,
+				getClients,
+				max,
+				prices,
+				token,
+				bridgeChainId,
+				farm,
+			});
+		}
+
 		reloadBalances();
 		reloadSupplies();
 	};
@@ -54,23 +79,49 @@ const useZapOut = (farm: PoolDef) => {
 		if (!currentWallet) return;
 		let amountInWei = toWei(withdrawAmt, farm.decimals);
 
-		// @ts-expect-error
-		const { receviedAmt, afterTxAmount, beforeTxAmount, slippage, bestFunctionName } = await farmFunctions[farm.id]?.zapOutSlippage({
-			id: "",
-			currentWallet,
-			amountInWei,
-			farm,
-			balances,
-			decimals,
-			getClients,
-			isSocial,
-			max,
-			estimateTxGas,
-			getPublicClient,
-			prices,
-			getWalletClient,
-			token,
-		});
+		let result;
+
+		if (isRegularPool(farm)) {
+			const slippageFn = farmFunctions[farm.id]?.zapOutSlippage as SlippageOutBaseFn;
+			result = await slippageFn({
+				id: "",
+				currentWallet,
+				amountInWei,
+				farm,
+				balances,
+				decimals,
+				getClients,
+				isSocial,
+				max,
+				estimateTxGas,
+				getPublicClient,
+				prices,
+				getWalletClient,
+				token,
+			});
+		} else if (isETFVault(farm)) {
+			const slippageFn = farmFunctions[farm.id]?.zapOutSlippage as SlippageOutBaseETFFn;
+			result = await slippageFn({
+				id: "",
+				currentWallet,
+				amountInWei,
+				farm,
+				balances,
+				decimals,
+				getClients,
+				isSocial,
+				max,
+				estimateTxGas,
+				getPublicClient,
+				prices,
+				getWalletClient,
+				token,
+			});
+		}
+
+		if (!result) throw new Error("Failed to get slippage result");
+
+		const { receviedAmt, afterTxAmount, beforeTxAmount, slippage, bestFunctionName } = result;
 
 		return { afterWithdrawAmount: afterTxAmount, beforeWithdrawAmount: beforeTxAmount, slippage, bestFunctionName };
 	};

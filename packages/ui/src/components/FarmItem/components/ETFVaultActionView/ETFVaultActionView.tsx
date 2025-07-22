@@ -1,8 +1,9 @@
 import Tokendetailspageleftsideleaves from "@beratrax/core/src/assets/images/tokendetailspageleftsideleaves.svg";
 import Tokendetailspagestoprightleaves from "@beratrax/core/src/assets/images/tokendetailspagestoprightleaves.png";
-import { useWallet } from "@beratrax/core/src/hooks";
-import { useAppSelector } from "@beratrax/core/src/state";
+import { useDetailInput, useTokens, useWallet } from "@beratrax/core/src/hooks";
+import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
+import { IS_LEGACY } from "@beratrax/core/src/config/constants";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState, useCallback, useMemo, memo, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -10,14 +11,14 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
 import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
-import { MarketCapIcon } from "@beratrax/ui/src/icons/MarketCap";
-import { VolumeIcon } from "@beratrax/ui/src/icons/Volume";
-import { CreatedIcon } from "@beratrax/ui/src/icons/Created";
-import { TrendUpIcon } from "@beratrax/ui/src/icons/TrendUp";
-import { RocketIcon } from "@beratrax/ui/src/icons/Rocket";
-import { ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
+import { ETF_VAULTS as ETF_VAULTS_DATA } from "@beratrax/core/src/config/constants/pools_json";
 import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
-import CorePairs from "./CorePairs/CorePairs";
+import FarmActionModal from "../FarmActionView/FarmActionModal/FarmActionModal";
+import { Skeleton } from "../../../Skeleton/Skeleton";
+import { FarmTransactionType } from "@beratrax/core/src/types/enums";
+import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
+import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import ETFInfo from "./ETFInfo/ETFInfo";
 
 const ActionButton = memo(
 	({
@@ -38,92 +39,25 @@ const ActionButton = memo(
 	)
 );
 
-// Similar as in PoolInfo.tsx component
-const StatInfo = ({ iconUrl, title, value }: { iconUrl: React.ReactNode; title: string; value: number | string }) => {
-	return (
-		<View className="flex flex-row items-center gap-2 sm:gap-4 bg-bgDark py-3 sm:py-4 px-3 sm:px-4 mt-2 rounded-2xl backdrop-blur-lg">
-			{typeof iconUrl === "string" ? (
-				<Image source={{ uri: iconUrl }} accessibilityLabel={title} className="flex-shrink-0 flex-grow-0 w-8 h-8 sm:w-10 sm:h-10" />
-			) : (
-				iconUrl
-			)}
-			<View className={"flex-1"}>
-				<Text className="text-textWhite text-base sm:text-lg font-medium font-league-spartan">{title}</Text>
-			</View>
-			<Text className="text-textWhite text-base sm:text-lg font-medium font-league-spartan">{value}</Text>
-		</View>
-	);
-};
-
-// Asset composition on Mobile
-const AssetMobile = ({ token, index }: { token: any; index: number }) => (
-	<View key={index} className="bg-bgDark rounded-2xl p-4 mb-3">
-		{/* Header with name and logo */}
-		<View className="flex flex-row items-center justify-between mb-3">
-			<View className="flex flex-row items-center">
-				<Image source={{ uri: token.logo }} className="w-6 h-6 rounded-full mr-2" />
-				<Text className="text-white text-base font-league-spartan font-medium">{token.name}</Text>
-			</View>
-			<Text className="text-white text-base font-league-spartan font-bold">{token.currentPrice}</Text>
-		</View>
-
-		{/* Stats grid */}
-		<View className="space-y-2">
-			<View className="flex flex-row justify-between">
-				<Text className="text-textSecondary text-sm font-league-spartan">Total Liquidity</Text>
-				<Text className="text-white text-sm font-league-spartan">{token.totalLiquidity}</Text>
-			</View>
-			<View className="flex flex-row justify-between">
-				<Text className="text-textSecondary text-sm font-league-spartan">Target Composition</Text>
-				<Text className="text-white text-sm font-league-spartan">{token.targetPercentage}</Text>
-			</View>
-			<View className="flex flex-row justify-between">
-				<Text className="text-textSecondary text-sm font-league-spartan">Current Composition</Text>
-				<Text className="text-white text-sm font-league-spartan">{token.currentPercentage}</Text>
-			</View>
-		</View>
-	</View>
-);
-
-// Desktop table row component
-const CompositionRowDesktop = ({ token, index }: { token: any; index: number }) => (
-	<View key={index} className="flex flex-row items-center py-4 border-b last:border-b-0 bg-bgDark pl-6 rounded-3xl m-2">
-		{/* Name Column */}
-		<View className="flex-1 min-w-[80px]">
-			<View className="flex flex-row items-center">
-				<Image source={{ uri: token.logo }} className="w-6 h-6 rounded-full mr-2" />
-				<Text className="text-white text-base font-league-spartan">{token.name}</Text>
-			</View>
-		</View>
-
-		{/* Current Price Column */}
-		<View className="flex-1 min-w-[80px]">
-			<Text className="text-white text-base font-league-spartan">{token.currentPrice}</Text>
-		</View>
-
-		{/* Total Liquidity Column */}
-		<View className="flex-1 min-w-[80px]">
-			<Text className="text-white text-base font-league-spartan">{token.totalLiquidity}</Text>
-		</View>
-
-		{/* Target Composition Column */}
-		<View className="flex-1 min-w-[80px]">
-			<Text className="text-white text-base font-league-spartan">{token.targetPercentage}</Text>
-		</View>
-
-		{/* Current Composition Column */}
-		<View className="flex-1 min-w-[80px]">
-			<Text className="text-white text-base font-league-spartan">{token.currentPercentage}</Text>
-		</View>
-	</View>
-);
-
 export const ETFVaultActionView: React.FC = () => {
+	const dispatch = useAppDispatch();
 	const { lastVisitedPage } = useAppSelector((state) => state.account);
 	const { currentWallet, isConnecting, connectWallet } = useWallet();
 	const { openConnectModal } = useConnectModal();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [screenWidth, setScreenWidth] = useState(Platform.OS === "web" ? (typeof window !== "undefined" ? window.innerWidth : 800) : 400);
+	const ETF_VAULT = ETF_VAULTS_DATA[0];
+	const { withdrawable, isLoadingFarm } = useDetailInput(ETF_VAULT);
+	const {
+		isBalancesLoading: isLoading,
+		prices: {
+			[ETF_VAULT.chainId]: { [ETF_VAULT.vault_addr]: vaultPrice },
+		},
+		totalSupplies,
+		isTotalSuppliesLoading,
+	} = useTokens();
+
+	const [openDepositModal, setOpenDepositModal] = useState(false);
 
 	const router = useRouter();
 	let navigate = null;
@@ -148,6 +82,14 @@ export const ETFVaultActionView: React.FC = () => {
 		}
 	}, []);
 
+	const setFarmOptions = useCallback(
+		(opt: Partial<FarmDetailInputOptions>) => {
+			dispatch(setFarmDetailInputOptions(opt));
+			setOpenDepositModal(true);
+		},
+		[dispatch]
+	);
+
 	const handleGoBack = () => {
 		if (Platform.OS === "web") {
 			navigate?.(lastVisitedPage || "/Earn", { replace: true });
@@ -159,17 +101,24 @@ export const ETFVaultActionView: React.FC = () => {
 	const handleDepositPress = useCallback(() => {
 		if (!currentWallet) {
 			Platform.OS === "web" ? openConnectModal?.() : setShowLoginModal(true);
-		} else {
-			// For now, just show an alert
-			if (Platform.OS === "web") {
-				alert("ETF vault deposit functionality coming soon!");
-			}
+		} else if (!IS_LEGACY) {
+			setFarmOptions({ transactionType: FarmTransactionType.Deposit });
 		}
-	}, [currentWallet, openConnectModal]);
+	}, [currentWallet, openConnectModal, setFarmOptions]);
+
+	const handleWithdrawPress = useCallback(() => {
+		if (!IS_LEGACY) {
+			setFarmOptions({
+				transactionType: FarmTransactionType.Withdraw,
+			});
+		}
+	}, [setFarmOptions]);
 
 	const depositButtonText = useMemo(() => {
-		return !currentWallet ? "Sign In/ Up to Deposit" : "Deposit (Coming Soon)";
+		return !currentWallet ? "Sign In/ Up to Deposit" : "Deposit";
 	}, [currentWallet]);
+
+	const withdrawButtonText = useMemo(() => FarmTransactionType.Withdraw, []);
 
 	const isSmallScreen = screenWidth <= 640;
 
@@ -187,86 +136,53 @@ export const ETFVaultActionView: React.FC = () => {
 					)}
 				</View>
 				<View className={`px-3 sm:px-4 pb-2 ${Platform.OS === "web" || Platform.OS === "android" ? "" : "mb-24"}`}>
-					<ScrollView className="pt-14">
-						<BackButton onClick={handleGoBack} />
-						<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
-							{/* ETF Price and Graph Section */}
-							<ETFPriceAndGraph />
+					{openDepositModal ? (
+						<></>
+					) : (
+						<>
+							<ScrollView className="pt-14">
+								<BackButton onClick={handleGoBack} />
+								<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
+									{/* ETF Price and Graph Section */}
+									<ETFPriceAndGraph vault={ETF_VAULT} />
 
-							{/* Core Pairs Section */}
-							<CorePairs />
+									<ETFInfo ETF_VAULT={ETF_VAULT} isSmallScreen={isSmallScreen} />
+								</View>
+							</ScrollView>
 
-							{/* ETF Composition Section */}
-							<View className="rounded-3xl mb-4">
-								<Text className="text-white text-lg sm:text-xl font-bold mb-4 pl-2 sm:pl-6">Assets</Text>
-
-								{isSmallScreen ? (
-									/* Mobile Layout - Card Style */
-									<View className="px-2">
-										{ETF_VAULTS.composition.map((token, index) => (
-											<AssetMobile key={index} token={token} index={index} />
-										))}
-									</View>
+							<View
+								className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
+									Platform.OS === "web"
+										? "fixed left-0 right-0 bottom-6 max-w-[600px] md:left-[calc(16.67%+0.5rem)] md:right-4 sm:left-4 sm:right-4"
+										: "absolute bottom-8 left-4 right-4"
+								}`}
+							>
+								{isConnecting || isLoading ? (
+									<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
 								) : (
-									/* Desktop Layout - Table Style */
 									<>
-										{/* Table Header */}
-										<View className="flex flex-row items-center py-3 border-b border-gray-600 pl-6">
-											<View className="flex-1 min-w-[80px]">
-												<Text className="text-textSecondary text-base font-league-spartan">Name</Text>
-											</View>
-											<View className="flex-1 min-w-[80px]">
-												<Text className="text-textSecondary text-base font-league-spartan">Current Price</Text>
-											</View>
-											<View className="flex-1 min-w-[80px]">
-												<Text className="text-textSecondary text-base font-league-spartan">Total Liquidity</Text>
-											</View>
-											<View className="flex-1 min-w-[80px]">
-												<Text className="text-textSecondary text-base font-league-spartan">Target Composition</Text>
-											</View>
-											<View className="flex-1 min-w-[80px]">
-												<Text className="text-textSecondary text-base font-league-spartan">Current Composition</Text>
-											</View>
-										</View>
+										<ActionButton
+											onPress={handleDepositPress}
+											text={depositButtonText}
+											className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
+										/>
 
-										{/* Table Rows */}
-										{ETF_VAULTS.composition.map((token, index) => (
-											<CompositionRowDesktop key={index} token={token} index={index} />
-										))}
+										{Number(withdrawable?.amount || "0") > 0 && (
+											<ActionButton
+												onPress={handleWithdrawPress}
+												text={withdrawButtonText}
+												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+												disabled={!currentWallet}
+											/>
+										)}
 									</>
 								)}
 							</View>
-							{/* Pool Info Section */}
-							<View className="mt-4 flex flex-col gap-2">
-								<StatInfo iconUrl={<MarketCapIcon />} title="Market Cap" value={ETF_VAULTS.marketCap} />
-								<StatInfo iconUrl={<VolumeIcon />} title="Vault Liquidity" value={ETF_VAULTS.vaultLiquidity} />
-								<StatInfo iconUrl={<TrendUpIcon />} title="Underlying APR" value={ETF_VAULTS.underlyingAPR} />
-								<StatInfo iconUrl={<RocketIcon />} title="Beratrax Auto-Compounded APY" value={ETF_VAULTS.apy} />
-								<StatInfo iconUrl={<CreatedIcon />} title="Created On" value={ETF_VAULTS.createdOn} />
-							</View>
-						</View>
-					</ScrollView>
-					<View
-						className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
-							Platform.OS === "web"
-								? "fixed left-0 right-0 bottom-6 max-w-[600px] md:left-[calc(16.67%+0.5rem)] md:right-4 sm:left-4 sm:right-4"
-								: "absolute bottom-8 left-4 right-4"
-						}`}
-					>
-						{isConnecting ? (
-							<View className="bg-buttonPrimaryLight w-full py-4 sm:py-5 px-4 rounded-[40px]">
-								<Text className="text-lg sm:text-xl font-bold tracking-widest uppercase text-center">Connecting...</Text>
-							</View>
-						) : (
-							<ActionButton
-								onPress={handleDepositPress}
-								text={depositButtonText}
-								className="bg-buttonPrimaryLight w-[70%] md:w-full py-4 sm:py-5 px-4 text-lg sm:text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
-							/>
-						)}
-					</View>
+						</>
+					)}
 				</View>
 			</View>
+			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={ETF_VAULT} />
 			{/* Login Modal */}
 			{/* only for mobile app */}
 			{showLoginModal && connectWallet && (

@@ -124,9 +124,13 @@ export const fetchBalances = createAsyncThunk(
 			});
 			farms.forEach((farm) => {
 				addresses[farm.chainId].add(getAddress(farm.lp_address));
-				addresses[farm.chainId].add(getAddress(farm.token1));
 				addresses[farm.chainId].add(getAddress(farm.vault_addr));
-				farm.token2 && addresses[farm.chainId].add(getAddress(farm.token2));
+				if ("token1" in farm) {
+					addresses[farm.chainId].add(getAddress(farm.token1));
+				}
+				if ("token2" in farm) {
+					farm.token2 && addresses[farm.chainId].add(getAddress(farm.token2));
+				}
 			});
 			tokens.forEach((token) => {
 				addresses[token.chainId]?.add(getAddress(token.address));
@@ -293,7 +297,7 @@ export const fetchTotalSupplies = createAsyncThunk(
 						};
 					});
 
-					const stablePools = farms.filter((farm) => farm.isStablePool && farm.chainId === Number(chainId));
+					const stablePools = farms.filter((farm) => "isStablePool" in farm && farm.isStablePool && farm.chainId === Number(chainId));
 					await Promise.all(
 						stablePools.map(async (pool) => {
 							const actualTotalSupply = await getContract({
@@ -338,9 +342,13 @@ export const fetchDecimals = createAsyncThunk(
 			});
 			farms.forEach((farm) => {
 				addresses[farm.chainId].add(getAddress(farm.lp_address));
-				addresses[farm.chainId].add(getAddress(farm.token1));
 				addresses[farm.chainId].add(getAddress(farm.vault_addr));
-				farm.token2 && addresses[farm.chainId].add(getAddress(farm.token2));
+				if ("token1" in farm) {
+					addresses[farm.chainId].add(getAddress(farm.token1));
+				}
+				if ("token2" in farm) {
+					farm.token2 && addresses[farm.chainId].add(getAddress(farm.token2));
+				}
 			});
 			tokens.forEach((token) => {
 				addresses[token.chainId]?.add(getAddress(token.address));

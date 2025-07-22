@@ -1,4 +1,4 @@
-import { PoolDef } from "../../config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "../../config/constants/pools_json";
 import { Balances, Decimals, Prices } from "../../state/tokens/types";
 import { EstimateTxGasArgs, IClients } from "../../types";
 import { awaitTransaction } from "../../utils/common";
@@ -95,6 +95,10 @@ export type SlippageInBaseFn = (args: ZapInArgs & { farm: PoolDef }) => Promise<
 export type SlippageOutBaseFn = (args: ZapOutArgs & { farm: PoolDef; balances: Balances }) => Promise<SlippageOutArgs>;
 export type ZapOutFn = (args: ZapOutArgs) => Promise<void>;
 export type ZapOutBaseFn = (args: ZapOutArgs & { farm: PoolDef; withBond?: boolean }) => Promise<void>;
+export type ZapInBaseETFFn = (args: ZapInArgs & { farm: ETFVaultDef; withBond?: boolean }) => Promise<void>;
+export type SlippageInBaseETFFn = (args: ZapInArgs & { farm: ETFVaultDef }) => Promise<SlippageOutArgs>;
+export type ZapOutBaseETFFn = (args: ZapOutArgs & { farm: ETFVaultDef; withBond?: boolean }) => Promise<void>;
+export type SlippageOutBaseETFFn = (args: ZapOutArgs & { farm: ETFVaultDef; balances: Balances }) => Promise<SlippageOutArgs>;
 export type GetFarmDataProcessedFn = (
 	balances: Balances,
 	prices: Prices,
@@ -107,8 +111,8 @@ export interface FarmFunctions {
 	withdraw: WithdrawFn;
 	zapIn: ZapInFn;
 	zapOut: ZapOutFn;
-	zapInSlippage?: SlippageInBaseFn;
-	zapOutSlippage?: SlippageOutBaseFn;
+	zapInSlippage?: SlippageInBaseFn | SlippageInBaseETFFn;
+	zapOutSlippage?: SlippageOutBaseFn | SlippageOutBaseETFFn;
 	depositSlippage?: SlippageDepositBaseFn;
 	withdrawSlippage?: SlippageWithdrawBaseFn;
 }
@@ -150,4 +154,10 @@ export interface PriceCalculationProps {
 	balances: Balances;
 	prices: Prices;
 	farm: PoolDef;
+}
+
+export interface PriceCalculationPropsETF {
+	balances: Balances;
+	prices: Prices;
+	farm: ETFVaultDef;
 }

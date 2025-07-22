@@ -3,9 +3,11 @@ import { useMemo } from "react";
 import { Address } from "viem";
 import useWallet from "../../../hooks/useWallet";
 import { toEth, toWei } from "../../../utils/common";
+import { isETFVault, isRegularPool } from "../../../utils/farmTypeGuards";
 import useTokens from "../../tokens/useTokens";
 import farmFunctions from "./../../../api/pools";
-import { PoolDef } from "./../../../config/constants/pools_json";
+import { ZapInBaseFn, ZapInBaseETFFn, SlippageInBaseFn, SlippageInBaseETFFn } from "./../../../api/pools/types";
+import { PoolDef, ETFVaultDef } from "./../../../config/constants/pools_json";
 import { FARM_ZAP_IN } from "./../../../config/constants/query";
 import { useAppDispatch } from "./../../../state";
 
@@ -17,7 +19,7 @@ export interface ZapIn {
 	txId: string;
 }
 
-const useZapIn = (farm: PoolDef) => {
+const useZapIn = (farm: PoolDef | ETFVaultDef) => {
 	const { currentWallet, getClients, getPublicClient, getWalletClient, isSocial, estimateTxGas } = useWallet();
 	const { reloadBalances, balances, decimals, prices, reloadSupplies } = useTokens();
 	const dispatch = useAppDispatch();
@@ -26,22 +28,45 @@ const useZapIn = (farm: PoolDef) => {
 		if (!currentWallet) return;
 		let amountInWei = toWei(zapAmount, decimals[farm.chainId][token]);
 
-		await farmFunctions[farm.id].zapIn({
-			id: txId,
-			currentWallet,
-			isSocial,
-			amountInWei,
-			balances,
-			max,
-			getClients,
-			estimateTxGas,
-			token,
-			prices,
-			decimals,
-			getPublicClient,
-			getWalletClient,
-			bridgeChainId,
-		});
+		if (isRegularPool(farm)) {
+			const zapInFn = farmFunctions[farm.id].zapIn as ZapInBaseFn;
+			await zapInFn({
+				id: txId,
+				currentWallet,
+				isSocial,
+				amountInWei,
+				balances,
+				max,
+				getClients,
+				estimateTxGas,
+				token,
+				prices,
+				decimals,
+				getPublicClient,
+				getWalletClient,
+				bridgeChainId,
+				farm,
+			});
+		} else if (isETFVault(farm)) {
+			const zapInFn = farmFunctions[farm.id].zapIn as ZapInBaseETFFn;
+			await zapInFn({
+				id: txId,
+				currentWallet,
+				isSocial,
+				amountInWei,
+				balances,
+				max,
+				getClients,
+				estimateTxGas,
+				token,
+				prices,
+				decimals,
+				getPublicClient,
+				getWalletClient,
+				bridgeChainId,
+				farm,
+			});
+		}
 
 		reloadBalances();
 		reloadSupplies();
@@ -51,33 +76,55 @@ const useZapIn = (farm: PoolDef) => {
 		if (!currentWallet) return;
 		let amountInWei = toWei(zapAmount, decimals[farm.chainId][token]);
 		if (!farmFunctions[farm.id]?.zapInSlippage) throw new Error("No zapInSlippage function");
-		const {
-			receviedAmt: difference,
-			slippage,
-			afterTxAmount,
-			beforeTxAmount,
-			bestFunctionName,
-			// @ts-expect-error
-		} = await farmFunctions[farm.id].zapInSlippage({
-			currentWallet,
-			amountInWei,
-			balances,
-			getClients,
-			isSocial,
-			farm,
-			max,
-			estimateTxGas,
-			token,
-			prices,
-			decimals,
-			getPublicClient,
-			getWalletClient,
-		});
+
+		let result;
+
+		if (isRegularPool(farm)) {
+			const slippageFn = farmFunctions[farm.id].zapInSlippage as SlippageInBaseFn;
+			result = await slippageFn({
+				id: "",
+				currentWallet,
+				amountInWei,
+				balances,
+				getClients,
+				isSocial,
+				farm,
+				max,
+				estimateTxGas,
+				token,
+				prices,
+				decimals,
+				getPublicClient,
+				getWalletClient,
+			});
+		} else if (isETFVault(farm)) {
+			const slippageFn = farmFunctions[farm.id].zapInSlippage as SlippageInBaseETFFn;
+			result = await slippageFn({
+				id: "",
+				currentWallet,
+				amountInWei,
+				balances,
+				getClients,
+				isSocial,
+				farm,
+				max,
+				estimateTxGas,
+				token,
+				prices,
+				decimals,
+				getPublicClient,
+				getWalletClient,
+			});
+		}
+
+		if (!result) throw new Error("Failed to get slippage result");
+
+		const { receviedAmt: difference, slippage, afterTxAmount, beforeTxAmount, bestFunctionName } = result;
 
 		console.log({
 			vaultPrice: prices[farm.chainId][farm.vault_addr],
-			lpPrice: prices[farm.chainId][farm.lp_address],
-			lpAddr: farm.lp_address,
+			lpPrice: isRegularPool(farm) ? prices[farm.chainId][farm.lp_address] : undefined,
+			lpAddr: isRegularPool(farm) ? farm.lp_address : undefined,
 			tokenPrice: prices[farm.chainId][token],
 			tokenAddr: token,
 			zapAmount,

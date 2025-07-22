@@ -85,22 +85,24 @@ export const updateEarnings = createAsyncThunk(
 			const representativeChainId = farms[0].chainId; // Use chainId from the first farm for the client
 			const publicClient = getPublicClient(representativeChainId);
 
-			const multicallContracts = farms.flatMap(
+			// Filter out ETF vaults before flatMap
+			const nonETFVaultFarms = farms.filter((farm) => !farm.isETFVault);
+			const multicallContracts = nonETFVaultFarms.flatMap(
 				(farm) =>
 					[
 						{
 							address: farm.vault_addr,
-							abi: VaultAbi.abi as Abi, // This will now use the 'as const' typed ABI
+							abi: VaultAbi.abi as Abi,
 							functionName: "totalAssets",
 						},
 						{
 							address: farm.lp_address,
-							abi: erc20Abi as Abi, // erc20Abi from viem is already correctly typed
+							abi: erc20Abi as Abi,
 							functionName: "balanceOf",
 							args: [farm.vault_addr],
 						},
 					] as const
-			); // Added 'as const' here too for the array of contract calls, ensuring readonly properties
+			);
 
 			const multicallResults = await publicClient.multicall({
 				contracts: multicallContracts, // This should now satisfy the type checker

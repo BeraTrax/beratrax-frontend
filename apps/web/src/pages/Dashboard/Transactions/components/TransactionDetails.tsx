@@ -2,7 +2,7 @@ import React from "react";
 import { FaRegCircle } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import CheckMark from "@beratrax/core/src/assets/images/checkmark.png";
-import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import { ETFVaultDef, PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
@@ -22,11 +22,11 @@ type IProps =
 			open: boolean;
 			showLoadingBar?: boolean;
 			tx: Transaction;
-			farm: PoolDef;
+			farm: PoolDef | ETFVaultDef;
 	  };
 
 const TransactionDetails: React.FC<IProps> = (args) => {
-	let farm: PoolDef | undefined = args.farm;
+	let farm: PoolDef | ETFVaultDef | undefined = args.farm;
 	let tx: Transaction | undefined = args.tx;
 	const obj = useTransaction(args.transactionId);
 	if (!farm) farm = obj?.farm;

@@ -178,7 +178,7 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 											<ActionButton
 												onPress={handleWithdrawPress}
 												text={withdrawButtonText}
-												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
 												disabled={!currentWallet}
 											/>
 										)}

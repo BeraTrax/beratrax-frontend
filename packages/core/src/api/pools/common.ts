@@ -14,6 +14,11 @@ import {
 	ZapOutFn,
 	GetFarmDataProcessedFn,
 	FarmFunctions,
+	PriceCalculationPropsETF,
+	ZapInBaseETFFn,
+	ZapOutBaseETFFn,
+	SlippageInBaseETFFn,
+	SlippageOutBaseETFFn,
 } from "./types";
 import { addressesByChainId } from "../../config/constants/contracts";
 import { isGasSponsored } from "..";
@@ -30,6 +35,7 @@ import {
 	parseEventLogs,
 } from "viem";
 import zapperAbi from "../../assets/abis/zapperAbi";
+import ETFVaultAbi from "../../assets/abis/ETFVaultAbi";
 import rewardVaultAbi from "../../assets/abis/rewardVaultAbi";
 import { IClients } from "../../types";
 import store from "../../state";
@@ -38,7 +44,7 @@ import { editTransactionDb, markAsFailedDb, TransactionsDB } from "../../state/t
 import { addNotificationWithTimeout } from "../../state/notification/notifiactionReducer";
 import { setSimulatedSlippage } from "../../state/farms/farmsReducer";
 import { Balances } from "../../state/tokens/types";
-import pools_json, { PoolDef, tokenNamesAndImages } from "../../config/constants/pools_json";
+import pools_json, { PoolDef, ETFVaultDef, ETF_VAULTS, tokenNamesAndImages } from "../../config/constants/pools_json";
 
 export const zapInBase: ZapInBaseFn = async ({
 	withBond,
@@ -658,6 +664,621 @@ export const slippageOut: SlippageOutBaseFn = async ({
 	//#endregion
 };
 
+export const zapInBaseETF: ZapInBaseETFFn = async ({
+	withBond,
+	farm,
+	amountInWei,
+	balances,
+	token,
+	isSocial,
+	currentWallet,
+	estimateTxGas,
+	getClients,
+	getWalletClient,
+	max,
+	id,
+	getPublicClient,
+	tokenIn,
+}) => {
+	const wethAddress = addressesByChainId[farm.chainId].wethAddress as Address;
+	const publicClient = getPublicClient(farm.chainId);
+	const client = await getClients(farm.chainId);
+	const state = store.getState();
+	const prices = state.tokens.prices;
+	const decimals = state.tokens.decimals;
+	let depositTxn;
+	const TransactionsStep = new TransactionsDB(id);
+	try {
+		if (max) {
+			const balance = balances[farm.chainId][token].valueWei;
+			amountInWei = BigInt(balance);
+		}
+
+		// #region Zapping In
+		// notifyLoading(loadingMessages.zapping(), { id });
+
+		const zapFunctionName = withBond
+			? (store.getState().farms.farmDetailInputOptions.bestFunctionNameForArberaHoney as any)
+			: token === zeroAddress
+				? "zapIn"
+				: "zapIn";
+		// eth zap
+		if (token === zeroAddress) {
+			// use weth address as tokenId, but in case of some farms (e.g: hop)
+			// we need the token of liquidity pair, so use tokenIn if provided
+			token = tokenIn ?? wethAddress;
+
+			await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei);
+			const client = await getClients(farm.chainId);
+			if (!isSocial && !(await isGasSponsored(currentWallet))) {
+				const afterGasCut = await subtractGas(
+					amountInWei,
+					{ public: publicClient },
+					estimateTxGas({
+						to: farm.vault_addr,
+						value: amountInWei,
+						chainId: farm.chainId,
+						data: encodeFunctionData({
+							abi: ETFVaultAbi,
+							functionName: zapFunctionName,
+							args: [zeroAddress, amountInWei, 0n],
+						}),
+					})
+				);
+				if (!afterGasCut) {
+					dismissNotify(id);
+					throw new Error("Error subtracting gas!");
+				}
+				amountInWei = afterGasCut;
+			}
+
+			// notifyLoading(loadingMessages.zapping(), { id });
+			depositTxn = await awaitTransaction(
+				client.wallet.sendTransaction({
+					account: currentWallet,
+					to: farm.vault_addr,
+					value: amountInWei,
+					data: encodeFunctionData({
+						abi: ETFVaultAbi,
+						functionName: zapFunctionName,
+						args: [zeroAddress, amountInWei, 0n],
+					}),
+				}),
+				client,
+				async (hash) => {
+					await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei, hash);
+				}
+			);
+			await TransactionsStep.zapIn(TransactionStepStatus.COMPLETED, amountInWei);
+		}
+		// token zap
+		else {
+			// #region Approve
+			// first approve tokens, if zap is not in eth
+			if (token !== zeroAddress) {
+				// notifyLoading(loadingMessages.approvingZapping(), { id });
+				await TransactionsStep.approveZap(TransactionStepStatus.IN_PROGRESS);
+				const response = await approveErc20(
+					token,
+					farm.vault_addr as Address,
+					amountInWei,
+					currentWallet,
+					farm.chainId,
+					getPublicClient,
+					getWalletClient
+				);
+				if (!response.status) {
+					await TransactionsStep.approveZap(TransactionStepStatus.FAILED);
+					throw new Error("Error approving vault!");
+				}
+				await TransactionsStep.approveZap(TransactionStepStatus.COMPLETED);
+			}
+			// #endregion
+			await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei);
+
+			// notifyLoading(loadingMessages.zapping(), { id });
+			const client = await getClients(farm.chainId);
+
+			depositTxn = await awaitTransaction(
+				client.wallet.sendTransaction({
+					account: currentWallet,
+					to: farm.vault_addr,
+					data: encodeFunctionData({
+						abi: ETFVaultAbi,
+						functionName: zapFunctionName,
+						args: [token, amountInWei, 0n],
+					}),
+				}),
+				client,
+				async (hash) => {
+					await TransactionsStep.zapIn(TransactionStepStatus.IN_PROGRESS, amountInWei, hash);
+				}
+			);
+		}
+
+		if (!depositTxn.status) {
+			store.dispatch(markAsFailedDb(id));
+			await TransactionsStep.zapIn(TransactionStepStatus.FAILED, amountInWei);
+			throw new Error(depositTxn.error);
+		} else {
+			await TransactionsStep.zapIn(TransactionStepStatus.COMPLETED, amountInWei);
+			dismissNotify(id);
+
+			const vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
+			// if (farm.rewardVault) {
+			// 	await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.IN_PROGRESS);
+			// 	await stakeIntoRewardVault(farm, vaultBalance, currentWallet, getClients, getPublicClient, getWalletClient);
+			// 	await TransactionsStep.stakeIntoRewardVault(TransactionStepStatus.COMPLETED);
+			// }
+
+			// notifySuccess(successMessages.zapIn());
+			const successMessage = successMessages.zapIn();
+			store.dispatch(
+				addNotificationWithTimeout({
+					type: "success",
+					title: successMessage.title,
+					message: typeof successMessage.message === "function" ? successMessage.message(id) : successMessage.message,
+				})
+			);
+		}
+
+		const logs = parseEventLogs({
+			abi: ETFVaultAbi,
+			logs: depositTxn.receipt?.logs ?? [],
+		}) as any[];
+
+		const fee = logs[0].args.fee.toString();
+		const vaultShares = logs[0].args.shares.toString();
+		const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+			amount: asset.amounts.toString(),
+			token: asset.tokens,
+		}));
+
+		// Calculate total value of returned assets
+		const totalReturnedValue =
+			logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+				const tokenPrice = prices[farm.chainId][tokens];
+				const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
+				return acc + tokenAmount * tokenPrice;
+			}, 0) || 0;
+
+		const slippage =
+			Number(toEth(amountInWei)) * prices[farm.chainId][token] -
+			totalReturnedValue -
+			Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
+			Number(toEth(vaultShares)) * prices[farm.chainId][farm.vault_addr];
+
+		const netAmount = toWei((Number(toEth(vaultShares)) * prices[farm.chainId][farm.vault_addr]) / prices[farm.chainId][token]).toString();
+
+		const dbTx = await store.dispatch(
+			editTransactionDb({
+				_id: id,
+				from: currentWallet!,
+				amountInWei: amountInWei.toString(),
+				date: new Date().toString(),
+				type: "deposit",
+				farmId: farm.id,
+				max: !!max,
+				token: token === addressesByChainId[farm.chainId].wethAddress ? zeroAddress : token,
+				vaultShares,
+				fee,
+				simulatedSlippage: store.getState().farms.farmDetailInputOptions.simulatedSlippage,
+				actualSlippage: slippage,
+				netAmount,
+				vaultPrice: prices[farm.chainId][farm.vault_addr],
+				tokenPrice: prices[farm.chainId][token],
+				returnedAssets,
+			})
+		);
+		// #endregionbn
+	} catch (error: any) {
+		console.log(error);
+		let err = JSON.parse(JSON.stringify(error));
+		id && dismissNotify(id);
+		store.dispatch(markAsFailedDb(id));
+		// notifyError(errorMessages.generalError(error.message || err.reason || err.message));
+		const generalError = errorMessages.generalError(error.message || err.reason || err.message);
+		store.dispatch(
+			addNotificationWithTimeout({
+				type: "error",
+				title: generalError.title,
+				message:
+					typeof generalError.message === "function"
+						? generalError.message(error.message || err.reason || err.message)
+						: generalError.message,
+			})
+		);
+	}
+};
+
+export const slippageInETF: SlippageInBaseETFFn = async (args) => {
+	let { amountInWei, balances, currentWallet, token, max, getPublicClient, decimals, prices, getWalletClient, farm, tokenIn } = args;
+	const wberaAddress = addressesByChainId[farm.chainId]?.beraAddress as Address;
+	const publicClient = getPublicClient(farm.chainId);
+	let isBridged = false;
+	let receviedAmt = 0n;
+	let returnedAssets: { tokens: `0x${string}`; amounts: bigint }[] = [];
+
+	try {
+		//#region Select Max
+		if (max) {
+			const balance = balances[farm.chainId][token].valueWei;
+			amountInWei = BigInt(balance);
+		}
+		//#endregion
+		let stateOverrides: StateOverride = [];
+		if (token !== zeroAddress) {
+			stateOverrides.push({
+				address: token,
+				stateDiff: [
+					{
+						slot: getHoneyAllowanceSlot(currentWallet, farm.vault_addr),
+						value: numberToHex(amountInWei, { size: 32 }),
+					},
+					{
+						slot: getHoneyBalanceSlot(currentWallet),
+						value: numberToHex(amountInWei, { size: 32 }),
+					},
+					{
+						slot: getIbgtAllowanceSlot(currentWallet, farm.vault_addr),
+						value: numberToHex(amountInWei, { size: 32 }),
+					},
+					{
+						slot: getIbgtBalanceSlot(currentWallet),
+						value: numberToHex(amountInWei, { size: 32 }),
+					},
+				],
+			});
+		} else {
+			stateOverrides.push({
+				address: currentWallet,
+				balance: amountInWei,
+			});
+		}
+		// #region Zapping In
+
+		// eth zap
+		if (token === zeroAddress) {
+			// use weth address as tokenId, but in case of some farms (e.g: hop)
+			// we need the token of liquidity pair, so use tokenIn if provided
+			token = tokenIn ?? wberaAddress;
+			const { result: vaultBalance } = await publicClient.simulateContract({
+				abi: ETFVaultAbi,
+				functionName: "zapIn",
+				args: [zeroAddress, amountInWei, 0n],
+				address: farm.vault_addr,
+				account: currentWallet,
+				value: amountInWei,
+				stateOverride: stateOverrides,
+			});
+			receviedAmt = vaultBalance[0];
+			returnedAssets = vaultBalance[1] as { tokens: `0x${string}`; amounts: bigint }[];
+		}
+		// token zap
+		else {
+			const { result: vaultBalance } = await publicClient.simulateContract({
+				abi: ETFVaultAbi,
+				functionName: "zapIn",
+				args: [token, amountInWei, 0n],
+				address: farm.vault_addr,
+				account: currentWallet,
+				stateOverride: stateOverrides,
+			});
+			console.log("vaultBalance", vaultBalance);
+			receviedAmt = vaultBalance[0];
+			returnedAssets = vaultBalance[1] as { tokens: `0x${string}`; amounts: bigint }[];
+		}
+
+		// #endregionbn
+	} catch (error: any) {
+		console.log(error);
+	}
+	// Calculate total value of returned assets
+	const totalReturnedValue =
+		returnedAssets?.reduce((acc, { tokens, amounts }) => {
+			const tokenPrice = prices[farm.chainId][tokens];
+			const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
+			return acc + tokenAmount * tokenPrice;
+		}, 0) || 0;
+	const zapAmount = Number(toEth(amountInWei, decimals[farm.chainId][token]));
+	const beforeTxAmount = zapAmount * prices[farm.chainId][token] - totalReturnedValue;
+	const afterTxAmount = Number(toEth(receviedAmt, farm.decimals)) * prices[farm.chainId][farm.vault_addr];
+	store.dispatch(setSimulatedSlippage(Math.abs(beforeTxAmount - afterTxAmount)));
+	let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
+	if (slippage < 0) slippage = 0;
+
+	return { receviedAmt, isBridged, slippage, beforeTxAmount, afterTxAmount };
+};
+
+export const zapOutBaseETF: ZapOutBaseETFFn = async ({
+	withBond,
+	farm,
+	amountInWei,
+	getPublicClient,
+	getWalletClient,
+	token,
+	currentWallet,
+	getClients,
+	max,
+	bridgeChainId,
+	id,
+}) => {
+	// notifyLoading(loadingMessages.approvingWithdraw(), { id });
+	const TransactionsStep = new TransactionsDB(id);
+	const state = store.getState();
+	const prices = state.tokens.prices;
+	const decimals = state.tokens.decimals;
+
+	try {
+		const client = await getClients(farm.chainId);
+		let vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
+
+		// if (vaultBalance < amountInWei) {
+		// 	await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.IN_PROGRESS);
+		// 	if (!farm.rewardVault) throw new Error("Reward vault not found");
+		// 	const amountToWithdrawFromRewardVault = amountInWei - vaultBalance;
+
+		// 	const rewardVaultWithdrawStatus = await awaitTransaction(
+		// 		client.wallet.sendTransaction({
+		// 			to: farm.rewardVault,
+		// 			data: encodeFunctionData({
+		// 				abi: rewardVaultAbi,
+		// 				functionName: "withdraw",
+		// 				args: [amountToWithdrawFromRewardVault],
+		// 			}),
+		// 		}),
+		// 		client
+		// 	);
+		// 	if (!rewardVaultWithdrawStatus.status) {
+		// 		await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.FAILED);
+		// 		throw new Error(rewardVaultWithdrawStatus.error);
+		// 	}
+		// 	await TransactionsStep.withdrawFromRewardVault(TransactionStepStatus.COMPLETED);
+		// }
+
+		await TransactionsStep.approveZap(TransactionStepStatus.IN_PROGRESS);
+
+		vaultBalance = await getBalance(farm.vault_addr, currentWallet, client);
+
+		const zapFunctionName = withBond
+			? (store.getState().farms.farmDetailInputOptions.bestFunctionNameForArberaHoney as any)
+			: token === zeroAddress
+				? "zapOut"
+				: "zapOut";
+
+		//#region Approve
+		if (
+			!(await approveErc20(farm.vault_addr, farm.vault_addr, vaultBalance, currentWallet, farm.chainId, getPublicClient, getWalletClient))
+				.status
+		)
+			throw new Error("Error approving vault!");
+
+		await TransactionsStep.approveZap(TransactionStepStatus.COMPLETED);
+
+		dismissNotify(id);
+		//#endregion
+
+		//#region Zapping Out
+		// notifyLoading(loadingMessages.withDrawing(), { id });
+
+		let withdrawTxn: Awaited<ReturnType<typeof awaitTransaction>>;
+
+		await TransactionsStep.zapOut(TransactionStepStatus.IN_PROGRESS, amountInWei);
+		if (token === zeroAddress) {
+			withdrawTxn = await awaitTransaction(
+				client.wallet.sendTransaction({
+					account: currentWallet,
+					to: farm.vault_addr,
+					data: encodeFunctionData({
+						abi: ETFVaultAbi,
+						functionName: zapFunctionName,
+						args: [amountInWei, token, 0n],
+					}),
+				}),
+				client,
+				async (hash) => {
+					await TransactionsStep.zapOut(TransactionStepStatus.IN_PROGRESS, amountInWei, hash);
+				}
+			);
+		} else {
+			withdrawTxn = await awaitTransaction(
+				client.wallet.sendTransaction({
+					account: currentWallet,
+					to: farm.vault_addr,
+					data: encodeFunctionData({
+						abi: ETFVaultAbi,
+						functionName: zapFunctionName,
+						args: [max ? vaultBalance : amountInWei, token, 0n],
+					}),
+				}),
+				client,
+				async (hash) => {
+					await TransactionsStep.zapOut(TransactionStepStatus.IN_PROGRESS, amountInWei, hash);
+				}
+			);
+		}
+		if (!withdrawTxn.status) {
+			store.dispatch(markAsFailedDb(id));
+			await TransactionsStep.zapOut(TransactionStepStatus.FAILED, amountInWei);
+			throw new Error(withdrawTxn.error);
+		} else {
+			await TransactionsStep.zapOut(TransactionStepStatus.COMPLETED, amountInWei);
+			dismissNotify(id);
+			// notifySuccess(successMessages.withdraw());
+			const successMessage = successMessages.withdraw();
+			store.dispatch(
+				addNotificationWithTimeout({
+					type: "success",
+					title: successMessage.title,
+					message: typeof successMessage.message === "function" ? successMessage.message(id) : successMessage.message,
+				})
+			);
+		}
+
+		const logs = parseEventLogs({
+			abi: ETFVaultAbi,
+			logs: withdrawTxn.receipt?.logs ?? [],
+		}) as any[];
+
+		const fee = logs[0].args.fee.toString();
+		const vaultShares = logs[0].args.shares.toString();
+		const assetsOut = logs[0].args.tokenOutAmount;
+		const returnedAssets = logs[0].args.returnedAssets.map((asset: any) => ({
+			amount: asset.amounts.toString(),
+			token: asset.tokens,
+		}));
+		const returnedAssetsValue =
+			logs[0].args.returnedAssets?.reduce((acc: number, { tokens, amounts }: any) => {
+				const tokenPrice = prices[farm.chainId][tokens];
+				const tokenAmount = Number(toEth(amounts, decimals[farm.chainId][tokens]));
+				return acc + tokenAmount * tokenPrice;
+			}, 0) || 0;
+
+		const slippage = Math.max(
+			0,
+			Number(toEth(amountInWei, decimals[farm.chainId][farm.vault_addr])) * prices[farm.chainId][farm.vault_addr] -
+				returnedAssetsValue -
+				Number(toEth(fee, decimals[farm.chainId][token])) * prices[farm.chainId][token] -
+				Number(toEth(assetsOut, decimals[farm.chainId][token])) * prices[farm.chainId][token]
+		);
+
+		const returnedAssetsValueInToken = toWei(returnedAssetsValue / prices[farm.chainId][token]);
+		const netAmount = (BigInt(assetsOut) + BigInt(fee) + BigInt(returnedAssetsValueInToken)).toString();
+
+		const dbTx = await store.dispatch(
+			editTransactionDb({
+				_id: id,
+				amountInWei: amountInWei.toString(),
+				date: new Date().toString(),
+				type: "withdraw",
+				farmId: farm.id,
+				token: token === addressesByChainId[farm.chainId].wethAddress ? zeroAddress : token,
+				vaultShares,
+				fee,
+				simulatedSlippage: store.getState().farms.farmDetailInputOptions.simulatedSlippage,
+				actualSlippage: slippage,
+				netAmount,
+				vaultPrice: prices[farm.chainId][farm.vault_addr],
+				tokenPrice: prices[farm.chainId][token],
+				returnedAssets,
+				from: currentWallet,
+				max: !!max,
+			})
+		);
+		//#endregion
+	} catch (error: any) {
+		console.log(error);
+		let err = JSON.parse(JSON.stringify(error));
+		dismissNotify(id);
+		store.dispatch(markAsFailedDb(id));
+		// notifyError(errorMessages.generalError(error.message || err.reason || err.message));
+		const generalError = errorMessages.generalError(error.message || err.reason || err.message);
+		store.dispatch(
+			addNotificationWithTimeout({
+				type: "error",
+				title: generalError.title,
+				message:
+					typeof generalError.message === "function"
+						? generalError.message(error.message || err.reason || err.message)
+						: generalError.message,
+			})
+		);
+	}
+};
+
+export const slippageOutETF: SlippageOutBaseETFFn = async ({
+	getPublicClient,
+	farm,
+	token,
+	prices,
+	currentWallet,
+	balances,
+	amountInWei,
+	max,
+}) => {
+	if (!prices) throw new Error("Prices not found");
+	const state = store.getState();
+	const decimals = state.tokens.decimals;
+	const publicClient = getPublicClient(farm.chainId);
+	//#region Zapping Out
+	let receivedAmtDollar = 0;
+	let receviedAmt = 0n;
+	const vaultBalance = BigInt(balances[farm.chainId][farm.vault_addr].valueWei);
+	let stateOverrides: StateOverride = [];
+	if (token === zeroAddress) {
+		stateOverrides.push({
+			address: currentWallet,
+			balance: maxUint256 / 2n,
+		});
+		stateOverrides.push({
+			address: farm.vault_addr,
+			stateDiff: [
+				{
+					slot: getVaultAllowanceSlot(currentWallet, farm.vault_addr),
+					value: numberToHex(maxUint256, { size: 32 }),
+				},
+				{
+					slot: getVaultBalanceSlot(currentWallet),
+					value: numberToHex(maxUint256, { size: 32 }),
+				},
+			],
+		});
+		const { result } = await publicClient.simulateContract({
+			account: currentWallet,
+			address: farm.vault_addr,
+			abi: ETFVaultAbi,
+			functionName: "zapOut",
+			args: [max ? vaultBalance : amountInWei, token, 0n],
+			stateOverride: stateOverrides,
+		});
+
+		console.log("result", result);
+
+		receivedAmtDollar =
+			Number(toEth(result[0], decimals[farm.chainId][zeroAddress])) * prices[farm.chainId][addressesByChainId[farm.chainId].beraAddress!];
+		receviedAmt = result[0];
+	} else {
+		stateOverrides.push({
+			address: farm.vault_addr,
+			stateDiff: [
+				{
+					slot: getVaultAllowanceSlot(currentWallet, farm.vault_addr),
+					value: numberToHex(maxUint256, { size: 32 }),
+				},
+				{
+					slot: getVaultBalanceSlot(currentWallet),
+					value: numberToHex(maxUint256, { size: 32 }),
+				},
+				{
+					slot: getBalanceSlot(currentWallet),
+					value: numberToHex(amountInWei, { size: 32 }),
+				},
+			],
+		});
+		const { result } = await publicClient.simulateContract({
+			account: currentWallet,
+			address: farm.vault_addr,
+			abi: ETFVaultAbi,
+			functionName: "zapOut",
+			args: [max ? vaultBalance : amountInWei, token, 0n],
+			stateOverride: stateOverrides,
+		});
+		console.log("result", result);
+		receviedAmt = result[0];
+		receivedAmtDollar = Number(toEth(result[0], decimals[farm.chainId][token])) * prices[farm.chainId][token];
+	}
+
+	const withdrawAmt = Number(toEth(amountInWei, farm.decimals));
+	const afterTxAmount = receivedAmtDollar;
+	const beforeTxAmount = withdrawAmt * prices[farm.chainId][farm.vault_addr];
+	store.dispatch(setSimulatedSlippage(Math.abs(beforeTxAmount - afterTxAmount)));
+	let slippage = (1 - afterTxAmount / beforeTxAmount) * 100;
+	if (slippage < 0) slippage = 0;
+
+	return { receviedAmt, slippage, afterTxAmount, beforeTxAmount };
+	//#endregion
+};
+
 export const calculateDepositableAmounts = ({ balances, prices, farm }: PriceCalculationProps): TokenAmounts[] => {
 	const tokenAmounts: TokenAmounts[] =
 		farm.zap_currencies?.map((item) => ({
@@ -706,7 +1327,34 @@ export const calculateWithdrawableAmounts = ({ balances, prices, farm }: PriceCa
 	return tokenAmounts;
 };
 
-export const isCrossChainFn = (balances: Balances, farm: PoolDef) => {
+export const calculateDepositableAmountsETF = ({ balances, prices, farm }: PriceCalculationPropsETF): TokenAmounts[] => {
+	const tokenAmounts: TokenAmounts[] =
+		farm.zap_currencies?.map((item) => ({
+			tokenAddress: item.address,
+			tokenSymbol: tokenNamesAndImages[item.address].name,
+			amount: balances[farm.chainId][item.address].value.toString(),
+			amountDollar: balances[farm.chainId][item.address].valueUsd.toString(),
+			price: prices[farm.chainId][item.address],
+		})) || [];
+
+	return tokenAmounts;
+};
+
+export const calculateWithdrawableAmountsETF = ({ balances, prices, farm }: PriceCalculationPropsETF): TokenAmounts[] => {
+	const tokenAmounts: TokenAmounts[] =
+		farm.zap_currencies?.map((item) => ({
+			tokenAddress: item.address,
+			tokenSymbol: tokenNamesAndImages[item.address].name,
+			amount: (balances[farm.chainId][farm.vault_addr].valueUsd / prices[farm.chainId][item.address]).toString(),
+			amountDollar: balances[farm.chainId][farm.vault_addr].valueUsd.toString(),
+			price: prices[farm.chainId][item.address],
+			isPrimaryVault: true,
+		})) || [];
+
+	return tokenAmounts;
+};
+
+export const isCrossChainFn = (balances: Balances, farm: PoolDef | ETFVaultDef) => {
 	const honeyCurrentChainBalance = Number(
 		balances[farm.chainId][farm.zap_currencies?.find((item) => item.symbol === "HONEY")?.address!].value.toString()
 	);
@@ -728,6 +1376,7 @@ export const createFarmInterface = (farmId: number): Omit<FarmFunctions, "deposi
 			vaultBalanceFormated: (Number(toEth(BigInt(vaultTotalSupply ?? 0))) * vaultTokenPrice).toString(),
 			id: farm.id,
 		};
+
 		return result;
 	};
 
@@ -736,6 +1385,39 @@ export const createFarmInterface = (farmId: number): Omit<FarmFunctions, "deposi
 
 	const zapOut: ZapOutFn = (props) => zapOutBase({ ...props, farm });
 	const zapOutSlippage: SlippageOutBaseFn = (props) => slippageOut({ ...props, farm });
+
+	return {
+		getProcessedFarmData,
+		zapIn,
+		zapOut,
+		zapInSlippage,
+		zapOutSlippage,
+	};
+};
+
+export const createETFVaultInterface = (etfId: number): Omit<FarmFunctions, "deposit" | "withdraw"> => {
+	const etfVault = ETF_VAULTS.find((etfVault) => etfVault.id === etfId)!;
+
+	const getProcessedFarmData: GetFarmDataProcessedFn = (balances, prices, decimals, vaultTotalSupply) => {
+		const vaultTokenPrice = prices[etfVault.chainId][etfVault.vault_addr];
+		const isCrossChain = isCrossChainFn(balances, etfVault);
+
+		const result = {
+			depositableAmounts: calculateDepositableAmountsETF({ balances, prices, farm: etfVault }),
+			withdrawableAmounts: calculateWithdrawableAmountsETF({ balances, prices, farm: etfVault }),
+			isCrossChain,
+			vaultBalanceFormated: (Number(toEth(BigInt(vaultTotalSupply ?? 0))) * vaultTokenPrice).toString(),
+			id: etfVault.id,
+		};
+
+		return result;
+	};
+
+	const zapIn: ZapInFn = (props) => zapInBaseETF({ ...props, farm: etfVault });
+	const zapInSlippage: SlippageInBaseETFFn = (props) => slippageInETF({ ...props, farm: etfVault });
+
+	const zapOut: ZapOutFn = (props) => zapOutBaseETF({ ...props, farm: etfVault });
+	const zapOutSlippage: SlippageOutBaseETFFn = (props) => slippageOutETF({ ...props, farm: etfVault });
 
 	return {
 		getProcessedFarmData,

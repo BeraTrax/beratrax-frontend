@@ -42,7 +42,7 @@ const FarmDetails = () => {
 				</p>
 			</div>
 			{farms.map((farm) => (
-				<FarmDetailsRow key={farm.id} farm={farm} poolFees={poolFees} isLoadingPoolFees={isLoadingPoolFees} />
+				<FarmDetailsRow key={farm.id} farm={farm as PoolDef} poolFees={poolFees} isLoadingPoolFees={isLoadingPoolFees} />
 			))}
 		</>
 	);

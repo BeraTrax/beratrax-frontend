@@ -1,8 +1,7 @@
 import { useMemo, useState, memo, useCallback } from "react";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
-import { LP_Prices } from "@beratrax/core/src/api/stats";
+import { PoolDef, ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useLp } from "@beratrax/core/src/hooks";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 import { Pressable, Text, View, Platform, Dimensions } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import Colors from "@beratrax/typescript-config/Colors";
@@ -28,7 +27,7 @@ const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick
 	return (
 		<Pressable onPress={onClick}>
 			<Text
-				className={` px-5 py-2 font-light rounded-2xl  text-[16px] font-league-spartan ${
+				className={` px-3 sm:px-5 py-1.5 sm:py-2 font-light rounded-2xl text-sm sm:text-[16px] font-league-spartan ${
 					isSelected ? "bg-gradientSecondary text-textPrimary" : "bg-bgDark text-textWhite"
 				}`}
 			>
@@ -58,7 +57,12 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	}
 };
 
-const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
+interface ETFPriceGraphProps {
+	vault: ETFVaultDef;
+}
+
+const ETFPriceGraph: React.FC<ETFPriceGraphProps> = ({ vault }) => {
+	console.log("vault", vault);
 	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
 
 	const graphFiltersList = useMemo(
@@ -85,23 +89,24 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		);
 	}, [graphFiltersList, handleFilterClick]);
 
-	const downsampleData = (data: LP_Prices[], filter: GraphFilterType) => {
-		if (!data || data.length === 0) return [];
+	// Get LP data for all underlying farms
+	const underlyingLpDataHooks = underlyingFarms.map((farm) => useLp(farm.id));
 
-		const filteredData: { date: string; lp: string; timestamp: number }[] = [];
+	// Calculate ETF price based on underlying assets
+	const etfPriceData = useMemo(() => {
+		// Check if any hook is still loading
+		const isAnyLoading = underlyingLpDataHooks.some((hook) => hook.isLpPriceLoading);
+		if (isAnyLoading) return [];
 
-		// Filter and sort entries by timestamp
-		const filteredEntries = data
-			.filter((entry) => entry.timestamp && typeof entry.lp === "number" && entry.lp > 0)
-			.sort((a, b) => a.timestamp - b.timestamp);
+		// For now, we'll calculate a weighted average of underlying prices
+		// This is a simplified calculation - in real implementation you'd have proper ETF pricing logic
+		const weights = vault.underlyingVaults.map(() => 1 / vault.underlyingVaults.length); // Equal weights for now
 
-		if (filteredEntries.length === 0) return [];
-
+		// Get the timestamp range we want based on filter
 		const now = Date.now() / 1000;
-		const firstValidTimestamp = filteredEntries[0].timestamp;
 		let filterTimestamp = now;
 
-		switch (filter) {
+		switch (graphFilter) {
 			case "hour":
 				filterTimestamp = now - 60 * 60;
 				break;
@@ -116,95 +121,47 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 				break;
 		}
 
-		// Use the later of filterTimestamp or firstValidTimestamp
-		filterTimestamp = Math.max(filterTimestamp, firstValidTimestamp);
+		// Aggregate price data from all underlying farms
+		const aggregatedData: { [timestamp: number]: { total: number; count: number } } = {};
 
-		// Make sure we have data in the selected time range
-		const entriesInRange = filteredEntries.filter((entry) => entry.timestamp >= filterTimestamp);
-		if (entriesInRange.length === 0) {
-			// If no entries in range, take the most recent ones for display
-			const recentEntries = filteredEntries.slice(-10); // Take last 10 entries
-			if (recentEntries.length > 0) {
-				const mostRecent = recentEntries[recentEntries.length - 1];
-				filteredData.push({
-					date: formatDate(mostRecent.timestamp, filter),
-					lp: mostRecent.lp.toFixed(3),
-					timestamp: mostRecent.timestamp,
+		underlyingLpDataHooks.forEach((farmLpHook, farmIndex) => {
+			const farmLpData = farmLpHook?.lp;
+			if (!farmLpData) return;
+
+			farmLpData
+				.filter((entry: any) => entry.timestamp >= filterTimestamp && entry.lp > 0)
+				.forEach((entry: any) => {
+					if (!aggregatedData[entry.timestamp]) {
+						aggregatedData[entry.timestamp] = { total: 0, count: 0 };
+					}
+					aggregatedData[entry.timestamp].total += entry.lp * weights[farmIndex];
+					aggregatedData[entry.timestamp].count += weights[farmIndex];
 				});
-			}
-			return filteredData;
-		}
-
-		// Generate time slots based on the filter type
-		const timeSlots: number[] = [];
-		const interval =
-			filter === "hour"
-				? 5 * 60 // 5 minutes for hour view
-				: filter === "day"
-					? 60 * 60 // 1 hour for day view
-					: filter === "week"
-						? 24 * 60 * 60 // 1 day for week view
-						: 24 * 60 * 60; // 1 day for month view
-
-		for (let t = filterTimestamp; t <= now; t += interval) {
-			timeSlots.push(t);
-		}
-
-		// If we don't have any time slots, add at least one
-		if (timeSlots.length === 0) {
-			timeSlots.push(filterTimestamp);
-		}
-
-		// Process entries into appropriate time slots
-		timeSlots.forEach((slotTime) => {
-			const slotEntries = filteredEntries.filter((entry) => entry.timestamp >= slotTime && entry.timestamp < slotTime + interval);
-
-			if (slotEntries.length > 0) {
-				const key = formatDate(slotTime, filter);
-				const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
-				const avgLp = totalLp / slotEntries.length;
-
-				if (avgLp > 0) {
-					filteredData.push({
-						date: key,
-						lp: avgLp.toFixed(3),
-						timestamp: slotTime,
-					});
-				}
-			}
 		});
 
-		return filteredData;
-	};
-
-	const { lp, isLpPriceLoading } = useLp(farm.id);
-
-	const newData = useMemo(() => {
-		const result = downsampleData(lp || [], graphFilter);
-		return result;
-	}, [lp, graphFilter]);
-
-	const chartData = useMemo(() => {
-		const result = newData.map((d) => ({
-			x: d.date,
-			y: parseFloat(d.lp), // ensure y is a number
-		}));
-		return result;
-	}, [newData]);
+		// Convert to chart data format
+		return Object.entries(aggregatedData)
+			.map(([timestamp, data]) => ({
+				x: formatDate(parseInt(timestamp), graphFilter),
+				y: data.total / Math.max(data.count, 1), // Avoid division by zero
+				timestamp: parseInt(timestamp),
+			}))
+			.sort((a, b) => a.timestamp - b.timestamp);
+	}, [underlyingLpDataHooks, graphFilter, vault.underlyingVaults, underlyingFarms]);
 
 	// Calculate y domain safely handling empty arrays
 	const yDomain = useMemo(() => {
-		if (chartData.length === 0) {
+		if (etfPriceData.length === 0) {
 			return [0, 1] as [number, number]; // Default domain when no data
 		}
-		const minY = Math.min(...chartData.map((d) => d.y));
-		const maxY = Math.max(...chartData.map((d) => d.y));
+		const minY = Math.min(...etfPriceData.map((d) => d.y));
+		const maxY = Math.max(...etfPriceData.map((d) => d.y));
 		// Check if min and max are the same (flat line)
 		if (minY === maxY) {
 			return [minY * 0.9, minY * 1.1] as [number, number]; // Add some padding
 		}
 		return [minY * 0.7, maxY * 1.1] as [number, number];
-	}, [chartData]);
+	}, [etfPriceData]);
 
 	const screenWidth = Dimensions.get("window").width;
 
@@ -228,21 +185,23 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		return { top: 40, bottom: 20, left: leftPadding, right: rightPadding };
 	}, [screenWidth]);
 
+	const chartHeight = screenWidth <= 640 ? 250 : 300;
+
 	return (
 		<View className="z-10 relative">
-			<View style={{ marginTop: 10, width: "100%", height: 300 }}>
-				{isLpPriceLoading ? (
-					<Skeleton h={300} w={1200} />
+			<View style={{ marginTop: 10, width: "100%", height: chartHeight }}>
+				{underlyingLpDataHooks.some((hook) => hook.isLpPriceLoading) ? (
+					<Skeleton h={chartHeight} w="100%" />
 				) : (
 					<>
-						{chartData.length === 0 ? (
-							<View style={{ height: 300, justifyContent: "center", alignItems: "center" }}>
+						{etfPriceData.length === 0 ? (
+							<View style={{ height: chartHeight, justifyContent: "center", alignItems: "center" }}>
 								<Text className="text-textWhite">No data available for this time period</Text>
 							</View>
 						) : (
 							<VictoryChart
 								width={screenWidth}
-								height={300}
+								height={chartHeight}
 								theme={VictoryTheme.clean}
 								padding={chartPadding}
 								animate={false}
@@ -252,12 +211,12 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={["priceArea"]}
-										labels={({ datum }) => `${datum.x}\nPrice: $${datum.y.toFixed(2)}`}
+										voronoiBlacklist={["etfPriceArea"]}
+										labels={({ datum }) => `${datum.x}\nETF Price: $${datum.y.toFixed(4)}`}
 										labelComponent={
 											<VictoryTooltip
-												flyoutWidth={130}
-												flyoutHeight={70}
+												flyoutWidth={screenWidth <= 640 ? 140 : 160}
+												flyoutHeight={screenWidth <= 640 ? 60 : 70}
 												cornerRadius={8}
 												pointerLength={10}
 												flyoutStyle={{
@@ -267,8 +226,8 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 													filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))",
 												}}
 												style={[
-													{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // First line style
-													{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // Second line style
+													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" },
+													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" },
 												]}
 												dy={-10}
 												centerOffset={{ x: 0 }}
@@ -285,20 +244,19 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									}}
 									tickCount={xAxisTickCount}
 								/>
-								{/* Y Axis */}
 								<VictoryAxis
 									dependentAxis
 									style={{
 										axis: { stroke: "#888" },
 										tickLabels: { fill: "#ccc", fontSize: screenWidth < 576 ? 8 : 10, padding: 5 },
 									}}
-									tickFormat={(y) => y.toFixed(screenWidth < 576 ? 1 : 2)}
+									tickFormat={(y) => `$${y.toFixed(screenWidth < 576 ? 2 : 4)}`}
 									tickCount={yAxisTickCount}
 								/>
 
 								<VictoryLine
-									name="priceLine"
-									data={chartData}
+									name="etfPriceLine"
+									data={etfPriceData}
 									style={{
 										data: {
 											stroke: Colors.buttonPrimary,
@@ -308,18 +266,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryDefsWrapper>
-									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+									<LinearGradient id="etfPriceGradient" x1="0" y1="0" x2="0" y2="1">
 										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
 										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 
 								<VictoryArea
-									name="priceArea"
-									data={chartData}
+									name="etfPriceArea"
+									data={etfPriceData}
 									style={{
 										data: {
-											fill: "url(#areaGradient)",
+											fill: "url(#etfPriceGradient)",
 											strokeWidth: 0,
 										},
 									}}
@@ -329,17 +287,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 					</>
 				)}
 			</View>
-			<View className="flex flex-row justify-around sm:justify-center sm:gap-4">
+			<View className="flex flex-row justify-center gap-2 sm:gap-4 pt-2">
 				{graphFiltersList.map((filter, index) => (
 					<GraphFilter key={index} text={filter.text} isSelected={graphFilter === filter.type} onClick={filterCallbacks[filter.type]} />
 				))}
 			</View>
 			<View>
-				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+				<Text className="text-xs sm:text-sm text-textSecondary text-center my-3 sm:my-4 font-league-spartan px-4">
+					Historical price of the ETF based on underlying assets
 				</Text>
 			</View>
 		</View>
 	);
 };
-export default FarmLpGraph;
+
+export default ETFPriceGraph;

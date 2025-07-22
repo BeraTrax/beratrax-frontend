@@ -9,6 +9,7 @@ export interface PoolDef {
 	isStablePool?: boolean;
 	isAutoCompounded?: boolean;
 	isBoosted?: boolean;
+	isETFVault?: boolean;
 	id: number;
 	stableCoin?: boolean;
 	originPlatform: FarmOriginName;
@@ -75,68 +76,89 @@ export interface PoolDef {
 	}[];
 }
 
+export interface ETFVaultDef {
+	id: number;
+	isETFVault: boolean;
+	chainId: CHAIN_ID;
+	name: string;
+	currentPrice: string;
+	marketCap: string;
+	totalSupply: string;
+	vaultLiquidity: string;
+	underlyingAPR: string;
+	apy: string;
+	source: string;
+	url_name: string;
+	createdOn: string;
+	originPlatform: FarmOriginName;
+	platform_logo: FarmOriginLogo;
+	platform_alt: string;
+	description: string;
+	vault_addr: Address;
+	isAutoCompounded: boolean;
+	synthetic: boolean;
+	underlyingVaults: number[];
+	decimals: number;
+	lp_address: Address;
+	platform?: string;
+	alt1: string;
+	alt2?: string;
+	alt3?: string;
+	alt4?: string;
+	logo1: string;
+	logo2?: string;
+	logo3?: string;
+	logo4?: string;
+	zap_currencies?: {
+		symbol: string;
+		address: Address;
+		decimals: number;
+	}[];
+}
+
 // Hardcoded ETF Vault data
-export const ETF_VAULTS = {
-	id: 1004,
-	chainId: CHAIN_ID.BERACHAIN,
-	name: "wBera-Honey-USDT-styBgt Price",
-	currentPrice: "$1.24",
-	marketCap: "$2,450,000",
-	totalSupply: "1,975,806",
-	vaultLiquidity: "$1,240,000",
-	underlyingAPR: "240.1%",
-	apy: "240.1%",
-	createdOn: "June 16, 2025",
-	platform: "BeraTrax",
-	platform_logo: FarmOriginPlatform.BeraTrax.logo,
-	platform_alt: "BeraTrax logo",
-	description: "wBera + Honey + USDT + styBgt ETF vault for exposure to BeraTrax's core growth.",
-	vault_addr: zeroAddress,
-	isAutoCompounded: true,
-	synthetic: true,
-	composition: [
-		{
-			name: "wBera",
-			targetPercentage: "40%",
-			currentPercentage: "41.52%",
-			currentPrice: "$100",
-			totalLiquidity: "$504.62k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-		},
-		{
-			name: "HONEY",
-			targetPercentage: "30%",
-			currentPercentage: "30.93%",
-			currentPrice: "$100",
-			totalLiquidity: "$303.19k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
-		},
-		{
-			name: "USDT",
-			targetPercentage: "20%",
-			currentPercentage: "19.80%",
-			currentPrice: "$100",
-			totalLiquidity: "$370.38k",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
-		},
-		{
-			name: "styBgt",
-			targetPercentage: "10%",
-			currentPercentage: "9.75%",
-			currentPrice: "$3,031.72",
-			totalLiquidity: "$117m",
-			logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png",
-		},
-	],
-	alt1: "wBera logo",
-	alt2: "Honey logo",
-	alt3: "USDT logo",
-	alt4: "styBgt logo",
-	logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x7507c1dc16935B82698e4C63f2746A2fCf994dF8/logo.png",
-	logo2: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x0E4aaF1351de4c0264C5c7056Ef3777b41BD8e03/logo.png",
-	logo3: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/0x779Ded0c9e1022225f8E0630b35a9b54bE713736/logo.png",
-	logo4: "https://raw.githubusercontent.com/BeraTrax/tokens/main/beratrax-tokens/ybgt/logo.png",
-};
+export const ETF_VAULTS: ETFVaultDef[] = [
+	{
+		id: 1004,
+		isETFVault: true,
+		chainId: CHAIN_ID.BERACHAIN,
+		name: "wBeraLbgt-IbgtWbera-osBGTiBera ETF",
+		currentPrice: "$1.24",
+		marketCap: "$2,450,000",
+		totalSupply: "1,975,806",
+		vaultLiquidity: "$1,240,000",
+		underlyingAPR: "240.1%",
+		apy: "240.1%",
+		createdOn: "June 16, 2025",
+		platform: FarmOriginPlatform.BeraTrax.name,
+		originPlatform: FarmOriginPlatform.BeraTrax.name,
+		platform_logo: FarmOriginPlatform.BeraTrax.logo,
+		platform_alt: "BeraTrax logo",
+		description: "WberaLbgt + IbgtWbera + osBGTiBera ETF vault for exposure to BeraTrax's core growth.",
+		vault_addr: "0x76B0CbaF690dd99B9AE979d9FFddD85573aEFA9F",
+		lp_address: "0x76B0CbaF690dd99B9AE979d9FFddD85573aEFA9F",
+		isAutoCompounded: true,
+		synthetic: true,
+		underlyingVaults: [44, 35, 40],
+		decimals: 18,
+		url_name: "wBeraLbgt-IbgtWbera-osBGTiBera",
+		source: "https://app.beratrax.com/etf-vaults/wBeraLbgt-IbgtWbera-osBGTiBera",
+		alt1: "wBera logo",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
+		zap_currencies: [
+			{
+				symbol: "HONEY",
+				address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+				decimals: 18,
+			},
+			{
+				symbol: "BERA",
+				address: zeroAddress,
+				decimals: 18,
+			},
+		],
+	},
+];
 
 const pools_json: PoolDef[] = [
 	{

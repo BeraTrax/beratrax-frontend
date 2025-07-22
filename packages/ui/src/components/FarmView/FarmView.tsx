@@ -14,7 +14,7 @@ import type { FarmDataExtended } from "@beratrax/core/src/types";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
 import { FarmSortOptions } from "@beratrax/core/src/types/enums";
 import Select from "@beratrax/ui/src/components/Select/Select";
-import { type PoolDef, ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
+import { type PoolDef, ETF_VAULTS, ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 
 // Clock SVG Icon component
 const ClockIcon = ({ isSelected }: { isSelected: boolean }) => (
@@ -40,7 +40,7 @@ const ClockIcon = ({ isSelected }: { isSelected: boolean }) => (
 // Section item type for combined list
 type SectionItem = {
 	type: "etf" | "regular";
-	data: PoolDef | FarmDataExtended;
+	data: PoolDef | FarmDataExtended | ETFVaultDef;
 };
 
 export function FarmView() {
@@ -54,7 +54,7 @@ export function FarmView() {
 			if (farm.originPlatform && farm.platform_logo && !uniquePlatforms.get(farm.originPlatform)) {
 				uniquePlatforms.set(farm.originPlatform, farm.platform_logo);
 			}
-			if (farm.secondary_platform && !uniquePlatforms.get(farm.secondary_platform)) {
+			if ("secondary_platform" in farm && farm.secondary_platform && !uniquePlatforms.get(farm.secondary_platform)) {
 				// If secondary platform doesn't have a logo, use the primary platform's logo
 				uniquePlatforms.set(farm.secondary_platform, farm.secondary_platform_logo || "");
 			}
@@ -95,7 +95,9 @@ export function FarmView() {
 
 		// Add ETF vault (single object)
 		// @ts-ignore
-		data.push({ type: "etf", data: ETF_VAULTS });
+		ETF_VAULTS.forEach((vault) => {
+			data.push({ type: "etf", data: vault });
+		});
 
 		// Add regular farms
 		filteredFarms.forEach((farm) => {

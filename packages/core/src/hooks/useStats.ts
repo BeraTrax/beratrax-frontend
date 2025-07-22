@@ -14,6 +14,7 @@ import {
 } from "@beratrax/core/src/api/stats";
 import { UsersTableColumns } from "@beratrax/core/src/types/enums";
 import useWallet from "@beratrax/core/src/hooks/useWallet";
+import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 export const useStats = (forGalxe?: boolean) => {
 	const [page, setPage] = useState<number>(1);
@@ -88,8 +89,8 @@ export const useStats = (forGalxe?: boolean) => {
 		if (!vaultStatsTemp) return [];
 
 		return vaultStatsTemp.vaults.flatMap((vault) => {
-			const farm = farms.find((farm) => farm.vault_addr === vault.address);
-			if (!farm) return []; // Skips this vault
+			const farm = farms.find((farm) => farm.vault_addr === vault.address) as PoolDef;
+			if (!farm || farm.isETFVault) return []; // Skips this vault
 			const autoCompoundResult = vaultStatsTemp.autoCompound?.[0];
 			const autoCompoundFarmResult = autoCompoundResult?.data?.[farm?.id];
 			const vaultStatsRecord = {

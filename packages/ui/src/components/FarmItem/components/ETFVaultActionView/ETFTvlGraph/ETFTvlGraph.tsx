@@ -1,8 +1,8 @@
 import { useMemo, useState, memo, useCallback } from "react";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
-import { LP_Prices } from "@beratrax/core/src/api/stats";
-import { useLp } from "@beratrax/core/src/hooks";
-import { PoolDef } from "@beratrax/core/src/config/constants/pools_json";
+import { PoolDef, ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
+import { useSpecificVaultTvl } from "@beratrax/core/src/hooks/useVaults";
+import { customCommify } from "@beratrax/core/src/utils/common";
 import { Pressable, Text, View, Platform, Dimensions } from "react-native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import Colors from "@beratrax/typescript-config/Colors";
@@ -28,7 +28,7 @@ const GraphFilter = memo(({ text, onClick, isSelected }: { text: string; onClick
 	return (
 		<Pressable onPress={onClick}>
 			<Text
-				className={` px-5 py-2 font-light rounded-2xl  text-[16px] font-league-spartan ${
+				className={` px-3 sm:px-5 py-1.5 sm:py-2 font-light rounded-2xl text-sm sm:text-[16px] font-league-spartan ${
 					isSelected ? "bg-gradientSecondary text-textPrimary" : "bg-bgDark text-textWhite"
 				}`}
 			>
@@ -58,8 +58,13 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 	}
 };
 
-const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
-	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("day");
+interface ETFTvlGraphProps {
+	vault: ETFVaultDef;
+	underlyingFarms: PoolDef[];
+}
+
+const ETFTvlGraph: React.FC<ETFTvlGraphProps> = ({ vault, underlyingFarms }) => {
+	const [graphFilter, setGraphFilter] = useState<GraphFilterType>("week");
 
 	const graphFiltersList = useMemo(
 		() => [
@@ -85,23 +90,37 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		);
 	}, [graphFiltersList, handleFilterClick]);
 
-	const downsampleData = (data: LP_Prices[], filter: GraphFilterType) => {
-		if (!data || data.length === 0) return [];
+	// Get TVL data for all underlying farms
+	const underlyingTvlData = underlyingFarms.map((farm) => useSpecificVaultTvl(farm.id));
 
-		const filteredData: { date: string; lp: string; timestamp: number }[] = [];
+	// Calculate aggregated ETF TVL based on underlying farms
+	const etfTvlData = useMemo(() => {
+		const allTvlData = underlyingTvlData.map((data) => data.vaultTvl).filter(Boolean);
 
-		// Filter and sort entries by timestamp
-		const filteredEntries = data
-			.filter((entry) => entry.timestamp && typeof entry.lp === "number" && entry.lp > 0)
-			.sort((a, b) => a.timestamp - b.timestamp);
+		if (allTvlData.length === 0) return [];
 
-		if (filteredEntries.length === 0) return [];
+		// Aggregate TVL data from all underlying farms
+		const aggregatedData: { [timestamp: number]: { total: number; count: number } } = {};
 
+		allTvlData.forEach((farmTvlData) => {
+			if (!farmTvlData) return;
+
+			farmTvlData.forEach((entry) => {
+				if (entry.timestamp && entry.tvl && entry.tvl > 0) {
+					if (!aggregatedData[entry.timestamp]) {
+						aggregatedData[entry.timestamp] = { total: 0, count: 0 };
+					}
+					aggregatedData[entry.timestamp].total += entry.tvl;
+					aggregatedData[entry.timestamp].count += 1;
+				}
+			});
+		});
+
+		// Get the timestamp range we want based on filter
 		const now = Date.now() / 1000;
-		const firstValidTimestamp = filteredEntries[0].timestamp;
 		let filterTimestamp = now;
 
-		switch (filter) {
+		switch (graphFilter) {
 			case "hour":
 				filterTimestamp = now - 60 * 60;
 				break;
@@ -116,97 +135,33 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 				break;
 		}
 
-		// Use the later of filterTimestamp or firstValidTimestamp
-		filterTimestamp = Math.max(filterTimestamp, firstValidTimestamp);
-
-		// Make sure we have data in the selected time range
-		const entriesInRange = filteredEntries.filter((entry) => entry.timestamp >= filterTimestamp);
-		if (entriesInRange.length === 0) {
-			// If no entries in range, take the most recent ones for display
-			const recentEntries = filteredEntries.slice(-10); // Take last 10 entries
-			if (recentEntries.length > 0) {
-				const mostRecent = recentEntries[recentEntries.length - 1];
-				filteredData.push({
-					date: formatDate(mostRecent.timestamp, filter),
-					lp: mostRecent.lp.toFixed(3),
-					timestamp: mostRecent.timestamp,
-				});
-			}
-			return filteredData;
-		}
-
-		// Generate time slots based on the filter type
-		const timeSlots: number[] = [];
-		const interval =
-			filter === "hour"
-				? 5 * 60 // 5 minutes for hour view
-				: filter === "day"
-					? 60 * 60 // 1 hour for day view
-					: filter === "week"
-						? 24 * 60 * 60 // 1 day for week view
-						: 24 * 60 * 60; // 1 day for month view
-
-		for (let t = filterTimestamp; t <= now; t += interval) {
-			timeSlots.push(t);
-		}
-
-		// If we don't have any time slots, add at least one
-		if (timeSlots.length === 0) {
-			timeSlots.push(filterTimestamp);
-		}
-
-		// Process entries into appropriate time slots
-		timeSlots.forEach((slotTime) => {
-			const slotEntries = filteredEntries.filter((entry) => entry.timestamp >= slotTime && entry.timestamp < slotTime + interval);
-
-			if (slotEntries.length > 0) {
-				const key = formatDate(slotTime, filter);
-				const totalLp = slotEntries.reduce((sum, entry) => sum + (entry.lp || 0), 0);
-				const avgLp = totalLp / slotEntries.length;
-
-				if (avgLp > 0) {
-					filteredData.push({
-						date: key,
-						lp: avgLp.toFixed(3),
-						timestamp: slotTime,
-					});
-				}
-			}
-		});
-
-		return filteredData;
-	};
-
-	const { lp, isLpPriceLoading } = useLp(farm.id);
-
-	const newData = useMemo(() => {
-		const result = downsampleData(lp || [], graphFilter);
-		return result;
-	}, [lp, graphFilter]);
-
-	const chartData = useMemo(() => {
-		const result = newData.map((d) => ({
-			x: d.date,
-			y: parseFloat(d.lp), // ensure y is a number
-		}));
-		return result;
-	}, [newData]);
+		// Filter by timestamp and convert to chart data format
+		return Object.entries(aggregatedData)
+			.filter(([timestamp]) => parseInt(timestamp) >= filterTimestamp)
+			.map(([timestamp, data]) => ({
+				x: formatDate(parseInt(timestamp), graphFilter),
+				y: data.total, // Total TVL across all underlying farms
+				timestamp: parseInt(timestamp),
+			}))
+			.sort((a, b) => a.timestamp - b.timestamp);
+	}, [underlyingTvlData, graphFilter]);
 
 	// Calculate y domain safely handling empty arrays
 	const yDomain = useMemo(() => {
-		if (chartData.length === 0) {
+		if (etfTvlData.length === 0) {
 			return [0, 1] as [number, number]; // Default domain when no data
 		}
-		const minY = Math.min(...chartData.map((d) => d.y));
-		const maxY = Math.max(...chartData.map((d) => d.y));
+		const minY = Math.min(...etfTvlData.map((d) => d.y));
+		const maxY = Math.max(...etfTvlData.map((d) => d.y));
 		// Check if min and max are the same (flat line)
 		if (minY === maxY) {
 			return [minY * 0.9, minY * 1.1] as [number, number]; // Add some padding
 		}
 		return [minY * 0.7, maxY * 1.1] as [number, number];
-	}, [chartData]);
+	}, [etfTvlData]);
 
 	const screenWidth = Dimensions.get("window").width;
+	const isLoading = underlyingTvlData.some((data) => data.isLoading);
 
 	if (!screenWidth) return null;
 
@@ -228,21 +183,23 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 		return { top: 40, bottom: 20, left: leftPadding, right: rightPadding };
 	}, [screenWidth]);
 
+	const chartHeight = screenWidth <= 640 ? 250 : 300;
+
 	return (
 		<View className="z-10 relative">
-			<View style={{ marginTop: 10, width: "100%", height: 300 }}>
-				{isLpPriceLoading ? (
-					<Skeleton h={300} w={1200} />
+			<View style={{ marginTop: 10, width: "100%", height: chartHeight }}>
+				{isLoading ? (
+					<Skeleton h={chartHeight} w="100%" />
 				) : (
 					<>
-						{chartData.length === 0 ? (
-							<View style={{ height: 300, justifyContent: "center", alignItems: "center" }}>
+						{etfTvlData.length === 0 ? (
+							<View style={{ height: chartHeight, justifyContent: "center", alignItems: "center" }}>
 								<Text className="text-textWhite">No data available for this time period</Text>
 							</View>
 						) : (
 							<VictoryChart
 								width={screenWidth}
-								height={300}
+								height={chartHeight}
 								theme={VictoryTheme.clean}
 								padding={chartPadding}
 								animate={false}
@@ -252,12 +209,12 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={["priceArea"]}
-										labels={({ datum }) => `${datum.x}\nPrice: $${datum.y.toFixed(2)}`}
+										voronoiBlacklist={["etfTvlArea"]}
+										labels={({ datum }) => `${datum.x}\nETF TVL: $${customCommify(datum.y.toFixed(2))}`}
 										labelComponent={
 											<VictoryTooltip
-												flyoutWidth={130}
-												flyoutHeight={70}
+												flyoutWidth={screenWidth <= 640 ? 140 : 160}
+												flyoutHeight={screenWidth <= 640 ? 60 : 70}
 												cornerRadius={8}
 												pointerLength={10}
 												flyoutStyle={{
@@ -267,8 +224,8 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 													filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))",
 												}}
 												style={[
-													{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // First line style
-													{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // Second line style
+													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" },
+													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: Colors.textPrimary, textAnchor: "middle" },
 												]}
 												dy={-10}
 												centerOffset={{ x: 0 }}
@@ -285,7 +242,6 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									}}
 									tickCount={xAxisTickCount}
 								/>
-								{/* Y Axis */}
 								<VictoryAxis
 									dependentAxis
 									style={{
@@ -297,29 +253,29 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryLine
-									name="priceLine"
-									data={chartData}
+									name="etfTvlLine"
+									data={etfTvlData}
 									style={{
 										data: {
-											stroke: Colors.buttonPrimary,
+											stroke: Colors.textPrimary,
 											strokeWidth: 2,
 										},
 									}}
 								/>
 
 								<VictoryDefsWrapper>
-									<LinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-										<Stop offset="5%" stopColor={Colors.bgPrimary} stopOpacity="0.3" />
-										<Stop offset="95%" stopColor={Colors.bgPrimary} stopOpacity="0" />
+									<LinearGradient id="etfTvlGradient" x1="0" y1="0" x2="0" y2="1">
+										<Stop offset="5%" stopColor={Colors.textPrimary} stopOpacity="0.3" />
+										<Stop offset="95%" stopColor={Colors.textPrimary} stopOpacity="0" />
 									</LinearGradient>
 								</VictoryDefsWrapper>
 
 								<VictoryArea
-									name="priceArea"
-									data={chartData}
+									name="etfTvlArea"
+									data={etfTvlData}
 									style={{
 										data: {
-											fill: "url(#areaGradient)",
+											fill: "url(#etfTvlGradient)",
 											strokeWidth: 0,
 										},
 									}}
@@ -329,17 +285,18 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 					</>
 				)}
 			</View>
-			<View className="flex flex-row justify-around sm:justify-center sm:gap-4">
+			<View className="flex flex-row justify-center gap-2 sm:gap-4 pt-2">
 				{graphFiltersList.map((filter, index) => (
 					<GraphFilter key={index} text={filter.text} isSelected={graphFilter === filter.type} onClick={filterCallbacks[filter.type]} />
 				))}
 			</View>
 			<View>
-				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+				<Text className="text-xs sm:text-sm text-textSecondary text-center my-3 sm:my-4 font-league-spartan px-4">
+					Historical Total Value Locked in the ETF
 				</Text>
 			</View>
 		</View>
 	);
 };
-export default FarmLpGraph;
+
+export default ETFTvlGraph;

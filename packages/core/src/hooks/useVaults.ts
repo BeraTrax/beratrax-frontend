@@ -5,6 +5,7 @@ import useFarms from "../state/farms/hooks/useFarms";
 import useTokens from "../state/tokens/useTokens";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSpecificVaultTvl, fetchSpecificVaultApy } from "../api/stats";
+import { isETFVault, isRegularPool } from "../utils/farmTypeGuards";
 
 export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: boolean } => {
 	const { farms } = useFarms();
@@ -21,6 +22,7 @@ export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: b
 
 	const vaults = useMemo(() => {
 		return farms
+			// .filter(isRegularPool)
 			.map((farm) => {
 				return {
 					...farm,
@@ -30,6 +32,17 @@ export const useVaults = (): { vaults: Vault[]; isLoading: boolean; isFetched: b
 				};
 			})
 			.filter((farm) => farm?.userVaultBalance && farm?.priceOfSingleToken && farm.userVaultBalance * farm.priceOfSingleToken >= 0.01);
+	}, [apys, usersVaultBalances, priceOfSingleToken]);
+
+	const etfVaults = useMemo(() => {
+		return farms.filter(isETFVault).map((farm) => {
+			return {
+				...farm,
+				userVaultBalance: usersVaultBalances[farm.chainId]?.[farm.vault_addr]?.value || 0,
+				priceOfSingleToken: priceOfSingleToken[farm.chainId]?.[farm.vault_addr] || 0,
+				apys: apys[farm.id],
+			};
+		});
 	}, [apys, usersVaultBalances, priceOfSingleToken]);
 
 	return {

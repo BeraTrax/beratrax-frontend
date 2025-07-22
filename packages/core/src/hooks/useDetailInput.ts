@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { PoolDef } from "./../config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "./../config/constants/pools_json";
 import store, { useAppDispatch, useAppSelector } from "./../state";
 import { setBestFunctionNameForArberaHoney, setFarmDetailInputOptions } from "./../state/farms/farmsReducer";
 import useDeposit from "./../state/farms/hooks/useDeposit";
@@ -12,7 +12,7 @@ import { FarmTransactionType } from "./../types/enums";
 import { limitDecimals } from "./../utils";
 import useWallet from "./useWallet";
 
-export const useDetailInput = (farm: PoolDef) => {
+export const useDetailInput = (farm: PoolDef | ETFVaultDef) => {
 	const [amount, setAmount] = useState("");
 	const [toggleAmount, setToggleAmount] = useState("");
 	const [slippage, setSlippage] = useState<number>();
@@ -27,9 +27,9 @@ export const useDetailInput = (farm: PoolDef) => {
 
 	const { prices } = useTokens();
 	const { isLoading: isZapping, zapInAsync, slippageZapIn } = useZapIn(farm);
-	const { isLoading: isDepositing, depositAsync, slippageDeposit } = useDeposit(farm);
+	// const { isLoading: isDepositing, depositAsync, slippageDeposit } = useDeposit(farm);
 	const { isLoading: isZappingOut, zapOutAsync, slippageZapOut } = useZapOut(farm);
-	const { isLoading: isWithdrawing, withdrawAsync, slippageWithdraw } = useWithdraw(farm);
+	// const { isLoading: isWithdrawing, withdrawAsync, slippageWithdraw } = useWithdraw(farm);
 	const { farmDetails, isLoading, reloadVaultEarnings } = useFarmDetails();
 	const farmData = farmDetails[farm.id];
 	const { currentWallet } = useWallet();
@@ -132,7 +132,7 @@ export const useDetailInput = (farm: PoolDef) => {
 		// if enough balance than proceed transaction
 		if (type === FarmTransactionType.Deposit) {
 			if (depositable?.tokenAddress === farm.lp_address && false) {
-				await depositAsync({ depositAmount: getTokenAmount(), max });
+				// await depositAsync({ depositAmount: getTokenAmount(), max });
 			} else {
 				await zapInAsync({
 					zapAmount: getTokenAmount(),
@@ -144,7 +144,7 @@ export const useDetailInput = (farm: PoolDef) => {
 			}
 		} else {
 			if (withdrawable?.tokenAddress === farm.lp_address && false) {
-				await withdrawAsync({ withdrawAmount: getTokenAmount(), max });
+				// await withdrawAsync({ withdrawAmount: getTokenAmount(), max });
 			} else {
 				await zapOutAsync({
 					withdrawAmt: getTokenAmount(),
@@ -165,7 +165,7 @@ export const useDetailInput = (farm: PoolDef) => {
 			const amnt = getTokenAmount();
 			let _slippage = NaN;
 			if (type === FarmTransactionType.Deposit) {
-				if (depositable?.tokenAddress === farm.lp_address) {
+				if (farm.hasOwnProperty('lp_address') && depositable?.tokenAddress === (farm as PoolDef).lp_address) {
 					// const res = await slippageDeposit({ depositAmount: amnt, max });
 					// console.log(res);
 					// _slippage = res?.slippage ?? NaN;
@@ -178,7 +178,7 @@ export const useDetailInput = (farm: PoolDef) => {
 					_slippage = res?.slippage ?? NaN;
 				}
 			} else {
-				if (withdrawable?.tokenAddress === farm.lp_address) {
+				if (farm.hasOwnProperty('lp_address') && withdrawable?.tokenAddress === (farm as PoolDef).lp_address) {
 					// const res = await slippageWithdraw({ withdrawAmount: amnt, max });
 					// console.log(res);
 					// _slippage = res?.slippage ?? NaN;
@@ -258,7 +258,7 @@ export const useDetailInput = (farm: PoolDef) => {
 		handleInput,
 		withdrawable,
 		handleSubmit,
-		isLoadingTransaction: isZapping || isZappingOut || isDepositing || isWithdrawing,
+		isLoadingTransaction: isZapping || isZappingOut,
 		isLoadingFarm: isLoading,
 	};
 };

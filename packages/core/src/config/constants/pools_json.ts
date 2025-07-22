@@ -118,7 +118,7 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		id: 1004,
 		isETFVault: true,
 		chainId: CHAIN_ID.BERACHAIN,
-		name: "iBGT-StLBGT-StYBGT ETF",
+		name: "xBGT",
 		underlyingAPR: "240.1%",
 		apy: "240.1%",
 		createdOn: "June 16, 2025",
@@ -133,9 +133,9 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		synthetic: true,
 		underlyingVaults: [7, 43, 47],
 		decimals: 18,
-		url_name: "iBGT-StLBGT-StYBGT",
-		source: "https://app.beratrax.com/etf-vaults/iBGT-StLBGT-StYBGT",
-		alt1: "wBera logo",
+		url_name: "xBGT",
+		source: "https://app.beratrax.com/etf-vaults/xBGT",
+		alt1: "xBGT logo",
 		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
 		zap_currencies: [
 			{

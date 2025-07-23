@@ -127,6 +127,30 @@ export interface AccountConnectorsStats {
 	count: number;
 }
 
+export interface ETFCompositionResponse {
+	status: boolean;
+	data: {
+		composition: ETFComposition[];
+		etfVault: ETFVaultInfo;
+	};
+}
+
+export interface ETFComposition {
+	vaultAddress: Address;
+	name: string;
+	currentValueUSD: number;
+}
+
+export interface ETFVaultInfo {
+	address: Address;
+	id: number;
+	name: string;
+	numberOfUnderlyingVaults: number;
+	timestamp: string;
+	currentValueUSD: number;
+	status: boolean;
+}
+
 export const fetchUserTVLs = async (
 	page: number,
 	sortBy: UsersTableColumns | undefined,
@@ -215,4 +239,14 @@ export const fetchFacetUsersCount = async () => {
 export const fetchAccountConnectorsStats = async () => {
 	const res = await backendApi.get<AccountConnectorsStatsResponse>(`stats/account-connectors`);
 	return res.data.data;
+};
+
+export const fetchETFComposition = async (etfVaultAddress: Address): Promise<ETFCompositionResponse> => {
+	try {
+		const response = await backendApi.get(`vault/etf-composition/${etfVaultAddress}`);
+		return response.data;
+	} catch (error) {
+		console.error("Error fetching ETF composition:", error);
+		throw error;
+	}
 };

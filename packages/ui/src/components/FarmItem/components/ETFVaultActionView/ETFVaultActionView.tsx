@@ -12,13 +12,13 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
 import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
-import { ETF_VAULTS as ETF_VAULTS_DATA } from "@beratrax/core/src/config/constants/pools_json";
 import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
 import FarmActionModal from "../FarmActionView/FarmActionModal/FarmActionModal";
 import { Skeleton } from "../../../Skeleton/Skeleton";
 import { FarmTransactionType } from "@beratrax/core/src/types/enums";
 import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsReducer";
 import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
+import { ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import ETFInfo from "./ETFInfo/ETFInfo";
 
 const ActionButton = memo(
@@ -40,22 +40,19 @@ const ActionButton = memo(
 	)
 );
 
-export const ETFVaultActionView: React.FC = () => {
+export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) => {
 	const dispatch = useAppDispatch();
 	const { lastVisitedPage } = useAppSelector((state) => state.account);
 	const { currentWallet, isConnecting, connectWallet } = useWallet();
 	const { openConnectModal } = useConnectModal();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [screenWidth, setScreenWidth] = useState(Platform.OS === "web" ? (typeof window !== "undefined" ? window.innerWidth : 800) : 400);
-	const ETF_VAULT = ETF_VAULTS_DATA[0];
-	const { withdrawable, isLoadingFarm } = useDetailInput(ETF_VAULT);
+	const { withdrawable, isLoadingFarm } = useDetailInput(farm);
 	const {
 		isBalancesLoading: isLoading,
 		prices: {
-			[ETF_VAULT.chainId]: { [ETF_VAULT.vault_addr]: vaultPrice },
+			[farm.chainId]: { [farm.vault_addr]: vaultPrice },
 		},
-		totalSupplies,
-		isTotalSuppliesLoading,
 	} = useTokens();
 
 	const [openDepositModal, setOpenDepositModal] = useState(false);
@@ -145,10 +142,10 @@ export const ETFVaultActionView: React.FC = () => {
 								<BackButton onClick={handleGoBack} />
 								<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
 									{/* ETF Price and Graph Section */}
-									<ETFPriceAndGraph vault={ETF_VAULT} />
+									<ETFPriceAndGraph vault={farm} />
 
-									<ETFInfo ETF_VAULT={ETF_VAULT} isSmallScreen={isSmallScreen} />
-									<Transactions farmId={ETF_VAULT.id} />
+									<ETFInfo ETF_VAULT={farm} isSmallScreen={isSmallScreen} />
+									<Transactions farmId={farm.id} />
 								</View>
 							</ScrollView>
 
@@ -184,7 +181,7 @@ export const ETFVaultActionView: React.FC = () => {
 					)}
 				</View>
 			</View>
-			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={ETF_VAULT} />
+			<FarmActionModal open={openDepositModal} setOpen={setOpenDepositModal} farm={farm} />
 			{/* Login Modal */}
 			{/* only for mobile app */}
 			{showLoginModal && connectWallet && (

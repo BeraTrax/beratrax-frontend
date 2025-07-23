@@ -1,7 +1,7 @@
 import { FarmActionView, ETFVaultActionView } from "@beratrax/ui";
 import { useParams } from "react-router-dom";
 import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
-import { PoolDef } from "packages/core/src/config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "packages/core/src/config/constants/pools_json";
 
 export default function FarmAction() {
 	const { vaultAddress } = useParams();
@@ -12,7 +12,7 @@ export default function FarmAction() {
 	if (farmData?.isETFVault) {
 		return (
 			<div>
-				<ETFVaultActionView />
+				<ETFVaultActionView farm={farmData as ETFVaultDef} />
 			</div>
 		);
 	}

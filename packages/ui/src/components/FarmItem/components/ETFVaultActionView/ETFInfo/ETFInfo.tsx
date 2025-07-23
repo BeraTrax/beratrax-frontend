@@ -11,9 +11,10 @@ import { customCommify } from "@beratrax/core/src/utils/common";
 // Import victory libraries based on platform
 import * as Victory from "victory";
 import * as VictoryNative from "victory-native";
-import { useLp } from "@beratrax/core/src/hooks";
+import { useLp, useETFVault } from "@beratrax/core/src/hooks";
 import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
+import Svg, { Circle, G, Text as SvgText, Defs, LinearGradient, Stop } from "react-native-svg";
 
 const { VictoryChart, VictoryLine, VictoryTheme, VictoryArea, VictoryAxis } = Platform.OS === "web" ? Victory : VictoryNative;
 
@@ -221,7 +222,7 @@ const StatInfo = ({ iconUrl, title, value }: { iconUrl: React.ReactNode; title: 
 };
 
 // Underlying Vault Mobile component
-const UnderlyingVaultMobile = ({ farm, index }: { farm: any; index: number }) => {
+const UnderlyingVaultMobile = ({ farm, index, etfComposition }: { farm: any; index: number; etfComposition: any[] }) => {
 	const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 
 	const displayApy = useMemo(() => {
@@ -229,6 +230,68 @@ const UnderlyingVaultMobile = ({ farm, index }: { farm: any; index: number }) =>
 		if (!farmApys?.apy) return "--";
 		return farmApys.apy.toFixed(2);
 	}, [farmApys, isApyLoading]);
+
+	// Find matching composition data for this farm
+	const compositionData = useMemo(() => {
+		return etfComposition?.find((comp) => comp.vaultAddress === farm.vault_addr) || null;
+	}, [etfComposition, farm.vault_addr]);
+
+	// Composition chart component
+	const CompositionChart = () => {
+		if (!compositionData) return <Text className="text-textSecondary text-xs">No data</Text>;
+
+		const currentPercentage = compositionData.currentComposition || 0;
+		const targetPercentage = compositionData.targetComposition || 0;
+		const progress = Math.min(currentPercentage / 100, 1);
+		const size = 55;
+		const strokeWidth = 4;
+		const radius = (size - strokeWidth) / 2;
+		const circumference = 2 * Math.PI * radius;
+		const strokeDasharray = circumference * progress;
+
+		const colors = [
+			{ start: "#10B981", end: "#059669" }, // Green
+			{ start: "#3B82F6", end: "#2563EB" }, // Blue
+			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
+		];
+		const color = colors[index % colors.length];
+
+		return (
+			<View className="flex items-center">
+				<Svg width={size} height={size}>
+					<Defs>
+						<LinearGradient id={`mobile-comp-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+							<Stop offset="0%" stopColor={color.start} />
+							<Stop offset="100%" stopColor={color.end} />
+						</LinearGradient>
+					</Defs>
+
+					{/* Background circle */}
+					<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
+
+					{/* Progress circle */}
+					<Circle
+						cx={size / 2}
+						cy={size / 2}
+						r={radius}
+						stroke={`url(#mobile-comp-gradient-${index})`}
+						strokeWidth={strokeWidth}
+						fill="transparent"
+						strokeDasharray={`${strokeDasharray} ${circumference}`}
+						strokeDashoffset={0}
+						strokeLinecap="round"
+						transform={`rotate(-90 ${size / 2} ${size / 2})`}
+					/>
+
+					{/* Center text */}
+					<SvgText x={size / 2} y={size / 2 + 3} textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">
+						{currentPercentage.toFixed(1)}%
+					</SvgText>
+				</Svg>
+				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+			</View>
+		);
+	};
 
 	return (
 		<View key={index} className="bg-bgDark rounded-2xl p-4 mb-3">
@@ -262,9 +325,21 @@ const UnderlyingVaultMobile = ({ farm, index }: { farm: any; index: number }) =>
 					<Text className="text-textSecondary text-sm font-league-spartan">Auto Compounded</Text>
 					<Text className="text-white text-sm font-league-spartan">{farm.isAutoCompounded ? "Yes" : "No"}</Text>
 				</View>
+				<View className="flex flex-row justify-between">
+					<Text className="text-textSecondary text-sm font-league-spartan">Liquidity</Text>
+					<Text className="text-white text-sm font-league-spartan">
+						{compositionData?.currentValueUSD
+							? customCommify(compositionData.currentValueUSD, { minimumFractionDigits: 2, showDollarSign: true })
+							: "--"}
+					</Text>
+				</View>
 				<View className="flex flex-row justify-between items-center">
 					<Text className="text-textSecondary text-sm font-league-spartan">Price Trend (1M)</Text>
 					<InlineChart farm={farm} />
+				</View>
+				<View className="flex flex-row justify-between items-center">
+					<Text className="text-textSecondary text-sm font-league-spartan">Composition</Text>
+					<CompositionChart />
 				</View>
 			</View>
 		</View>
@@ -272,7 +347,7 @@ const UnderlyingVaultMobile = ({ farm, index }: { farm: any; index: number }) =>
 };
 
 // Desktop table row component for underlying vaults
-const UnderlyingVaultRowDesktop = ({ farm, index }: { farm: any; index: number }) => {
+const UnderlyingVaultRowDesktop = ({ farm, index, etfComposition }: { farm: any; index: number; etfComposition: any[] }) => {
 	const { apy: farmApys, isLoading: isApyLoading } = useFarmApy(farm);
 
 	const displayApy = useMemo(() => {
@@ -280,6 +355,68 @@ const UnderlyingVaultRowDesktop = ({ farm, index }: { farm: any; index: number }
 		if (!farmApys?.apy) return "--";
 		return farmApys.apy.toFixed(2);
 	}, [farmApys, isApyLoading]);
+
+	// Find matching composition data for this farm
+	const compositionData = useMemo(() => {
+		return etfComposition?.find((comp) => comp.vaultAddress === farm.vault_addr) || null;
+	}, [etfComposition, farm.vault_addr]);
+
+	// Composition chart component
+	const CompositionChart = () => {
+		if (!compositionData) return <Text className="text-textSecondary text-xs">No data</Text>;
+
+		const currentPercentage = compositionData.currentComposition || 0;
+		const targetPercentage = compositionData.targetComposition || 0;
+		const progress = Math.min(currentPercentage / 100, 1);
+		const size = 70;
+		const strokeWidth = 5;
+		const radius = (size - strokeWidth) / 2;
+		const circumference = 2 * Math.PI * radius;
+		const strokeDasharray = circumference * progress;
+
+		const colors = [
+			{ start: "#10B981", end: "#059669" }, // Green
+			{ start: "#3B82F6", end: "#2563EB" }, // Blue
+			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
+		];
+		const color = colors[index % colors.length];
+
+		return (
+			<View className="flex items-center">
+				<Svg width={size} height={size}>
+					<Defs>
+						<LinearGradient id={`comp-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+							<Stop offset="0%" stopColor={color.start} />
+							<Stop offset="100%" stopColor={color.end} />
+						</LinearGradient>
+					</Defs>
+
+					{/* Background circle */}
+					<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
+
+					{/* Progress circle */}
+					<Circle
+						cx={size / 2}
+						cy={size / 2}
+						r={radius}
+						stroke={`url(#comp-gradient-${index})`}
+						strokeWidth={strokeWidth}
+						fill="transparent"
+						strokeDasharray={`${strokeDasharray} ${circumference}`}
+						strokeDashoffset={0}
+						strokeLinecap="round"
+						transform={`rotate(-90 ${size / 2} ${size / 2})`}
+					/>
+
+					{/* Center text */}
+					<SvgText x={size / 2} y={size / 2 + 4} textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
+						{currentPercentage.toFixed(1)}%
+					</SvgText>
+				</Svg>
+				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+			</View>
+		);
+	};
 
 	return (
 		<View key={index} className="flex flex-row items-center py-4 border-b last:border-b-0 bg-bgDark pl-6 rounded-3xl m-2">
@@ -317,9 +454,170 @@ const UnderlyingVaultRowDesktop = ({ farm, index }: { farm: any; index: number }
 				<Text className="text-white text-base font-league-spartan">{farm.isAutoCompounded ? "Yes" : "No"}</Text>
 			</View>
 
+			{/* Liquidity Column */}
+			<View className="flex-1 min-w-[100px] items-center">
+				<Text className="text-white text-base font-league-spartan">
+					{compositionData?.currentValueUSD
+						? customCommify(compositionData.currentValueUSD, { minimumFractionDigits: 2, showDollarSign: true })
+						: "--"}
+				</Text>
+			</View>
+
 			{/* Price Chart Column */}
 			<View className="flex-1 min-w-[120px] items-center">
 				<InlineChart farm={farm} />
+			</View>
+
+			{/* Composition Chart Column */}
+			<View className="flex-1 min-w-[120px] items-center">
+				<CompositionChart />
+			</View>
+		</View>
+	);
+};
+
+// ETF Composition Visualizer Component
+const ETFCompositionVisualizer = ({ etfComposition, isLoading }: { etfComposition: any[]; isLoading: boolean }) => {
+	if (isLoading) {
+		return (
+			<View className="bg-bgDark rounded-2xl p-4 mb-4">
+				<Text className="text-white text-lg font-bold mb-4">ETF Composition</Text>
+				<View className="flex-row justify-around">
+					{[1, 2, 3].map((i) => (
+						<View key={i} className="items-center">
+							<Skeleton w={80} h={80} bRadius={40} />
+							<Skeleton w={60} h={16} className="mt-2" />
+						</View>
+					))}
+				</View>
+			</View>
+		);
+	}
+
+	if (!etfComposition || etfComposition.length === 0) {
+		return (
+			<View className="bg-bgDark rounded-2xl p-4 mb-4">
+				<Text className="text-white text-lg font-bold mb-4">ETF Composition</Text>
+				<Text className="text-textSecondary text-center">No composition data available</Text>
+			</View>
+		);
+	}
+
+	const size = 80;
+	const strokeWidth = 8;
+	const radius = (size - strokeWidth) / 2;
+	const circumference = 2 * Math.PI * radius;
+
+	// Color gradients for each vault
+	const getVaultColors = (index: number) => {
+		const colors = [
+			{ start: "#10B981", end: "#059669" }, // Green
+			{ start: "#3B82F6", end: "#2563EB" }, // Blue
+			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
+			{ start: "#F59E0B", end: "#D97706" }, // Amber
+			{ start: "#EF4444", end: "#DC2626" }, // Red
+		];
+		return colors[index % colors.length];
+	};
+
+	const getCompositionStatus = (current: number, target: number) => {
+		const diff = Math.abs(current - target);
+		if (diff <= 2) return { status: "Balanced", color: "#10B981" };
+		if (diff <= 5) return { status: "Slightly Off", color: "#F59E0B" };
+		return { status: "Needs Rebalancing", color: "#EF4444" };
+	};
+
+	// Circular Progress Component
+	const CircularProgress = ({ vault, index }: { vault: any; index: number }) => {
+		const colors = getVaultColors(index);
+		const currentPercentage = vault.currentComposition || 0;
+		const targetPercentage = vault.targetComposition || 0;
+		const progress = Math.min(currentPercentage / 100, 1);
+		const strokeDasharray = circumference * progress;
+		const status = getCompositionStatus(currentPercentage, targetPercentage);
+
+		return (
+			<View
+				className={`flex items-center ${Platform.OS !== "web" ? "flex-shrink-0" : ""} ${Platform.OS === "web" ? "hover:scale-105 transition-transform duration-200" : ""}`}
+			>
+				<View className="relative">
+					<Svg width={size} height={size}>
+						<Defs>
+							<LinearGradient id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+								<Stop offset="0%" stopColor={colors.start} />
+								<Stop offset="100%" stopColor={colors.end} />
+							</LinearGradient>
+						</Defs>
+
+						{/* Background circle */}
+						<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
+
+						{/* Progress circle */}
+						<Circle
+							cx={size / 2}
+							cy={size / 2}
+							r={radius}
+							stroke={`url(#gradient-${index})`}
+							strokeWidth={strokeWidth}
+							fill="transparent"
+							strokeDasharray={`${strokeDasharray} ${circumference}`}
+							strokeDashoffset={0}
+							strokeLinecap="round"
+							transform={`rotate(-90 ${size / 2} ${size / 2})`}
+						/>
+
+						{/* Center text */}
+						<SvgText x={size / 2} y={size / 2 + 5} textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
+							{currentPercentage.toFixed(1)}%
+						</SvgText>
+					</Svg>
+				</View>
+
+				<Text className="text-white text-sm font-medium mt-2 text-center">{vault.name || `Vault ${index + 1}`}</Text>
+				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+				<Text className="text-xs mt-1" style={{ color: status.color }}>
+					{status.status}
+				</Text>
+			</View>
+		);
+	};
+
+	return (
+		<View className="bg-bgDark rounded-2xl p-4 mb-4">
+			<Text className="text-white text-lg font-bold mb-4">ETF Composition</Text>
+
+			{/* Desktop Layout - Grid */}
+			{Platform.OS === "web" ? (
+				<View className="grid grid-cols-3 gap-4">
+					{etfComposition.map((vault, index) => (
+						<CircularProgress key={index} vault={vault} index={index} />
+					))}
+				</View>
+			) : (
+				/* Mobile Layout - Scrollable horizontal list */
+				<View className="flex-row space-x-4">
+					{etfComposition.map((vault, index) => (
+						<CircularProgress key={index} vault={vault} index={index} />
+					))}
+				</View>
+			)}
+
+			{/* Summary Stats */}
+			<View className="mt-4 pt-4 border-t border-gray-700">
+				<View className="flex-row justify-between items-center">
+					<Text className="text-textSecondary text-sm">Total Value:</Text>
+					<Text className="text-white text-sm font-medium">
+						$
+						{customCommify(
+							etfComposition.reduce((sum, vault) => sum + (vault.currentValueUSD || 0), 0),
+							{ minimumFractionDigits: 2, showDollarSign: true }
+						)}
+					</Text>
+				</View>
+				<View className="flex-row justify-between items-center mt-1">
+					<Text className="text-textSecondary text-sm">Vaults:</Text>
+					<Text className="text-white text-sm font-medium">{etfComposition.length}</Text>
+				</View>
 			</View>
 		</View>
 	);
@@ -327,7 +625,7 @@ const UnderlyingVaultRowDesktop = ({ farm, index }: { farm: any; index: number }
 
 const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 	const { totalSupplies } = useTokens();
-
+	const { etfComposition, isLoading: isETFCompositionLoading } = useETFVault(ETF_VAULT.vault_addr);
 	// Get underlying vault farms by IDs
 	const underlyingVaultFarms = useMemo(() => {
 		return ETF_VAULT.underlyingVaults.map((farmId) => pools_json.find((farm) => farm.id === farmId)).filter(Boolean);
@@ -362,7 +660,7 @@ const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 				/* Mobile Layout - Card Style */
 				<View className="px-2">
 					{underlyingVaultFarms.map((farm, index) => (
-						<UnderlyingVaultMobile key={index} farm={farm} index={index} />
+						<UnderlyingVaultMobile key={index} farm={farm} index={index} etfComposition={etfComposition || []} />
 					))}
 				</View>
 			) : (
@@ -382,14 +680,20 @@ const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 						<View className="flex-1 min-w-[80px]">
 							<Text className="text-textSecondary text-base font-league-spartan">Auto Compounded</Text>
 						</View>
+						<View className="flex-1 min-w-[100px] text-center">
+							<Text className="text-textSecondary text-base font-league-spartan text-center">Liquidity</Text>
+						</View>
 						<View className="flex-1 min-w-[120px] text-center">
 							<Text className="text-textSecondary text-base font-league-spartan text-center">Price Trend (1M)</Text>
+						</View>
+						<View className="flex-1 min-w-[120px] text-center">
+							<Text className="text-textSecondary text-base font-league-spartan text-center">Composition</Text>
 						</View>
 					</View>
 
 					{/* Table Rows */}
 					{underlyingVaultFarms.map((farm, index) => (
-						<UnderlyingVaultRowDesktop key={index} farm={farm} index={index} />
+						<UnderlyingVaultRowDesktop key={index} farm={farm} index={index} etfComposition={etfComposition || []} />
 					))}
 				</>
 			)}

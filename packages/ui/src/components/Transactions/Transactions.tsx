@@ -339,7 +339,7 @@ const TransactionRow = memo(
 		// Memoize the modal inner content
 		const modalInnerContent = useMemo(
 			() => (
-				<Pressable className="w-full tablet:w-2/5 m-0 tablet:m-auto bg-[#1A1A1A] rounded-t-xl p-6" onPress={handleModalPress}>
+				<Pressable className="w-[90vw] max-w-[500px] bg-[#1A1A1A] rounded-xl p-6" onPress={handleModalPress} style={{ margin: 16 }}>
 					<View className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />
 					{transactionDetails}
 					{closeButton}
@@ -352,8 +352,22 @@ const TransactionRow = memo(
 		const modalContent = useMemo(
 			() => (
 				<Modal visible={showTooltipModal} transparent={true} animationType="slide" onRequestClose={handleModalClose}>
-					<BlurView intensity={50} tint="dark" className="flex-1 justify-end" experimentalBlurMethod="dimezisBlurView">
-						<Pressable className="flex-1 justify-end" onPress={handleModalClose}>
+					<BlurView
+						intensity={50}
+						tint="dark"
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+						experimentalBlurMethod="dimezisBlurView"
+					>
+						<Pressable style={{ flex: 1, width: "100%", justifyContent: "center", alignItems: "center" }} onPress={handleModalClose}>
 							{modalInnerContent}
 						</Pressable>
 					</BlurView>

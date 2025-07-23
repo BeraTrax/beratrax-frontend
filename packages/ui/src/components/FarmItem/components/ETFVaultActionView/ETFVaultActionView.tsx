@@ -4,6 +4,7 @@ import { useDetailInput, useTokens, useWallet } from "@beratrax/core/src/hooks";
 import { useAppDispatch, useAppSelector } from "@beratrax/core/src/state";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 import { IS_LEGACY } from "@beratrax/core/src/config/constants";
+import { Transactions } from "@beratrax/ui";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState, useCallback, useMemo, memo, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -147,6 +148,7 @@ export const ETFVaultActionView: React.FC = () => {
 									<ETFPriceAndGraph vault={ETF_VAULT} />
 
 									<ETFInfo ETF_VAULT={ETF_VAULT} isSmallScreen={isSmallScreen} />
+									<Transactions farmId={ETF_VAULT.id} />
 								</View>
 							</ScrollView>
 

@@ -60,7 +60,7 @@ const formatDate = (timestamp: number, filter: GraphFilterType): string => {
 // Define colors for different underlying assets
 const UNDERLYING_COLORS = [
 	Colors.buttonPrimary, // Blue (keep one)
-	"#FF6B35", // Orange/Red  
+	"#FF6B35", // Orange/Red
 	"#4ECDC4", // Teal/Cyan
 	"#45B7D1", // Light Blue
 	"#96CEB4", // Mint Green
@@ -284,25 +284,63 @@ const ETFUnderlyingTvlGraph: React.FC<ETFUnderlyingTvlGraphProps> = ({ vault, un
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={underlyingChartsData.map((_, i) => `underlyingTvlArea-${i}`)}
-										labels={({ datum }) => `${datum.x}\n${datum.farmName}: $${customCommify(datum.y.toFixed(2))}`}
+										voronoiBlacklist={(() => {
+											// Find the farm with the highest average value to make it the "top line"
+											const farmWithHighestAvg = underlyingChartsData.reduce((highest, current) => {
+												const highestAvg = highest.data.reduce((sum, d) => sum + d.y, 0) / highest.data.length;
+												const currentAvg = current.data.reduce((sum, d) => sum + d.y, 0) / current.data.length;
+												return currentAvg > highestAvg ? current : highest;
+											});
+
+											// Blacklist all lines except the highest value one
+											return underlyingChartsData
+												.map((farm, i) => (farm === farmWithHighestAvg ? null : `underlyingTvlLine-${i}`))
+												.filter((item): item is string => item !== null);
+										})()}
+										labels={({ datum }) => {
+											// Find all farms data for this time point
+											const timePoint = datum.x;
+											const allFarmsAtTime = underlyingChartsData
+												.map((farm) => {
+													const dataAtTime = farm.data.find((d) => d.x === timePoint);
+													return dataAtTime ? `${farm.name}: $${customCommify(dataAtTime.y.toFixed(2))}` : null;
+												})
+												.filter(Boolean);
+
+											return `${timePoint}\n${allFarmsAtTime.join("\n")}`;
+										}}
 										labelComponent={
 											<VictoryTooltip
 												flyoutWidth={screenWidth <= 640 ? 160 : 180}
-												flyoutHeight={screenWidth <= 640 ? 60 : 70}
+												flyoutHeight={screenWidth <= 640 ? 110 : 120}
 												cornerRadius={8}
-												pointerLength={10}
+												pointerLength={6}
+												orientation="top"
 												flyoutStyle={{
-													fill: "#111111",
-													stroke: "#333333",
+													fill: "rgba(0, 0, 0, 0.9)",
+													stroke: "rgba(255, 255, 255, 0.2)",
 													strokeWidth: 1,
-													filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))",
 												}}
+												flyoutPadding={{ top: 16, bottom: 16, left: 20, right: 20 }}
 												style={[
-													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" },
-													{ fontSize: screenWidth <= 640 ? 12 : 14, fontWeight: "bold", fill: Colors.textPrimary, textAnchor: "middle" },
+													// Time style (white)
+													{
+														fontSize: screenWidth <= 640 ? 14 : 15,
+														fontWeight: "600",
+														fill: "#FFFFFF",
+														textAnchor: "middle",
+														fontFamily: "system-ui",
+													},
+													// Farm styles (each with their line color)
+													...underlyingChartsData.map((farm) => ({
+														fontSize: screenWidth <= 640 ? 13 : 14,
+														fontWeight: "500",
+														fill: farm.color,
+														textAnchor: "middle",
+														fontFamily: "system-ui",
+													})),
 												]}
-												dy={-10}
+												dy={-15}
 												centerOffset={{ x: 0 }}
 												constrainToVisibleArea
 											/>

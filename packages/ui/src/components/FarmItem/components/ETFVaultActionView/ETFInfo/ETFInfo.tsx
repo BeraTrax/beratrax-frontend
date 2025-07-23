@@ -14,9 +14,10 @@ import * as VictoryNative from "victory-native";
 import { useLp, useETFVault } from "@beratrax/core/src/hooks";
 import { useFarmApy } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
-import Svg, { Circle, G, Text as SvgText, Defs, LinearGradient, Stop } from "react-native-svg";
 
-const { VictoryChart, VictoryLine, VictoryTheme, VictoryArea, VictoryAxis } = Platform.OS === "web" ? Victory : VictoryNative;
+const { VictoryChart, VictoryLine, VictoryTheme, VictoryArea, VictoryAxis, VictoryTooltip } =
+	Platform.OS === "web" ? Victory : VictoryNative;
+const VictoryPie = Platform.OS === "web" ? Victory.VictoryPie : VictoryNative.VictoryPie;
 
 interface ETFInfoProps {
 	ETF_VAULT: ETFVaultDef;
@@ -236,59 +237,62 @@ const UnderlyingVaultMobile = ({ farm, index, etfComposition }: { farm: any; ind
 		return etfComposition?.find((comp) => comp.vaultAddress === farm.vault_addr) || null;
 	}, [etfComposition, farm.vault_addr]);
 
+	// Function to get color based on allocation status
+	const getAllocationColor = (current: number, target: number) => {
+		const diff = Math.abs(current - target);
+		const percentageDiff = (diff / target) * 100;
+
+		if (percentageDiff <= 5) {
+			// Close to balance (within 5% of target) - Green
+			return "#10B981";
+		} else if (current < target) {
+			// Under allocated - Red
+			return "#EF4444";
+		} else {
+			// Over allocated - Darker green
+			return "#059669";
+		}
+	};
+
 	// Composition chart component
 	const CompositionChart = () => {
 		if (!compositionData) return <Text className="text-textSecondary text-xs">No data</Text>;
 
 		const currentPercentage = compositionData.currentComposition || 0;
 		const targetPercentage = compositionData.targetComposition || 0;
-		const progress = Math.min(currentPercentage / 100, 1);
-		const size = 55;
-		const strokeWidth = 4;
-		const radius = (size - strokeWidth) / 2;
-		const circumference = 2 * Math.PI * radius;
-		const strokeDasharray = circumference * progress;
+		const barWidth = 80;
+		const currentPosition = (currentPercentage / 100) * barWidth;
+		const targetPosition = (targetPercentage / 100) * barWidth;
 
-		const colors = [
-			{ start: "#10B981", end: "#059669" }, // Green
-			{ start: "#3B82F6", end: "#2563EB" }, // Blue
-			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
-		];
-		const color = colors[index % colors.length];
+		const color = getAllocationColor(currentPercentage, targetPercentage);
 
 		return (
-			<View className="flex items-center">
-				<Svg width={size} height={size}>
-					<Defs>
-						<LinearGradient id={`mobile-comp-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-							<Stop offset="0%" stopColor={color.start} />
-							<Stop offset="100%" stopColor={color.end} />
-						</LinearGradient>
-					</Defs>
+			<View className="flex items-end">
+				<View className="relative">
+					{/* Full width background bar (100%) - using fixed width for clarity */}
+					<View className="h-2 bg-gray-700 rounded-full" style={{ width: barWidth }} />
 
-					{/* Background circle */}
-					<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
-
-					{/* Progress circle */}
-					<Circle
-						cx={size / 2}
-						cy={size / 2}
-						r={radius}
-						stroke={`url(#mobile-comp-gradient-${index})`}
-						strokeWidth={strokeWidth}
-						fill="transparent"
-						strokeDasharray={`${strokeDasharray} ${circumference}`}
-						strokeDashoffset={0}
-						strokeLinecap="round"
-						transform={`rotate(-90 ${size / 2} ${size / 2})`}
+					{/* Target composition colored section (only the target portion) */}
+					<View
+						className="h-2 rounded-full absolute top-0 left-0"
+						style={{
+							width: targetPosition,
+							backgroundColor: color,
+						}}
 					/>
 
-					{/* Center text */}
-					<SvgText x={size / 2} y={size / 2 + 3} textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">
-						{currentPercentage.toFixed(1)}%
-					</SvgText>
-				</Svg>
-				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+					{/* Current composition indicator line */}
+					<View
+						className="w-0.5 h-3 bg-white absolute top-0"
+						style={{
+							left: currentPosition - 1,
+							transform: [{ translateY: -2 }],
+						}}
+					/>
+				</View>
+				<Text className="text-textSecondary text-xs mt-1">
+					Target: {targetPercentage}% | Current: {currentPercentage.toFixed(1)}%
+				</Text>
 			</View>
 		);
 	};
@@ -361,59 +365,62 @@ const UnderlyingVaultRowDesktop = ({ farm, index, etfComposition }: { farm: any;
 		return etfComposition?.find((comp) => comp.vaultAddress === farm.vault_addr) || null;
 	}, [etfComposition, farm.vault_addr]);
 
+	// Function to get color based on allocation status
+	const getAllocationColor = (current: number, target: number) => {
+		const diff = Math.abs(current - target);
+		const percentageDiff = (diff / target) * 100;
+
+		if (percentageDiff <= 5) {
+			// Close to balance (within 5% of target) - Green
+			return "#10B981";
+		} else if (current < target) {
+			// Under allocated - Red
+			return "#EF4444";
+		} else {
+			// Over allocated - Darker green
+			return "#059669";
+		}
+	};
+
 	// Composition chart component
 	const CompositionChart = () => {
 		if (!compositionData) return <Text className="text-textSecondary text-xs">No data</Text>;
 
 		const currentPercentage = compositionData.currentComposition || 0;
 		const targetPercentage = compositionData.targetComposition || 0;
-		const progress = Math.min(currentPercentage / 100, 1);
-		const size = 70;
-		const strokeWidth = 5;
-		const radius = (size - strokeWidth) / 2;
-		const circumference = 2 * Math.PI * radius;
-		const strokeDasharray = circumference * progress;
+		const barWidth = 120;
+		const currentPosition = (currentPercentage / 100) * barWidth;
+		const targetPosition = (targetPercentage / 100) * barWidth;
 
-		const colors = [
-			{ start: "#10B981", end: "#059669" }, // Green
-			{ start: "#3B82F6", end: "#2563EB" }, // Blue
-			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
-		];
-		const color = colors[index % colors.length];
+		const color = getAllocationColor(currentPercentage, targetPercentage);
 
 		return (
 			<View className="flex items-center">
-				<Svg width={size} height={size}>
-					<Defs>
-						<LinearGradient id={`comp-gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-							<Stop offset="0%" stopColor={color.start} />
-							<Stop offset="100%" stopColor={color.end} />
-						</LinearGradient>
-					</Defs>
+				<View className="relative">
+					{/* Full width background bar (100%) - using fixed width for clarity */}
+					<View className="h-2.5 bg-gray-700 rounded-full" style={{ width: barWidth }} />
 
-					{/* Background circle */}
-					<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
-
-					{/* Progress circle */}
-					<Circle
-						cx={size / 2}
-						cy={size / 2}
-						r={radius}
-						stroke={`url(#comp-gradient-${index})`}
-						strokeWidth={strokeWidth}
-						fill="transparent"
-						strokeDasharray={`${strokeDasharray} ${circumference}`}
-						strokeDashoffset={0}
-						strokeLinecap="round"
-						transform={`rotate(-90 ${size / 2} ${size / 2})`}
+					{/* Target composition colored section (only the target portion) */}
+					<View
+						className="h-2.5 rounded-full absolute top-0 left-0"
+						style={{
+							width: targetPosition,
+							backgroundColor: color,
+						}}
 					/>
 
-					{/* Center text */}
-					<SvgText x={size / 2} y={size / 2 + 4} textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-						{currentPercentage.toFixed(1)}%
-					</SvgText>
-				</Svg>
-				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+					{/* Current composition indicator line */}
+					<View
+						className="w-0.5 h-4 bg-white absolute top-0"
+						style={{
+							left: currentPosition - 1,
+							transform: [{ translateY: -3 }],
+						}}
+					/>
+				</View>
+				<Text className="text-textSecondary text-xs mt-1">
+					Target: {targetPercentage}% | Current: {currentPercentage.toFixed(1)}%
+				</Text>
 			</View>
 		);
 	};
@@ -469,7 +476,7 @@ const UnderlyingVaultRowDesktop = ({ farm, index, etfComposition }: { farm: any;
 			</View>
 
 			{/* Composition Chart Column */}
-			<View className="flex-1 min-w-[120px] items-center">
+			<View className="flex-1 min-w-[120px] items-center justify-center">
 				<CompositionChart />
 			</View>
 		</View>
@@ -503,21 +510,21 @@ const ETFCompositionVisualizer = ({ etfComposition, isLoading }: { etfCompositio
 		);
 	}
 
-	const size = 80;
-	const strokeWidth = 8;
-	const radius = (size - strokeWidth) / 2;
-	const circumference = 2 * Math.PI * radius;
+	// Function to get color based on allocation status
+	const getAllocationColor = (current: number, target: number) => {
+		const diff = Math.abs(current - target);
+		const percentageDiff = (diff / target) * 100;
 
-	// Color gradients for each vault
-	const getVaultColors = (index: number) => {
-		const colors = [
-			{ start: "#10B981", end: "#059669" }, // Green
-			{ start: "#3B82F6", end: "#2563EB" }, // Blue
-			{ start: "#8B5CF6", end: "#7C3AED" }, // Purple
-			{ start: "#F59E0B", end: "#D97706" }, // Amber
-			{ start: "#EF4444", end: "#DC2626" }, // Red
-		];
-		return colors[index % colors.length];
+		if (percentageDiff <= 5) {
+			// Close to balance (within 5% of target) - Green
+			return "#10B981";
+		} else if (current < target) {
+			// Under allocated - Red
+			return "#EF4444";
+		} else {
+			// Over allocated - Darker green
+			return "#059669";
+		}
 	};
 
 	const getCompositionStatus = (current: number, target: number) => {
@@ -527,54 +534,47 @@ const ETFCompositionVisualizer = ({ etfComposition, isLoading }: { etfCompositio
 		return { status: "Needs Rebalancing", color: "#EF4444" };
 	};
 
-	// Circular Progress Component
-	const CircularProgress = ({ vault, index }: { vault: any; index: number }) => {
-		const colors = getVaultColors(index);
+	// Horizontal Bar Progress Component
+	const HorizontalBarProgress = ({ vault, index }: { vault: any; index: number }) => {
 		const currentPercentage = vault.currentComposition || 0;
 		const targetPercentage = vault.targetComposition || 0;
-		const progress = Math.min(currentPercentage / 100, 1);
-		const strokeDasharray = circumference * progress;
+		const barWidth = 120;
+		const currentPosition = (currentPercentage / 100) * barWidth;
+		const targetPosition = (targetPercentage / 100) * barWidth;
 		const status = getCompositionStatus(currentPercentage, targetPercentage);
+		const color = getAllocationColor(currentPercentage, targetPercentage);
 
 		return (
 			<View
 				className={`flex items-center ${Platform.OS !== "web" ? "flex-shrink-0" : ""} ${Platform.OS === "web" ? "hover:scale-105 transition-transform duration-200" : ""}`}
 			>
 				<View className="relative">
-					<Svg width={size} height={size}>
-						<Defs>
-							<LinearGradient id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-								<Stop offset="0%" stopColor={colors.start} />
-								<Stop offset="100%" stopColor={colors.end} />
-							</LinearGradient>
-						</Defs>
+					{/* Full width background bar (100%) - using fixed width for clarity */}
+					<View className="h-3 bg-gray-700 rounded-full" style={{ width: barWidth }} />
 
-						{/* Background circle */}
-						<Circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="transparent" />
+					{/* Target composition colored section (only the target portion) */}
+					<View
+						className="h-3 rounded-full absolute top-0 left-0"
+						style={{
+							width: targetPosition,
+							backgroundColor: color,
+						}}
+					/>
 
-						{/* Progress circle */}
-						<Circle
-							cx={size / 2}
-							cy={size / 2}
-							r={radius}
-							stroke={`url(#gradient-${index})`}
-							strokeWidth={strokeWidth}
-							fill="transparent"
-							strokeDasharray={`${strokeDasharray} ${circumference}`}
-							strokeDashoffset={0}
-							strokeLinecap="round"
-							transform={`rotate(-90 ${size / 2} ${size / 2})`}
-						/>
-
-						{/* Center text */}
-						<SvgText x={size / 2} y={size / 2 + 5} textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">
-							{currentPercentage.toFixed(1)}%
-						</SvgText>
-					</Svg>
+					{/* Current composition indicator line */}
+					<View
+						className="w-1 h-5 bg-white absolute top-0"
+						style={{
+							left: currentPosition - 2,
+							transform: [{ translateY: -4 }],
+						}}
+					/>
 				</View>
 
 				<Text className="text-white text-sm font-medium mt-2 text-center">{vault.name || `Vault ${index + 1}`}</Text>
-				<Text className="text-textSecondary text-xs mt-1">Target: {targetPercentage}%</Text>
+				<Text className="text-textSecondary text-xs mt-1">
+					Target: {targetPercentage}% | Current: {currentPercentage.toFixed(1)}%
+				</Text>
 				<Text className="text-xs mt-1" style={{ color: status.color }}>
 					{status.status}
 				</Text>
@@ -590,14 +590,14 @@ const ETFCompositionVisualizer = ({ etfComposition, isLoading }: { etfCompositio
 			{Platform.OS === "web" ? (
 				<View className="grid grid-cols-3 gap-4">
 					{etfComposition.map((vault, index) => (
-						<CircularProgress key={index} vault={vault} index={index} />
+						<HorizontalBarProgress key={index} vault={vault} index={index} />
 					))}
 				</View>
 			) : (
 				/* Mobile Layout - Scrollable horizontal list */
 				<View className="flex-row space-x-4">
 					{etfComposition.map((vault, index) => (
-						<CircularProgress key={index} vault={vault} index={index} />
+						<HorizontalBarProgress key={index} vault={vault} index={index} />
 					))}
 				</View>
 			)}
@@ -617,6 +617,165 @@ const ETFCompositionVisualizer = ({ etfComposition, isLoading }: { etfCompositio
 				<View className="flex-row justify-between items-center mt-1">
 					<Text className="text-textSecondary text-sm">Vaults:</Text>
 					<Text className="text-white text-sm font-medium">{etfComposition.length}</Text>
+				</View>
+			</View>
+		</View>
+	);
+};
+
+// Donut Chart Component for ETF Composition
+const ETFCompositionDonutChart = ({ etfComposition, isLoading }: { etfComposition: any[]; isLoading: boolean }) => {
+	// Generate colors for each vault
+	const colors = [
+		"#10B981", // Green
+		"#3B82F6", // Blue
+		"#F59E0B", // Amber
+		"#EF4444", // Red
+		"#8B5CF6", // Purple
+		"#06B6D4", // Cyan
+		"#84CC16", // Lime
+		"#F97316", // Orange
+	];
+
+	// Prepare data for the pie chart
+	const chartData = useMemo(() => {
+		if (!etfComposition || etfComposition.length === 0) return [];
+
+		return etfComposition
+			.filter((vault) => vault.currentComposition && vault.currentComposition > 0)
+			.map((vault, index) => ({
+				x: vault.name || `Vault ${index + 1}`,
+				y: vault.currentComposition || 0,
+				color: colors[index % colors.length],
+				vault: vault,
+			}));
+	}, [etfComposition]);
+
+	// Calculate total composition
+	const totalComposition = useMemo(() => {
+		return chartData.reduce((sum, item) => sum + item.y, 0);
+	}, [chartData]);
+
+	if (isLoading) {
+		return (
+			<View className="bg-bgDark rounded-2xl p-4 mb-4">
+				<Text className="text-white text-lg font-bold mb-4">Current Composition</Text>
+				<View className="flex-row justify-center">
+					<Skeleton w={200} h={200} bRadius={100} />
+				</View>
+			</View>
+		);
+	}
+
+	if (chartData.length === 0) {
+		return (
+			<View className="bg-bgDark rounded-2xl p-4 mb-4">
+				<Text className="text-white text-lg font-bold mb-4">Current Composition</Text>
+				<Text className="text-textSecondary text-center">No composition data available</Text>
+			</View>
+		);
+	}
+
+	// Check if VictoryPie is available
+	const isVictoryPieAvailable = VictoryPie !== undefined;
+
+	return (
+		<View className="bg-bgDark rounded-2xl p-4 mb-4">
+			<Text className="text-white text-lg font-bold mb-4">Current Composition</Text>
+
+			{isVictoryPieAvailable ? (
+				<View className="flex-row items-center justify-center">
+					{/* Donut Chart */}
+					<View className="relative">
+						<VictoryChart width={200} height={200} padding={{ top: 0, bottom: 0, left: 0, right: 0 }} theme={VictoryTheme.clean}>
+							{/* Hide X Axis */}
+							<VictoryAxis
+								style={{
+									axis: { stroke: "transparent" },
+									ticks: { stroke: "transparent" },
+									tickLabels: { fill: "transparent" },
+									grid: { stroke: "transparent" },
+								}}
+							/>
+							{/* Hide Y Axis */}
+							<VictoryAxis
+								dependentAxis
+								style={{
+									axis: { stroke: "transparent" },
+									ticks: { stroke: "transparent" },
+									tickLabels: { fill: "transparent" },
+									grid: { stroke: "transparent" },
+								}}
+							/>
+							<VictoryPie
+								data={chartData}
+								colorScale={chartData.map((d) => d.color)}
+								innerRadius={60}
+								padAngle={2}
+								cornerRadius={4}
+								animate={{
+									duration: 1000,
+									onLoad: { duration: 500 },
+								}}
+								style={{
+									data: {
+										fillOpacity: 0.9,
+										stroke: "#1F2937",
+										strokeWidth: 2,
+									},
+								}}
+								labelComponent={
+									<VictoryTooltip
+										flyoutWidth={120}
+										flyoutHeight={60}
+										cornerRadius={8}
+										pointerLength={10}
+										flyoutStyle={{
+											fill: "#111111",
+											stroke: "#333333",
+											strokeWidth: 1,
+											filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))",
+										}}
+										style={{
+											fontSize: 12,
+											fontWeight: "bold",
+											fill: "#FFFFFF",
+											textAnchor: "middle",
+										}}
+										dy={-5}
+										centerOffset={{ x: 0 }}
+										constrainToVisibleArea
+									/>
+								}
+								labels={({ datum }) => `${datum.x}: ${datum.y.toFixed(1)}%`}
+							/>
+						</VictoryChart>
+					</View>
+				</View>
+			) : (
+				/* Fallback for mobile platforms without VictoryPie */
+				<View className="flex-row items-center justify-center">
+					<View className="relative">
+						<View className="w-48 h-48 rounded-full border-4 border-gray-700 items-center justify-center">
+							<Text className="text-textSecondary text-xs">Composition</Text>
+						</View>
+					</View>
+				</View>
+			)}
+
+			{/* Legend */}
+			<View className="mt-4">
+				<Text className="text-white text-sm font-medium mb-2">Vault Breakdown:</Text>
+				<View className="space-y-2">
+					{chartData.map((item, index) => (
+						<View key={index} className="flex-row items-center justify-between">
+							<View className="flex-row items-center">
+								<View className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }} />
+								<Text className="text-textSecondary text-sm">{item.x}</Text>
+							</View>
+							<Text className="text-white text-sm font-medium">{item.y.toFixed(1)}%</Text>
+						</View>
+					))}
 				</View>
 			</View>
 		</View>
@@ -654,6 +813,9 @@ const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 	}, [totalSupplies, ETF_VAULT.chainId, ETF_VAULT.vault_addr]);
 	return (
 		<View>
+			{/* Donut Chart for Current Composition */}
+			<ETFCompositionDonutChart etfComposition={etfComposition || []} isLoading={isETFCompositionLoading} />
+
 			<Text className="text-white text-lg sm:text-xl font-bold mb-4 pl-2 sm:pl-6">Underlying Vaults</Text>
 
 			{isSmallScreen ? (

@@ -39,8 +39,8 @@ const ClockIcon = ({ isSelected }: { isSelected: boolean }) => (
 
 // Section item type for combined list
 type SectionItem = {
-	type: "etf" | "regular";
-	data: PoolDef | FarmDataExtended | ETFVaultDef;
+	type: "etf" | "regular" | "section_header";
+	data: PoolDef | FarmDataExtended | ETFVaultDef | null;
 };
 
 export function FarmView() {
@@ -99,13 +99,49 @@ export function FarmView() {
 			data.push({ type: "etf", data: vault });
 		});
 
+		// Always add section header when there are farms available
+		if (farms.length > 0) {
+			data.push({ type: "section_header", data: null });
+		}
+
 		// Add regular farms
 		filteredFarms.forEach((farm) => {
 			data.push({ type: "regular", data: farm });
 		});
 
 		return data;
-	}, [filteredFarms]);
+	}, [filteredFarms, farms.length]);
+
+	// Separate component for the controls that should always be visible when there are farms
+	const renderControls = useCallback(() => {
+		if (farms.length === 0) return null;
+
+		return (
+			<View className="flex flex-row gap-4 justify-end items-center mt-4">
+				<View className="flex items-center gap-4">
+					{/* New Vaults Sort Option */}
+					<TouchableOpacity
+						onPress={() => setSortSelected(sortSelected === FarmSortOptions.New ? undefined : FarmSortOptions.New)}
+						className={`flex flex-row items-center gap-2 px-4 py-2 rounded-lg border ${
+							sortSelected === FarmSortOptions.New ? "bg-buttonPrimary border-buttonPrimary" : "bg-transparent border-borderDark"
+						}`}
+					>
+						<ClockIcon isSelected={sortSelected === FarmSortOptions.New} />
+						<Text className={`${sortSelected === FarmSortOptions.New ? "text-textWhite font-medium" : "text-textSecondary"}`}>New</Text>
+					</TouchableOpacity>
+				</View>
+				<Select
+					options={["All", ...platforms.map(([name]) => name)]}
+					images={Object.fromEntries(platforms.map(([name, logo]) => [name, [logo]]))}
+					value={selectedPlatform || "All"}
+					setValue={(val) => setSelectedPlatform(val === "All" ? null : val)}
+					className="text-textWhite font-light text-[16px] w-[150px] border border-borderDark rounded-lg"
+					bgSecondary={true}
+					customWidth={150}
+				/>
+			</View>
+		);
+	}, [farms.length, platforms, selectedPlatform, setSelectedPlatform, sortSelected, setSortSelected]);
 
 	const renderHeader = useCallback(
 		() => (
@@ -128,54 +164,28 @@ export function FarmView() {
 
 	const renderSectionHeader = useCallback(
 		(index: number) => {
-			// Check if this is the first regular farm after ETF vaults
 			const currentItem = combinedData[index];
-			const previousItem = index > 0 ? combinedData[index - 1] : null;
 
-			if (currentItem?.type === "regular" && previousItem?.type === "etf") {
+			// Render section header for the dedicated section header item
+			if (currentItem?.type === "section_header") {
 				return (
 					<View className="mt-8 mb-4">
 						<Text className="text-lg font-light text-white font-league-spartan">Available Protocols</Text>
-						{farms.length > 0 && (
-							<View className="flex flex-row gap-4 justify-end items-center mt-4">
-								<View className="flex items-center gap-4">
-									{/* New Vaults Sort Option */}
-									<TouchableOpacity
-										onPress={() => setSortSelected(sortSelected === FarmSortOptions.New ? undefined : FarmSortOptions.New)}
-										className={`flex flex-row items-center gap-2 px-4 py-2 rounded-lg border ${
-											sortSelected === FarmSortOptions.New ? "bg-buttonPrimary border-buttonPrimary" : "bg-transparent border-borderDark"
-										}`}
-									>
-										<ClockIcon isSelected={sortSelected === FarmSortOptions.New} />
-										<Text className={`${sortSelected === FarmSortOptions.New ? "text-textWhite font-medium" : "text-textSecondary"}`}>
-											New
-										</Text>
-									</TouchableOpacity>
-								</View>
-								<Select
-									options={["All", ...platforms.map(([name]) => name)]}
-									images={Object.fromEntries(platforms.map(([name, logo]) => [name, [logo]]))}
-									value={selectedPlatform || "All"}
-									setValue={(val) => setSelectedPlatform(val === "All" ? null : val)}
-									className="text-textWhite font-light text-[16px] w-[150px] border border-borderDark rounded-lg"
-									bgSecondary={true}
-									customWidth={150}
-								/>
-							</View>
-						)}
+						{renderControls()}
 					</View>
 				);
 			}
+
 			return null;
 		},
-		[combinedData, farms.length, platforms, selectedPlatform, setSelectedPlatform, sortSelected, setSortSelected]
+		[combinedData, renderControls]
 	);
 
 	const renderItem = useCallback(
 		({ item, index }: { item: SectionItem; index: number }) => (
 			<>
 				{renderSectionHeader(index)}
-				<FarmRow farm={item.data as any} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />
+				{item.data && <FarmRow farm={item.data as any} openedFarm={openedFarm} setOpenedFarm={setOpenedFarm} />}
 			</>
 		),
 		[openedFarm, setOpenedFarm, renderSectionHeader]
@@ -183,7 +193,7 @@ export function FarmView() {
 
 	const renderFooter = useCallback(() => <View className="h-32" />, []);
 
-	const keyExtractor = useCallback((item: SectionItem, index: number) => `${item.type}-${item.data.id}-${index}`, []);
+	const keyExtractor = useCallback((item: SectionItem, index: number) => `${item.type}-${item.data?.id || index}-${index}`, []);
 
 	const contentContainerStyle = useMemo(() => ({ gap: 8 }), []);
 

@@ -233,10 +233,16 @@ export const TraxAirdropVault = () => {
 					</View>
 				</View>
 				<View className="flex-col gap-1">
-					<View className="flex items-center gap-1 mb-2 justify-end">
+					<View className="flex flex-row items-center gap-1 mb-2 justify-end">
 						<FarmRowChip text={FarmOriginPlatform.Trax.name} color="invert" />
 						<View className="flex">
-							<Image alt="Trax" className="w-4 rounded-full border border-bgDark" source={{ uri: "beratrax.png" }} />
+							<Image
+								alt="Trax"
+								className="w-4 h-4 rounded-full border border-bgDark"
+								source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png" }}
+								style={{ width: 16, height: 16 }}
+								resizeMode="contain"
+							/>
 						</View>
 					</View>
 				</View>

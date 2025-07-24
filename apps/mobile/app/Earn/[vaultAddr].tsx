@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useEarnPage } from "@beratrax/core/src/state/farms/hooks";
 import { FarmActionView, ETFVaultActionView } from "@beratrax/ui";
-import { zeroAddress } from "viem";
+import { ETFVaultDef, PoolDef } from "@beratrax/core/src/config/constants/pools_json";
 
 export default function EarnDetailScreen() {
 	const { vaultAddr } = useLocalSearchParams();
@@ -10,17 +10,17 @@ export default function EarnDetailScreen() {
 	const farmData = farms.find((farm) => farm.vault_addr === vaultAddr);
 
 	// Checks if this is an ETF vault (zero address)
-	if (vaultAddr === zeroAddress) {
+	if (farmData?.isETFVault) {
 		return (
 			<View>
-				<ETFVaultActionView />
+				<ETFVaultActionView farm={farmData as ETFVaultDef} />
 			</View>
 		);
 	}
 
 	return (
 		<View>
-			<FarmActionView farm={farmData!} />
+			<FarmActionView farm={farmData as PoolDef} />
 		</View>
 	);
 }

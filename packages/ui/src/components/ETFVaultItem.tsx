@@ -171,7 +171,7 @@ const ETFVaultItem: FC<ETFVaultItemProps> = ({ vault }) => {
 						style={{
 							position: "absolute",
 							top: 0,
-							left: -15,
+							left: -35,
 							right: 0,
 							bottom: 0,
 							borderRadius: 24,
@@ -277,7 +277,6 @@ const ETFVaultItem: FC<ETFVaultItemProps> = ({ vault }) => {
 											borderRadius: 8,
 											borderWidth: 1,
 											borderColor: "#181818",
-											backgroundColor: "#ffffff",
 										}}
 										resizeMode="contain"
 									/>

@@ -70,7 +70,7 @@ function Sidebar() {
 
 	return (
 		<div className="flex h-screen flex-col border-r border-borderDark p-4 pt-5 uppercase text-sm font-medium tracking-wide	">
-			<img src={logo} alt="beratrax-logo" className="w-[90%] mx-auto" />
+			<img src={logo} alt="trax-logo" className="w-[90%] mx-auto" />
 
 			<div className="mt-6 flex flex-col flex-1">
 				{routes

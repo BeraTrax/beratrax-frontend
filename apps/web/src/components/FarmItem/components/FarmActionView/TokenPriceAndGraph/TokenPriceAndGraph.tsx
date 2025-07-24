@@ -31,7 +31,7 @@ export const TokenPriceAndGraph: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 		{ id: "earnings" as TabType, label: "Earnings" },
 		{ id: "price" as TabType, label: "Price" },
 		{ id: "tvl" as TabType, label: "TVL" },
-		{ id: "apy" as TabType, label: farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR" },
+		{ id: "apy" as TabType, label: farm.isAutoCompounded ? "Trax APY" : "Underlying APR" },
 	];
 
 	return (

@@ -44,7 +44,7 @@ export const TermsOfUseModal: FC<IProps> = ({ setOpenModal }) => {
 							<p className="py-2">AGREEMENT TO TERMS</p>
 							<br />
 							These Terms of Use constitute a legally binding agreement made between you, whether personally or on behalf of an entity
-							("you") and Beratrax Operations IBC, doing business as BeraTrax ("BeraTrax", "we", "us", or "our"), concerning your access to
+							("you") and Beratrax Operations IBC, doing business as Trax ("Trax", "we", "us", or "our"), concerning your access to
 							and use of the http://www.BeraTrax.com website as well as any other media form, media channel, mobile website or mobile
 							application related, linked, or otherwise connected thereto (collectively, the "Site"). You agree that by accessing the Site,
 							you have read, understood, and agreed to be bound by all of these Terms of Use. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF

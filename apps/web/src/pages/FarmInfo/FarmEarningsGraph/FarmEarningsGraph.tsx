@@ -165,7 +165,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 									labelStyle={{ color: "#fff" }}
 									formatter={(value: any, name: string) => [
 										`$${formatCurrency(value)}`,
-										name === "autoCompounded" ? "BeraTrax APY" : "Underlying APR",
+										name === "autoCompounded" ? "Trax APY" : "Underlying APR",
 									]}
 									labelFormatter={(label) => label}
 								/>

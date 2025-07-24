@@ -273,7 +273,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 								containerComponent={
 									<VoronoiContainer
 										voronoiDimension="x"
-										voronoiBlacklist={["underlyingAprArea", "beratraxApyArea", farm.isAutoCompounded ? "underlyingApr" : ""]}
+										voronoiBlacklist={["underlyingAprArea", "traxApyArea", farm.isAutoCompounded ? "underlyingApr" : ""]}
 										labels={({ datum }) => {
 											const beratraxApy = datum.y ? datum.y : 0;
 											const underlyingApr = farm.isAutoCompounded
@@ -348,7 +348,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryLine
-									name="beratraxApy"
+									name="traxApy"
 									data={beratraxApyChartData}
 									style={{
 										data: {
@@ -359,7 +359,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 								/>
 
 								<VictoryArea
-									name="beratraxApyArea"
+									name="traxApyArea"
 									data={beratraxApyChartData}
 									style={{
 										data: {

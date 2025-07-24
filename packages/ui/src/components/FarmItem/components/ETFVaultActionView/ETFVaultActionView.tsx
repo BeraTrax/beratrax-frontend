@@ -163,14 +163,14 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 										<ActionButton
 											onPress={handleDepositPress}
 											text={depositButtonText}
-											className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
+											className="bg-buttonPrimaryLight w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
 										/>
 
 										{Number(withdrawable?.amount || "0") > 0 && (
 											<ActionButton
 												onPress={handleWithdrawPress}
 												text={withdrawButtonText}
-												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
 												disabled={!currentWallet}
 											/>
 										)}

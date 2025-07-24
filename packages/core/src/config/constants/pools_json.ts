@@ -136,7 +136,7 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		url_name: "xBGT",
 		source: "https://app.trax.finance/etf-vaults/xBGT",
 		alt1: "xBGT logo",
-		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/xBGT/logo.png",
 		zap_currencies: [
 			{
 				symbol: "HONEY",

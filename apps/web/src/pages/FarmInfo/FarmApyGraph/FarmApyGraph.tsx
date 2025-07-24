@@ -198,7 +198,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 								<Tooltip
 									contentStyle={{ background: "#1a1a1a", border: "none" }}
 									labelStyle={{ color: "#fff" }}
-									formatter={(value: any, name: string) => [`${value}%`, name === "apy" ? "BeraTrax APY" : "Underlying APR"]}
+									formatter={(value: any, name: string) => [`${value}%`, name === "apy" ? "Trax APY" : "Underlying APR"]}
 									labelFormatter={(label) => label}
 								/>
 								{farm.isAutoCompounded && (
@@ -240,7 +240,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 				))}
 			</div>
 			<div className="text-center my-4">
-				<p className="text-sm text-textSecondary">Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault</p>
+				<p className="text-sm text-textSecondary">Historical {farm.isAutoCompounded ? "Trax APY" : "Underlying APR"} of the vault</p>
 			</div>
 		</div>
 	);

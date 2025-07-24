@@ -74,6 +74,15 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 		// when importing crypto, resolve to react-native-quick-crypto
 		return context.resolveRequest(context, "react-native-quick-crypto", platform);
 	}
+	
+	// Handle @coinbase/onchainkit/fund submodule
+	if (moduleName === "@coinbase/onchainkit/fund") {
+		return {
+			filePath: path.resolve(workspaceRoot, "node_modules/@coinbase/onchainkit/esm/fund/index.js"),
+			type: "sourceFile",
+		};
+	}
+	
 	// otherwise chain to the standard Metro resolver.
 	return context.resolveRequest(context, moduleName, platform);
 };

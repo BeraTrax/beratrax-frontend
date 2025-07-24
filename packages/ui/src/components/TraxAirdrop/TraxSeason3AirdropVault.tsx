@@ -14,7 +14,7 @@ import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@berat
 import { CgSpinner } from "react-icons/cg";
 import { ImSpinner8 } from "react-icons/im";
 import FarmRowChip from "@beratrax/ui/src/components/FarmItem/components/FarmRowChip/FarmRowChip";
-import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { TRAX_TOKEN_ADDRESS } from "@beratrax/core/src/config/constants";
 import { Image, Pressable, Text, View, Platform } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
@@ -238,9 +238,9 @@ export const TraxSeason3AirdropVault = () => {
 				</View>
 				<View className="flex-col gap-1">
 					<View className="flex items-center gap-1 mb-2 justify-end">
-						<FarmRowChip text={"BeraTrax"} color="invert" />
+						<FarmRowChip text={FarmOriginPlatform.Trax.name} color="invert" />
 						<View className="flex">
-							<Image alt="Beratrax" className="w-4 rounded-full border border-bgDark" src="beratrax.png" />
+							<Image alt="Trax" className="w-4 rounded-full border border-bgDark" src="trax.png" />
 						</View>
 					</View>
 				</View>

@@ -201,7 +201,7 @@ const TransactionDetailsContent: FC<{
 
 				{fee !== undefined && (
 					<View className={`flex flex-row justify-between items-start ${detailItemClass}`}>
-						<Text className={`text-textSecondary ${labelClass}`}>BeraTrax Fee:</Text>
+						<Text className={`text-textSecondary ${labelClass}`}>Trax Fee:</Text>
 						<View className="flex flex-col items-end">
 							<Text className={`${isMobile ? "text-sm" : "text-xs"} text-textSecondary`}>
 								${formatCurrency(Number(toEth(BigInt(fee), decimals[farm.chainId][token])) * (tokenPrice || prices[farm.chainId][token]))}

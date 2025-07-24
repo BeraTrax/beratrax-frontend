@@ -26,7 +26,7 @@ export const ReferralLink: React.FC<IProps> = () => {
 	};
 
 	const shareOnTwitter = () => {
-		const text = "Beras, follow the trax to the #BeraTrax dapp! Use my referral link to one-click stake, and start earning BTX points!";
+		const text = "Beras, follow the trax to the #Trax dapp! Use my referral link to one-click stake, and start earning BTX points!";
 		const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(referralLink || "")}`;
 		Linking.openURL(url);
 	};

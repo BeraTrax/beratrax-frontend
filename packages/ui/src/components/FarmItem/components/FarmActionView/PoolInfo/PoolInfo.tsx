@@ -360,7 +360,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 				<StatInfo title="Market cap" value={marketCap} iconUrl={<MarketCapIcon />} isStatLoading={marketCapLoading} />
 				<StatInfo title="Vault Liquidity" value={vaultTvl} iconUrl={<VolumeIcon />} isStatLoading={vaultTvlLoading} />
 
-				<StatInfo title={!isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} value={underlyingApy + "%"} iconUrl={<TrendUpIcon />} />
+				<StatInfo title={!isAutoCompounded ? "Trax APY" : "Underlying APR"} value={underlyingApy + "%"} iconUrl={<TrendUpIcon />} />
 				{underlyingApyWithPoints ? (
 					<StatInfo
 						title={!isAutoCompounded ? "Trax APY with Points" : "Underlying APR with Points"}

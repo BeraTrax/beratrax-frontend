@@ -132,7 +132,7 @@ const Vaults: React.FC = () => {
 								<iframe
 									className="min-h-[315px] hidden md:block"
 									src="https://www.youtube.com/embed/RolxWw5HMoM?si=pVuzfqEFDD0aOfWM&amp;controls=0"
-									title="Beratrax"
+									title="Trax"
 									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 									referrerPolicy="strict-origin-when-cross-origin"
 									allowFullScreen

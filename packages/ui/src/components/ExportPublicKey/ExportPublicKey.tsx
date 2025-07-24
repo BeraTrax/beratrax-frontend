@@ -37,7 +37,7 @@ export const ExportPublicKey: FC<IProps> = ({ setOpenModal }) => {
 					</TouchableOpacity>
 				</View>
 				<Text className="font-arame-mono w-[250px] hidden md:block text-textWhite">
-					Sending cryptocurrency has never been easier. Simply scan this QR code to transfer your desired tokens to your Beratrax wallet.
+					Sending cryptocurrency has never been easier. Simply scan this QR code to transfer your desired tokens to your Trax wallet.
 				</Text>
 			</View>
 			<View className="bg-bgPrimary w-fit h-fit text-center p-3 m-auto border-[12px] border-bgDark rounded-xl shadow-xl">

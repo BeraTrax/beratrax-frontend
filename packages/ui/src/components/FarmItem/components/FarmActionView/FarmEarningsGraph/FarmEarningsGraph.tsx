@@ -292,7 +292,7 @@ const FarmEarningsGraph = ({ farm }: { farm: PoolDef }) => {
 											}}
 											style={[
 												{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // Date
-												{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // BeraTrax APY
+												{ fontSize: 14, fontWeight: "bold", fill: Colors.buttonPrimary, textAnchor: "middle" }, // Trax APY
 												{ fontSize: 14, fontWeight: "bold", fill: Colors.textSecondary, textAnchor: "middle" }, // Underlying APR
 											]}
 											dy={-10}

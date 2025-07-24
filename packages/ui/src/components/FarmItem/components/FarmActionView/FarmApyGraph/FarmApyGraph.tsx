@@ -296,7 +296,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 												}}
 												style={[
 													{ fontSize: 14, fontWeight: "bold", fill: "#FFFFFF", textAnchor: "middle" }, // Date
-													{ fontSize: 14, fontWeight: "bold", fill: Colors.textPrimary, textAnchor: "middle" }, // BeraTrax APY
+													{ fontSize: 14, fontWeight: "bold", fill: Colors.textPrimary, textAnchor: "middle" }, // Trax APY
 													{ fontSize: 14, fontWeight: "bold", fill: Colors.textSecondary, textAnchor: "middle" }, // Underlying APR
 												]}
 												dy={-10}
@@ -394,7 +394,7 @@ const FarmApyGraph = ({ farm }: { farm: PoolDef }) => {
 			</View>
 			<View>
 				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+					Historical {farm.isAutoCompounded ? "Trax APY" : "Underlying APR"} of the vault
 				</Text>
 			</View>
 		</View>

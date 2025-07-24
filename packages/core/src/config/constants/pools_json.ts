@@ -126,7 +126,7 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		originPlatform: FarmOriginPlatform.Trax.name,
 		platform_logo: FarmOriginPlatform.Trax.logo,
 		platform_alt: "Trax logo",
-		description: "iBGT + StLBGT + StYBGT ETF vault for exposure to BeraTrax's core growth.",
+		description: "iBGT + StLBGT + StYBGT ETF vault for exposure to Trax's core growth.",
 		vault_addr: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
 		lp_address: "0x256458D86184fe0B976B943fCb4761Dd48390C7B",
 		isAutoCompounded: true,
@@ -134,7 +134,7 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 		underlyingVaults: [7, 43, 47],
 		decimals: 18,
 		url_name: "xBGT",
-		source: "https://app.beratrax.com/etf-vaults/xBGT",
+		source: "https://app.trax.finance/etf-vaults/xBGT",
 		alt1: "xBGT logo",
 		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/wBeraLbgt-IbgtWbera-osBGTiBera/logo.png",
 		zap_currencies: [

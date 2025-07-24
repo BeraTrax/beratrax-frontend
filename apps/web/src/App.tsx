@@ -40,7 +40,7 @@ function App() {
 						accentColorForeground: "white",
 					})}
 					showRecentTransactions={false}
-					appInfo={{ appName: "Beratrax", disclaimer: WalletDisclaimer }}
+					appInfo={{ appName: "Trax", disclaimer: WalletDisclaimer }}
 				>
 					<WalletProvider>
 						<OnChainKitProvider>

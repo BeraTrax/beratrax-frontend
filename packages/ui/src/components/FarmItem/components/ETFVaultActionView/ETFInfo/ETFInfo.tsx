@@ -872,7 +872,7 @@ const ETFInfo = ({ ETF_VAULT, isSmallScreen }: ETFInfoProps) => {
 					value={customCommify(etfVaultSupply.supplyUsdFormatted, { minimumFractionDigits: 0, showDollarSign: true })}
 				/>
 				<StatInfo iconUrl={<TrendUpIcon />} title="Underlying APR" value={ETF_VAULT.underlyingAPR} />
-				<StatInfo iconUrl={<RocketIcon />} title="Beratrax Auto-Compounded APY" value={ETF_VAULT.apy} />
+				<StatInfo iconUrl={<RocketIcon />} title="Trax Auto-Compounded APY" value={ETF_VAULT.apy} />
 				<StatInfo iconUrl={<CreatedIcon />} title="Created On" value={ETF_VAULT.createdOn} />
 			</View>
 		</View>

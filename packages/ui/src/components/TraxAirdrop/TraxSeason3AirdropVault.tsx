@@ -18,6 +18,7 @@ import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { TRAX_TOKEN_ADDRESS } from "@beratrax/core/src/config/constants";
 import { Image, Pressable, Text, View, Platform } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
+import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 
 interface WarningModalProps {
 	isOpen: boolean;
@@ -238,7 +239,7 @@ export const TraxSeason3AirdropVault = () => {
 				</View>
 				<View className="flex-col gap-1">
 					<View className="flex items-center gap-1 mb-2 justify-end">
-						<FarmRowChip text={"BeraTrax"} color="invert" />
+						<FarmRowChip text={FarmOriginPlatform.Trax.name} color="invert" />
 						<View className="flex">
 							<Image alt="Beratrax" className="w-4 rounded-full border border-bgDark" src="beratrax.png" />
 						</View>

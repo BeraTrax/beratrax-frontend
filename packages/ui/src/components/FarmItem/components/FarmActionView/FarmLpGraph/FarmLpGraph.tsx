@@ -336,7 +336,7 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 			</View>
 			<View>
 				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical {farm.isAutoCompounded ? "BeraTrax APY" : "Underlying APR"} of the vault
+					Historical {farm.isAutoCompounded ? "Trax APY" : "Underlying APR"} of the vault
 				</Text>
 			</View>
 		</View>

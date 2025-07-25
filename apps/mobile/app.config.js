@@ -11,14 +11,14 @@ export default {
 		slug: "mobile",
 		version: "1.0.0",
 		orientation: "portrait",
-		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png",
-		scheme: "com.beratrax.mobile",
+		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png",
+		scheme: "com.trax.mobile",
 		userInterfaceStyle: "automatic",
 		newArchEnabled: true,
 		jsEngine: "hermes",
 		ios: {
 			supportsTablet: true,
-			bundleIdentifier: "com.beratrax.mobile",
+			bundleIdentifier: "com.trax.mobile",
 			permissions: ["CAMERA", "INTERNET"],
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
@@ -30,7 +30,7 @@ export default {
 				backgroundColor: "#ffffff",
 			},
 			permissions: ["CAMERA", "INTERNET"],
-			package: "com.beratrax.mobile",
+			package: "com.trax.mobile",
 		},
 		web: {
 			bundler: "metro",

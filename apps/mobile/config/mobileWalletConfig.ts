@@ -7,7 +7,7 @@ import * as SecureStore from "expo-secure-store";
 import { Web3AuthConnector } from "./web3authRnConnector";
 import { createConfig } from "wagmi";
 
-const scheme = "com.beratrax.mobile";
+const scheme = "com.trax.mobile";
 const redirectUrl = `${scheme}://auth`;
 
 const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
@@ -64,7 +64,7 @@ const createWeb3AuthConnector = (
 	return Web3AuthConnector({
 		web3AuthInstance: web3auth,
 		loginParams: {
-			redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+			redirectUrl: Linking.createURL("web3auth", { scheme: "com.trax.mobile" }),
 			mfaLevel: "default",
 			loginProvider: provider,
 			extraLoginOptions: {
@@ -78,7 +78,7 @@ const createWeb3AuthConnector = (
 const web3AuthConnector = Web3AuthConnector({
 	web3AuthInstance: web3auth,
 	loginParams: {
-		redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+		redirectUrl: Linking.createURL("web3auth", { scheme: "com.trax.mobile" }),
 		mfaLevel: "default",
 		loginProvider: LOGIN_PROVIDER.GOOGLE, // Default provider
 	},

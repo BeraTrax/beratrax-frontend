@@ -19,6 +19,7 @@ import { TRAX_TOKEN_ADDRESS } from "@beratrax/core/src/config/constants";
 import { Image, Pressable, Text, View, Platform } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
 import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
+import { ModalLayout } from "@beratrax/ui/src/components/modals/ModalLayout/ModalLayout";
 
 interface WarningModalProps {
 	isOpen: boolean;
@@ -31,19 +32,19 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
 	if (!isOpen) return null;
 
 	return (
-		<View className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+		<ModalLayout onClose={onClose} wrapperClassName="w-[90vw] max-w-[500px]">
 			<View className="bg-bgSecondary rounded-3xl p-6 max-w-lg w-full mx-4 border border-borderDark">
 				<View className="w-full mb-4">
 					<View className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
-						<Text className="text-2xl font-bold text-center text-textWhite">Important Notice!</Text>
-						<Text className="text-base text-textWhite">
+						<Text className="text-2xl font-bold text-center text-textWhite font-league-spartan">Important Notice!</Text>
+						<Text className="text-base text-textWhite font-league-spartan">
 							You are choosing to withdraw your staked TRAX tokens. You understand that after this transaction, you will receive your staked
 							tokens and any pending rewards. You recognize that you won't be able to stake these tokens again in this pool after
 							withdrawal.
 						</Text>
 					</View>
 				</View>
-				<View className="flex justify-end gap-4">
+				<View className="flex flex-row justify-end gap-4">
 					<Pressable className="bg-gray-500 p-4 rounded-xl w-32 font-league-spartan text-textWhite" onPress={onClose}>
 						<Text>Cancel</Text>
 					</Pressable>
@@ -56,7 +57,7 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
 					</Pressable>
 				</View>
 			</View>
-		</View>
+		</ModalLayout>
 	);
 };
 

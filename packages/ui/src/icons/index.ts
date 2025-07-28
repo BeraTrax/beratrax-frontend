@@ -6,3 +6,5 @@ export * from "./Qrcode";
 export * from "./ChatCircle";
 export * from "./CheckCircle";
 export * from "./Warning";
+export * from "./Discord";
+export * from "./Mail";

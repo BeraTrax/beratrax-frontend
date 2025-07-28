@@ -22,6 +22,8 @@ export default {
 			permissions: ["CAMERA", "INTERNET"],
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
+				NSCameraUsageDescription:
+					"This app uses the camera to securely capture identification documents for KYC verification through Transak.",
 			},
 		},
 		android: {

@@ -150,6 +150,42 @@ export const ETF_VAULTS: ETFVaultDef[] = [
 			},
 		],
 	},
+	{
+		id: 1005,
+		isETFVault: true,
+		chainId: CHAIN_ID.BERACHAIN,
+		name: "xUSD",
+		underlyingAPR: "240.1%",
+		apy: "240.1%",
+		createdOn: "June 16, 2025",
+		platform: FarmOriginPlatform.Trax.name,
+		originPlatform: FarmOriginPlatform.Trax.name,
+		platform_logo: FarmOriginPlatform.Trax.logo,
+		platform_alt: "Trax logo",
+		description: "USDC-HONEY + HONEY-BYUSD + HONEY-rUSD + USDa-sUSDa ETF vault for exposure to Trax's core growth.",
+		vault_addr: "0xD5d8C2E07a4Ecc2EA5B0cb3F441155b70F14F0E7",
+		lp_address: "0xD5d8C2E07a4Ecc2EA5B0cb3F441155b70F14F0E7",
+		isAutoCompounded: true,
+		synthetic: true,
+		underlyingVaults: [21, 20, 31, 41],
+		decimals: 18,
+		url_name: "xUSDC",
+		source: "https://app.trax.finance/etf-vaults/xUSDC",
+		alt1: "xUSDC logo",
+		logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/xUSDC/logo.png",
+		zap_currencies: [
+			{
+				symbol: "HONEY",
+				address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+				decimals: 18,
+			},
+			{
+				symbol: "BERA",
+				address: zeroAddress,
+				decimals: 18,
+			},
+		],
+	},
 ];
 
 const pools_json: PoolDef[] = [
@@ -2713,6 +2749,7 @@ const getActivePoolIdsOfAllPlatforms = () => {
 		[FarmOriginPlatform.Yeet.name]: [],
 		[FarmOriginPlatform.Bex.name]: [],
 		[FarmOriginPlatform.Wasabee.name]: [],
+		[FarmOriginPlatform.BeraTrax.name]: [],
 	};
 	//the BeraPaw pools are considered to be Kodiak pools and also have the entries in the BeraPaw object.
 	pools_json.forEach(({ id, originPlatform, secondary_platform, isUpcoming, isDeprecated }) => {
@@ -2725,6 +2762,9 @@ const getActivePoolIdsOfAllPlatforms = () => {
 		} else {
 			platformPools[originPlatform].push(id);
 		}
+	});
+	ETF_VAULTS.forEach((pool) => {
+		platformPools[FarmOriginPlatform.BeraTrax.name].push(pool.id);
 	});
 	return platformPools;
 };

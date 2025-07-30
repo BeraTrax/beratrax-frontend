@@ -119,9 +119,11 @@ const WalletProvider: React.FC<IProps> = ({
 					setIsGuest(true);
 					setIsSocial(false); // Guest is not social login
 
-					// Create guest wallet
-					const guestWallet = await createGuestWallet(80094); // Berachain chain ID
-					setCurrentWallet(guestWallet.account.address);
+					// Use the guest connector to connect with wagmi
+					const { accounts } = await connectAsync({
+						connector: walletConfig.connectors[1], // Guest connector is the second one
+					});
+					setCurrentWallet(accounts[0]);
 					return;
 				}
 
@@ -205,8 +207,8 @@ const WalletProvider: React.FC<IProps> = ({
 			try {
 				if (walletClients.current[chainId]) return walletClients.current[chainId];
 
-				// Use currentWallet for guest mode, address for other modes
-				const walletAddress = isGuest ? currentWallet : address;
+				// Use wagmi's address as primary source, fall back to currentWallet for guest mode
+				const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
 				if (!walletAddress) throw new Error("provider not found");
 
 				const chain = supportedChains.find((item) => item.id === chainId);
@@ -215,7 +217,7 @@ const WalletProvider: React.FC<IProps> = ({
 				let client: IClients["wallet"];
 
 				// Check if we're using guest mode
-				if (isGuest) {
+				if (isGuest || connector?.id === "guest") {
 					const guestWallet = await createGuestWallet(chainId);
 					client = guestWallet.client as IClients["wallet"];
 				}
@@ -243,28 +245,36 @@ const WalletProvider: React.FC<IProps> = ({
 						});
 					}
 				} else {
-					// For external wallets, use the wagmi client but skip chain switching for now
+					// For external wallets or guest wallet, use the wagmi client but skip chain switching for now
 					if (!getWalletClientHook) {
-						throw new Error("External wallet client not available - no wagmi wallet client found");
-					}
+						// If no wagmi wallet client is available, try to create one from the connector
+						if (connector?.id === "guest") {
+							// For guest wallet, create the wallet client directly
+							const guestWallet = await createGuestWallet(chainId);
+							client = guestWallet.client as IClients["wallet"];
+						} else {
+							throw new Error("External wallet client not available - no wagmi wallet client found");
+						}
+					} else {
+						// For external wallets, try to switch chain but don't fail if it doesn't work
+						try {
+							await switchChainAsyncHook({ chainId });
+						} catch (error) {
+							console.warn("Chain switching failed for external wallet:", error);
+							// Continue with current chain
+						}
 
-					// For external wallets, try to switch chain but don't fail if it doesn't work
-					try {
-						await switchChainAsyncHook({ chainId });
-					} catch (error) {
-						console.warn("Chain switching failed for external wallet:", error);
-						// Continue with current chain
+						// Use the wagmi client directly and cast it to our interface
+						// This works because both implement the same wallet client interface
+						client = getWalletClientHook as any;
 					}
-
-					// Use the wagmi client directly and cast it to our interface
-					// This works because both implement the same wallet client interface
-					client = getWalletClientHook as any;
 				}
 
 				client = client.extend((client) => ({
 					async sendTransaction(args) {
 						const publicClient = getPublicClient(chainId);
-						const walletAddress = isGuest ? currentWallet : address;
+						// For guest mode, use wagmi's address if available, otherwise fall back to currentWallet
+						const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
 
 						if (!walletAddress) {
 							throw new Error("Wallet address not found");
@@ -320,7 +330,8 @@ const WalletProvider: React.FC<IProps> = ({
 
 	const estimateTxGas = async (args: EstimateTxGasArgs) => {
 		const publicClient = getPublicClient(args.chainId);
-		const walletAddress = isGuest ? currentWallet : address;
+		// For guest mode, use wagmi's address if available, otherwise fall back to currentWallet
+		const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
 
 		if (!walletAddress) {
 			throw new Error("Wallet address not found");
@@ -385,13 +396,17 @@ const WalletProvider: React.FC<IProps> = ({
 			if (connector?.id === "web3Auth" || web3auth?.privKey) {
 				setIsSocial(true);
 			}
+			// Set isGuest flag if this is a guest connection
+			if (connector?.id === "guest") {
+				setIsGuest(true);
+			}
 		}
 	}, [status, address, connector, web3auth]);
 
 	const getPkey = async (): Promise<Hex | undefined> => {
 		try {
 			// Return guest private key if in guest mode
-			if (isGuest) {
+			if (isGuest || connector?.id === "guest") {
 				return GUEST_PRIVATE_KEY as Hex;
 			}
 

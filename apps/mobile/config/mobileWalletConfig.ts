@@ -5,6 +5,7 @@ import Web3Auth, { OPENLOGIN_NETWORK, LOGIN_PROVIDER } from "@web3auth/react-nat
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
 import { Web3AuthConnector } from "./web3authRnConnector";
+import { GuestConnector } from "./guestConnector";
 import { createConfig } from "wagmi";
 
 const scheme = "com.trax.mobile";
@@ -104,7 +105,7 @@ export const createMobileWalletConfig = (
 // Export the default config for initial setup with stable connector
 export const mobileWalletConfig = createConfig({
 	chains,
-	connectors: [web3AuthConnector],
+	connectors: [web3AuthConnector, GuestConnector()],
 	transports: chains.reduce<Record<number, Transport>>((acc, chain) => {
 		return {
 			...acc,

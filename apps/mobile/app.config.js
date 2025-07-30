@@ -43,6 +43,16 @@ export default {
 			"expo-router",
 			"expo-secure-store",
 			[
+				"expo-build-properties",
+				{
+					android: {
+						compileSdkVersion: 35,
+						targetSdkVersion: 35,
+						buildToolsVersion: "35.0.0",
+					},
+				},
+			],
+			[
 				"expo-splash-screen",
 				{
 					image: "./assets/images/splash-icon.png",

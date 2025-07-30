@@ -107,7 +107,7 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 		termsOfUseAgreed,
 	} = useAppSelector((state) => state.account);
 	const { earningsUsd, isVaultEarningsFirstLoad } = useAppSelector((state) => state.farms);
-	const { currentWallet, isConnecting, isSocial, getPublicClient } = useWallet();
+	const { currentWallet, isConnecting, isSocial, getPublicClient, isGuest, logout } = useWallet();
 	const { disconnect } = useDisconnect();
 	const { switchChain } = useSwitchChain();
 	const { openConnectModal } = useConnectModal();
@@ -324,7 +324,7 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 								)}
 								<PowerIcon
 									onPress={() => {
-										disconnect();
+										isGuest ? logout() : disconnect();
 									}}
 									size={42}
 									strokeWidth={2}

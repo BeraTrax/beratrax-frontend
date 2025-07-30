@@ -56,6 +56,7 @@ export interface IWalletContext {
 	estimateTxGas: (args: EstimateTxGasArgs) => Promise<bigint>;
 	connectWeb3Auth: () => Promise<any>;
 	connector?: Connector;
+	isGuest?: boolean;
 }
 
 export const WalletContext = React.createContext<IWalletContext>({} as IWalletContext);
@@ -348,6 +349,7 @@ const WalletProvider: React.FC<IProps> = ({ children }) => {
 				getWalletClient,
 				getClients,
 				connector,
+				isGuest: false,
 			}}
 		>
 			{children}

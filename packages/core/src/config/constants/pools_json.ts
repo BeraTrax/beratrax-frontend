@@ -2749,7 +2749,6 @@ const getActivePoolIdsOfAllPlatforms = () => {
 		[FarmOriginPlatform.Yeet.name]: [],
 		[FarmOriginPlatform.Bex.name]: [],
 		[FarmOriginPlatform.Wasabee.name]: [],
-		[FarmOriginPlatform.BeraTrax.name]: [],
 	};
 	//the BeraPaw pools are considered to be Kodiak pools and also have the entries in the BeraPaw object.
 	pools_json.forEach(({ id, originPlatform, secondary_platform, isUpcoming, isDeprecated }) => {
@@ -2762,9 +2761,6 @@ const getActivePoolIdsOfAllPlatforms = () => {
 		} else {
 			platformPools[originPlatform].push(id);
 		}
-	});
-	ETF_VAULTS.forEach((pool) => {
-		platformPools[FarmOriginPlatform.BeraTrax.name].push(pool.id);
 	});
 	return platformPools;
 };

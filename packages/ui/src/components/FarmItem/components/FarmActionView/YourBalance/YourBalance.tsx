@@ -1,4 +1,4 @@
-import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import { PoolDef, tokenNamesAndImages, ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { useFarmDetails } from "@beratrax/core/src/state/farms/hooks";
 import useTokens from "@beratrax/core/src/state/tokens/useTokens";
@@ -24,7 +24,7 @@ const TokenEarning = ({
 	token: string | undefined;
 	chainId: number;
 	prices: Record<number, Record<string, number>>;
-	farm: PoolDef;
+	farm: PoolDef | ETFVaultDef;
 	changeInAssets: string | number | undefined;
 	lifetimeEarnings: string | number | undefined;
 }) => {
@@ -117,7 +117,7 @@ const TokenEarning = ({
 						<Text className="text-blue-500 text-lg font-medium flex items-center gap-x-2">
 							${customCommify(lifetimeEarningsUsd, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
 						</Text>
-						{farm.apyBasedEarnings || typeof lifetimeEarnings === "string" ? null : (
+						{("apyBasedEarnings" in farm && farm.apyBasedEarnings) || typeof lifetimeEarnings === "string" ? null : (
 							<View className="group relative">
 								<Text className="h-4 w-4 cursor-pointer text-textSecondary text-sm">?</Text>
 								<View className="absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
@@ -198,7 +198,7 @@ const LpAssetChange = ({
 	);
 };
 
-const YourBalance = ({ farm }: { farm: PoolDef }) => {
+const YourBalance = ({ farm }: { farm: PoolDef | ETFVaultDef }) => {
 	const { currentWallet, isConnecting } = useWallet();
 	const { balances, isBalancesLoading: isLoading, prices } = useTokens();
 	const { vaultEarnings, isLoadingVaultEarnings, isVaultEarningsFirstLoad } = useFarmDetails();
@@ -298,7 +298,7 @@ const YourBalance = ({ farm }: { farm: PoolDef }) => {
 				farm.originPlatform === FarmOriginPlatform.Trax.name) &&
 			!farm.isDeprecated ? (
 				<View className="flex flex-col md:flex-row gap-4 pr-4">
-					{renderEarningsSection()}
+					{!farm.isETFVault ? renderEarningsSection() : null}
 					{renderPositionSection()}
 				</View>
 			) : (

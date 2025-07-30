@@ -1,5 +1,5 @@
 import { Balances, Decimals, Prices, TotalSupplies } from "../tokens/types";
-import { PoolDef } from "./../../config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "./../../config/constants/pools_json";
 import { FarmData, IClients } from "./../../types";
 import { FarmTransactionType, FarmOriginPlatform } from "./../../types/enums";
 
@@ -32,7 +32,7 @@ export interface FarmDetails {
 }
 
 export interface FetchFarmDetailsAction {
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 	totalSupplies: TotalSupplies;
 	currentWallet: string;
 	getPublicClient: (chainId: number) => IClients["public"];
@@ -55,7 +55,7 @@ export interface VaultEarnings {
 }
 
 export interface FetchEarningsAction {
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 	currentWallet: string;
 	decimals: Decimals;
 	prices: Prices;

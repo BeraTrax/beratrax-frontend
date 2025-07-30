@@ -1,4 +1,4 @@
-import { PoolDef } from "../../config/constants/pools_json";
+import { ETFVaultDef, PoolDef } from "../../config/constants/pools_json";
 import { IClients } from "../../types";
 import { Address, PublicClient } from "viem";
 
@@ -52,7 +52,7 @@ export interface GetOldPricesActionPayload {
 		tokenId: string;
 		blockTimestamp: string;
 	}[];
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 }
 
 export interface Prices {
@@ -61,12 +61,12 @@ export interface Prices {
 
 export interface UpdateBalancesActionPayload {
 	account: Address;
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 	getPublicClient: (chainId: number) => IClients["public"];
 }
 
 export interface UpdateTotalSuppliesActionPayload {
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 	getPublicClient: (chainId: number) => IClients["public"];
 }
 
@@ -106,7 +106,7 @@ export interface SupplyValue {
 }
 
 export interface UpdateDecimalsActionPayload {
-	farms: PoolDef[];
+	farms: (PoolDef | ETFVaultDef)[];
 	getPublicClient: (chainId: number) => IClients["public"];
 }
 

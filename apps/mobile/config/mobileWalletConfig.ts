@@ -5,9 +5,10 @@ import Web3Auth, { OPENLOGIN_NETWORK, LOGIN_PROVIDER } from "@web3auth/react-nat
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
 import { Web3AuthConnector } from "./web3authRnConnector";
+import { GuestConnector } from "./guestConnector";
 import { createConfig } from "wagmi";
 
-const scheme = "com.beratrax.mobile";
+const scheme = "com.trax.mobile";
 const redirectUrl = `${scheme}://auth`;
 
 const clientId = "BFMP__u_AAiJT5_Hj1dDBpCCHKB0tLxRbFuUQsBE2BBqxamxWKkSwNW_hk7zHjfbHr0eHV7nWC8qukXPCZL9Ov4";
@@ -64,7 +65,7 @@ const createWeb3AuthConnector = (
 	return Web3AuthConnector({
 		web3AuthInstance: web3auth,
 		loginParams: {
-			redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+			redirectUrl: Linking.createURL("web3auth", { scheme: "com.trax.mobile" }),
 			mfaLevel: "default",
 			loginProvider: provider,
 			extraLoginOptions: {
@@ -78,7 +79,7 @@ const createWeb3AuthConnector = (
 const web3AuthConnector = Web3AuthConnector({
 	web3AuthInstance: web3auth,
 	loginParams: {
-		redirectUrl: Linking.createURL("web3auth", { scheme: "com.beratrax.mobile" }),
+		redirectUrl: Linking.createURL("web3auth", { scheme: "com.trax.mobile" }),
 		mfaLevel: "default",
 		loginProvider: LOGIN_PROVIDER.GOOGLE, // Default provider
 	},
@@ -104,7 +105,7 @@ export const createMobileWalletConfig = (
 // Export the default config for initial setup with stable connector
 export const mobileWalletConfig = createConfig({
 	chains,
-	connectors: [web3AuthConnector],
+	connectors: [web3AuthConnector, GuestConnector()],
 	transports: chains.reduce<Record<number, Transport>>((acc, chain) => {
 		return {
 			...acc,

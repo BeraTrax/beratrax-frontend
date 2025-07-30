@@ -14,6 +14,7 @@ import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { TRAX_TOKEN_ADDRESS } from "@beratrax/core/src/config/constants";
 import { Pressable, Text, View, Platform, Image } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
+import { ModalLayout } from "@beratrax/ui/src/components/modals/ModalLayout/ModalLayout";
 interface WarningModalProps {
 	isOpen: boolean;
 	onClose: () => void;
@@ -25,19 +26,19 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
 	if (!isOpen) return null;
 
 	return (
-		<View className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+		<ModalLayout onClose={onClose} wrapperClassName="w-[90vw] max-w-[500px]">
 			<View className="bg-bgSecondary rounded-3xl p-6 max-w-lg w-full mx-4 border border-borderDark">
 				<View className="w-full mb-4">
 					<View className="overflow-y-auto pr-2 pt-4 text-justify normal-case text-sm font-league-spartan">
-						<Text className="text-2xl font-bold text-center text-textWhite">Important Notice!</Text>
-						<Text className="text-base text-textWhite">
+						<Text className="text-2xl font-bold text-center text-textWhite font-league-spartan">Important Notice!</Text>
+						<Text className="text-base text-textWhite font-league-spartan">
 							You are choosing to withdraw your staked TRAX tokens. You understand that after this transaction, you will receive your staked
 							tokens and any pending rewards. You recognize that you won't be able to stake these tokens again in this pool after
 							withdrawal.
 						</Text>
 					</View>
 				</View>
-				<View className="flex justify-end gap-4">
+				<View className="flex flex-row justify-end gap-4">
 					<Pressable className="bg-gray-500 p-4 rounded-xl w-32 font-league-spartan text-textWhite" onPress={onClose}>
 						<Text>Cancel</Text>
 					</Pressable>
@@ -46,11 +47,11 @@ const WithdrawWarningModal = ({ isOpen, onClose, onConfirm, isLoading }: Warning
 						disabled={isLoading}
 						onPress={onConfirm}
 					>
-						{isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : <Text>I understand</Text>}
+						{isLoading ? <ImSpinner8 className="animate-spin mx-auto" /> : "I understand"}
 					</Pressable>
 				</View>
 			</View>
-		</View>
+		</ModalLayout>
 	);
 };
 
@@ -232,10 +233,16 @@ export const TraxAirdropVault = () => {
 					</View>
 				</View>
 				<View className="flex-col gap-1">
-					<View className="flex items-center gap-1 mb-2 justify-end">
+					<View className="flex flex-row items-center gap-1 mb-2 justify-end">
 						<FarmRowChip text={FarmOriginPlatform.Trax.name} color="invert" />
 						<View className="flex">
-							<Image alt="Trax" className="w-4 rounded-full border border-bgDark" source={{ uri: "trax.png" }} />
+							<Image
+								alt="Trax"
+								className="w-4 h-4 rounded-full border border-bgDark"
+								source={{ uri: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png" }}
+								style={{ width: 16, height: 16 }}
+								resizeMode="contain"
+							/>
 						</View>
 					</View>
 				</View>

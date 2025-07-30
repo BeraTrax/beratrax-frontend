@@ -1,7 +1,7 @@
 import React from "react";
 import { CircleOneIcon } from "@beratrax/ui/src/icons/CircleOne";
 import { CancelOutlineIcon } from "@beratrax/ui/src/icons/CancelOutline";
-import { PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
+import { ETFVaultDef, PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { Transaction, TransactionStepStatus } from "@beratrax/core/src/state/transactions/types";
 import useTransaction from "@beratrax/core/src/state/transactions/useTransaction";
 import { formatCurrency } from "@beratrax/core/src/utils/common";
@@ -24,11 +24,11 @@ type IProps =
 			open: boolean;
 			showLoadingBar?: boolean;
 			tx: Transaction;
-			farm: PoolDef;
+			farm: PoolDef | ETFVaultDef;
 	  };
 
 const TransactionDetails: React.FC<IProps> = (args) => {
-	let farm: PoolDef | undefined = args.farm;
+	let farm: PoolDef | ETFVaultDef | undefined = args.farm;
 	let tx: Transaction | undefined = args.tx;
 	const obj = useTransaction(args.transactionId);
 	farm = obj?.farm;

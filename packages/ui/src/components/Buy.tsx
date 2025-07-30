@@ -9,6 +9,9 @@ import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 import coinbaseLogo from "@beratrax/core/src/assets/images/coinbaselogo.png";
 import { WebView } from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useWallet } from "@beratrax/core/src/hooks";
+import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 
 interface Service {
 	id: string;
@@ -151,7 +154,10 @@ const OnRamp = ({ isVisible, onClose, service, displayAmount, address }: OnRampP
 };
 
 export const Buy = (): React.JSX.Element => {
-	const { address } = useAccount();
+	const { address, isConnected } = useAccount();
+	const { openConnectModal } = useConnectModal();
+	const { connectWallet } = useWallet();
+	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [userCountryCode, setUserCountryCode] = useState<string>("");
 	const [userSubDivisionCode, setUserSubDivisionCode] = useState<string>("");
 	const [onrampOptions, setOnrampOptions] = useState<any>(null);
@@ -286,6 +292,41 @@ export const Buy = (): React.JSX.Element => {
 			setIsWebViewVisible(true);
 		}
 	};
+
+	const handleConnect = () => {
+		if (Platform.OS === "web" && openConnectModal) {
+			openConnectModal();
+		} else {
+			setShowLoginModal(true);
+		}
+	};
+
+	// If user is not connected, show connect wallet message
+	if (!isConnected) {
+		return (
+			<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
+				<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
+					<Text className="font-arame-mono text-2xl font-bold mb-6 text-center text-textWhite uppercase">BUY CRYPTO</Text>
+
+					<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-6 mb-4 w-full">
+						<View className="flex flex-col items-center justify-center py-12">
+							<Text className="text-textWhite text-xl font-medium mb-4 text-center">Connect Your Wallet</Text>
+							<Text className="text-textSecondary text-center mb-6">Please connect your wallet to access the buy crypto feature</Text>
+							<Pressable onPress={handleConnect} className="bg-buttonPrimary text-bgDark font-semibold text-lg px-8 py-4 rounded-lg">
+								<Text className="font-league-spartan text-center text-bgDark text-lg font-semibold">Connect Wallet</Text>
+							</Pressable>
+						</View>
+					</View>
+				</View>
+
+				{/* Login Modal for mobile */}
+				{showLoginModal && connectWallet && (
+					// @ts-ignore
+					<LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />
+				)}
+			</ScrollView>
+		);
+	}
 
 	return (
 		<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">

@@ -11,11 +11,13 @@ import Web3Auth, { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
 import { ethereumPrivateKeyProvider } from "@beratrax/mobile/config/ethereumProvider";
 import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
+import { createGuestWallet, isGuestEmail, GUEST_PRIVATE_KEY } from "@beratrax/mobile/config/guestWallet";
 export interface IWalletContext {
 	currentWallet?: Address;
 	logout: () => void;
 	getPkey: () => Promise<string | undefined>;
 	isSocial: boolean;
+	isGuest?: boolean; // Optional since it's mobile-only
 	isConnecting: boolean;
 	isSponsored: boolean;
 	getPublicClient: (chainId: number) => IClients["public"];
@@ -61,6 +63,7 @@ const WalletProvider: React.FC<IProps> = ({
 	const [isReconnectingTimeout, setIsReconnectingTimeout] = useState(false);
 	const [isConnecting, setIsConnecting] = useState(false);
 	const [isSocial, setIsSocial] = useState(false);
+	const [isGuest, setIsGuest] = useState(false);
 	const [currentWallet, setCurrentWallet] = useState<Address | undefined>();
 	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
 	const [hasInitialized, setHasInitialized] = useState(false);
@@ -111,6 +114,22 @@ const WalletProvider: React.FC<IProps> = ({
 			try {
 				setIsConnecting(true);
 
+				// Check if this is a guest login
+				if (email && isGuestEmail(email)) {
+					setIsGuest(true);
+					setIsSocial(false); // Guest is not social login
+
+					// Use the guest connector to connect with wagmi
+					const { accounts } = await connectAsync({
+						connector: walletConfig.connectors[1], // Guest connector is the second one
+					});
+					setCurrentWallet(accounts[0]);
+					return;
+				}
+
+				// Regular Web3Auth login
+				setIsGuest(false);
+
 				// Update the connector's login parameters before connecting
 				const connector = walletConfig.connectors[0] as any;
 				if (connector.setLoginParams) {
@@ -132,6 +151,7 @@ const WalletProvider: React.FC<IProps> = ({
 			} catch (error) {
 				console.error("Login error:", error);
 				setIsSocial(false);
+				setIsGuest(false);
 				throw error;
 			} finally {
 				setIsConnecting(false);
@@ -187,16 +207,22 @@ const WalletProvider: React.FC<IProps> = ({
 			try {
 				if (walletClients.current[chainId]) return walletClients.current[chainId];
 
-				if (!address) throw new Error("provider not found");
+				// Use wagmi's address as primary source, fall back to currentWallet for guest mode
+				const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
+				if (!walletAddress) throw new Error("provider not found");
 
 				const chain = supportedChains.find((item) => item.id === chainId);
 				if (!chain) throw new Error("chain not found");
 
-				// Check if we're using Web3Auth - multiple ways to detect this
-				const isUsingWeb3Auth = isSocial || web3auth?.privKey || connector?.id === "web3Auth";
-
 				let client: IClients["wallet"];
-				if (isUsingWeb3Auth) {
+
+				// Check if we're using guest mode
+				if (isGuest || connector?.id === "guest") {
+					const guestWallet = await createGuestWallet(chainId);
+					client = guestWallet.client as IClients["wallet"];
+				}
+				// Check if we're using Web3Auth - multiple ways to detect this
+				else if (isSocial || web3auth?.privKey || connector?.id === "web3Auth") {
 					// If we detect Web3Auth but don't have the private key yet, it might be a timing issue
 					if (!web3auth || !web3auth.privKey) {
 						// If wagmi thinks we're connected but Web34Auth isn't ready, this might be a timing issue
@@ -219,33 +245,47 @@ const WalletProvider: React.FC<IProps> = ({
 						});
 					}
 				} else {
-					// For external wallets, use the wagmi client but skip chain switching for now
+					// For external wallets or guest wallet, use the wagmi client but skip chain switching for now
 					if (!getWalletClientHook) {
-						throw new Error("External wallet client not available - no wagmi wallet client found");
-					}
+						// If no wagmi wallet client is available, try to create one from the connector
+						if (connector?.id === "guest") {
+							// For guest wallet, create the wallet client directly
+							const guestWallet = await createGuestWallet(chainId);
+							client = guestWallet.client as IClients["wallet"];
+						} else {
+							throw new Error("External wallet client not available - no wagmi wallet client found");
+						}
+					} else {
+						// For external wallets, try to switch chain but don't fail if it doesn't work
+						try {
+							await switchChainAsyncHook({ chainId });
+						} catch (error) {
+							console.warn("Chain switching failed for external wallet:", error);
+							// Continue with current chain
+						}
 
-					// For external wallets, try to switch chain but don't fail if it doesn't work
-					try {
-						await switchChainAsyncHook({ chainId });
-					} catch (error) {
-						console.warn("Chain switching failed for external wallet:", error);
-						// Continue with current chain
+						// Use the wagmi client directly and cast it to our interface
+						// This works because both implement the same wallet client interface
+						client = getWalletClientHook as any;
 					}
-
-					// Use the wagmi client directly and cast it to our interface
-					// This works because both implement the same wallet client interface
-					client = getWalletClientHook as any;
 				}
 
 				client = client.extend((client) => ({
 					async sendTransaction(args) {
 						const publicClient = getPublicClient(chainId);
+						// For guest mode, use wagmi's address if available, otherwise fall back to currentWallet
+						const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
+
+						if (!walletAddress) {
+							throw new Error("Wallet address not found");
+						}
+
 						const gas =
 							((await publicClient.estimateGas({
 								to: args.to,
 								data: args.data,
 								value: args.value,
-								account: address,
+								account: walletAddress,
 							})) *
 								120n) /
 							100n; // increase gas by 20%
@@ -253,14 +293,14 @@ const WalletProvider: React.FC<IProps> = ({
 						const gasLimit = gasPrice * gas;
 						const sponsored = await requestEthForGas({
 							chainId: chainId,
-							from: address,
+							from: walletAddress,
 							to: args.to!,
 							data: args.data as any,
 							value: args.value,
 							ethAmountForGas: gasLimit,
 						});
 						if (!sponsored.status && args.value) {
-							const userBalance = await publicClient.getBalance({ address });
+							const userBalance = await publicClient.getBalance({ address: walletAddress });
 							if (userBalance >= args.value + gasLimit) {
 								// User has sufficient balance, no need to modify args.value
 							} else {
@@ -285,13 +325,20 @@ const WalletProvider: React.FC<IProps> = ({
 				throw error;
 			}
 		},
-		[address, isSocial, getWalletClientHook, switchChainAsyncHook, web3auth, connector, hasInitialized]
+		[address, currentWallet, isSocial, isGuest, getWalletClientHook, switchChainAsyncHook, web3auth, connector, hasInitialized]
 	);
 
 	const estimateTxGas = async (args: EstimateTxGasArgs) => {
 		const publicClient = getPublicClient(args.chainId);
+		// For guest mode, use wagmi's address if available, otherwise fall back to currentWallet
+		const walletAddress = isGuest || connector?.id === "guest" ? address || currentWallet : address;
+
+		if (!walletAddress) {
+			throw new Error("Wallet address not found");
+		}
+
 		return await publicClient.estimateGas({
-			account: address,
+			account: walletAddress,
 			data: args.data,
 			to: args.to,
 			value: args.value ? BigInt(args.value) : undefined,
@@ -321,6 +368,7 @@ const WalletProvider: React.FC<IProps> = ({
 			setIsReconnectingTimeout(false);
 			setCurrentWallet(undefined);
 			setIsSocial(false);
+			setIsGuest(false);
 		} catch (error) {
 			console.error("Error during logout:", error);
 		}
@@ -338,6 +386,7 @@ const WalletProvider: React.FC<IProps> = ({
 			setIsReconnectingTimeout(false);
 			setCurrentWallet(undefined);
 			setIsSocial(false);
+			setIsGuest(false);
 			// Don't reset isWeb3AuthReady here - Web3Auth itself might still be ready
 		} else if (status === "connected" && address) {
 			// Sync wagmi address with local state
@@ -347,11 +396,20 @@ const WalletProvider: React.FC<IProps> = ({
 			if (connector?.id === "web3Auth" || web3auth?.privKey) {
 				setIsSocial(true);
 			}
+			// Set isGuest flag if this is a guest connection
+			if (connector?.id === "guest") {
+				setIsGuest(true);
+			}
 		}
 	}, [status, address, connector, web3auth]);
 
 	const getPkey = async (): Promise<Hex | undefined> => {
 		try {
+			// Return guest private key if in guest mode
+			if (isGuest || connector?.id === "guest") {
+				return GUEST_PRIVATE_KEY as Hex;
+			}
+
 			if (web3auth && web3auth.privKey) {
 				const cleanPrivateKey = web3auth.privKey.startsWith("0x") ? web3auth.privKey.slice(2) : web3auth.privKey;
 				return ("0x" + cleanPrivateKey) as Hex;
@@ -367,6 +425,7 @@ const WalletProvider: React.FC<IProps> = ({
 		() => ({
 			currentWallet: address || currentWallet, // Prefer wagmi address as source of truth
 			isSocial,
+			isGuest,
 			isConnecting: isConnecting || wagmiIsConnecting,
 			isSponsored,
 			connector,
@@ -382,6 +441,7 @@ const WalletProvider: React.FC<IProps> = ({
 			address,
 			currentWallet,
 			isSocial,
+			isGuest,
 			isConnecting,
 			wagmiIsConnecting,
 			isSponsored,

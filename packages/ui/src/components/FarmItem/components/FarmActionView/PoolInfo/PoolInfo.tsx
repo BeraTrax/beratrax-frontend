@@ -121,7 +121,7 @@ const PoolInfo = ({ farm, marketCap, vaultTvl, marketCapLoading, vaultTvlLoading
 						<>
 							<Text className="text-textWhite mt-2 text-[16px] font-light font-league-spartan">
 								Synthetic Reward Vaults are deposits into Rewards Vaults where the BGT is always claimed as a BGT liquid wrapper and
-								autocompound. BeraTrax always claims the BGT wrapper that is the highest price that minute. The current wrappers that are
+								autocompound. Trax always claims the BGT wrapper that is the highest price that minute. The current wrappers that are
 								supported for compounding:
 							</Text>
 							<View className="mt-4 overflow-hidden rounded-xl bg-bgSecondary">

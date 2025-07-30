@@ -11,17 +11,19 @@ export default {
 		slug: "mobile",
 		version: "1.0.0",
 		orientation: "portrait",
-		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/beratrax-logo/logo.png",
-		scheme: "com.beratrax.mobile",
+		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png",
+		scheme: "com.trax.mobile",
 		userInterfaceStyle: "automatic",
 		newArchEnabled: true,
 		jsEngine: "hermes",
 		ios: {
 			supportsTablet: true,
-			bundleIdentifier: "com.beratrax.mobile",
+			bundleIdentifier: "com.trax.mobile",
 			permissions: ["CAMERA", "INTERNET"],
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
+				NSCameraUsageDescription:
+					"This app uses the camera to securely capture identification documents for KYC verification through Transak.",
 			},
 		},
 		android: {
@@ -30,7 +32,7 @@ export default {
 				backgroundColor: "#ffffff",
 			},
 			permissions: ["CAMERA", "INTERNET"],
-			package: "com.beratrax.mobile",
+			package: "com.trax.mobile",
 		},
 		web: {
 			bundler: "metro",
@@ -40,6 +42,16 @@ export default {
 		plugins: [
 			"expo-router",
 			"expo-secure-store",
+			[
+				"expo-build-properties",
+				{
+					android: {
+						compileSdkVersion: 35,
+						targetSdkVersion: 35,
+						buildToolsVersion: "35.0.0",
+					},
+				},
+			],
 			[
 				"expo-splash-screen",
 				{

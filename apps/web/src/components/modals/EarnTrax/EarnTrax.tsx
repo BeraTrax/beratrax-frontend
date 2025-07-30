@@ -38,7 +38,7 @@ export const EarnTrax: FC<IProps> = ({ setOpenModal, setCongModal }) => {
 			<p className={styles.description}>Effective Date: 02/05/2025</p>
 			<div className={styles.terms}>
 				These BTX Token Terms of Use (the "Terms") govern your receipt and use of the BTX token ("BTX" or "Token") issued by Beratrax DAO
-				LLC ("Beratrax DAO," "we," "us," or "our"). By accessing, staking, holding, or using BTX in any manner (“Use”), you acknowledge that
+				LLC ("Trax DAO," "we," "us," or "our"). By accessing, staking, holding, or using BTX in any manner (“Use”), you acknowledge that
 				you have read, understood, and agree to be bound by these Terms and the Operating Agreement of Beratrax DAO. They are in addition to
 				the website terms and conditions, which you also affirming you agree in these terms. The website terms and conditions can be found{" "}
 				<a href="termsofuse.pdf" target="_blank">

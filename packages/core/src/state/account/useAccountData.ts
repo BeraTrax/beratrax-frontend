@@ -20,7 +20,7 @@ const useAccountDataWeb = () => {
 		() =>
 			referralCode
 				? `${
-						window.location.origin.includes("staging") ? "https://beta.beratrax.com" : window.location.origin
+						window.location.origin.includes("staging") ? "https://app.trax.finance" : window.location.origin
 					}/${encodeURIComponent(referralCode)}`
 				: undefined,
 		[referralCode]

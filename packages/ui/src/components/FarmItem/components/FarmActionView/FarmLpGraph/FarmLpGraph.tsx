@@ -281,7 +281,6 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 								<VictoryAxis
 									style={{
 										axis: { stroke: "#888" },
-										grid: { stroke: "#444", strokeDasharray: "4,8" },
 										tickLabels: { fill: "#ccc", fontSize: screenWidth < 576 ? 8 : 10, padding: 5 },
 									}}
 									tickCount={xAxisTickCount}
@@ -291,7 +290,6 @@ const FarmLpGraph = ({ farm }: { farm: PoolDef }) => {
 									dependentAxis
 									style={{
 										axis: { stroke: "#888" },
-										grid: { stroke: "#444", strokeDasharray: "4,8" },
 										tickLabels: { fill: "#ccc", fontSize: screenWidth < 576 ? 8 : 10, padding: 5 },
 									}}
 									tickFormat={(y) => y.toFixed(screenWidth < 576 ? 1 : 2)}

@@ -36,7 +36,7 @@ export const FarmTVL: React.FC = () => {
 					<tbody>
 						<>
 							{farms.map((farm) => (
-								<FarmTVLRow key={uuid()} farm={farm} />
+								<FarmTVLRow key={uuid()} farm={farm as PoolDef} />
 							))}
 						</>
 					</tbody>

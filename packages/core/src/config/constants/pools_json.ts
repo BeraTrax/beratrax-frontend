@@ -9,6 +9,7 @@ export interface PoolDef {
 	isStablePool?: boolean;
 	isAutoCompounded?: boolean;
 	isBoosted?: boolean;
+	isETFVault?: boolean;
 	id: number;
 	stableCoin?: boolean;
 	originPlatform: FarmOriginName;
@@ -74,6 +75,155 @@ export interface PoolDef {
 		decimals: number;
 	}[];
 }
+
+export interface ETFVaultDef {
+	id: number;
+	isETFVault: boolean;
+	chainId: CHAIN_ID;
+	name: string;
+	underlyingAPR: string;
+	apy: string;
+	source: string;
+	url_name: string;
+	createdOn: string;
+	originPlatform: FarmOriginName;
+	platform_logo: FarmOriginLogo;
+	platform_alt: string;
+	description: string;
+	vault_addr: Address;
+	isAutoCompounded: boolean;
+	synthetic: boolean;
+	underlyingVaults: number[];
+	decimals: number;
+	lp_address: Address;
+	platform?: string;
+	isDeprecated?: boolean;
+	alt1: string;
+	alt2?: string;
+	alt3?: string;
+	alt4?: string;
+	logo1: string;
+	logo2?: string;
+	logo3?: string;
+	logo4?: string;
+	zap_currencies?: {
+		symbol: string;
+		address: Address;
+		decimals: number;
+	}[];
+}
+
+// Hardcoded ETF Vault data
+export const ETF_VAULTS: ETFVaultDef[] = [
+	// {
+	// 	id: 1004,
+	// 	isETFVault: true,
+	// 	chainId: CHAIN_ID.BERACHAIN,
+	// 	name: "xBGT",
+	// 	underlyingAPR: "240.1%",
+	// 	apy: "240.1%",
+	// 	createdOn: "June 16, 2025",
+	// 	platform: FarmOriginPlatform.Trax.name,
+	// 	originPlatform: FarmOriginPlatform.Trax.name,
+	// 	platform_logo: FarmOriginPlatform.Trax.logo,
+	// 	platform_alt: "Trax logo",
+	// 	description: "iBGT + StLBGT + StYBGT ETF vault for exposure to Trax's core growth.",
+	// 	vault_addr: "0x6aa99a8100F7223dFfea6C2E7DBC7a51C8723870",
+	// 	lp_address: "0x6aa99a8100F7223dFfea6C2E7DBC7a51C8723870",
+	// 	isAutoCompounded: true,
+	// 	synthetic: true,
+	// 	underlyingVaults: [7, 43, 47],
+	// 	decimals: 18,
+	// 	url_name: "xBGT",
+	// 	source: "https://app.trax.finance/etf-vaults/xBGT",
+	// 	alt1: "xBGT logo",
+	// 	logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/xBGT/logo.png",
+	// 	zap_currencies: [
+	// 		{
+	// 			symbol: "HONEY",
+	// 			address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+	// 			decimals: 18,
+	// 		},
+	// 		{
+	// 			symbol: "BERA",
+	// 			address: zeroAddress,
+	// 			decimals: 18,
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	id: 1005,
+	// 	isETFVault: true,
+	// 	chainId: CHAIN_ID.BERACHAIN,
+	// 	name: "xUSD",
+	// 	underlyingAPR: "240.1%",
+	// 	apy: "240.1%",
+	// 	createdOn: "June 16, 2025",
+	// 	platform: FarmOriginPlatform.Trax.name,
+	// 	originPlatform: FarmOriginPlatform.Trax.name,
+	// 	platform_logo: FarmOriginPlatform.Trax.logo,
+	// 	platform_alt: "Trax logo",
+	// 	description: "USDC-HONEY + HONEY-BYUSD + HONEY-rUSD + USDa-sUSDa ETF vault for exposure to Trax's core growth.",
+	// 	vault_addr: "0xD5d8C2E07a4Ecc2EA5B0cb3F441155b70F14F0E7",
+	// 	lp_address: "0xD5d8C2E07a4Ecc2EA5B0cb3F441155b70F14F0E7",
+	// 	isAutoCompounded: true,
+	// 	synthetic: true,
+	// 	underlyingVaults: [21, 20, 31, 41],
+	// 	decimals: 18,
+	// 	url_name: "xUSDC",
+	// 	source: "https://app.trax.finance/etf-vaults/xUSDC",
+	// 	alt1: "xUSDC logo",
+	// 	logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/xUSDC/logo.png",
+	// 	zap_currencies: [
+	// 		{
+	// 			symbol: "HONEY",
+	// 			address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+	// 			decimals: 18,
+	// 		},
+	// 		{
+	// 			symbol: "BERA",
+	// 			address: zeroAddress,
+	// 			decimals: 18,
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	id: 1006,
+	// 	isETFVault: true,
+	// 	chainId: CHAIN_ID.BERACHAIN,
+	// 	name: "xBTC",
+	// 	underlyingAPR: "240.1%",
+	// 	apy: "240.1%",
+	// 	createdOn: "June 16, 2025",
+	// 	platform: FarmOriginPlatform.Trax.name,
+	// 	originPlatform: FarmOriginPlatform.Trax.name,
+	// 	platform_logo: FarmOriginPlatform.Trax.logo,
+	// 	platform_alt: "Trax logo",
+	// 	description: "wBTC-SolvBTC + SolvBTC-xSolvBTC + wBTC-SolvBTC-xSolvBTC ETF vault for exposure to Trax's core growth.",
+	// 	vault_addr: "0x671126aE6A5FF94C820bdB24d44615412d580693",
+	// 	lp_address: "0x671126aE6A5FF94C820bdB24d44615412d580693",
+	// 	isAutoCompounded: true,
+	// 	synthetic: true,
+	// 	underlyingVaults: [38, 37, 50],
+	// 	decimals: 18,
+	// 	url_name: "xBTC",
+	// 	source: "https://app.trax.finance/etf-vaults/xBTC",
+	// 	alt1: "xBTC logo",
+	// 	logo1: "https://raw.githubusercontent.com/BeraTrax/tokens/main/etfs/xBTC/logo.png",
+	// 	zap_currencies: [
+	// 		{
+	// 			symbol: "HONEY",
+	// 			address: "0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce",
+	// 			decimals: 18,
+	// 		},
+	// 		{
+	// 			symbol: "BERA",
+	// 			address: zeroAddress,
+	// 			decimals: 18,
+	// 		},
+	// 	],
+	// },
+];
 
 const pools_json: PoolDef[] = [
 	{

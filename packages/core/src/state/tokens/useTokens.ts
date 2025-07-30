@@ -68,11 +68,15 @@ const useTokens = () => {
 		const set = new Set<Address>();
 		const arr: { address: Address; decimals: number }[] = [];
 		for (const farm of farms) {
-			set.add(farm.token1);
-			if (farm.token2) set.add(farm.token2);
+			if ("token1" in farm) {
+				set.add(farm.token1);
+			}
+			if ("token2" in farm) {
+				farm.token2 && set.add(farm.token2);
+			}
 		}
 		set.forEach((address) => {
-			const farm = farms.find((farm) => farm.token1 === address || farm.token2 === address);
+			const farm = farms.find((farm) => ("token1" in farm && farm.token1 === address) || ("token2" in farm && farm.token2 === address));
 			if (farm) {
 				const decimal = decimals[farm.chainId][address] || 18;
 				arr.push({ address: address as Address, decimals: decimal });
@@ -100,8 +104,8 @@ const useTokens = () => {
 
 	useEffect(() => {
 		const tokens: Token[] = tokenAddresses.map(({ address, decimals }) => {
-			const farm = farms.find((farm) => farm.token1 === address || farm.token2 === address)!;
-			const isToken1 = farm?.token1 === address;
+			const farm = farms.find((farm) => ("token1" in farm && farm.token1 === address) || ("token2" in farm && farm.token2 === address))!;
+			const isToken1 = "token1" in farm && farm.token1 === address;
 			let obj: Token = {
 				address: address,
 				decimals: decimals,
@@ -109,7 +113,7 @@ const useTokens = () => {
 				balance: balances[farm.chainId][address]?.valueFormatted ?? "0",
 				usdBalance: balances[farm.chainId][address]?.valueUsdFormatted ?? "0",
 				logo: isToken1 ? farm?.logo1 : farm?.logo2 || "",
-				name: isToken1 ? farm?.name1 : farm?.name2 || "",
+				name: isToken1 ? farm?.name1 : "token2" in farm ? farm?.name2 || "" : "",
 				price: prices[farm.chainId]?.[address],
 				networkId: farm.chainId,
 			};
@@ -135,7 +139,7 @@ const useTokens = () => {
 				const farm = farms.find((farm) => getAddress(farm.lp_address) === address)!;
 
 				// Skip if it is a single token LP
-				if (!farm.token2) {
+				if (!("token2" in farm) || !farm.token2) {
 					return null;
 				}
 

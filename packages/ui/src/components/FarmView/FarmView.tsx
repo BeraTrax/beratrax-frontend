@@ -154,9 +154,9 @@ export function FarmView() {
 				</View>
 
 				{/* ETF Section Header */}
-				<View className="mt-6 mb-4">
+				{/* <View className="mt-6 mb-4">
 					<Text className="text-lg font-light text-white font-league-spartan">ETF Yield Protocols</Text>
-				</View>
+				</View> */}
 			</>
 		),
 		[handleBack]

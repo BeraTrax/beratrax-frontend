@@ -20,6 +20,7 @@ import { setFarmDetailInputOptions } from "@beratrax/core/src/state/farms/farmsR
 import { FarmDetailInputOptions } from "@beratrax/core/src/state/farms/types";
 import { ETFVaultDef } from "@beratrax/core/src/config/constants/pools_json";
 import ETFInfo from "./ETFInfo/ETFInfo";
+import YourBalance from "../FarmActionView/YourBalance/YourBalance";
 
 const ActionButton = memo(
 	({
@@ -140,9 +141,10 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 						<>
 							<ScrollView className="pt-14">
 								<BackButton onClick={handleGoBack} />
-								<View className={`relative mt-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
+								<View className={`relative mt-4 flex gap-y-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
 									{/* ETF Price and Graph Section */}
 									<ETFPriceAndGraph vault={farm} />
+									<YourBalance farm={farm} />
 
 									<ETFInfo ETF_VAULT={farm} isSmallScreen={isSmallScreen} />
 									<Transactions farmId={farm.id} />

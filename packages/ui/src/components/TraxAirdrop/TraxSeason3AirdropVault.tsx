@@ -14,11 +14,10 @@ import { dismissNotify, notifyError, notifyLoading, notifySuccess } from "@berat
 import { CgSpinner } from "react-icons/cg";
 import { ImSpinner8 } from "react-icons/im";
 import FarmRowChip from "@beratrax/ui/src/components/FarmItem/components/FarmRowChip/FarmRowChip";
-import { CHAIN_ID } from "@beratrax/core/src/types/enums";
+import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { TRAX_TOKEN_ADDRESS } from "@beratrax/core/src/config/constants";
 import { Image, Pressable, Text, View, Platform } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
-import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { ModalLayout } from "@beratrax/ui/src/components/modals/ModalLayout/ModalLayout";
 
 interface WarningModalProps {

@@ -7,8 +7,8 @@ config({ path: path.resolve(__dirname, "../../.env") });
 
 export default {
 	expo: {
-		name: "mobile",
-		slug: "mobile",
+		name: "Trax",
+		slug: "Trax",
 		version: "1.0.0",
 		orientation: "portrait",
 		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png",
@@ -71,14 +71,14 @@ export default {
 				origin: false,
 			},
 			eas: {
-				projectId: "2bdcbec7-c2a3-45f9-a2ca-547d9da345cc",
+				projectId: "2d543807-5097-4147-84ee-b64eda651ed5",
 			},
 			API_URL: process.env.EXPO_PUBLIC_API_URL, // Example env variable
 		},
 		owner: "beratrax",
 		runtimeVersion: "1.0.0",
 		updates: {
-			url: "https://u.expo.dev/2bdcbec7-c2a3-45f9-a2ca-547d9da345cc",
+			url: "https://u.expo.dev/2d543807-5097-4147-84ee-b64eda651ed5",
 		},
 	},
 };

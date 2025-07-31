@@ -1,9 +1,27 @@
 import { createConnector } from "wagmi";
 import { privateKeyToAccount } from "viem/accounts";
-import { GUEST_PRIVATE_KEY } from "./guestWallet";
+import { GUEST_PRIVATE_KEY, setGuestSessionActive, clearGuestSession, isGuestSessionActive } from "./guestWallet";
 
 export function GuestConnector() {
 	return createConnector((config) => {
+		let isConnected = false; // Track connection state
+
+		// Check for existing guest session on initialization
+		const checkGuestSession = async () => {
+			try {
+				const hasSession = await isGuestSessionActive();
+				if (hasSession) {
+					console.log("Found existing guest session, restoring...");
+					isConnected = true;
+				}
+			} catch (error) {
+				console.error("Error checking guest session:", error);
+			}
+		};
+
+		// Initialize session check (fire and forget)
+		checkGuestSession().catch(console.error);
+
 		const connector = {
 			id: "guest",
 			name: "Guest Wallet",
@@ -15,6 +33,10 @@ export function GuestConnector() {
 				const account = privateKeyToAccount(GUEST_PRIVATE_KEY as `0x${string}`);
 
 				console.log("Guest connector connecting with address:", account.address);
+				isConnected = true; // Mark as connected
+
+				// Save session to SecureStore
+				await setGuestSessionActive();
 
 				return {
 					accounts: [account.address],
@@ -24,6 +46,8 @@ export function GuestConnector() {
 
 			async disconnect() {
 				// Guest wallet doesn't need special disconnect logic
+				isConnected = false; // Mark as disconnected
+				await clearGuestSession(); // Clear session from SecureStore
 			},
 
 			async getAccounts() {
@@ -53,8 +77,8 @@ export function GuestConnector() {
 			},
 
 			async isAuthorized() {
-				// Guest wallet is always authorized when used
-				return true;
+				// Guest wallet is only authorized when explicitly connected
+				return isConnected;
 			},
 
 			onAccountsChanged(accounts: string[]) {
@@ -70,6 +94,8 @@ export function GuestConnector() {
 			},
 
 			onDisconnect() {
+				isConnected = false; // Mark as disconnected
+				clearGuestSession(); // Clear session from SecureStore
 				config.emitter.emit("disconnect");
 			},
 		};

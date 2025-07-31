@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { useNavigate } from "react-router-dom";
 import BackButton from "ui/src/components/BackButton/BackButton";
 import { SvgImage } from "ui/src/components/SvgImage/SvgImage";
-import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image, SafeAreaView } from "react-native";
 import ETFPriceAndGraph from "./ETFPriceAndGraph/ETFPriceAndGraph";
 import FarmActionModal from "../FarmActionView/FarmActionModal/FarmActionModal";
 import { Skeleton } from "../../../Skeleton/Skeleton";
@@ -122,7 +122,7 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 	const isSmallScreen = screenWidth <= 640;
 
 	return (
-		<>
+		<SafeAreaView>
 			<View className={`flex-1 w-full bg-bgSecondary relative ${Platform.OS === "web" ? "" : "min-h-screen"}`}>
 				<View className={`${Platform.OS === "web" ? "fixed" : "absolute"} top-[45%]`}>
 					<SvgImage source={Tokendetailspageleftsideleaves} height={200} width={200} />
@@ -190,6 +190,6 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 				// @ts-ignore
 				<LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} connectWallet={connectWallet} />
 			)}
-		</>
+		</SafeAreaView>
 	);
 };

@@ -302,12 +302,18 @@ const ETFVaultItem: FC<ETFVaultItemProps> = ({ vault }) => {
 				</View>
 
 				<View className="flex flex-row justify-between gap-4">
-					{/* Earnings*/}
+					{/* Earnings or Staked Value based on vault type */}
 					<View className="border-r border-bgPrimary pr-4 flex-1 basis-0">
 						<Text className="font-arame-mono mb-2 text-textPrimary text-lg normal-case">
-							<Text className="flex items-center gap-2">Earnings</Text>
+							<Text className="flex items-center gap-2">{vault.isETFVault ? "Your Stake" : "Earnings"}</Text>
 						</Text>
-						{!(isVaultEarningsFirstLoad || earningsUsd == null) ? (
+						{vault.isETFVault ? (
+							<View className="w-full">
+								<Text className="text-textPrimary text-lg font-league-spartan leading-5">
+									${formatCurrency(userVaultBalance * priceOfSingleToken)}
+								</Text>
+							</View>
+						) : !(isVaultEarningsFirstLoad || earningsUsd == null) ? (
 							<View className="w-full">
 								<Text className="text-textPrimary text-lg font-league-spartan leading-5">
 									{`$${customCommify(totalEarningsUsd, {
@@ -346,13 +352,15 @@ const ETFVaultItem: FC<ETFVaultItemProps> = ({ vault }) => {
 					)}
 				</View>
 
-				{/* Your Stake */}
-				<View className="flex justify-end items-end gap-3">
-					<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
-						<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
-						<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
+				{/* Your Stake - only show if not ETF vault */}
+				{!vault.isETFVault && (
+					<View className="flex justify-end items-end gap-3">
+						<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+							<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
+							<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
+						</View>
 					</View>
-				</View>
+				)}
 
 				{rewards > 0n ? (
 					<View className={`flex flex-row justify-between items-end`}>

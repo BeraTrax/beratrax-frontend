@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
+import { backendApi } from "@beratrax/core/src/api";
 
 interface Service {
 	id: string;
@@ -153,6 +154,16 @@ const OnRamp = ({ isVisible, onClose, service, displayAmount, address }: OnRampP
 	);
 };
 
+interface SessionTokenResponse {
+	status: boolean;
+	data: {
+		sessionToken: string;
+		channelId: string;
+		generatedAt: string;
+		expiresIn: number;
+	};
+}
+
 export const Buy = (): React.JSX.Element => {
 	const { address, isConnected } = useAccount();
 	const { openConnectModal } = useConnectModal();
@@ -163,6 +174,9 @@ export const Buy = (): React.JSX.Element => {
 	const [onrampOptions, setOnrampOptions] = useState<any>(null);
 	const [selectedToken, setSelectedToken] = useState<SupportedToken | null>(null);
 	const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
+	const [sessionToken, setSessionToken] = useState<string | null>(null);
+	const [isLoadingSessionToken, setIsLoadingSessionToken] = useState(false);
+	const [sessionTokenError, setSessionTokenError] = useState<string | null>(null);
 
 	useEffect(() => {
 		fetchUserLocation().then((location) => {
@@ -225,6 +239,86 @@ export const Buy = (): React.JSX.Element => {
 		}
 	}, [supportedTokens, selectedToken]);
 
+	// Clear session token when selected token changes
+	useEffect(() => {
+		setSessionToken(null);
+		setSessionTokenError(null);
+	}, [selectedToken]);
+
+	/**
+	 * Generate session token for Coinbase Secure Init
+	 */
+	const generateSessionToken = async (): Promise<string | null> => {
+		if (!address) return null;
+
+		setIsLoadingSessionToken(true);
+		setSessionTokenError(null);
+
+		try {
+			const assets = selectedToken ? [selectedToken.symbol] : ["USDC"];
+
+			const response = await backendApi.post<SessionTokenResponse>("/coinbase/session-token", {
+				addresses: [
+					{
+						address: address,
+						blockchains: ["berachain"],
+					},
+				],
+				assets: assets,
+			});
+
+			if (response.data.status && response.data.data.sessionToken) {
+				const token = response.data.data.sessionToken;
+				setSessionToken(token);
+				setSessionTokenError(null);
+				return token;
+			} else {
+				const errorMsg = "Failed to generate session token";
+				console.error(errorMsg, response.data);
+				setSessionTokenError(errorMsg);
+				return null;
+			}
+		} catch (error) {
+			const errorMsg = "Error generating session token. Please try again.";
+			console.error("Error generating session token:", error);
+			setSessionTokenError(errorMsg);
+			return null;
+		} finally {
+			setIsLoadingSessionToken(false);
+		}
+	};
+
+	/**
+	 * Generate Coinbase onramp URL with session token (Secure Init)
+	 */
+	const generateSecureOnrampUrl = async (): Promise<string> => {
+		const token = await generateSessionToken();
+
+		if (!token) {
+			// Fallback to old method if session token generation fails
+			console.warn("Session token generation failed, falling back to legacy URL");
+			return getOnrampBuyUrl({
+				projectId: onchainkitProjectId,
+				addresses: { [address?.toString() || ""]: [defaultNetworkName] },
+				assets: selectedToken ? [selectedToken.symbol] : ["USDC"],
+				defaultNetwork: defaultNetworkName,
+				presetFiatAmount: parseFloat(displayAmount) || 10,
+				fiatCurrency: "USD",
+			});
+		}
+
+		// Generate secure URL with session token
+		const baseUrl = "https://pay.coinbase.com/buy/select-asset";
+		const params = new URLSearchParams({
+			sessionToken: token,
+			defaultNetwork: defaultNetworkName,
+			presetFiatAmount: (parseFloat(displayAmount) || 10).toString(),
+			fiatCurrency: "USD",
+		});
+
+		return `${baseUrl}?${params.toString()}`;
+	};
+
 	const onrampBuyUrl = useMemo(() => {
 		const assets = selectedToken ? [selectedToken.symbol] : ["USDC"];
 		return getOnrampBuyUrl({
@@ -283,10 +377,13 @@ export const Buy = (): React.JSX.Element => {
 
 	const handleBuyClick = async () => {
 		if (selectedService?.id === "coinbase") {
+			// Use Secure Init for Coinbase
+			const secureUrl = await generateSecureOnrampUrl();
+
 			if (Platform.OS === "web") {
-				window.open(selectedService.url, "_blank");
+				window.open(secureUrl, "_blank");
 			} else {
-				Linking.openURL(selectedService.url);
+				Linking.openURL(secureUrl);
 			}
 		} else {
 			setIsWebViewVisible(true);
@@ -476,18 +573,34 @@ export const Buy = (): React.JSX.Element => {
 							</Text>
 						)}
 
+						{selectedService?.id === "coinbase" && sessionTokenError && (
+							<View className="mb-4 p-3 bg-bgSecondary border border-red-500 rounded-lg">
+								<Text className="text-red-400 text-sm text-center">{sessionTokenError}</Text>
+							</View>
+						)}
+
 						<Pressable
 							onPress={handleBuyClick}
-							// disable buy if invalid amount or no tokens available for coinbase in available country
-							disabled={!isValidAmount || (selectedService?.id === "coinbase" && supportedTokens.length === 0)}
+							// disable buy if invalid amount or no tokens available for coinbase in available country or loading session token
+							disabled={
+								!isValidAmount ||
+								(selectedService?.id === "coinbase" && supportedTokens.length === 0) ||
+								(selectedService?.id === "coinbase" && isLoadingSessionToken)
+							}
 							className={`w-full py-4 rounded-lg font-semibold text-lg ${
-								isValidAmount && !(selectedService?.id === "coinbase" && supportedTokens.length === 0)
+								isValidAmount &&
+								!(selectedService?.id === "coinbase" && supportedTokens.length === 0) &&
+								!(selectedService?.id === "coinbase" && isLoadingSessionToken)
 									? "bg-buttonPrimary text-bgDark"
 									: "bg-buttonDisabled text-textBlack"
 							}`}
 						>
 							<Text className="font-league-spartan text-center text-textWhite text-lg font-semibold">
-								{selectedService?.id === "coinbase" && supportedTokens.length === 0 ? "No tokens available" : "Buy"}
+								{selectedService?.id === "coinbase" && supportedTokens.length === 0
+									? "No tokens available"
+									: selectedService?.id === "coinbase" && isLoadingSessionToken
+										? "Generating secure link..."
+										: "Buy"}
 							</Text>
 						</Pressable>
 					</View>

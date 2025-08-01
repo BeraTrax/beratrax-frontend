@@ -7,7 +7,7 @@ config({ path: path.resolve(__dirname, "../../.env") });
 
 export default {
 	expo: {
-		name: "Trax",
+		name: "Trax Finance",
 		slug: "Trax",
 		version: "1.0.0",
 		orientation: "portrait",

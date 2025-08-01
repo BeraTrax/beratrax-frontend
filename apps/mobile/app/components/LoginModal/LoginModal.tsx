@@ -40,6 +40,12 @@ const loginProviders = [
 		color: "#5865F2",
 	},
 	{
+		id: LOGIN_PROVIDER.APPLE,
+		name: "Apple",
+		icon: "https://www.apple.com/favicon.ico",
+		color: "#000000",
+	},
+	{
 		id: LOGIN_PROVIDER.EMAIL_PASSWORDLESS,
 		name: "Email",
 		icon: "https://images.icon-icons.com/614/PNG/512/email-envelope-outline-shape-with-rounded-corners_icon-icons.com_56530.png",

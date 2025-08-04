@@ -4,6 +4,7 @@ import { supportedChains } from "@beratrax/core/src/config/baseWalletConfig";
 import { ChainNamespace } from "@web3auth/react-native-sdk";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 
 export interface GuestWalletResult {
 	client: WalletClient;
@@ -94,6 +95,9 @@ export async function clearGuestSession(): Promise<void> {
 
 export async function isGuestSessionActive(): Promise<boolean> {
 	try {
+		if (Platform.OS === "web") {
+			return false;
+		}
 		const sessionActive = await SecureStore.getItemAsync(GUEST_SESSION_KEY);
 		const timestamp = await SecureStore.getItemAsync(GUEST_SESSION_TIMESTAMP_KEY);
 

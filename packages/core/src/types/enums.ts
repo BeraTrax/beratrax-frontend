@@ -21,6 +21,7 @@ export const FarmOriginPlatform = {
 	Wasabee: { name: "Wasabee", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/wasabee/wasabee.ico" },
 	BeraPaw: { name: "BeraPaw", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/berapaw/berapaw.ico" },
 	Trax: { name: "Trax", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png" },
+	XTF: { name: "XTF", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png" },
 	Bearn: { name: "Bearn", logo: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/platform-logos/bearn/bearn.ico" },
 	Beraborrow: {
 		name: "Beraborrow",

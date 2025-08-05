@@ -84,7 +84,7 @@ export const ETFPriceAndGraph: React.FC<{ vault: ETFVaultDef }> = ({ vault }) =>
 					</View>
 					<View className="flex flex-col mt-2 mr-1 sm:mr-3">
 						<View className="flex flex-row items-center gap-1 sm:gap-2 mb-2 justify-end">
-							<FarmRowChip text="Trax ETF" color="invert" />
+							<FarmRowChip text="XTF" color="invert" />
 							<Image
 								className="w-3 h-3 sm:w-4 sm:h-4 rounded-full border border-bgDark"
 								source={{ uri: `${vault.platform_logo}` }}

@@ -11,7 +11,13 @@ import Web3Auth, { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import { initWeb3Auth as initWeb3AuthMobile, web3auth as web3authInstance } from "@beratrax/mobile/config/mobileWalletConfig";
 import { ethereumPrivateKeyProvider } from "@beratrax/mobile/config/ethereumProvider";
 import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
-import { createGuestWallet, isGuestEmail, GUEST_PRIVATE_KEY } from "@beratrax/mobile/config/guestWallet";
+import {
+	createGuestWallet,
+	isGuestEmail,
+	GUEST_PRIVATE_KEY,
+	isGuestSessionActive,
+	clearGuestSession,
+} from "@beratrax/mobile/config/guestWallet";
 export interface IWalletContext {
 	currentWallet?: Address;
 	logout: () => void;
@@ -97,6 +103,30 @@ const WalletProvider: React.FC<IProps> = ({
 						setIsSocial(false);
 					} finally {
 						setIsConnecting(false);
+					}
+				} else {
+					// Check for guest session if no Web3Auth session
+					const hasGuestSession = await isGuestSessionActive();
+					if (hasGuestSession) {
+						setIsConnecting(true);
+						setIsGuest(true);
+						setIsSocial(false);
+
+						try {
+							// Use wagmi's connectAsync to inform wagmi about the restored guest session
+							const { accounts } = await connectAsync({
+								connector: walletConfig.connectors[1], // Guest connector
+							});
+
+							setCurrentWallet(accounts[0]);
+						} catch (error) {
+							console.error("Error restoring guest session:", error);
+							setIsGuest(false);
+						} finally {
+							setIsConnecting(false);
+						}
+					} else {
+						console.log("No existing guest session found");
 					}
 				}
 			} catch (error) {
@@ -358,6 +388,11 @@ const WalletProvider: React.FC<IProps> = ({
 		try {
 			// Use wagmi's disconnect which will call our connector's disconnect method
 			await disconnectAsync();
+
+			// Clear guest session if it was active
+			if (isGuest) {
+				await clearGuestSession();
+			}
 
 			// Clean up local state
 			if (reconnectTimeoutRef.current) {

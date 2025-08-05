@@ -144,6 +144,32 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 								<View className={`relative mt-4 flex gap-y-4 ${Platform.OS === "android" ? "mb-40" : "mb-24"}`}>
 									{/* ETF Price and Graph Section */}
 									<ETFPriceAndGraph vault={farm} />
+
+									{Platform.OS === "android" ? (
+										<View className="flex flex-row gap-2 justify-center items-center max-w-[700px]">
+											{isConnecting || isLoading ? (
+												<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
+											) : (
+												<>
+													<ActionButton
+														onPress={handleDepositPress}
+														text={depositButtonText}
+														className="bg-buttonPrimaryLight w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
+													/>
+
+													{Number(withdrawable?.amount || "0") > 0 && (
+														<ActionButton
+															onPress={handleWithdrawPress}
+															text={withdrawButtonText}
+															className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+															disabled={!currentWallet}
+														/>
+													)}
+												</>
+											)}
+										</View>
+									) : null}
+
 									<YourBalance farm={farm} />
 
 									<ETFInfo ETF_VAULT={farm} isSmallScreen={isSmallScreen} />
@@ -151,34 +177,36 @@ export const ETFVaultActionView: React.FC<{ farm: ETFVaultDef }> = ({ farm }) =>
 								</View>
 							</ScrollView>
 
-							<View
-								className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
-									Platform.OS === "web"
-										? "fixed left-0 right-0 bottom-6 max-w-[600px] md:left-[calc(16.67%+0.5rem)] md:right-4 sm:left-4 sm:right-4"
-										: "absolute bottom-8 left-4 right-4"
-								}`}
-							>
-								{isConnecting || isLoading ? (
-									<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
-								) : (
-									<>
-										<ActionButton
-											onPress={handleDepositPress}
-											text={depositButtonText}
-											className="bg-buttonPrimaryLight w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
-										/>
-
-										{Number(withdrawable?.amount || "0") > 0 && (
+							{Platform.OS === "android" ? null : (
+								<View
+									className={`flex flex-row gap-2 justify-center items-center w-full mx-auto ${
+										Platform.OS === "web"
+											? "fixed left-0 right-0 bottom-6 max-w-[600px] md:left-[calc(16.67%+0.5rem)] md:right-4 sm:left-4 sm:right-4"
+											: "absolute bottom-8 left-4 right-4"
+									}`}
+								>
+									{isConnecting || isLoading ? (
+										<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
+									) : (
+										<>
 											<ActionButton
-												onPress={handleWithdrawPress}
-												text={withdrawButtonText}
-												className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
-												disabled={!currentWallet}
+												onPress={handleDepositPress}
+												text={depositButtonText}
+												className="bg-buttonPrimaryLight w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
 											/>
-										)}
-									</>
-								)}
-							</View>
+
+											{Number(withdrawable?.amount || "0") > 0 && (
+												<ActionButton
+													onPress={handleWithdrawPress}
+													text={withdrawButtonText}
+													className="bg-bgDark border border-gradientPrimary text-gradientPrimary w-[80%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center"
+													disabled={!currentWallet}
+												/>
+											)}
+										</>
+									)}
+								</View>
+							)}
 						</>
 					)}
 				</View>

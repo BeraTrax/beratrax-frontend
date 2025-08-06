@@ -169,7 +169,7 @@ export const TokenBalances: FC<IProps> = () => {
 
 			{UIState === UIStateEnum.NO_TOKENS && ethBalance?.valueWei === "0" && (
 				<View className={isWeb ? "flex justify-center items-center py-12" : "items-center justify-center pt-[50px] pb-[50px]"}>
-					<Text className="text-white text-center">Get some Bera or Honey on Kodiak to start earning.</Text>
+					<Text className="text-white text-center">Buy Bera on our Onramps to start earning.</Text>
 				</View>
 			)}
 

@@ -42,26 +42,17 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 
 	const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
 	const currentVaultEarningsUsd = useMemo(() => {
-		if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+		if (!currentVaultEarnings) return 0;
 
-		return (
-			Number(
-				toEth(
-					BigInt(currentVaultEarnings?.earnings0 || 0n),
-					decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
-				)
-			) *
-				prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
-			(currentVaultEarnings?.token1
-				? Number(
-						toEth(
-							BigInt(currentVaultEarnings?.earnings1 || 0n),
-							decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-						)
-					) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-				: 0)
-		);
+		return currentVaultEarnings.tokenEarnings.reduce((acc, curr) => {
+			return (
+				acc +
+				Number(toEth(BigInt(curr.earnings || 0n), decimals[vault.chainId][getAddress(curr.token as `0x${string}`)])) *
+					prices[vault.chainId][getAddress(curr.token as `0x${string}`)]
+			);
+		}, 0);
 	}, [isVaultEarningsFirstLoad, vaultEarnings]);
+
 	const changeInAssets = currentVaultEarnings?.changeInAssets;
 	const changeInAssetsStr = changeInAssets === "0" ? "0" : changeInAssets?.toString();
 	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr || 0), decimals[vault.chainId][vault.lp_address as Address]));
@@ -285,22 +276,25 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 						style={{
 							position: "absolute",
 							top: 0,
-							left: -15,
+							left: 0,
 							right: 0,
 							bottom: 0,
 							borderRadius: 24,
 							zIndex: -1,
 							pointerEvents: "none",
+							overflow: "hidden",
 						}}
 					>
 						<Svg
 							height="100%"
 							width="100%"
-							viewBox="0 0 400 300"
+							preserveAspectRatio="xMidYMid slice"
 							style={{
 								position: "absolute",
 								top: 0,
 								left: 0,
+								right: 0,
+								bottom: 0,
 								zIndex: -1,
 							}}
 						>
@@ -486,7 +480,7 @@ const VaultItem: FC<VaultItemProps> = ({ vault }) => {
 
 				{/* Your Stake */}
 				<View className="flex justify-end items-end gap-3">
-					<View className="flex flex-row inline-flex items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
+					<View className="flex flex-row  items-end gap-2 bg-white/5 backdrop-blur-sm rounded-lg p-2">
 						<Text className="uppercase font-arame-mono text-textPrimary text-base">Your Stake</Text>
 						<Text className="text-textWhite text-base font-league-spartan">${formatCurrency(userVaultBalance * priceOfSingleToken)}</Text>
 					</View>

@@ -415,7 +415,7 @@ const ETFUnderlyingTvlGraph: React.FC<ETFUnderlyingTvlGraphProps> = ({ vault, un
 			</View>
 			<View>
 				<Text className="text-xs sm:text-sm text-textSecondary text-center my-3 sm:my-4 font-league-spartan px-4">
-					Historical TVL of the underlying assets in the ETF
+					Historical TVL of the underlying assets in the XTF
 				</Text>
 			</View>
 		</View>

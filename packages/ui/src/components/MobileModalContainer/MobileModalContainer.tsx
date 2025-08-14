@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Dimensions, ScrollView, Platform, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
 
 interface MobileModalContainerProps {
@@ -18,6 +19,7 @@ const MobileModalContainer = ({
 	maxHeight = "90%",
 }: MobileModalContainerProps) => {
 	const { height } = Dimensions.get("window");
+	const insets = useSafeAreaInsets();
 
 	if (open === false) {
 		return null;
@@ -28,14 +30,12 @@ const MobileModalContainer = ({
 		maxHeight: maxHeight as any,
 	};
 
+	// Calculate dynamic bottom padding based on safe area insets
+	// Android devices typically need more padding due to navigation bar differences
+	const dynamicBottomPadding = Platform.OS === "android" ? Math.max(30, insets.bottom + 20) : insets.bottom + 20;
+
 	return (
-		<View
-			className={twMerge(
-				`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`,
-				wrapperClassName
-			)}
-			style={{ height }}
-		>
+		<View className={twMerge(`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>
 			<View className="flex-1 justify-end">
 				<View
 					className={twMerge(`w-full bg-[#1A1A1A] rounded-t-[40px] border-t-2 border-t-[#333333] overflow-hidden`, className)}
@@ -45,7 +45,7 @@ const MobileModalContainer = ({
 						className="w-full rounded-t-[40px]"
 						showsVerticalScrollIndicator={true}
 						bounces={true}
-						contentContainerStyle={{ paddingBottom: Platform.OS === "ios" ? 20 : 0 }}
+						contentContainerStyle={{ paddingBottom: dynamicBottomPadding }}
 					>
 						{children}
 					</ScrollView>

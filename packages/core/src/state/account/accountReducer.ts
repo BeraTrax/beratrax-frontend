@@ -11,6 +11,7 @@ import {
 	agreeTermsOfUse as agreeTermsOfUseApi,
 	getAirdropClaim,
 	getAdditionalAirdropClaim,
+	deleteAccount as deleteAccountApi,
 } from "./../../api/account";
 import { CHAIN_ID } from "@beratrax/core/src/types/enums";
 import { addressesByChainId } from "@beratrax/core/src/config/constants/contracts";
@@ -545,6 +546,36 @@ export const claimAdditionalAirdropRewards = createAsyncThunk(
 		}
 	}
 );
+
+export const deleteAccount = createAsyncThunk("account/deleteAccount", async ({ address }: { address: string }, thunkApi) => {
+	try {
+		const result = await deleteAccountApi(address);
+
+		// Update the account state to reflect deletion status
+		thunkApi.dispatch(
+			updateAccountField({
+				field: "markedForDeletion",
+				value: result.data.markedForDeletion,
+			})
+		);
+		thunkApi.dispatch(
+			updateAccountField({
+				field: "deletionDate",
+				value: result.data.deletionDate,
+			})
+		);
+
+		return {
+			markedForDeletion: result.data.markedForDeletion,
+			deletionDate: result.data.deletionDate,
+			message: result.message,
+		};
+	} catch (error) {
+		console.error("Error in deleteAccount", error);
+		return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to delete account");
+	}
+});
+
 // #endregion
 
 const accountSlice = createSlice({
@@ -816,6 +847,18 @@ const accountSlice = createSlice({
 			if (state.additionalAirdrop) {
 				state.additionalAirdrop.isClaimRewardsLoading = false;
 			}
+		});
+
+		// Delete account cases
+		builder.addCase(deleteAccount.pending, (state) => {
+			state.error = null;
+		});
+		builder.addCase(deleteAccount.fulfilled, (state, action) => {
+			// State is already updated by the thunk dispatches
+			state.error = null;
+		});
+		builder.addCase(deleteAccount.rejected, (state, action) => {
+			state.error = action.payload as string;
 		});
 	},
 });

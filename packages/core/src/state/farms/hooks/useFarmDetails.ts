@@ -29,17 +29,17 @@ const useFarmDetails = () => {
 	const reloadFarmData = useCallback(async () => {
 		if (isBalancesFetched && isPricesFetched && isDecimalsFetched && isTotalSuppliesFetched && currentWallet) {
 			await dispatch(updateFarmDetails({ farms, totalSupplies, currentWallet, balances, prices, decimals, getPublicClient }));
-			await dispatch(
-				updateEarnings({
-					farms,
-					currentWallet,
-					getPublicClient,
-					decimals,
-					prices,
-					balances,
-					totalSupplies,
-				})
-			);
+			// await dispatch(
+			// 	updateEarnings({
+			// 		farms,
+			// 		currentWallet,
+			// 		getPublicClient,
+			// 		decimals,
+			// 		prices,
+			// 		balances,
+			// 		totalSupplies,
+			// 	})
+			// );
 		}
 	}, [
 		farms,

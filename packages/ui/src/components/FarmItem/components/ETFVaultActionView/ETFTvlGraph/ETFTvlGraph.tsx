@@ -340,7 +340,7 @@ const ETFTvlGraph: React.FC<ETFTvlGraphProps> = ({ vault }) => {
 			</View>
 			<View>
 				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">
-					Historical Total Value Locked in the ETF vault
+					Historical Total Value Locked in the XTF vault
 				</Text>
 			</View>
 		</View>

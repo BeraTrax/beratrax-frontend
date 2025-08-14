@@ -66,6 +66,7 @@ export const updateFarmDetails = createAsyncThunk(
 	}
 );
 
+// This is only used in withdrawal current earnings function, but that is not migrated to the new app yet, it is present in legacy though
 export const updateEarnings = createAsyncThunk(
 	"farms/updateEarnings",
 	async ({ currentWallet, farms, decimals, prices, balances, totalSupplies, getPublicClient }: FetchEarningsAction, thunkApi) => {
@@ -226,20 +227,25 @@ export const getVaultEarnings = createAsyncThunk(
 
 			const earnings = await getEarningsForPlatforms(currentWallet);
 			const earningsUsd = earnings
-				.filter((earning) => Number(earning.earnings0) > 0 || Number(earning.changeInAssets) > 0)
+				.filter((earning) => Number(earning.tokenEarnings[0].earnings) > 0 || Number(earning.changeInAssets) > 0)
 				.reduce((acc, curr) => {
-					const price0 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
-					const earnings0 = Number(toEth(BigInt(curr.earnings0), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)]));
-					let totalEarnings = earnings0 * price0;
-					// Only calculate for token1 and earnings1 if they exist
-					if (curr.token1 && curr.earnings1) {
-						const price1 = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)];
-						const earnings1 = Number(toEth(BigInt(curr.earnings1), decimals[CHAIN_ID.BERACHAIN][getAddress(curr.token1 as Address)]));
-						totalEarnings += earnings1 * price1;
+					if (curr.tokenEarnings.length === 0) {
+						return acc;
 					}
+
+					let totalEarnings = 0;
+
+					for (const tokenEarnings of curr.tokenEarnings) {
+						const price = prices[CHAIN_ID.BERACHAIN][getAddress(tokenEarnings.token as Address)];
+						const earnings = Number(
+							toEth(BigInt(tokenEarnings.earnings), decimals[CHAIN_ID.BERACHAIN][getAddress(tokenEarnings.token as Address)] || 18)
+						);
+						totalEarnings += earnings * price;
+					}
+
 					if (curr.changeInAssets) {
 						const changeAssetValue = Number(toEth(BigInt(curr.changeInAssets)));
-						const assetPrice = prices[CHAIN_ID.BERACHAIN][getAddress(curr.token0 as Address)];
+						const assetPrice = prices[CHAIN_ID.BERACHAIN][getAddress(curr.tokenEarnings[0].token as Address)];
 						totalEarnings += changeAssetValue * assetPrice;
 					}
 

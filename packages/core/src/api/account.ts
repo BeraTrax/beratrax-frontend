@@ -107,3 +107,44 @@ export const getAdditionalAirdropClaim = async (address: string) => {
 	}>("account/airdrop-claim-additional/" + address);
 	return response.data;
 };
+
+/**
+ * Delete user account - marks account for deletion with 5-day grace period
+ */
+export const deleteAccount = async (address: string) => {
+	try {
+		const response = await backendApi.delete<{
+			status: boolean;
+			message: string;
+			data: {
+				markedForDeletion: boolean;
+				deletionDate: string;
+			};
+		}>(`account/delete/${address}`);
+
+		if (response.data.status) {
+			return {
+				success: true,
+				data: response.data.data,
+				message: response.data.message,
+			};
+		} else {
+			throw new Error(response.data.message || "Account deletion failed");
+		}
+	} catch (error: any) {
+		console.error("Error deleting account:", error);
+
+		// Handle different error types
+		if (error.response?.data?.error) {
+			throw new Error(error.response.data.error);
+		} else if (error.response?.status === 404) {
+			throw new Error("Account not found");
+		} else if (error.response?.status >= 500) {
+			throw new Error("Server error occurred. Please try again later.");
+		} else if (!navigator.onLine) {
+			throw new Error("No internet connection. Please check your network and try again.");
+		} else {
+			throw new Error(error.message || "Failed to delete account. Please try again.");
+		}
+	}
+};

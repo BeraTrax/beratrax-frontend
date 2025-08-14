@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createPublicClient, getContract, PublicClient } from "viem";
+import { createPublicClient, getAddress, getContract, PublicClient } from "viem";
 import vaultAbi from "@beratrax/core/src/assets/abis/vault.json";
 import { getPublicClientConfiguration } from "@beratrax/core/src/utils/common";
 import {
@@ -8,7 +8,7 @@ import {
 	KODIAK_EARNINGS_GRAPH_URL,
 	BURRBEAR_EARNINGS_GRAPH_URL,
 } from "@beratrax/core/src/config/constants";
-import pools_json, { activePoolIdsOfAllPlatforms } from "@beratrax/core/src/config/constants/pools_json";
+import pools_json, { activePoolIdsOfAllPlatforms, ETF_VAULTS } from "@beratrax/core/src/config/constants/pools_json";
 import store from "@beratrax/core/src/state";
 import { VaultEarnings } from "@beratrax/core/src/state/farms/types";
 import { CHAIN_ID, FarmOriginPlatform } from "@beratrax/core/src/types/enums";
@@ -16,6 +16,7 @@ import { toEth, toWei } from "@beratrax/core/src/utils/common";
 import { getPricesByTime } from "@beratrax/core/src/api/token";
 import { getApyByTime } from "@beratrax/core/src/api/stats";
 import { IClients } from "@beratrax/mobile/config/mobileWalletConfig";
+import ETFVaultAbi from "@beratrax/core/src/assets/abis/ETFVaultAbi";
 interface Response {
 	deposit: string;
 	vaultAddress: string;
@@ -117,6 +118,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 			bearnEarnings,
 			beratraxEarnings,
 			apyBasedEarnings,
+			etfVaultEarnings,
 		] = await Promise.all([
 			getEarningsForInfrared(transactionsByPlatform.Infrared, client, balances),
 			getEarningsForSteer(transactionsByPlatform.Steer, client, balances),
@@ -127,6 +129,7 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 			getEarningsForBearn(transactionsByPlatform.Bearn, client, balances),
 			getEarningsForBeraTrax(transactionsByPlatform.Trax, client, balances),
 			getApyBasedEarnings(Object.values(transactionsByPlatform).flat()),
+			getEarningsForETFVaults(userAddress, client, balances),
 		]);
 
 		return [
@@ -139,7 +142,51 @@ export const getEarningsForPlatforms = async (userAddress: string) => {
 			...bearnEarnings,
 			...beratraxEarnings,
 			...apyBasedEarnings,
+			...etfVaultEarnings,
 		];
+	} catch (err: any) {
+		console.error(err);
+		return [];
+	}
+};
+
+const getEarningsForETFVaults = async (userAddress: string, client: PublicClient, balances: any): Promise<VaultEarnings[]> => {
+	try {
+		return await Promise.all(
+			ETF_VAULTS.map(async (pool) => {
+				const [[currentEarnings, lifetimeEarnings], vaults] = await Promise.all([
+					client.readContract({
+						address: pool.vault_addr,
+						abi: ETFVaultAbi,
+						functionName: "getUserLifetimeEarnings",
+						args: [getAddress(userAddress)],
+					}),
+					client.readContract({
+						address: pool.vault_addr,
+						abi: ETFVaultAbi,
+						functionName: "getVaults",
+						args: [],
+					}),
+				]);
+
+				const tokenEarnings = vaults.map((vault, index) => ({
+					token: pools_json.find((pool) => getAddress(pool.vault_addr) === getAddress(vault))?.lp_address || "",
+					earnings: currentEarnings[index].toString(),
+				}));
+
+				// lifetime earnings don't include current pending earnings so add them here
+				const lifetimeEtfEarnings = vaults.map((vault, index) => ({
+					token: pools_json.find((pool) => getAddress(pool.vault_addr) === getAddress(vault))?.lp_address || "",
+					earnings: (lifetimeEarnings[index] + currentEarnings[index]).toString(),
+				}));
+
+				return {
+					tokenId: pool.id.toString(),
+					tokenEarnings,
+					lifetimeEtfEarnings,
+				};
+			})
+		);
 	} catch (err: any) {
 		console.error(err);
 		return [];
@@ -185,8 +232,7 @@ const getEarningsForInfrared = async (infraredPoolsTxs: any, client: PublicClien
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					};
 				}
 
@@ -202,16 +248,14 @@ const getEarningsForInfrared = async (infraredPoolsTxs: any, client: PublicClien
 				if (changeInAssets <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
 
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0: "0",
-					token0: pool.lp_addr,
+					tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					changeInAssets: changeInAssets.toString(),
 					lifetimeEarnings: lifetimeEarnings.toString(),
 				};
@@ -274,10 +318,7 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						earnings1: "0",
-						token0: "",
-						token1: "",
+						tokenEarnings: [{ token: token0, earnings: "0" }],
 					};
 				}
 
@@ -304,10 +345,7 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 				if (!lastFeeData) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						earnings1: "0",
-						token0: "",
-						token1: "",
+						tokenEarnings: [{ token: token0, earnings: "0" }],
 					};
 				}
 
@@ -330,10 +368,10 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 				if (currentBalance <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						earnings1: "0",
-						token0,
-						token1,
+						tokenEarnings: [
+							{ token: token0, earnings: "0" },
+							{ token: token1, earnings: "0" },
+						],
 					};
 				}
 
@@ -371,10 +409,10 @@ const getEarningsForSteer = async (steerPoolsTxs: any, client: PublicClient, bal
 				// Return only the required fields for VaultEarnings
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0: userShareOfFees0.toString(),
-					earnings1: userShareOfFees1.toString(),
-					token0,
-					token1,
+					tokenEarnings: [
+						{ token: token0, earnings: userShareOfFees0.toString() },
+						{ token: token1, earnings: userShareOfFees1.toString() },
+					],
 				};
 			})
 		);
@@ -440,8 +478,7 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					};
 				}
 
@@ -457,8 +494,7 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 				if (changeInAssets <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
@@ -481,8 +517,7 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 				if (!lastFeeData) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
@@ -520,8 +555,7 @@ const getEarningsForKodiak = async (kodiakAndBerapawTxs: any, client: PublicClie
 
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0,
-					token0: pool.lp_addr,
+					tokenEarnings: [{ token: pool.lp_addr, earnings: earnings0 }],
 					changeInAssets: changeInAssets.toString(),
 					lifetimeEarnings: (lifetimeEarnings + BigInt(earnings0)).toString(), // Added earnings0 to lifetimeEarnings to make sure lifetimeEarnings is atleast equal to current earnings
 				};
@@ -580,8 +614,7 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					};
 				}
 
@@ -597,8 +630,7 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 				if (changeInAssets <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
@@ -625,8 +657,7 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 				if (!lastFeeData) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
@@ -671,8 +702,7 @@ const getEarningsForBurrbear = async (burrbearPoolsTxs: any, client: PublicClien
 
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0,
-					token0: pool.lp_addr,
+					tokenEarnings: [{ token: pool.lp_addr, earnings: earnings0 }],
 					changeInAssets: changeInAssets.toString(),
 					lifetimeEarnings: (lifetimeEarnings + BigInt(earnings0)).toString(), // Added earnings0 to lifetimeEarnings to make sure lifetimeEarnings is atleast equal to current earnings
 				};
@@ -691,8 +721,7 @@ const calculateIBeraEarnings = async (iberaPool42: any): Promise<VaultEarnings> 
 		if (!iberaPool) {
 			return {
 				tokenId: "42",
-				earnings0: "0",
-				token0: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
+				tokenEarnings: [{ token: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302", earnings: "0" }],
 				changeInAssets: "0",
 				lifetimeEarnings: "0",
 			};
@@ -701,8 +730,7 @@ const calculateIBeraEarnings = async (iberaPool42: any): Promise<VaultEarnings> 
 		if (iberaPool42.length === 0) {
 			return {
 				tokenId: "42",
-				earnings0: "0",
-				token0: iberaPool.lp_address,
+				tokenEarnings: [{ token: iberaPool.lp_address, earnings: "0" }],
 				changeInAssets: "0",
 				lifetimeEarnings: "0",
 			};
@@ -747,16 +775,14 @@ const calculateIBeraEarnings = async (iberaPool42: any): Promise<VaultEarnings> 
 
 		return {
 			tokenId: "42",
-			earnings0: lastEarnings.toString(),
-			token0: iberaPool.lp_address,
+			tokenEarnings: [{ token: iberaPool.lp_address, earnings: lastEarnings.toString() }],
 			lifetimeEarnings: totalEarnings.toString(),
 		};
 	} catch (error) {
 		console.error(error);
 		return {
 			tokenId: "42",
-			earnings0: "0",
-			token0: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302",
+			tokenEarnings: [{ token: "0x4D6f6580a78EEaBEE50f3ECefD19E17a3f4dB302", earnings: "0" }],
 			changeInAssets: "0",
 			lifetimeEarnings: "0",
 		};
@@ -796,8 +822,7 @@ const calculateBerapawEarnings = async (berapawPoolsTxs: any): Promise<VaultEarn
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.id.toString(),
-						earnings0: "0",
-						token0: pool.lp_address,
+						tokenEarnings: [{ token: pool.lp_address, earnings: "0" }],
 						changeInAssets: "0",
 						lifetimeEarnings: "0",
 					};
@@ -841,8 +866,7 @@ const calculateBerapawEarnings = async (berapawPoolsTxs: any): Promise<VaultEarn
 
 				return {
 					tokenId: pool.id.toString(),
-					earnings0: lastEarnings.toString(),
-					token0: pool.lp_address,
+					tokenEarnings: [{ token: pool.lp_address, earnings: lastEarnings.toString() }],
 					lifetimeEarnings: totalEarnings.toString(),
 				};
 			})
@@ -894,8 +918,7 @@ const getEarningsForBearn = async (bearnPoolsTxs: any, client: PublicClient, bal
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					};
 				}
 
@@ -918,16 +941,14 @@ const getEarningsForBearn = async (bearnPoolsTxs: any, client: PublicClient, bal
 				if (changeInAssets <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
 
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0: "0",
-					token0: pool.lp_addr,
+					tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					changeInAssets: changeInAssets.toString(),
 					lifetimeEarnings: lifetimeEarnings.toString(),
 				};
@@ -980,8 +1001,7 @@ const getEarningsForBeraTrax = async (beratraxPoolsTxs: any, client: PublicClien
 				if (picked.length === 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					};
 				}
 
@@ -1004,16 +1024,14 @@ const getEarningsForBeraTrax = async (beratraxPoolsTxs: any, client: PublicClien
 				if (changeInAssets <= 0) {
 					return {
 						tokenId: pool.farmId.toString(),
-						earnings0: "0",
-						token0: pool.lp_addr,
+						tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 						lifetimeEarnings: lifetimeEarnings.toString(),
 					};
 				}
 
 				return {
 					tokenId: pool.farmId.toString(),
-					earnings0: "0",
-					token0: pool.lp_addr,
+					tokenEarnings: [{ token: pool.lp_addr, earnings: "0" }],
 					changeInAssets: changeInAssets.toString(),
 					lifetimeEarnings: lifetimeEarnings.toString(),
 				};
@@ -1038,8 +1056,7 @@ const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarn
 				if (filtered.length === 0) {
 					return {
 						tokenId: pool.id.toString(),
-						earnings0: "0",
-						token0: pool.lp_address,
+						tokenEarnings: [{ token: pool.lp_address, earnings: "0" }],
 						changeInAssets: "0",
 						lifetimeEarnings: "0",
 					};
@@ -1089,8 +1106,7 @@ const getApyBasedEarnings = async (combinedTransactions: any): Promise<VaultEarn
 
 				return {
 					tokenId: pool.id.toString(),
-					earnings0: lastEarnings.toString(),
-					token0: pool.lp_address,
+					tokenEarnings: [{ token: pool.lp_address, earnings: lastEarnings.toString() }],
 					lifetimeEarnings: totalEarnings.toString(),
 				};
 			})

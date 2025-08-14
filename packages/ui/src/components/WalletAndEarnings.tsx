@@ -285,7 +285,7 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 											<Link
 												target="_blank"
 												href={`${blockExplorersByChainId[chainId]}/address/${currentWallet}`}
-												className="no-underline font-arame-mono font-light text-lg text-white leading-5 uppercase font-arame-mono font-normal"
+												className="no-underline text-lg text-white leading-5 uppercase font-arame-mono font-normal"
 											>
 												<Text>{truncatedAddress}</Text>
 											</Link>

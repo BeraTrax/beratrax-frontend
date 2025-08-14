@@ -44,12 +44,17 @@ export interface FetchFarmDetailsAction {
 export interface Earnings {
 	[farmId: number]: number;
 }
+
+export interface VaultTokenEarnings {
+	earnings: string;
+	token: string;
+}
+
+// TODO: create a array for token and earnings
 export interface VaultEarnings {
 	tokenId: string;
-	earnings0: string;
-	token0: string;
-	earnings1?: string;
-	token1?: string;
+	tokenEarnings: VaultTokenEarnings[];
+	lifetimeEtfEarnings?: VaultTokenEarnings[];
 	changeInAssets?: string;
 	lifetimeEarnings?: string;
 }

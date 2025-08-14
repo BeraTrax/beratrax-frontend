@@ -7,8 +7,8 @@ import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { customCommify, formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
 import { VaultEarnings } from "packages/core/src/state/farms/types";
-import { useMemo } from "react";
-import { View, Text } from "react-native";
+import { useMemo, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Address, getAddress } from "viem";
 
 // Reusable component for token earnings
@@ -31,6 +31,8 @@ const TokenEarning = ({
 }) => {
 	if (!currentVaultEarnings || !token) return null;
 	const { decimals } = useTokens();
+	const [showTooltip, setShowTooltip] = useState(false);
+	const [showInfoTooltip, setShowInfoTooltip] = useState(false);
 	const { data: txHistory } = useFarmTransactions(farm.id, 1);
 	const lastTransaction = useMemo(() => {
 		if (!txHistory) return null;
@@ -125,8 +127,15 @@ const TokenEarning = ({
 						</Text>
 						{("apyBasedEarnings" in farm && farm.apyBasedEarnings) || typeof lifetimeEarnings === "string" ? null : (
 							<View className="group relative">
-								<Text className="h-4 w-4 cursor-pointer text-textSecondary text-sm">?</Text>
-								<View className="absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl">
+								<TouchableOpacity
+									onPress={() => setShowTooltip(!showTooltip)}
+									className="h-4 w-4 cursor-pointer text-textSecondary text-sm flex items-center justify-center"
+								>
+									<Text className="text-textSecondary text-sm">?</Text>
+								</TouchableOpacity>
+								<View
+									className={`absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl ${showTooltip ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+								>
 									<View className="flex flex-col gap-1">
 										{farm.isETFVault && currentVaultEarnings.tokenEarnings?.length > 0 ? (
 											// Show all token earnings for ETF vaults
@@ -178,9 +187,16 @@ const TokenEarning = ({
 					<View className="text-textSecondary text-sm flex flex-row items-center gap-1">
 						<Text className="text-textSecondary text-sm">Lifetime Earnings</Text>
 						<View className="group relative">
-							<Text className="cursor-pointer h-4 w-4 text-textSecondary text-sm">?</Text>
+							<TouchableOpacity
+								onPress={() => setShowInfoTooltip(!showInfoTooltip)}
+								className="cursor-pointer h-4 w-4 text-textSecondary text-sm flex items-center justify-center"
+							>
+								<Text className="text-textSecondary text-sm">?</Text>
+							</TouchableOpacity>
 
-							<View className="absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl">
+							<View
+								className={`absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl ${showInfoTooltip ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+							>
 								<Text className="text-xs text-gray-300 mt-1">Based on current token prices, swap fee is not included.</Text>
 							</View>
 						</View>

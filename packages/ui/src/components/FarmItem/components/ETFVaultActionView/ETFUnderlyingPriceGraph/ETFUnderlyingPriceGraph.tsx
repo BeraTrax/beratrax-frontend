@@ -423,7 +423,7 @@ const ETFUnderlyingPriceGraph: React.FC<ETFUnderlyingPriceGraphProps> = ({ vault
 			</View>
 			<View>
 				<Text className="text-xs sm:text-sm text-textSecondary text-center my-3 sm:my-4 font-league-spartan px-4">
-					Historical prices of the underlying assets in the ETF
+					Historical prices of the underlying assets in the XTF
 				</Text>
 			</View>
 		</View>

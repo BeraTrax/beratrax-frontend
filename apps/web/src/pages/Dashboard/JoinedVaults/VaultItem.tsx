@@ -50,26 +50,17 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 
 	const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(vault.id));
 	const currentVaultEarningsUsd = useMemo(() => {
-		if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+		if (!currentVaultEarnings) return 0;
 
-		return (
-			Number(
-				toEth(
-					BigInt(currentVaultEarnings?.earnings0 || 0n),
-					decimals[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
-				)
-			) *
-				prices[vault.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
-			(currentVaultEarnings?.token1
-				? Number(
-						toEth(
-							BigInt(currentVaultEarnings?.earnings1 || 0n),
-							decimals[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-						)
-				  ) * prices[vault.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-				: 0)
-		);
+		return currentVaultEarnings.tokenEarnings.reduce((acc, curr) => {
+			return (
+				acc +
+				Number(toEth(BigInt(curr.earnings || 0n), decimals[vault.chainId][getAddress(curr.token as `0x${string}`)])) *
+					prices[vault.chainId][getAddress(curr.token as `0x${string}`)]
+			);
+		}, 0);
 	}, [isVaultEarningsFirstLoad, vaultEarnings]);
+
 	const changeInAssets = currentVaultEarnings?.changeInAssets;
 	const changeInAssetsStr = changeInAssets === "0" ? "0" : changeInAssets?.toString();
 	const changeInAssetsValue = Number(toEth(BigInt(changeInAssetsStr || 0), decimals[vault.chainId][vault.lp_address as Address]));
@@ -247,7 +238,7 @@ const VaultItem: React.FC<Props> = ({ vault }) => {
 						{vault.isCurrentWeeksRewardsVault && (
 							<div className="group relative">
 								<IoInformationCircle className="text-xl text-textSecondary cursor-help" onClick={(e) => e.stopPropagation()} />
-								<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-bgDark rounded-lg text-sm text-textWhite w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+								<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-bgDark rounded-lg text-sm text-textWhite w-64 opacity-0 group-hover:opacity-100 transition-all duration-200">
 									This vault is earning boosted BGT rewards from our Flywheel.
 								</div>
 							</div>

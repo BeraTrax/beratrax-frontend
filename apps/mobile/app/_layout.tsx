@@ -76,6 +76,13 @@ const tabOptions = {
 		activeIcon: require("@beratrax/core/src/assets/images/userguideactiveicon.svg").default,
 		inactiveIcon: require("@beratrax/core/src/assets/images/userguidenonactiveicon.svg").default,
 	},
+	Settings: {
+		name: "Settings",
+		tabBarLabel: "Settings",
+		route: "/Settings",
+		activeIcon: require("@beratrax/core/src/assets/images/userguideactiveicon.svg").default,
+		inactiveIcon: require("@beratrax/core/src/assets/images/userguidenonactiveicon.svg").default,
+	},
 };
 
 const AppContent = memo(() => {

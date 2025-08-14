@@ -18,3 +18,5 @@ export * from "./ClaimAirdrop";
 export * from "./TraxAirdrop/AdditionalAirdropClaim";
 export * from "./TraxAirdrop/AirdropClaim";
 export * from "./TraxAirdrop/TraxAirdropVault";
+export * from "./AccountDeletionModal/AccountDeletionModal";
+export { default as BackButton } from "./BackButton/BackButton";

@@ -6,6 +6,7 @@ import { useFarmTransactions } from "@beratrax/core/src/state/transactions/useFa
 import { FarmOriginPlatform } from "@beratrax/core/src/types/enums";
 import { customCommify, formatCurrency, toEth } from "@beratrax/core/src/utils/common";
 import { Skeleton } from "@beratrax/ui/src/components/Skeleton/Skeleton";
+import { VaultEarnings } from "packages/core/src/state/farms/types";
 import { useMemo } from "react";
 import { View, Text } from "react-native";
 import { Address, getAddress } from "viem";
@@ -20,7 +21,7 @@ const TokenEarning = ({
 	changeInAssets,
 	lifetimeEarnings,
 }: {
-	currentVaultEarnings: any;
+	currentVaultEarnings: VaultEarnings;
 	token: string | undefined;
 	chainId: number;
 	prices: Record<number, Record<string, number>>;
@@ -37,23 +38,28 @@ const TokenEarning = ({
 	}, [txHistory]);
 
 	const currentVaultEarningsUsd = useMemo(() => {
-		return (
-			Number(
-				toEth(BigInt(currentVaultEarnings?.earnings0 || 0n), decimals[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)])
-			) *
-				prices[chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
-			(currentVaultEarnings?.token1
-				? Number(
-						toEth(
-							BigInt(currentVaultEarnings?.earnings1 || 0n),
-							decimals[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-						)
-					) * prices[chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-				: 0)
-		);
+		return currentVaultEarnings.tokenEarnings.reduce((acc, curr) => {
+			return (
+				acc +
+				Number(toEth(BigInt(curr.earnings || 0n), decimals[chainId][getAddress(curr.token as `0x${string}`)])) *
+					prices[chainId][getAddress(curr.token as `0x${string}`)]
+			);
+		}, 0);
 	}, [currentVaultEarnings]);
 
 	const lifetimeEarningsUsd = useMemo(() => {
+		if (farm.isETFVault) {
+			return (
+				currentVaultEarnings.lifetimeEtfEarnings?.reduce((acc, curr) => {
+					return (
+						acc +
+						Number(toEth(BigInt(curr.earnings || 0n), decimals[chainId][getAddress(curr.token as `0x${string}`)])) *
+							prices[chainId][getAddress(curr.token as `0x${string}`)]
+					);
+				}, 0) || 0
+			);
+		}
+
 		if (typeof lifetimeEarnings === "string") {
 			return 0;
 		}
@@ -120,19 +126,50 @@ const TokenEarning = ({
 						{("apyBasedEarnings" in farm && farm.apyBasedEarnings) || typeof lifetimeEarnings === "string" ? null : (
 							<View className="group relative">
 								<Text className="h-4 w-4 cursor-pointer text-textSecondary text-sm">?</Text>
-								<View className="absolute z-[100] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
+								<View className="absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl">
 									<View className="flex flex-col gap-1">
-										<View className="flex flex-row items-center justify-center gap-2">
-											<Text className="text-blue-400">
-												<Text>+</Text>
-												{customCommify(Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])), {
-													minimumFractionDigits: 2,
-													maximumFractionDigits: 5,
+										{farm.isETFVault && currentVaultEarnings.tokenEarnings?.length > 0 ? (
+											// Show all token earnings for ETF vaults
+											<>
+												{currentVaultEarnings.tokenEarnings.map((tokenEarning, index) => {
+													const tokenAddress = getAddress(tokenEarning.token as `0x${string}`);
+													const tokenName = tokenNamesAndImages[tokenAddress]?.name || "Unknown Token";
+													const earningsAmount = Number(toEth(BigInt(tokenEarning.earnings || 0), decimals[chainId][tokenAddress]));
+
+													return (
+														<View key={index} className="flex flex-row items-center justify-center gap-2">
+															<Text className="text-blue-400">
+																<Text>+</Text>
+																{customCommify(earningsAmount, {
+																	minimumFractionDigits: 2,
+																	maximumFractionDigits: 5,
+																})}
+															</Text>
+															<Text className="text-textPrimary font-medium">{tokenName}</Text>
+														</View>
+													);
 												})}
-											</Text>
-											<Text className="text-textPrimary font-medium">{farm.name}</Text>
-										</View>
-										<Text className="text-xs text-textSecondary mt-1">Your total accumulated LP tokens</Text>
+												<Text className="text-xs text-gray-300 mt-1">Your total accumulated tokens</Text>
+											</>
+										) : (
+											// Show single LP token for regular vaults
+											<>
+												<View className="flex flex-row items-center justify-center gap-2">
+													<Text className="text-blue-400">
+														<Text>+</Text>
+														{customCommify(
+															Number(toEth(BigInt(lifetimeEarnings || 0), decimals[farm.chainId][farm.lp_address as Address])),
+															{
+																minimumFractionDigits: 2,
+																maximumFractionDigits: 5,
+															}
+														)}
+													</Text>
+													<Text className="text-textPrimary font-medium">{farm.name}</Text>
+												</View>
+												<Text className="text-xs text-gray-300 mt-1">Your total accumulated LP tokens</Text>
+											</>
+										)}
 									</View>
 								</View>
 							</View>
@@ -143,8 +180,8 @@ const TokenEarning = ({
 						<View className="group relative">
 							<Text className="cursor-pointer h-4 w-4 text-textSecondary text-sm">?</Text>
 
-							<View className="absolute z-[200] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-bgDark text-textSecondary/80 text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm">
-								<Text className="text-xs text-textSecondary mt-1">Based on current token prices, swap fee is not included.</Text>
+							<View className="absolute z-[99999] bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-3 bg-gray-800/95 border border-gray-500/30 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none min-w-[240px] text-center backdrop-blur-sm shadow-xl">
+								<Text className="text-xs text-gray-300 mt-1">Based on current token prices, swap fee is not included.</Text>
 							</View>
 						</View>
 					</View>
@@ -209,24 +246,24 @@ const YourBalance = ({ farm }: { farm: PoolDef | ETFVaultDef }) => {
 	);
 
 	const farmEarnings = useMemo(() => {
-		if (!vaultEarnings?.length) return { earnings0: 0, token0: "", earnings1: 0, token1: "", lifetimeEarnings: 0 };
+		if (!vaultEarnings?.length)
+			return { tokenId: "", tokenEarnings: [], changeInAssets: "", lifetimeEarnings: "", lifetimeEtfEarnings: [] };
 		return (
 			vaultEarnings.find((earning) => earning.tokenId === farm.id.toString()) || {
-				earnings0: 0,
-				token0: "",
-				earnings1: 0,
-				token1: "",
-				changeInAssets: 0,
-				lifetimeEarnings: 0,
+				tokenId: "",
+				tokenEarnings: [],
+				changeInAssets: "",
+				lifetimeEarnings: "",
+				lifetimeEtfEarnings: [],
 			}
 		);
 	}, [vaultEarnings, farm.id]);
 
 	const renderEarningsSection = () => {
 		return (
-			<View className="w-full md:w-1/2 flex flex-col">
+			<View className="w-full md:w-1/2 flex flex-col relative z-10">
 				<Text className="text-textWhite font-arame-mono font-normal text-[16px] leading-[18px] tracking-widest">YOUR EARNINGS</Text>
-				<View className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg min-h-[120px] flex flex-col justify-center">
+				<View className="bg-bgDark py-4 px-4 mt-2 rounded-2xl backdrop-blur-lg min-h-[120px] flex flex-col justify-center relative overflow-visible">
 					{isVaultEarningsFirstLoad ? (
 						<Skeleton h={28} w={120} />
 					) : (
@@ -234,7 +271,7 @@ const YourBalance = ({ farm }: { farm: PoolDef | ETFVaultDef }) => {
 							<View className="flex flex-col md:flex-row gap-4">
 								<TokenEarning
 									currentVaultEarnings={farmEarnings}
-									token={farmEarnings.token0}
+									token={farmEarnings.tokenEarnings?.[0]?.token}
 									chainId={farm.chainId}
 									prices={prices}
 									farm={farm}
@@ -288,17 +325,18 @@ const YourBalance = ({ farm }: { farm: PoolDef | ETFVaultDef }) => {
 	if (stakedTokenValueUsd === 0 || !currentWallet) return null;
 
 	return (
-		<View className="mt-10 relative">
+		<View className="mt-10 relative overflow-visible">
 			{(farm.originPlatform === FarmOriginPlatform.Infrared.name ||
 				farm.originPlatform === FarmOriginPlatform.Steer.name ||
 				farm.originPlatform === FarmOriginPlatform.Kodiak.name ||
 				farm.originPlatform === FarmOriginPlatform.Burrbear.name ||
 				farm.originPlatform === FarmOriginPlatform.BeraPaw.name ||
 				farm.originPlatform === FarmOriginPlatform.Bearn.name ||
-				farm.originPlatform === FarmOriginPlatform.Trax.name) &&
+				farm.originPlatform === FarmOriginPlatform.Trax.name ||
+				farm.isETFVault) &&
 			!farm.isDeprecated ? (
-				<View className="flex flex-col md:flex-row gap-4 pr-4">
-					{!farm.isETFVault ? renderEarningsSection() : null}
+				<View className="flex flex-col md:flex-row gap-4 pr-4 relative overflow-visible">
+					{renderEarningsSection()}
 					{renderPositionSection()}
 				</View>
 			) : (

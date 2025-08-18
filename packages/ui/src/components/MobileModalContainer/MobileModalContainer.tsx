@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Dimensions, ScrollView, Platform, ViewStyle } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { twMerge } from "tailwind-merge";
+import { useCrossPlatformSafeArea, useAndroidNavigation } from "../../hooks/useCrossPlatformSafeArea";
 
 interface MobileModalContainerProps {
 	children: React.ReactNode;
@@ -19,7 +19,8 @@ const MobileModalContainer = ({
 	maxHeight = "90%",
 }: MobileModalContainerProps) => {
 	const { height } = Dimensions.get("window");
-	const insets = useSafeAreaInsets();
+	const insets = useCrossPlatformSafeArea();
+	const androidNav = useAndroidNavigation();
 
 	if (open === false) {
 		return null;
@@ -30,9 +31,13 @@ const MobileModalContainer = ({
 		maxHeight: maxHeight as any,
 	};
 
-	// Calculate dynamic bottom padding based on safe area insets
-	// Android devices typically need more padding due to navigation bar differences
-	const dynamicBottomPadding = Platform.OS === "android" ? Math.max(30, insets.bottom + 20) : insets.bottom + 20;
+	// Calculate dynamic bottom padding based on platform and navigation type
+	const dynamicBottomPadding =
+		Platform.OS === "web"
+			? 20 // Standard web padding
+			: androidNav.isAndroid
+				? Math.max(30, androidNav.recommendedBottomPadding / 2) // Modal needs less padding than action buttons
+				: insets.bottom + 20;
 
 	return (
 		<View className={twMerge(`absolute w-full top-0 left-0 right-0 z-20 bg-transparent`, wrapperClassName)} style={{ height }}>

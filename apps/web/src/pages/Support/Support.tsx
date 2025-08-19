@@ -129,7 +129,7 @@ export const Support = () => {
 							description="Join our Discord server for real-time support, community discussions, and the latest updates."
 							icon={DiscordIcon}
 							actionText="Join Discord"
-							href="https://discord.com/invite/beratrax"
+							href="https://discord.com/invite/traxdefi"
 						/>
 						<ContactCard
 							title="Email Support"

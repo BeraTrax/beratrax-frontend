@@ -19,9 +19,9 @@ import { useEffect, memo } from "react";
 import "react-native-reanimated";
 
 import WalletProvider from "@beratrax/mobile/app/context/WalletProvider";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { WagmiProvider } from "wagmi";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import store from "@beratrax/core/src/state";
 import BottomBar from "./components/BottomBar/BottomBar";
 import { ReactHooksWrapper, setHook } from "react-hooks-outside";
@@ -88,10 +88,16 @@ const tabOptions = {
 const AppContent = memo(() => {
 	useDataRefresh();
 	useBackgroundImagePrefetch(); // 🖼️ Silently prefetch all pool images in the background
+	const insets = useSafeAreaInsets();
+
+	const isDashboard = usePathname() === "/";
 
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView className="flex-1 bg-bgSecondary">
+			<SafeAreaView
+				edges={isDashboard && Platform.OS === "ios" ? ["bottom", "left", "right"] : undefined}
+				className="flex-1 bg-bgSecondary"
+			>
 				<AppKit />
 				<View className="flex-1 relative">
 					<Stack
@@ -103,6 +109,8 @@ const AppContent = memo(() => {
 					<BottomBar tabOptions={tabOptions} />
 				</View>
 			</SafeAreaView>
+			{/* Bottom safe area with matching background */}
+			<View className="bg-bgDark absolute bottom-0 left-0 right-0" style={{ height: insets.bottom }} />
 		</SafeAreaProvider>
 	);
 });

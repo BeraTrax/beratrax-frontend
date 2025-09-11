@@ -271,7 +271,7 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 				? null // <TermsOfUseModal setOpenModal={setOpenTermsOfUseModal} />
 				: null}
 
-			<View className="p-5">
+			<View className={`p-5 ${Platform.OS === "ios" ? "mt-10" : ""}`}>
 				<View>
 					{/* Wallet Connected */}
 					{currentWallet ? (

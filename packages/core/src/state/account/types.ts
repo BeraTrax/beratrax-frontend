@@ -28,6 +28,10 @@ export interface StateInterface {
 	error?: string | null;
 	lastVisitedPage?: string;
 
+	// Account deletion status
+	markedForDeletion?: boolean;
+	deletionDate?: string;
+
 	// Airdrop-related state
 	airdrop?: {
 		claimData: { account: Address; signature: Address; amount: string; nonce?: number } | null;
@@ -71,6 +75,8 @@ export interface AccountResponse {
 	connector?: string;
 	xFollower?: boolean;
 	disableZapWarning?: boolean;
+	markedForDeletion?: boolean;
+	deletionDate?: string;
 }
 
 export enum Boosts {

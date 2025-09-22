@@ -339,7 +339,7 @@ const ETFPriceGraph: React.FC<ETFPriceGraphProps> = ({ vault }) => {
 				))}
 			</View>
 			<View>
-				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">Historical price of the ETF vault</Text>
+				<Text className="text-sm text-textSecondary text-center my-4 font-league-spartan">Historical price of the XTF vault</Text>
 			</View>
 		</View>
 	);

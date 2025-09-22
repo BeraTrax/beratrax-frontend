@@ -11,7 +11,7 @@ export default {
 		slug: "Trax",
 		version: "1.0.0",
 		orientation: "portrait",
-		icon: "https://raw.githubusercontent.com/BeraTrax/tokens/main/logos/trax-logo/logo.png",
+		icon: "./assets/images/trax-logo.png",
 		scheme: "com.trax.mobile",
 		userInterfaceStyle: "automatic",
 		newArchEnabled: true,
@@ -28,7 +28,7 @@ export default {
 		},
 		android: {
 			adaptiveIcon: {
-				foregroundImage: "./assets/images/adaptive-icon.png",
+				foregroundImage: "./assets/images/trax-logo.png",
 				backgroundColor: "#ffffff",
 			},
 			permissions: ["CAMERA", "INTERNET"],
@@ -37,7 +37,7 @@ export default {
 		web: {
 			bundler: "metro",
 			output: "static",
-			favicon: "./assets/images/favicon.png",
+			favicon: "./assets/images/trax-logo.png",
 		},
 		plugins: [
 			"expo-router",
@@ -55,7 +55,7 @@ export default {
 			[
 				"expo-splash-screen",
 				{
-					image: "./assets/images/splash-icon.png",
+					image: "./assets/images/trax-logo.png",
 					imageWidth: 200,
 					resizeMode: "contain",
 					backgroundColor: "#ffffff",

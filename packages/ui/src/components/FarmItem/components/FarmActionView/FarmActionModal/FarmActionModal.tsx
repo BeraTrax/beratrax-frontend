@@ -5,6 +5,7 @@ import React, { memo, useCallback, useMemo, useRef, useState, useLayoutEffect } 
 import DialPad from "ui/src/components/Dialpad/Dialpad";
 import MobileModalContainer from "ui/src/components/MobileModalContainer/MobileModalContainer";
 import Select from "ui/src/components/Select/Select";
+import { useCrossPlatformSafeArea, useAndroidNavigation } from "../../../../../hooks/useCrossPlatformSafeArea";
 import { ETFVaultDef, PoolDef, tokenNamesAndImages } from "@beratrax/core/src/config/constants/pools_json";
 import { useWindowSize } from "@beratrax/core/src/hooks";
 import { useDetailInput } from "@beratrax/core/src/hooks/useDetailInput";
@@ -173,6 +174,8 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 	const { transactionType, currencySymbol } = useAppSelector((state) => state.farms.farmDetailInputOptions);
 	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const insets = useCrossPlatformSafeArea();
+	const androidNav = useAndroidNavigation();
 
 	const {
 		amount,
@@ -401,7 +404,13 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
 	return (
 		<MobileModalContainer open={open} maxHeight={dynamicMaxHeight}>
-			<View className={`px-4 py-3 bg-bgDark desktopLg:pb-24 ${Platform.OS === "ios" ? "pb-24" : ""}`} onLayout={handleContentLayout}>
+			<View
+				className="px-4 py-3 bg-bgDark desktopLg:pb-24"
+				style={{
+					paddingBottom: Platform.OS === "web" ? 96 : androidNav.isAndroid ? Math.max(128, androidNav.recommendedBottomPadding + 50) : 96,
+				}}
+				onLayout={handleContentLayout}
+			>
 				<View className="h-10 w-full relative">
 					<Pressable onPress={handleClose} style={closeButtonStyle}>
 						{CloseIcon}

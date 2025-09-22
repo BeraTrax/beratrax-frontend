@@ -2,52 +2,6 @@ const ETFVaultAbi = [
 	{
 		inputs: [
 			{
-				internalType: "string",
-				name: "name",
-				type: "string",
-			},
-			{
-				internalType: "string",
-				name: "symbol",
-				type: "string",
-			},
-			{
-				internalType: "contract IVault[]",
-				name: "vaultAddresses",
-				type: "address[]",
-			},
-			{
-				internalType: "uint256[]",
-				name: "targetRatios",
-				type: "uint256[]",
-			},
-			{
-				internalType: "contract IZapper[]",
-				name: "zappers",
-				type: "address[]",
-			},
-			{
-				internalType: "enum IDexType.DexType[]",
-				name: "dexTypes",
-				type: "uint8[]",
-			},
-			{
-				internalType: "address",
-				name: "quoteRouter",
-				type: "address",
-			},
-			{
-				internalType: "address",
-				name: "governance",
-				type: "address",
-			},
-		],
-		stateMutability: "nonpayable",
-		type: "constructor",
-	},
-	{
-		inputs: [
-			{
 				internalType: "address",
 				name: "target",
 				type: "address",
@@ -199,6 +153,11 @@ const ETFVaultAbi = [
 		type: "error",
 	},
 	{
+		inputs: [],
+		name: "ReentrancyGuardReentrantCall",
+		type: "error",
+	},
+	{
 		inputs: [
 			{
 				internalType: "address",
@@ -333,7 +292,7 @@ const ETFVaultAbi = [
 			{
 				indexed: false,
 				internalType: "bool[]",
-				name: "isSingleToken",
+				name: "isLpToken",
 				type: "bool[]",
 			},
 		],
@@ -440,6 +399,69 @@ const ETFVaultAbi = [
 			},
 		],
 		name: "Transfer",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: "address",
+				name: "user",
+				type: "address",
+			},
+			{
+				indexed: false,
+				internalType: "uint256[]",
+				name: "newDebt",
+				type: "uint256[]",
+			},
+		],
+		name: "UserDebtUpdated",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: "address",
+				name: "user",
+				type: "address",
+			},
+			{
+				indexed: false,
+				internalType: "uint256[]",
+				name: "earningsPerVault",
+				type: "uint256[]",
+			},
+		],
+		name: "UserEarnings",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: "uint256",
+				name: "vaultIndex",
+				type: "uint256",
+			},
+			{
+				indexed: false,
+				internalType: "uint256",
+				name: "newEarnings",
+				type: "uint256",
+			},
+			{
+				indexed: false,
+				internalType: "uint256",
+				name: "newAccumulatedPerShare",
+				type: "uint256",
+			},
+		],
+		name: "VaultEarningsAccumulated",
 		type: "event",
 	},
 	{
@@ -615,6 +637,35 @@ const ETFVaultAbi = [
 			{
 				internalType: "uint256",
 				name: "",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "vaultIndex",
+				type: "uint256",
+			},
+			{
+				internalType: "uint256",
+				name: "currentETFSupply",
+				type: "uint256",
+			},
+		],
+		name: "calculateVaultPendingEarnings",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "newEarnings",
+				type: "uint256",
+			},
+			{
+				internalType: "uint256",
+				name: "newAccumulatedPerShare",
 				type: "uint256",
 			},
 		],
@@ -802,7 +853,7 @@ const ETFVaultAbi = [
 		outputs: [
 			{
 				internalType: "uint256",
-				name: "price",
+				name: "",
 				type: "uint256",
 			},
 		],
@@ -938,19 +989,43 @@ const ETFVaultAbi = [
 		inputs: [
 			{
 				internalType: "address",
-				name: "token",
+				name: "user",
 				type: "address",
 			},
 		],
-		name: "getTokenPriceUSD",
+		name: "getUserLifetimeEarnings",
 		outputs: [
 			{
-				internalType: "uint256",
-				name: "price",
-				type: "uint256",
+				internalType: "uint256[]",
+				name: "currentEarnings",
+				type: "uint256[]",
+			},
+			{
+				internalType: "uint256[]",
+				name: "lifetimeEarnings",
+				type: "uint256[]",
 			},
 		],
-		stateMutability: "nonpayable",
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "user",
+				type: "address",
+			},
+		],
+		name: "getUserPendingEarnings",
+		outputs: [
+			{
+				internalType: "uint256[]",
+				name: "earningsPerVault",
+				type: "uint256[]",
+			},
+		],
+		stateMutability: "view",
 		type: "function",
 	},
 	{
@@ -1040,6 +1115,25 @@ const ETFVaultAbi = [
 		type: "function",
 	},
 	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "vaultIndex",
+				type: "uint256",
+			},
+		],
+		name: "getVaultTotalAssets",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "totalAssets",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
 		inputs: [],
 		name: "getVaults",
 		outputs: [
@@ -1067,12 +1161,12 @@ const ETFVaultAbi = [
 	},
 	{
 		inputs: [],
-		name: "iBGT",
+		name: "initialSharePriceUSD",
 		outputs: [
 			{
-				internalType: "address",
+				internalType: "uint256",
 				name: "",
-				type: "address",
+				type: "uint256",
 			},
 		],
 		stateMutability: "view",
@@ -1086,7 +1180,7 @@ const ETFVaultAbi = [
 				type: "address",
 			},
 		],
-		name: "isAssetSingleToken",
+		name: "isLpToken",
 		outputs: [
 			{
 				internalType: "bool",
@@ -1286,7 +1380,7 @@ const ETFVaultAbi = [
 			},
 			{
 				internalType: "bool[]",
-				name: "isSingleToken",
+				name: "isLp",
 				type: "bool[]",
 			},
 		],
@@ -1344,40 +1438,6 @@ const ETFVaultAbi = [
 		],
 		name: "setTargetRatios",
 		outputs: [],
-		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-			{
-				internalType: "bool",
-				name: "isDeposit",
-				type: "bool",
-			},
-		],
-		name: "simulateRebalancingEffect",
-		outputs: [
-			{
-				internalType: "uint256[]",
-				name: "currentRatios",
-				type: "uint256[]",
-			},
-			{
-				internalType: "uint256[]",
-				name: "newRatios",
-				type: "uint256[]",
-			},
-			{
-				internalType: "int256",
-				name: "improvement",
-				type: "int256",
-			},
-		],
 		stateMutability: "nonpayable",
 		type: "function",
 	},
@@ -1477,6 +1537,78 @@ const ETFVaultAbi = [
 			},
 		],
 		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "",
+				type: "uint256",
+			},
+		],
+		name: "userEarningsDebt",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "",
+				type: "uint256",
+			},
+		],
+		name: "userLifetimeEarnings",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "",
+				type: "uint256",
+			},
+		],
+		name: "vaultEarnings",
+		outputs: [
+			{
+				internalType: "uint256",
+				name: "lastTotalAssets",
+				type: "uint256",
+			},
+			{
+				internalType: "uint256",
+				name: "accumulatedEarningsPerETFShare",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
 		type: "function",
 	},
 	{

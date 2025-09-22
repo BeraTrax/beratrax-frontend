@@ -8,11 +8,11 @@ import { isStagging, RAMP_TRANSAK_API_KEY, onchainkitProjectId } from "@beratrax
 import transaklogo from "@beratrax/core/src/assets/images/transaklogo.png";
 import coinbaseLogo from "@beratrax/core/src/assets/images/coinbaselogo.png";
 import { WebView } from "react-native-webview";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useWallet } from "@beratrax/core/src/hooks";
 import { LoginModal } from "@beratrax/mobile/app/components/LoginModal/LoginModal";
 import { backendApi } from "@beratrax/core/src/api";
+import { checkGeolocationBlocking } from "@beratrax/core/src/api/geolocation";
 
 interface Service {
 	id: string;
@@ -37,85 +37,39 @@ interface SupportedToken {
 }
 
 /**
- * Type representing IP-based location info.
+ * Type representing geolocation data.
  */
-type Location = { country_code: string; region_code: string };
-
-const CACHE_KEY = "USER_LOCATION_CACHE";
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
-
-/**
- * Read the cached location from AsyncStorage if it's still valid.
- *
- * @returns {Promise<Location | null>} The cached location data or null if expired/missing.
- */
-async function readCachedLocation(): Promise<Location | null> {
-	const json = await AsyncStorage.getItem(CACHE_KEY);
-	if (!json) return null;
-
-	try {
-		const { timestamp, data }: { timestamp: number; data: Location } = JSON.parse(json);
-		if (Date.now() - timestamp < CACHE_TTL_MS) {
-			return data; // cache hit
-		}
-		await AsyncStorage.removeItem(CACHE_KEY);
-	} catch {
-		// parse error or unexpected shape
-		await AsyncStorage.removeItem(CACHE_KEY);
-	}
-	return null; // cache miss
+interface GeolocationData {
+	isBlocked: boolean;
+	country_code?: string;
+	region_code?: string;
+	message: string;
 }
 
 /**
- * Write the user's location data to AsyncStorage with a timestamp.
+ * Check if user is blocked based on geolocation using Beratrax API.
+ * Defaults to allow access on API errors to prevent false blocking.
  *
- * @param {Location} location - The location data to cache.
+ * @returns {Promise<GeolocationData>} Geolocation data with blocking status.
  */
-async function writeCachedLocation(location: Location): Promise<void> {
+async function checkUserGeolocation(): Promise<GeolocationData> {
 	try {
-		const cacheData = {
-			timestamp: Date.now(),
-			data: location,
+		const response = await checkGeolocationBlocking();
+		return {
+			isBlocked: response.isBlocked,
+			country_code: response.country,
+			region_code: response.region,
+			message: response.message,
 		};
-		await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
 	} catch (error) {
-		console.warn("Failed to cache location data:", error);
-	}
-}
-
-/**
- * Fetch the user's location based on IP address using the API.
- * Uses cached value if present and valid. If not, fetches from API and writes to the cache,
- *
- * @returns {Promise<Location | null>} Location data from cache or API.
- */
-async function fetchUserLocation(): Promise<Location | null> {
-	// First check cache
-	const cachedLocation = await readCachedLocation();
-	if (cachedLocation) {
-		console.log("Using cached location data");
-		return cachedLocation;
-	}
-
-	// Cache miss - fetch from API
-	try {
-		const response = await fetch("https://ipwho.is/");
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		const data = await response.json();
-		const location: Location = {
-			country_code: data.country_code,
-			region_code: data.region_code,
+		console.error("Error checking user geolocation:", error);
+		// Default to allow access on error to prevent false blocking
+		return {
+			isBlocked: false,
+			country_code: undefined,
+			region_code: undefined,
+			message: "Unable to determine location, access granted",
 		};
-
-		// Cache the result
-		await writeCachedLocation(location);
-		return location;
-	} catch (error) {
-		console.error("Error fetching user location:", error);
-		return null;
 	}
 }
 
@@ -177,14 +131,36 @@ export const Buy = (): React.JSX.Element => {
 	const [sessionToken, setSessionToken] = useState<string | null>(null);
 	const [isLoadingSessionToken, setIsLoadingSessionToken] = useState(false);
 	const [sessionTokenError, setSessionTokenError] = useState<string | null>(null);
+	const [isBlocked, setIsBlocked] = useState<boolean>(false);
+	const [blockingMessage, setBlockingMessage] = useState<string>("");
+	const [isLoadingGeolocation, setIsLoadingGeolocation] = useState<boolean>(true);
 
 	useEffect(() => {
-		fetchUserLocation().then((location) => {
-			if (location) {
-				setUserCountryCode(location.country_code);
-				setUserSubDivisionCode(location.region_code);
+		const checkGeolocation = async () => {
+			try {
+				setIsLoadingGeolocation(true);
+				const geolocationData = await checkUserGeolocation();
+
+				setIsBlocked(geolocationData.isBlocked);
+				setBlockingMessage(geolocationData.message);
+
+				if (geolocationData.country_code) {
+					setUserCountryCode(geolocationData.country_code);
+				}
+				if (geolocationData.region_code) {
+					setUserSubDivisionCode(geolocationData.region_code);
+				}
+			} catch (error) {
+				console.error("Error checking geolocation:", error);
+				// Default to allow access on error
+				setIsBlocked(false);
+				setBlockingMessage("Unable to determine location, access granted");
+			} finally {
+				setIsLoadingGeolocation(false);
 			}
-		});
+		};
+
+		checkGeolocation();
 	}, []);
 
 	useEffect(() => {
@@ -397,6 +373,45 @@ export const Buy = (): React.JSX.Element => {
 			setShowLoginModal(true);
 		}
 	};
+
+	// Show loading state while checking geolocation
+	if (isLoadingGeolocation) {
+		return (
+			<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
+				<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
+					<Text className="font-arame-mono text-2xl font-bold mb-6 text-center text-textWhite uppercase">BUY CRYPTO</Text>
+
+					<View className="bg-bgDark rounded-2xl border border-gradientSecondary p-6 mb-4 w-full">
+						<View className="flex flex-col items-center justify-center py-12">
+							<Text className="text-textWhite text-xl font-medium mb-4 text-center">Checking Location...</Text>
+							<Text className="text-textSecondary text-center">Please wait while we verify your location</Text>
+						</View>
+					</View>
+				</View>
+			</ScrollView>
+		);
+	}
+
+	// If user is blocked by region, show blocked message
+	if (isBlocked && Platform.OS === "ios") {
+		return (
+			<ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-bgDark p-4">
+				<View className="flex flex-col items-center justify-center w-full max-w-md m-auto">
+					<Text className="font-arame-mono text-2xl font-bold mb-6 text-center text-textWhite uppercase">BUY CRYPTO</Text>
+
+					<View className="bg-bgDark rounded-2xl border border-red-500 p-6 mb-4 w-full">
+						<View className="flex flex-col items-center justify-center py-12">
+							<Text className="text-red-400 text-xl font-medium mb-4 text-center">Access Restricted</Text>
+							<Text className="text-textSecondary text-center mb-6">{blockingMessage}</Text>
+							<Text className="text-textSecondary text-sm text-center">
+								The Buy Crypto feature is not available in your region due to regulatory restrictions.
+							</Text>
+						</View>
+					</View>
+				</View>
+			</ScrollView>
+		);
+	}
 
 	// If user is not connected, show connect wallet message
 	if (!isConnected) {

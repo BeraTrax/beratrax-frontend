@@ -8,3 +8,7 @@ export * from "./CheckCircle";
 export * from "./Warning";
 export * from "./Discord";
 export * from "./Mail";
+export * from "./User";
+export * from "./Trash";
+export * from "./ShieldCheck";
+export * from "./Settings";

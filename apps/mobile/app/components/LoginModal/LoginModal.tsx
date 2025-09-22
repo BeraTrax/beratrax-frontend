@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Modal, TouchableOpacity, Image, TextInput } from "react-native";
+import { View, Text, Modal, TouchableOpacity, Image, TextInput, ActivityIndicator } from "react-native";
 import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 
 interface LoginModalProps {
@@ -14,6 +14,12 @@ const loginProviders = [
 		name: "Google",
 		icon: "https://www.google.com/favicon.ico",
 		color: "#4285F4",
+	},
+	{
+		id: LOGIN_PROVIDER.APPLE,
+		name: "Apple",
+		icon: "https://www.apple.com/favicon.ico",
+		color: "#000000",
 	},
 	{
 		id: LOGIN_PROVIDER.FACEBOOK,
@@ -40,12 +46,6 @@ const loginProviders = [
 		color: "#5865F2",
 	},
 	{
-		id: LOGIN_PROVIDER.APPLE,
-		name: "Apple",
-		icon: "https://www.apple.com/favicon.ico",
-		color: "#000000",
-	},
-	{
 		id: LOGIN_PROVIDER.EMAIL_PASSWORDLESS,
 		name: "Email",
 		icon: "https://images.icon-icons.com/614/PNG/512/email-envelope-outline-shape-with-rounded-corners_icon-icons.com_56530.png",
@@ -56,68 +56,112 @@ const loginProviders = [
 export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose, connectWallet }) => {
 	const [showEmailInput, setShowEmailInput] = useState(false);
 	const [email, setEmail] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
 	const handleLogin = async (provider: (typeof LOGIN_PROVIDER)[keyof typeof LOGIN_PROVIDER]) => {
+		if (isLoading) return; // Prevent multiple clicks during loading
+
 		try {
 			if (provider === LOGIN_PROVIDER.EMAIL_PASSWORDLESS) {
 				setShowEmailInput(true);
 				return;
 			}
+
+			setIsLoading(true);
+			setLoadingProvider(provider);
 			await connectWallet(provider);
 			onClose();
 		} catch (error) {
 			console.error("Login failed:", error);
+		} finally {
+			setIsLoading(false);
+			setLoadingProvider(null);
 		}
 	};
 
 	const handleEmailSubmit = async () => {
+		if (isLoading) return; // Prevent multiple clicks during loading
+
 		try {
+			setIsLoading(true);
+			setLoadingProvider(LOGIN_PROVIDER.EMAIL_PASSWORDLESS);
 			await connectWallet(LOGIN_PROVIDER.EMAIL_PASSWORDLESS, email);
 			onClose();
 		} catch (error) {
 			console.error("Email login failed:", error);
+		} finally {
+			setIsLoading(false);
+			setLoadingProvider(null);
 		}
 	};
 
 	const handleBack = () => {
+		if (isLoading) return; // Prevent going back during loading
 		setShowEmailInput(false);
 		setEmail("");
 	};
 
+	const resetStates = () => {
+		setShowEmailInput(false);
+		setEmail("");
+		setIsLoading(false);
+		setLoadingProvider(null);
+	};
+
+	const handleClose = () => {
+		if (isLoading) return; // Prevent closing during loading
+		resetStates();
+		onClose();
+	};
+
 	return (
-		<Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+		<Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
 			<View className="flex-1 bg-black/50 justify-center items-center">
 				<View className="w-[90vw] bg-[#1A1A1A] rounded-2xl p-6 shadow-2xl">
 					{!showEmailInput ? (
 						<>
 							<View className="flex-row justify-between items-center mb-5">
 								<Text className="text-2xl font-bold text-white">Connect Wallet</Text>
-								<TouchableOpacity onPress={onClose} className="p-1">
+								<TouchableOpacity onPress={handleClose} className="p-1" disabled={isLoading} style={{ opacity: isLoading ? 0.5 : 1 }}>
 									<Text className="text-3xl text-white font-bold">×</Text>
 								</TouchableOpacity>
 							</View>
 
 							<Text className="text-base text-white mb-5">Choose your preferred login method</Text>
 
-							<View className="space-y-3">
-								{loginProviders.map((provider) => (
-									<TouchableOpacity
-										key={provider.id}
-										className="flex-row items-center p-4 rounded-xl my-2"
-										style={{ backgroundColor: provider.color }}
-										onPress={() => handleLogin(provider.id)}
-									>
-										<Image source={{ uri: provider.icon }} className="w-6 h-6 mr-3" />
-										<Text className="text-white text-base font-semibold">Continue with {provider.name}</Text>
-									</TouchableOpacity>
-								))}
+							<View className="gap-y-3">
+								{loginProviders.map((provider) => {
+									const isProviderLoading = isLoading && loadingProvider === provider.id;
+									return (
+										<TouchableOpacity
+											key={provider.id}
+											className="flex-row items-center p-4 rounded-xl my-2"
+											style={{
+												backgroundColor: isLoading && !isProviderLoading ? `${provider.color}80` : provider.color,
+												opacity: isLoading && !isProviderLoading ? 0.5 : 1,
+											}}
+											onPress={() => handleLogin(provider.id)}
+											disabled={isLoading}
+										>
+											{isProviderLoading ? (
+												<ActivityIndicator size="small" color="white" className="mr-3" />
+											) : (
+												<Image source={{ uri: provider.icon }} className="w-6 h-6 mr-3" />
+											)}
+											<Text className="text-white text-base font-semibold">
+												{isProviderLoading ? "Signing in..." : `Sign in with ${provider.name}`}
+											</Text>
+										</TouchableOpacity>
+									);
+								})}
 							</View>
 						</>
 					) : (
 						<>
 							<View className="flex-row justify-between items-center mb-6">
 								<View className="flex-row items-center">
-									<TouchableOpacity onPress={handleBack} className="mr-3">
+									<TouchableOpacity onPress={handleBack} className="mr-3" disabled={isLoading} style={{ opacity: isLoading ? 0.5 : 1 }}>
 										<Text className="text-white text-2xl">←</Text>
 									</TouchableOpacity>
 									<Image
@@ -128,14 +172,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose, connec
 									/>
 									<Text className="text-2xl font-bold text-white">Enter Email</Text>
 								</View>
-								<TouchableOpacity onPress={onClose} className="p-1">
+								<TouchableOpacity onPress={handleClose} className="p-1" disabled={isLoading} style={{ opacity: isLoading ? 0.5 : 1 }}>
 									<Text className="text-3xl text-white font-bold">×</Text>
 								</TouchableOpacity>
 							</View>
 
 							<Text className="text-base text-gray-400 mb-6">Enter your email address to continue with passwordless login</Text>
 
-							<View className="space-y-4">
+							<View className="gap-y-4">
 								<View className="bg-[#2A2A2A] rounded-xl overflow-hidden">
 									<TextInput
 										className="w-full text-white p-4 text-base"
@@ -152,9 +196,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose, connec
 								<TouchableOpacity
 									className="w-full bg-[#EA4335] p-4 rounded-xl items-center shadow-lg"
 									onPress={handleEmailSubmit}
-									style={{ elevation: 3 }}
+									style={{
+										elevation: 3,
+										opacity: isLoading ? 0.7 : 1,
+									}}
+									disabled={isLoading}
 								>
-									<Text className="text-white text-base font-semibold">Continue</Text>
+									<View className="flex-row items-center">
+										{isLoading && loadingProvider === LOGIN_PROVIDER.EMAIL_PASSWORDLESS && (
+											<ActivityIndicator size="small" color="white" className="mr-2" />
+										)}
+										<Text className="text-white text-base font-semibold">
+											{isLoading && loadingProvider === LOGIN_PROVIDER.EMAIL_PASSWORDLESS ? "Signing in..." : "Continue"}
+										</Text>
+									</View>
 								</TouchableOpacity>
 							</View>
 						</>

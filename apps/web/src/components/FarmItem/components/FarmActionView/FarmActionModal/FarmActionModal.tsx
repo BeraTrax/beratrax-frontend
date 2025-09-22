@@ -136,34 +136,27 @@ const FarmActionModal = ({ open, setOpen, farm }: FarmActionModalProps) => {
 
 	const currentVaultEarningsUsd = useMemo(() => {
 		const currentVaultEarnings = vaultEarnings?.find((earning) => Number(earning.tokenId) === Number(farm.id));
-		if (!currentVaultEarnings || currentVaultEarnings.token0 === "") return 0;
+		if (!currentVaultEarnings || currentVaultEarnings.tokenEarnings[0].token === "") return 0;
 
 		return (
-			Number(
-				toEth(
-					BigInt(currentVaultEarnings?.earnings0 || 0n),
-					decimals[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
-				)
-			) *
-				prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)] +
-			(currentVaultEarnings?.token1
-				? Number(
-						toEth(
-							BigInt(currentVaultEarnings?.earnings1 || 0n),
-							decimals[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-						)
-				  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token1 as `0x${string}`)]
-				: 0) +
+			currentVaultEarnings.tokenEarnings.reduce((acc, curr) => {
+				return (
+					acc +
+					Number(toEth(BigInt(curr.earnings || 0n), decimals[farm.chainId][getAddress(curr.token as `0x${string}`)])) *
+						prices[farm.chainId][getAddress(curr.token as `0x${string}`)]
+				);
+			}, 0) +
 			(currentVaultEarnings?.changeInAssets
 				? Number(
 						toEth(
 							BigInt(currentVaultEarnings?.changeInAssets || 0n),
-							decimals[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+							decimals[farm.chainId][getAddress(currentVaultEarnings.tokenEarnings[0].token as `0x${string}`)]
 						)
-				  ) * prices[farm.chainId][getAddress(currentVaultEarnings.token0 as `0x${string}`)]
+				  ) * prices[farm.chainId][getAddress(currentVaultEarnings.tokenEarnings[0].token as `0x${string}`)]
 				: 0)
 		);
 	}, [isVaultEarningsFirstLoad]);
+
 	const {
 		amount,
 		toggleAmount,

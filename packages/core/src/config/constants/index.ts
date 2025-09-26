@@ -26,7 +26,7 @@ const getEnvVar = (key: string): string | undefined => {
 	return process.env[envKey];
 };
 
-export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1/";
+export const BACKEND_BASE_URL = "https://beratrax-prod-api-4f574d5de3b1.herokuapp.com/api/v1/";
 export const EARNINGS_GRAPH_URL =
 	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/prod/gn";
 export const EARNINGS_GRAPH_URL_BASE =

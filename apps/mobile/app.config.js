@@ -9,7 +9,7 @@ export default {
 	expo: {
 		name: "Trax Finance",
 		slug: "Trax",
-		version: "1.0.0",
+		version: "1.0.1",
 		orientation: "portrait",
 		icon: "./assets/images/trax-logo.png",
 		scheme: "com.trax.mobile",

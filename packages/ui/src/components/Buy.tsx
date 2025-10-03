@@ -318,7 +318,7 @@ export const Buy = (): React.JSX.Element => {
 			{
 				id: "transak",
 				name: "Transak",
-				url: `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`,
+				url: `https://global${isStagging ? "-stg" : ""}.transak.com/?apiKey=${RAMP_TRANSAK_API_KEY ?? "cee219b7-35f1-47ed-92dc-65a60c0a4d01"}&cryptoCurrencyCode=BERA&network=berachain&walletAddress=${address}&defaultFiatAmount=${displayAmount}&defaultFiatCurrency=USD`,
 				icon: transaklogo,
 			},
 		],

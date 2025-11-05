@@ -60,7 +60,7 @@ export const updateFarmDetails = createAsyncThunk(
 
 			return { data, currentWallet };
 		} catch (error) {
-			console.error(error);
+			console.error("updateFarmDetails error", error);
 			return thunkApi.rejectWithValue(error instanceof Error ? error.message : "Failed to fetch farm details");
 		}
 	}

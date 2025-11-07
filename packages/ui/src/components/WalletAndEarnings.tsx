@@ -266,6 +266,13 @@ export const WalletAndEarnings: React.FC<WalletHookType> = ({ connectWallet }) =
 
 	return (
 		<View className="z-[1] bg-bgDark bg-[100%_20%] bg-no-repeat rounded-[2.5rem] rounded-tl-none rounded-tr-none border-b border-borderDark relative overflow-hidden">
+			{/* Shutdown Banner */}
+			<View className="w-full bg-red-600 border-b border-red-500">
+				<Text className="text-white text-center px-4 py-3 text-sm leading-5">
+					The Trax project, platform, and token support are shutting down. Autocompounding will not be supported from November 15th. The
+					website and apps will go down on December 31st. Please withdraw your funds. Open a ticket in Discord for withdraw support
+				</Text>
+			</View>
 			{/* Terms of Use Modal */}
 			{openTermsOfUseModal !== null && currentWallet && openTermsOfUseModal
 				? null // <TermsOfUseModal setOpenModal={setOpenTermsOfUseModal} />

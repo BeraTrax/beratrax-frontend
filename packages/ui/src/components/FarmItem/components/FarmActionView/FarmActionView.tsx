@@ -24,6 +24,7 @@ import PoolInfo from "./PoolInfo/PoolInfo";
 import TokenPriceAndGraph from "./TokenPriceAndGraph/TokenPriceAndGraph";
 import YourBalance from "./YourBalance/YourBalance";
 import { View, Text, Pressable, ScrollView, Platform, ImageSourcePropType, Image } from "react-native";
+import { notifyError } from "packages/core/src/api/notify";
 
 const ActionButton = memo(
 	({
@@ -154,11 +155,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 												<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
 											) : (
 												<View className="flex flex-row gap-2 justify-center items-center w-full">
-													<ActionButton
+													{/* <ActionButton
 														onPress={handleDepositPress}
 														text={depositButtonText}
 														className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
-													/>
+													/> */}
 
 													{Number(withdrawable?.amount || "0") > 0 && (
 														<ActionButton
@@ -195,11 +196,11 @@ export const FarmActionView: React.FC<{ farm: PoolDef }> = ({ farm }) => {
 										<>{Number(withdrawable?.amount || "0") > 0 && <Skeleton w="100%" h={72} bRadius={40} className="flex-1" />}</>
 									) : (
 										<>
-											<ActionButton
+											{/* <ActionButton
 												onPress={handleDepositPress}
 												text={depositButtonText}
 												className="bg-buttonPrimaryLight w-[70%] md:w-full py-5 px-4 text-xl font-bold tracking-widest rounded-[40px] uppercase text-center self-center"
-											/>
+											/> */}
 
 											{Number(withdrawable?.amount || "0") > 0 && (
 												<ActionButton

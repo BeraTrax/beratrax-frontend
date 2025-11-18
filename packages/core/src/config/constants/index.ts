@@ -26,9 +26,8 @@ const getEnvVar = (key: string): string | undefined => {
 	return process.env[envKey];
 };
 
-export const BACKEND_BASE_URL = "https://api.beratrax.io/api/v1/";
-export const EARNINGS_GRAPH_URL =
-	"https://api.goldsky.com/api/public/project_cm4bd2i5uaow101vy0y342dfg/subgraphs/beratrax-mainnet-subgraph/prod/gn";
+export const BACKEND_BASE_URL = "https://beratrax-prod-api-4f574d5de3b1.herokuapp.com/api/v1/";
+export const EARNINGS_GRAPH_URL = "";
 export const EARNINGS_GRAPH_URL_BASE =
 	"https://gateway-arbitrum.network.thegraph.com/api/616d6a1cc1199359a718e468c9aec235/subgraphs/id/D7uDmHS7qoxRwxHPnYNQm2foppkWmi7r2TaH5qZDX2Dh";
 export const STEER_PROTOCOL_EARNINGS_GRAPH_URL =

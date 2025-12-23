@@ -19,6 +19,8 @@ import useTrax from "./useTrax";
 import useTVL from "./useUserTVL";
 import { useVaults } from "./useVaults";
 import { useETFVault } from "./useETFVault";
+import { useWithdrawPage } from "./useWithdrawPage";
+import { useEmergencyWithdraw } from "./useEmergencyWithdraw";
 import useTokens from "../state/tokens/useTokens";
 import useWallet from "./useWallet";
 import useWindowSize from "./useWindowSize";
@@ -51,4 +53,6 @@ export {
 	useTVL,
 	useVaults,
 	useETFVault,
+	useWithdrawPage,
+	useEmergencyWithdraw,
 };

@@ -32,6 +32,12 @@ function Sidebar() {
 			path: RoutesPaths.Farms,
 			target: undefined,
 		},
+		{
+			title: "Withdraw",
+			icon: <AiOutlineExport size={18} />,
+			path: RoutesPaths.Withdraw,
+			target: undefined,
+		},
 		// {
 		// 	title: "Leaderboard",
 		// 	icon: <ImStatsDots size={15} />,
